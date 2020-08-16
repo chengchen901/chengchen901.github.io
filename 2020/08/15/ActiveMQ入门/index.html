@@ -11,7 +11,7 @@
    
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    hexo搭建博客 |  
+    ActiveMQ入门 |  
   </title>
   <meta name="generator" content="hexo-theme-ayer">
   
@@ -46,7 +46,7 @@
     <main class="content on">
       <section class="outer">
   <article
-  id="post-我的第一篇博客"
+  id="post-ActiveMQ入门"
   class="article article-type-post"
   itemscope
   itemprop="blogPost"
@@ -57,22 +57,22 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  hexo搭建博客
+  ActiveMQ入门
 </h1>
  
 
     </header>
      
     <div class="article-meta">
-      <a href="/2020/08/15/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" class="article-date">
-  <time datetime="2020-08-14T22:43:00.000Z" itemprop="datePublished">2020-08-15</time>
+      <a href="/2020/08/15/ActiveMQ%E5%85%A5%E9%97%A8/" class="article-date">
+  <time datetime="2020-08-15T07:15:25.000Z" itemprop="datePublished">2020-08-15</time>
 </a>   
 <div class="word_count">
     <span class="post-time">
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">326</span>
+            <span class="post-count">930</span>
         </span>
     </span>
 
@@ -81,7 +81,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">1 min</span>
+            <span class="post-count">4 min</span>
         </span>
     </span>
 </div>
@@ -96,41 +96,83 @@
   
     <div class="article-entry" itemprop="articleBody">
        
-  <p>参考资料：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Yb411a7ty?from=search&seid=6549671895795810573">手把手教你从0开始搭建自己的个人博客 |无坑版视频教程| hexo</a></p>
+  <p>ActiveMQ是一款用Java开发的、开源的、支持多种协议的、非常流行的消息服务（消息中间件）。因为它的支持多协议，支持工业标准的协议，所以我们可以跨平台、跨语言来使用它。</p>
 <a id="more"></a>
 
-<h1 id="安装nodejs"><a href="#安装nodejs" class="headerlink" title="安装nodejs"></a>安装nodejs</h1><p>下载 <a target="_blank" rel="noopener" href="https://nodejs.org/">nodejs</a> LTS长期支持版</p>
-<p>安装完成查看版本确保安装成功</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#　查看nodejs版本</span></span><br><span class="line">node -v</span><br><span class="line"></span><br><span class="line"><span class="comment">#　查看npm版本</span></span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure>
+<h1 id="ActiveMQ入门指南"><a href="#ActiveMQ入门指南" class="headerlink" title="ActiveMQ入门指南"></a><strong>ActiveMQ入门指南</strong></h1><h1 id="1-ActiveMQ简介"><a href="#1-ActiveMQ简介" class="headerlink" title="1.ActiveMQ简介"></a>1.ActiveMQ简介</h1><p>官网的介绍<a target="_blank" rel="noopener" href="https://activemq.apache.org/"> </a><a target="_blank" rel="noopener" href="https://activemq.apache.org/">https://activemq.apache.or</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/">g</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/">/</a></p>
+<p>从官网介绍能很好地获知ActiveMQ的用处：</p>
+<p>Apache ActiveMQ™ is the most popular open source, multi-protocol, Java-based messaging server. It supports industry standard protocols so users get the benefits of client choices across a broad range of languages and platforms. Connectivity from C, C++, Python, .Net, and more is available. Integrate your multi-platform applications using the ubiquitous <strong>AMQP</strong> protocol. Exchange messages between your web applications using <strong>STOMP</strong> over websockets. Manage your IoT devices using <strong>MQTT</strong>. Support your existing <strong>JMS</strong> infrastructure and beyond. ActiveMQ offers the power and flexibility to support any messaging use-case.</p>
+<p>一款用Java开发的、开源的、支持多种协议的、非常流行的消息服务（消息中间件）。因为它的支持多协议，支持工业标准的协议，所以我们可以跨平台、跨语言来使用它。</p>
+<ul>
+<li>用AMQP工业标准协议进行多平台应用集成</li>
+<li>Web应用可基于websocket用STOMP协议与ActiveMQ直接交互</li>
+<li>物联网设备用MQTT协议基于JMS的已有基础设施</li>
+<li>支持还有更多…</li>
+</ul>
+<p>当前有两个版本：ActiveMQ 5 “Classic” 和 ActiveMQ Artemis (下一代版本)。我们学习 ActiveMQ 5 “Classic” 经典版。有兴趣可以了解 ActiveMQ Artemis。</p>
+<!--more-->
 
+<h1 id="2-ActiveMQ-官方学习资源介绍"><a href="#2-ActiveMQ-官方学习资源介绍" class="headerlink" title="2.ActiveMQ 官方学习资源介绍"></a>2.ActiveMQ 官方学习资源介绍</h1><p>ActiveMQ作为一个老牌的消息中间件，其提供了详细的官方文档，强烈大家从官网文档来进行学习，及工作中新需求解决办法的查找。</p>
+<p>官网文档入口：<a target="_blank" rel="noopener" href="https://activemq.apache.org/components/classic/documentation">https://activemq.apache.or</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/components/classic/documentation">g</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/components/classic/documentation">/components/classic/documentation</a></p>
+<img src="/2020/08/15/ActiveMQ%E5%85%A5%E9%97%A8/image-20200815152033595.png" class="" title="image-20200815152033595">
 
+<h1 id="3-Linux安装指南"><a href="#3-Linux安装指南" class="headerlink" title="3.Linux安装指南"></a>3.Linux安装指南</h1><p>各种环境下安装，请参考官网文档：<a target="_blank" rel="noopener" href="https://activemq.apache.org/getting-started">https://activemq.apache.or</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/getting-started">g</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/getting-started">/</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/getting-started">g</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/getting-started">ettin</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/getting-started">g</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/getting-started">-started </a>下面说明一下linux上的安装。</p>
+<h2 id="3-1环境准备"><a href="#3-1环境准备" class="headerlink" title="3.1环境准备"></a>3.1环境准备</h2><ul>
+<li><p>虚拟机软件：Oracle VM VirtualBox</p>
+<p>下载地址：<a target="_blank" rel="noopener" href="https://www.virtualbox.org/wiki/Downloads">https://www.virtualbox.or</a><a target="_blank" rel="noopener" href="https://www.virtualbox.org/wiki/Downloads">g</a><a target="_blank" rel="noopener" href="https://www.virtualbox.org/wiki/Downloads">/wiki/Downloads </a></p>
+</li>
+<li><p>Linux: Centos 7镜像下载</p>
+<p>官网下载地址：<a target="_blank" rel="noopener" href="https://www.centos.org/download/">https://www.centos.org/download/</a></p>
+</li>
+</ul>
+<h2 id="3-2安装"><a href="#3-2安装" class="headerlink" title="3.2安装"></a>3.2安装</h2><h3 id="3-2-1下载安装包"><a href="#3-2-1下载安装包" class="headerlink" title="3.2.1下载安装包"></a>3.2.1下载安装包</h3><p><a target="_blank" rel="noopener" href="https://activemq.apache.org/components/classic/download/">https://activemq.apache.or</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/components/classic/download/">g</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/components/classic/download/">/components/classic/download/</a></p>
+<img src="/2020/08/15/ActiveMQ%E5%85%A5%E9%97%A8/image-20200815152949384.png" class="" title="image-20200815152949384">
 
-<h1 id="安装hexo博客框架"><a href="#安装hexo博客框架" class="headerlink" title="安装hexo博客框架"></a>安装hexo博客框架</h1><p>因为hexo-cli在国外的仓库下载会非常慢，所以需要先安装cnpm淘宝源仓库，使用cnpm来安装hexo</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看cnpm版本</span></span><br><span class="line">cnmp -v</span><br></pre></td></tr></table></figure>
+<h3 id="3-2-2安装"><a href="#3-2-2安装" class="headerlink" title="3.2.2安装"></a>3.2.2安装</h3><p>1.创建安装目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir /usr/activemq</span><br></pre></td></tr></table></figure>
 
+<p>2.解压安装包到安装目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf apache-activemq-5.16.0 -C /user/activemq</span><br></pre></td></tr></table></figure>
 
+<p>3.为方便配置时书写，创建软链接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -s /usr/activemq/apache-activemq-5.16.0 /usr/activemq/latest</span><br></pre></td></tr></table></figure>
 
-<p>安装hexo</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cnpm install -g hexo-cli</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看hexo版本</span></span><br><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
+<p>4.熟悉activemq的目录构成</p>
+<img src="/2020/08/15/ActiveMQ%E5%85%A5%E9%97%A8/image-20200815153332088.png" class="" title="image-20200815153332088">
 
+<h3 id="3-2-3启动-停止"><a href="#3-2-3启动-停止" class="headerlink" title="3.2.3启动/停止"></a>3.2.3启动/停止</h3><p>1.启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/activemq/latest/bin</span><br></pre></td></tr></table></figure>
 
+<p>作为前台进程启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./activemq console</span><br></pre></td></tr></table></figure>
 
-<h1 id="初始化hexo博客"><a href="#初始化hexo博客" class="headerlink" title="初始化hexo博客"></a>初始化hexo博客</h1><p>建立空的文件夹用于存放hexo博客相关文件及博客内容，例如：hexo_blog</p>
-<p>初始化博客</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
+<p>作为后台守护进程启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./activemq start</span><br></pre></td></tr></table></figure>
 
+<p>2.启动成功检测</p>
+<p>访问管理控制台：<a target="_blank" rel="noopener" href="http://ip:8161/admin%EF%BC%8C**%E5%A6%82%E6%9E%9C%E9%98%B2%E7%81%AB%E5%A2%99%E9%98%BB%E6%AD%A2%E4%BA%86%EF%BC%8C%E8%AF%B7%E7%9C%8B%E4%B8%8B%E9%9D%A2%E9%98%B2%E7%81%AB%E5%A2%99%E5%BC%80%E5%8F%91%E7%AB%AF%E5%8F%A3**%EF%BC%8CActiveMQ%E7%9A%84%E7%AE%A1%E7%90%86%E9%A1%B5%E9%9D%A2%E9%BB%98%E8%AE%A4%E5%BC%80%E5%90%AF">http://ip:8161/admin，**如果防火墙阻止了，请看下面防火墙开发端口**，ActiveMQ的管理页面默认开启</a> 了身份校验，账号：admin，密码：admin</p>
+<p>3.停止</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./activemq stop</span><br></pre></td></tr></table></figure>
 
+<p>4.了解activemq命令的用法（快速了解一下）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./activemq</span><br></pre></td></tr></table></figure>
 
-<p>在执行行hexo init时可能会遇到下面错误</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">INFO  Cloning hexo-starter https://github.com/hexojs/hexo-starter.git</span><br><span class="line">error: RPC failed; curl 56 OpenSSL SSL_read: Connection was reset, errno 10054</span><br><span class="line">fatal: the remote end hung up unexpectedly</span><br><span class="line">fatal: early EOF</span><br><span class="line">fatal: index-pack failed</span><br><span class="line">fatal: <span class="built_in">clone</span> of <span class="string">&#x27;https://github.com/hexojs/hexo-theme-landscape.git&#x27;</span> into submodule path <span class="string">&#x27;D:/blog/themes/landscape&#x27;</span> failed</span><br><span class="line">Failed to <span class="built_in">clone</span> <span class="string">&#x27;themes/landscape&#x27;</span>. Retry scheduled</span><br><span class="line">warning: Clone succeeded, but checkout failed.</span><br></pre></td></tr></table></figure>
+<p>浏览用法说明信息，也可以查看官网链接：<a target="_blank" rel="noopener" href="https://activemq.apache.org/unix-shell-script">https://activemq.apache.or</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/unix-shell-script">g</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/unix-shell-script">/unix-shell-script</a></p>
+<h3 id="3-2-4防火墙开放ActiveMQ的端口"><a href="#3-2-4防火墙开放ActiveMQ的端口" class="headerlink" title="3.2.4防火墙开放ActiveMQ的端口"></a>3.2.4防火墙开放ActiveMQ的端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Web管理端口默认为8161，通讯端口默认为61616</span></span><br><span class="line">firewall-cmd --zone=public --add-port=8161/tcp --permanent </span><br><span class="line">firewall-cmd --zone=public --add-port=61616/tcp --permanent</span><br></pre></td></tr></table></figure>
 
-<p>解决办法</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 取消ssl验证</span></span><br><span class="line">git config http.sslVerify <span class="string">&quot;false&quot;</span></span><br><span class="line"><span class="comment"># 增加git缓冲区大小，如果还报同样的错误可以将缓冲区大小设置更高，524288000 = 500M</span></span><br><span class="line">git config --global http.postBuffer 524288000</span><br></pre></td></tr></table></figure>
+<p>重启防火墙</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart firewalld.service</span><br></pre></td></tr></table></figure>
 
+<p>学习用，可以直接关闭防火墙</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld</span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld</span><br></pre></td></tr></table></figure>
 
+<p>修改conf目录下jetty.xml文件</p>
+<p>原配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;jettyPort&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.activemq.web.WebConsolePort&quot;</span> <span class="attr">init-method</span>=<span class="string">&quot;start&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- the default port number for the web console --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;host&quot;</span> <span class="attr">value</span>=<span class="string">&quot;127.0.0.1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;port&quot;</span> <span class="attr">value</span>=<span class="string">&quot;8161&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<p>安装成功，启动预览博客</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure>
+<p>修改后：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;jettyPort&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.activemq.web.WebConsolePort&quot;</span> <span class="attr">init-method</span>=<span class="string">&quot;start&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- the default port number for the web console --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;host&quot;</span> <span class="attr">value</span>=<span class="string">&quot;ip&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;port&quot;</span> <span class="attr">value</span>=<span class="string">&quot;8161&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
  
       <!-- reward -->
       
@@ -193,12 +235,12 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/08/15/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/08/15/ActiveMQ%E5%85%A5%E9%97%A8/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>  
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/activeMQ/" rel="tag">activeMQ</a></li></ul>
 
     </footer>
   </div>
@@ -206,15 +248,20 @@
    
   <nav class="article-nav">
     
-      <a href="/2020/08/15/ActiveMQ%E5%85%A5%E9%97%A8/" class="article-nav-link">
+      <a href="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            ActiveMQ入门
+            MQ概述
           
         </div>
       </a>
     
+    
+      <a href="/2020/08/15/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">hexo搭建博客</div>
+      </a>
     
   </nav>
 
