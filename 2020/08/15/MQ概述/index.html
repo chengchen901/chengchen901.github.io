@@ -104,15 +104,15 @@
 <p>​        <strong>同步调用</strong></p>
 <p>事情不急：发短信、微信</p>
 <p>​        <strong>异步传递</strong></p>
-<img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200815165908294.png" class="" title="image-20200815165908294">
+<img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200816165704115.png" class="" title="image-20200816165704115">
 
-<h2 id="同步-异步效果对比理解"><a href="#同步-异步效果对比理解" class="headerlink" title="同步-异步效果对比理解"></a>同步-异步效果对比理解</h2><h3 id="同步-串行"><a href="#同步-串行" class="headerlink" title="同步-串行"></a>同步-串行</h3><img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200815170722631.png" class="" title="image-20200815170722631">
+<h2 id="同步-异步效果对比理解"><a href="#同步-异步效果对比理解" class="headerlink" title="同步-异步效果对比理解"></a>同步-异步效果对比理解</h2><h3 id="同步-串行"><a href="#同步-串行" class="headerlink" title="同步-串行"></a>同步-串行</h3><img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200816165729686.png" class="" title="image-20200816165729686">
 
-<h3 id="同步-并行"><a href="#同步-并行" class="headerlink" title="同步-并行"></a>同步-并行</h3><img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200815171025736.png" class="" title="image-20200815171025736">
+<h3 id="同步-并行"><a href="#同步-并行" class="headerlink" title="同步-并行"></a>同步-并行</h3><img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200816165759986.png" class="" title="image-20200816165759986">
 
-<h3 id="异步-MQ"><a href="#异步-MQ" class="headerlink" title="异步-MQ"></a>异步-MQ</h3><img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200815171439673.png" class="" title="image-20200815171439673">
+<h3 id="异步-MQ"><a href="#异步-MQ" class="headerlink" title="异步-MQ"></a>异步-MQ</h3><img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200816165818064.png" class="" title="image-20200816165818064">
 
-<h3 id="基于消息中间件的分布式系统架构"><a href="#基于消息中间件的分布式系统架构" class="headerlink" title="基于消息中间件的分布式系统架构"></a>基于消息中间件的分布式系统架构</h3><img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200815172214208.png" class="" title="image-20200815172214208">
+<h3 id="基于消息中间件的分布式系统架构"><a href="#基于消息中间件的分布式系统架构" class="headerlink" title="基于消息中间件的分布式系统架构"></a>基于消息中间件的分布式系统架构</h3><img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200816165845285.png" class="" title="image-20200816165845285">
 
 <h2 id="MQ-消息中间件概述"><a href="#MQ-消息中间件概述" class="headerlink" title="MQ-消息中间件概述"></a>MQ-消息中间件概述</h2><h3 id="什么是Message-Queue消息中间件"><a href="#什么是Message-Queue消息中间件" class="headerlink" title="什么是Message-Queue消息中间件"></a>什么是Message-Queue消息中间件</h3><p>利用高效可靠的消息传递机制进行平台无关的数据交流；</p>
 <p>并基于数据通信来进行分布式系统的集成；</p>
@@ -164,7 +164,7 @@
 <p>结构简单、解析快、无事务设计、有持久化设计</p>
 <p><strong>支持Kafka协议的MQ：</strong>Kafka</p>
 <h2 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h2><h3 id="持久化是什么"><a href="#持久化是什么" class="headerlink" title="持久化是什么"></a>持久化是什么</h3><p>简单来说就是将数据存入磁盘，而不是存在内存中随服务重启而消失，使数据能够永久保存叫做持久化。</p>
-<img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200815182452455.png" class="" title="image-20200815182452455">
+<img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200816165906839.png" class="" title="image-20200816165906839">
 
 <h3 id="常用持久化方式"><a href="#常用持久化方式" class="headerlink" title="常用持久化方式"></a>常用持久化方式</h3><table>
 <thead>
@@ -191,9 +191,9 @@
 <td>/</td>
 </tr>
 </tbody></table>
-<h2 id="消息分发"><a href="#消息分发" class="headerlink" title="消息分发"></a>消息分发</h2><h3 id="为什么要有消息分发策略"><a href="#为什么要有消息分发策略" class="headerlink" title="为什么要有消息分发策略"></a>为什么要有消息分发策略</h3><img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200815184424263.png" class="" title="image-20200815184424263">
+<h2 id="消息分发"><a href="#消息分发" class="headerlink" title="消息分发"></a>消息分发</h2><h3 id="为什么要有消息分发策略"><a href="#为什么要有消息分发策略" class="headerlink" title="为什么要有消息分发策略"></a>为什么要有消息分发策略</h3><img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200816165922107.png" class="" title="image-20200816165922107">
 
-<img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200815184405960.png" class="" title="image-20200815184405960">
+<img src="/2020/08/15/MQ%E6%A6%82%E8%BF%B0/image-20200816165936335.png" class="" title="image-20200816165936335">
 
 
 
@@ -337,10 +337,19 @@
    
   <nav class="article-nav">
     
+      <a href="/2020/08/16/ActiveMQ%E5%85%A5%E9%97%A8/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            ActiveMQ入门
+          
+        </div>
+      </a>
     
-      <a href="/2020/08/15/ActiveMQ%E5%85%A5%E9%97%A8/" class="article-nav-link">
+    
+      <a href="/2020/08/15/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">ActiveMQ入门</div>
+        <div class="article-nav-title">hexo搭建博客</div>
       </a>
     
   </nav>
