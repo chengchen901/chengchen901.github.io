@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="java" />
+   
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    RabbitMQ-集群高可用 |  
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/assets/favicon.png" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-RabbitMQ-集群高可用"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  RabbitMQ-集群高可用
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/" class="article-date">
+  <time datetime="2020-10-26T14:59:43.000Z" itemprop="datePublished">2020-10-26</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">2.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">9 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>RabbitMQ-集群高可用</p>
+<a id="more"></a>
+
+<h1 id="1-集群能解决什么问题"><a href="#1-集群能解决什么问题" class="headerlink" title="1 集群能解决什么问题"></a>1 集群能解决什么问题</h1><img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201114171424030.png" class="" title="image-20201114171424030">
+
+<p>解决了单个RabbitMQ的不可靠，提高整个系统的可用性</p>
+<img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201114171658942.png" class="" title="image-20201114171658942">
+
+
+
+<h1 id="2-常用管理命令"><a href="#2-常用管理命令" class="headerlink" title="2 常用管理命令"></a>2 常用管理命令</h1><p>rabbitmqctl命令官网文档地址：<a target="_blank" rel="noopener" href="https://www.rabbitmq.com/rabbitmqctl.8.html%EF%BC%8C%E5%8F%AF%E4%BB%A5%E9%80%9A%E8%BF%87%E6%9F%A5%E6%89%BE%E5%85%B3%E9%94%AE%E5%AD%97%E5%BF%AB%E9%80%9F%E6%89%BE%E5%88%B0%E8%87%AA%E5%B7%B1%E6%83%B3%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E5%91%BD%E4%BB%A4">https://www.rabbitmq.com/rabbitmqctl.8.html，可以通过查找关键字快速找到自己想要了解的命令</a></p>
+<img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201115103444446.png" class="" title="image-20201115103444446">
+
+<h2 id="2-1-应用管理"><a href="#2-1-应用管理" class="headerlink" title="2.1 应用管理"></a>2.1 应用管理</h2><p><strong>rabbitmqctl status</strong></p>
+<p>查看节点状态</p>
+<p><strong>rabbitmqctl stop [pid_file]</strong></p>
+<p>停止运行RabbitMQ的Erlang虚拟机和RabbitMQ服务应用</p>
+<p>如果指定了pid_file，还需要等待指定进程的结束。pid_file是通过调用rabbitmq-server命令启动RabbitMQ服务时创建的，默认情况下放于Mnesia目录中。</p>
+<p>如果使用rabbitmq-server -detach这个带有-detach后缀的命令来启动RabbitMQ服务则不会生成pid file文件</p>
+<p><strong>rabbitmqctl stop_app</strong></p>
+<p>停止RabbitMQ服务应用，但是Erlang虚拟机还是处于运行状态。</p>
+<p>此命令的执行优先于其他管理操作（这些管理操作需要先停止RabbitMQ应用），比如rabbitmqctl reset</p>
+<p><strong>rabbitmqctl start_app</strong></p>
+<p>启动RabbitMQ应用。此命令典型的用途是在执行了其他管理操作之后，重新启动之前停止的RabbitMQ应用，比如rabbitmqctl reset</p>
+<p><strong>rabbitmqctl reset</strong></p>
+<p>将RabbitMQ节点重置还原到最初状态</p>
+<p>包括从原来所在的集群中删除此节点，从管理数据库中删除所有的配置数据，如已配置的用户、vhost等，以及删除所有的持久化消息。</p>
+<p>执行rabbitmqctl restart命令前必须停止RabbitMQ应用（比如先执行rabbitmqctl stop_app）</p>
+<p><strong>rabbitmqctl force_reset</strong></p>
+<p>强制将RabbitMQ节点重置还原到最初状态。此命令不论当前管理数据库的状态和集群配置是什么，都会无条件地重置节点，只能在数据库或集群配置已损坏的情况下使用。</p>
+<h2 id="2-2-集群管理"><a href="#2-2-集群管理" class="headerlink" title="2.2 集群管理"></a>2.2 集群管理</h2><p><strong>rabbitmqctl [-n nodename] joio_cluster {cluster_node} [–ram]</strong></p>
+<p>将节点加入指定集群中。在这个命令执行前需要停止RabbitMQ应用并重置节点。</p>
+<p>-n nodename：指定需要操作的目标节点，列如：rabbit@node1</p>
+<p>cluster_node：需要加入的集群节点名，格式同上</p>
+<p>–ram：集群节点类型，有俩种类型：ram|disc，默认为disc</p>
+<ul>
+<li>ram：内存节点，所有的元数据都存储在内存中</li>
+<li>disc：磁盘节点，所有的元数据都存储在磁盘中</li>
+</ul>
+<p><strong>rabbitmqctl cluster_status</strong></p>
+<p>查看集群状态</p>
+<p><strong>rabbitmqctl change_cluster_node_type {disc|ram}</strong></p>
+<p>修改集群节点的类型，使用此命令前要停止RabbitMQ应用</p>
+<p><strong>rabbitmqctl forget_cluster_node [–offiine]</strong></p>
+<p>将节点从集群中删除，允许离线执行</p>
+<p><strong>rabbitmqctl update_cluster_nodes {clusternode}</strong></p>
+<p>在集群中的节点应用启动前此咨询clusternode节点的最新信息，并更新相应的集群信息。这个和join_cluster不同，它不加入集群</p>
+<p><strong>rabbitmqctl force_boot</strong></p>
+<p>确保节点可以启动，即使它不是最后一个关闭的节点</p>
+<p><strong>rabbitmqctl set_cluster_name {name}</strong></p>
+<p>设置集群名称。集群名称在客户端连接时会通报给客户端</p>
+<p>集群名称默认是集群中第一个节点的名称，通过这个命令可以重新设置</p>
+<h1 id="3-RabbitMQ高可用集群管理方案"><a href="#3-RabbitMQ高可用集群管理方案" class="headerlink" title="3 RabbitMQ高可用集群管理方案"></a>3 RabbitMQ高可用集群管理方案</h1><h2 id="3-1-Cluster-模式"><a href="#3-1-Cluster-模式" class="headerlink" title="3.1 Cluster 模式"></a>3.1 Cluster 模式</h2><p>RabbitMQ的Cluster模式分为俩种：普通模式、镜像模式</p>
+<h3 id="3-1-1-Cluster-普通模式"><a href="#3-1-1-Cluster-普通模式" class="headerlink" title="3.1.1 Cluster 普通模式"></a>3.1.1 Cluster 普通模式</h3><img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201115104552246.png" class="" title="image-20201115104552246">
+
+<p>元数据包含以下内容：</p>
+<p><strong>队列元数据：</strong>队列的名称及属性</p>
+<p><strong>交换器：</strong>交换器的名称及属性</p>
+<p><strong>绑定关系元数据：</strong>交换器与队列或者交换器与交换器</p>
+<p><strong>vhost元数据：</strong>为vhost内的队列、交换器和绑定提供命名空间及安全属性之间的绑定关系</p>
+<p><strong>Cluster 多机多节点部署</strong></p>
+<p>推荐在可靠的、低延迟的内部局域网使用该集群模式，因为节点之前需要同步元信息不能有太大的网络延迟。</p>
+<p>多机多节点是指在每台机器中部署一个RabbitMQ服务节点，进而由多台机器组成一个RabbitMQ集群</p>
+<p><font color="red"><strong>注意：</strong></font >集群的第一个RabbitMQ服务可以直接启动，之后的每台机器都需要先执行命令<strong>rabbitmqctl reset</strong>将RabbitMQ节点重置还原到最初状态，这是因为如果之后的每个RabbitMQ服务都会有自己的元信息会发生冲突。</p>
+<img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201115105233473.png" class="" title="image-20201115105233473">
+
+<img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201115105308750.png" class="" title="image-20201115105308750">
+
+<h4 id="3-1-1-1-FAQ"><a href="#3-1-1-1-FAQ" class="headerlink" title="3.1.1.1 FAQ"></a>3.1.1.1 FAQ</h4><ol>
+<li>负载均衡能不能做到？ 高并发 大量链接<br>能 客户端建立连接时是从节点地址列表中随机选择一个。</li>
+<li>是分布式的吗？ 大量消息，是否是分布在不同的节点上进行存储处理的<br>是的，队列维度的分布式存储数据</li>
+</ol>
+<p>Cluster : 集群提升了可用性、队列消息数据安全性 、并发客户端连接数。</p>
+<h3 id="3-1-2-Cluster-镜像模式"><a href="#3-1-2-Cluster-镜像模式" class="headerlink" title="3.1.2 Cluster 镜像模式"></a>3.1.2 Cluster 镜像模式</h3><img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201115105912406.png" class="" title="image-20201115105912406">
+
+<p>镜像模式的集群是在普通模式的基础上，通过policy来实现，使用镜像可以实现RabbitMQ的高可用方案</p>
+<p>Name：policy的名称</p>
+<p>Pattern：匹配表达式</p>
+<p>Apply to：规则应用到哪个目标</p>
+<p>Priority：优先级</p>
+<p>Definition：规则的定义，对于镜像队列的配置来说，只需要包含3个部分：ha-mode、ha-params和ha-sync-mode。</p>
+<img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201115145502470.png" class="" title="image-20201115145502470">
+
+<img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201115112103554.png" class="" title="image-20201115112103554">
+
+
+
+<p><strong>ha-mode</strong></p>
+<p>指明镜像队列的模式，有效值为all、exatly、nodes，默认为all。</p>
+<table>
+<thead>
+<tr>
+<th>ha-mode</th>
+<th>ha-params</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>all</td>
+<td>(empty)</td>
+<td>队列镜像到集群内所有节点</td>
+</tr>
+<tr>
+<td>exactly</td>
+<td>count</td>
+<td>队列镜像到集群内指定数量的节点。如果集群内节点数少于此值，队列将会镜像到所有节点。如果大于此值，而且一个包含镜像的节点停止，则新的镜像会在其它节点创建。</td>
+</tr>
+<tr>
+<td>nodes</td>
+<td>nodename</td>
+<td>队列镜像到指定节点，指定的节点不在集群中不会报错。当队列申明时，如果指定的节点不在线，则队列会被创建在客户端所连接的节点上。</td>
+</tr>
+</tbody></table>
+<p><strong>ha-sync-mode</strong></p>
+<p>队列中消息的同步方式，有效值为automatic和manual，默认是automatic。</p>
+<h4 id="3-1-2-1-FAQ"><a href="#3-1-2-1-FAQ" class="headerlink" title="3.1.2.1 FAQ"></a>3.1.2.1 FAQ</h4><p>镜像 数量多少合适？ N / 2 + 1 大多数 3</p>
+<p>高并发、海量数据（消息）推荐使用镜像模式来保证消息的可靠性</p>
+<p>CAP理论，一致性（Consistency）、可用性（Availability）、分区容错性（Partition tolerance）</p>
+<p>RabbitMQ保证了CP，A是可用性</p>
+<h3 id="3-1-3-FAQ"><a href="#3-1-3-FAQ" class="headerlink" title="3.1.3 FAQ"></a>3.1.3 FAQ</h3><p>如果整个集群都需要停止，需要记住最后停止的服务节点，再次启动的时候先启动最后停止的RabbitMQ服务节点。因为在停止RabbitMQ服务节点时客户端可能会新增或修改元信息，只有最后停止的RabbitMQ服务节点是最全的。</p>
+<h1 id="4-Federation（联合）"><a href="#4-Federation（联合）" class="headerlink" title="4 Federation（联合）"></a>4 Federation（联合）</h1><p>官网地址：<a target="_blank" rel="noopener" href="https://www.rabbitmq.com/federated-exchanges.html">https://www.rabbitmq.com/federated-exchanges.html</a></p>
+<p>基础业务系统架构</p>
+<img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201115113754502.png" class="" title="image-20201115113754502">
+
+<p>需要其它系统介入获取消息，通过Internet不可靠</p>
+<img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201115114511382.png" class="" title="image-20201115114511382">
+
+<p>只需要一次连接，连接次数大大减少，mq和mq进行联合保证了消息的可靠性</p>
+<img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201115114625803.png" class="" title="image-20201115114625803">
+
+<h2 id="4-1-Federation插件"><a href="#4-1-Federation插件" class="headerlink" title="4.1 Federation插件"></a>4.1 Federation插件</h2><p><strong>Federation插件</strong>的设计目标是使RabbitMQ在不同的Broker节点之间进行消息传递而无须建立集群，该功能在一下<strong>场景</strong>下非常有用：</p>
+<ul>
+<li>各个节点运行在不同版本的Erlang和RabbitMQ上。普通的Cluster需要每个RabbitMQ之间的AMQP协议版本一致。</li>
+<li>网络环境不稳定，比如在广域网当中。</li>
+</ul>
+<h2 id="4-2-Federation开启步骤"><a href="#4-2-Federation开启步骤" class="headerlink" title="4.2 Federation开启步骤"></a>4.2 Federation开启步骤</h2><ol>
+<li>开启插件支持 上游下游都得开。 cluster 和 cluster 之间也可连接 （cluster 中每个节点都必须开启</li>
+</ol>
+<p>联合支持）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-plugins enable rabbitmq_federation #开启 federation 插件 </span><br><span class="line">rabbitmq-plugins enable rabbitmq_federation_management #开启 federation 管理控制 台插件</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>在下游broker上定义上游</p>
+<p>命令行、http api 、管理控制台</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl set_parameter federation-upstream my-upstream \ &#39;&#123;&quot;uri&quot;:&quot;amqp:&#x2F;&#x2F;admin:admin@192.168.254.155&quot;&#125;&#39;</span><br></pre></td></tr></table></figure>
+
+<p>​    管理控制台</p>
+<img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201115172959458.png" class="" title="image-20201115172959458">
+
+<ol start="3">
+<li>定义一个policy 说明下游哪些交换器、队列需要建立联合</li>
+</ol>
+<p>federation-upstream-set = all，表示和所有上游建立联合，也可以单独指定federation-upstream = 上游名称</p>
+<img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201115173454877.png" class="" title="image-20201115173454877">
+
+
+
+
+
+<h1 id="5-Shovel（铲子）"><a href="#5-Shovel（铲子）" class="headerlink" title="5 Shovel（铲子）"></a>5 Shovel（铲子）</h1><h2 id="5-1-Shovel-插件"><a href="#5-1-Shovel-插件" class="headerlink" title="5.1 Shovel 插件"></a>5.1 Shovel 插件</h2><p>Shovel与Federation具备的数据转发功能类似<br>Shovel能够可靠、持续地从一个Broker中的队列（作为源端，即source）拉取数据并转发至另一个Broker中的交换器（作为目的端，即destination）。</p>
+<p>Shovel可以翻译为“铲子”，是一种比较形象的比喻。这个“铲子”可以将消息从一方“挖到”另一方</p>
+<h2 id="5-2-Shovel-的主要优势"><a href="#5-2-Shovel-的主要优势" class="headerlink" title="5.2 Shovel 的主要优势"></a>5.2 Shovel 的主要优势</h2><p><strong>松耦合</strong>，Shovel可以移动位于不同管理域中的Broker或者集群上的消息，这些Broker或者集群可以包含不同的用户和vhost，也可以使用不同的RabbitMQ和Erlang版本。</p>
+<p><strong>支持广域网</strong>，Shovel插件同样基于AMQP协议在Broker之间进行通信，被设计成可以容忍时断时续的连通情形，并且能够保证消息的可靠性。</p>
+<p><strong>高度定制</strong>，当Shovel成功连接后，可以对其进行配置以执行相关的AMQP命令。</p>
+<h2 id="5-3-Shovel-的作用"><a href="#5-3-Shovel-的作用" class="headerlink" title="5.3 Shovel 的作用"></a>5.3 Shovel 的作用</h2><img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201115214749879.png" class="" title="image-20201115214749879">
+
+
+
+<h2 id="5-4-Federation-Shovel-与-Cluster-的区别和联系"><a href="#5-4-Federation-Shovel-与-Cluster-的区别和联系" class="headerlink" title="5.4 Federation/Shovel 与 Cluster 的区别和联系"></a>5.4 Federation/Shovel 与 Cluster 的区别和联系</h2><table>
+<thead>
+<tr>
+<th>Federation/Shovel</th>
+<th align="left">Cluster</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>各个Broker节点之间逻辑分离</td>
+<td align="left">逻辑上是一个Broker节点</td>
+</tr>
+<tr>
+<td>各个Broker节点之间可以运行不同版本的Erlang和RabbitMQ</td>
+<td align="left">各个Broker节点之间必须运行相同版本的Erlang和RabbitMQ</td>
+</tr>
+<tr>
+<td>各个Broker节点之间可以在广域网中相连，当然必须要授予适当的用户和权限</td>
+<td align="left">各个Broker节点之间必须在可信赖的局域网中相连，通过Erlang内部节点传递消息，但节点访问需要有相同的Erlang cookie</td>
+</tr>
+<tr>
+<td>各个Broker节点之间能以任何拓扑逻辑部署，连接可以是单向的或者是双向的</td>
+<td align="left">所有的Broker节点都双向连接所有其他节点</td>
+</tr>
+<tr>
+<td>从CAP理论中选择可用性和分区耐受性，即AP</td>
+<td align="left">从CAP理论中选择一致性和可用性，即CP</td>
+</tr>
+<tr>
+<td>一个Broker中的交换器可以是Federation生成的或者是本地的</td>
+<td align="left">集群中所有Broker节点中的交换器都是一样的，要么全有要么全无</td>
+</tr>
+<tr>
+<td>客户端所能看到它所连接的Broker节点上的队列</td>
+<td align="left">客户端连接到集群中的任何Broker节点都可以看到所有的队列</td>
+</tr>
+</tbody></table>
+<h2 id="5-5-使用方式"><a href="#5-5-使用方式" class="headerlink" title="5.5 使用方式"></a>5.5 使用方式</h2><p>在两个彼此独立的Broker之间建立消息的联通</p>
+<ol>
+<li>启用插件 在哪个broker上定义铲子就在哪里启用Shovel插件</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-plugins enable rabbitmq_shovel # 启动shovel插件 </span><br><span class="line">rabbitmq-plugins enable rabbitmq_shovel_management # 启用shovel管理插件</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>配置Shovel两种配置方式：</p>
+<p>静态配置： 在配置文件中配 /etc/rabbitmq/advanced.conf</p>
+</li>
+</ol>
+<p>   动态配置：通过运行参数来配置 实时生效。</p>
+<img src="/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/image-20201115222013917.png" class="" title="image-20201115222013917">
+
+
+
+<p><strong>Shovel 的工作流程</strong></p>
+<ul>
+<li><p>建立到源到目标的连接 AMQP</p>
+</li>
+<li><p>消费源的消息</p>
+</li>
+<li><p>重发布到目标</p>
+</li>
+</ul>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/10/26/RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/11/15/MQ%E5%BA%94%E7%94%A8-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            MQ应用-分布式事务
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/10/25/RabbitMQ-%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7%E8%AF%A6%E8%A7%A3/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">RabbitMQ-高级特性详解</div>
+      </a>
+    
+  </nav>
+
+  
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2020
+        <i class="ri-heart-fill heart_icon"></i> Hash
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/assets/head.png" alt="Hash的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>
