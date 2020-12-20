@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="java" />
+   
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Redis海量数据存储方案 |  
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/assets/favicon.png" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Redis海量数据存储方案"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Redis海量数据存储方案
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/12/13/Redis%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E6%A1%88/" class="article-date">
+  <time datetime="2020-12-13T14:23:06.000Z" itemprop="datePublished">2020-12-13</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">3.8k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">16 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>Redis海量数据存储方案</p>
+<a id="more"></a>
+
+<h1 id="1-海量数据存储方案"><a href="#1-海量数据存储方案" class="headerlink" title="1 海量数据存储方案"></a>1 海量数据存储方案</h1><h2 id="1-1-为什么要分片存储"><a href="#1-1-为什么要分片存储" class="headerlink" title="1.1 为什么要分片存储"></a>1.1 为什么要分片存储</h2><p>示例： 公司用户量3千万，用户基本信息缓存到redis中，需要内存10G，如何设计Redis的缓存架构？</p>
+<ol>
+<li><p>3千万用户，各种业务场景对用户信息的访问量很大。（单台redis示例的读写瓶颈凸显）</p>
+</li>
+<li><p>单redis实例管理10G内存，必然影响处理效率。</p>
+</li>
+<li><p>redis的内存需求可能超过机器的最大内存。 （一台机器不够用）</p>
+</li>
+</ol>
+<p>故此，引出分片存储的技术。</p>
+<h2 id="1-2-官方集群方案"><a href="#1-2-官方集群方案" class="headerlink" title="1.2 官方集群方案"></a>1.2 官方集群方案</h2><p>redis cluster是Redis的分布式集群解决方案，在3.0版本推出后有效地解决了redis分布式方面的需求实现了数据在多个Redis节点之间自动分片、故障自动转移、扩容机制等功能。</p>
+<img src="/2020/12/13/Redis%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E6%A1%88/image-20201213222723915.png" class="" title="image-20201213222723915">
+
+<h2 id="1-3-Redis分片集群示意图"><a href="#1-3-Redis分片集群示意图" class="headerlink" title="1.3 Redis分片集群示意图"></a>1.3 Redis分片集群示意图</h2><img src="/2020/12/13/Redis%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E6%A1%88/image-20201216233318048.png" class="" title="image-20201216233318048">
+
+<img src="/2020/12/13/Redis%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E6%A1%88/image-20201216233322843.png" class="" title="image-20201216233322843">
+
+
+
+<p><strong>Gossip协议示例：</strong></p>
+<p><video src="Redis海量数据存储方案/gossip协议.mp4"></video></p>
+<h1 id="2-搭建cluster集群"><a href="#2-搭建cluster集群" class="headerlink" title="2 搭建cluster集群"></a>2 搭建cluster集群</h1><p>搭建环境：centos7、redis5</p>
+<p>整体集群信息：</p>
+<ul>
+<li>以直接在一台机器上实现上述的伪集群，因为端口号特意设置为不同的。</li>
+<li>重点：不论机器多少，对于部署过程都是一样的，只不过是在不同机器启动redis-server而已</li>
+<li>192.168.254.161 (6381- 6386共6个端口）</li>
+<li>注意事项：如果你的服务器有多个IP，那你操作下面步骤时，尽量使用你的客户端能够访问的IP</li>
+</ul>
+<p>每台服务器上面都要下载安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">wget http://download.redis.io/releases/redis-5.0.3.tar.gz</span><br><span class="line">tar -zxvf redis-5.0.3.tar.gz</span><br><span class="line">cd redis-5.0.3 </span><br><span class="line">make</span><br><span class="line"><span class="meta">#</span><span class="bash"> 安装到 /usr/<span class="built_in">local</span>/redis 目录中 安装的文件只有一个bin目录</span></span><br><span class="line">make install PREFIX=/usr/local/redis/ </span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建配置文件和data存放目录</span></span><br><span class="line">mkdir /usr/local/redis/conf /usr/local/redis/data</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-1-准备6个独立的redis服务"><a href="#2-1-准备6个独立的redis服务" class="headerlink" title="2.1 准备6个独立的redis服务"></a>2.1 准备6个独立的redis服务</h2><p>备注：准备6个redis.conf配置文件（为了方便学习，redis.conf根据不同端口来命名，方便一台机器上构建伪集群）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 配置文件进行了精简，完整配置可自行和官方提供的完整conf文件进行对照。端口号自行对应修改</span></span><br><span class="line"><span class="meta">#</span><span class="bash">后台启动的意思</span></span><br><span class="line">daemonize yes </span><br><span class="line"><span class="meta"> #</span><span class="bash">端口号</span></span><br><span class="line">port 6381</span><br><span class="line"><span class="meta">#</span><span class="bash"> IP绑定，redis不建议对公网开放，直接绑定0.0.0.0没毛病</span></span><br><span class="line">bind 0.0.0.0</span><br><span class="line"><span class="meta">#</span><span class="bash"> redis数据文件存放的目录</span></span><br><span class="line">dir /usr/local/redis/data</span><br><span class="line"><span class="meta">#</span><span class="bash"> 开启AOF</span></span><br><span class="line">appendonly yes</span><br><span class="line"><span class="meta"> #</span><span class="bash"> 开启集群</span></span><br><span class="line">cluster-enabled yes</span><br><span class="line"><span class="meta">#</span><span class="bash"> 会自动生成在上面配置的dir目录下</span></span><br><span class="line">cluster-config-file nodes-6381.conf </span><br><span class="line">cluster-node-timeout 5000</span><br><span class="line"><span class="meta">#</span><span class="bash"> 这个文件会自动生成</span></span><br><span class="line">pidfile /var/run/redis_6381.pid </span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-2-启动6个Redis实例"><a href="#2-2-启动6个Redis实例" class="headerlink" title="2.2 启动6个Redis实例"></a>2.2 启动6个Redis实例</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 一定要注意每个配置文件中的端口号哦</span></span><br><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/6381.conf</span><br><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/6382.conf</span><br><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/6383.conf</span><br><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/6384.conf</span><br><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/6385.conf</span><br><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/6386.conf</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-3-创建cluster"><a href="#2-3-创建cluster" class="headerlink" title="2.3 创建cluster"></a>2.3 创建cluster</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 5.0版本的方式</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> cluster-replicas 1 从节点的个数</span></span><br><span class="line">/usr/local/redis/bin/redis-cli --cluster create 192.168.254.161:6381 192.168.254.161:6382 \</span><br><span class="line">192.168.254.161:6383 192.168.254.161:6384 192.168.254.161:6385 192.168.254.161:6386 \</span><br><span class="line">--cluster-replicas 1</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 自动设置主从，而且会提示你，是否运行使用自动的配置</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Performing <span class="built_in">hash</span> slots allocation on 6 nodes...</span></span><br><span class="line">Master[0] -&gt; Slots 0 - 5460</span><br><span class="line">Master[1] -&gt; Slots 5461 - 10922</span><br><span class="line">Master[2] -&gt; Slots 10923 - 16383</span><br><span class="line">Adding replica 192.168.254.161:6384 to 192.168.254.161:6381</span><br><span class="line">Adding replica 192.168.254.161:6385 to 192.168.254.161:6382</span><br><span class="line">Adding replica 192.168.254.161:6386 to 192.168.254.161:6383</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Trying to optimize slaves allocation <span class="keyword">for</span> anti-affinity</span></span><br><span class="line">[WARNING] Some slaves are in the same host as their master</span><br><span class="line">M: 0f9efafbb18f79fd3dd6acf276e070b899326409 192.168.254.161:6381</span><br><span class="line">   slots:[0-5460] (5461 slots) master</span><br><span class="line">M: bc5b3d29e9900ba90e01d45992f958fa346af0bb 192.168.254.161:6382</span><br><span class="line">   slots:[5461-10922] (5462 slots) master</span><br><span class="line">M: 47273962f527e7da0690f6e165f7530ef41f7561 192.168.254.161:6383</span><br><span class="line">   slots:[10923-16383] (5461 slots) master</span><br><span class="line">S: a36f7ab201f8745b230a8ac99086961380f93ab9 192.168.254.161:6384</span><br><span class="line">   replicates 47273962f527e7da0690f6e165f7530ef41f7561</span><br><span class="line">S: 113419e01cca0a645d038226c466ae56a779d79b 192.168.254.161:6385</span><br><span class="line">   replicates 0f9efafbb18f79fd3dd6acf276e070b899326409</span><br><span class="line">S: 8953e3d208654223fa3d1f9af2acbde3f8bcfbb0 192.168.254.161:6386</span><br><span class="line">   replicates bc5b3d29e9900ba90e01d45992f958fa346af0bb</span><br><span class="line">Can I set the above configuration? (type &#x27;yes&#x27; to accept): yes</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Nodes configuration updated</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Assign a different config epoch to each node</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Sending CLUSTER MEET messages to join the cluster</span></span><br><span class="line">Waiting for the cluster to join</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Performing Cluster Check (using node 192.168.254.161:6381)</span></span><br><span class="line">M: 0f9efafbb18f79fd3dd6acf276e070b899326409 192.168.254.161:6381</span><br><span class="line">   slots:[0-5460] (5461 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">M: 47273962f527e7da0690f6e165f7530ef41f7561 192.168.254.161:6383</span><br><span class="line">   slots:[10923-16383] (5461 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">S: a36f7ab201f8745b230a8ac99086961380f93ab9 192.168.254.161:6384</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 47273962f527e7da0690f6e165f7530ef41f7561</span><br><span class="line">S: 113419e01cca0a645d038226c466ae56a779d79b 192.168.254.161:6385</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 0f9efafbb18f79fd3dd6acf276e070b899326409</span><br><span class="line">S: 8953e3d208654223fa3d1f9af2acbde3f8bcfbb0 192.168.254.161:6386</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates bc5b3d29e9900ba90e01d45992f958fa346af0bb</span><br><span class="line">M: bc5b3d29e9900ba90e01d45992f958fa346af0bb 192.168.254.161:6382</span><br><span class="line">   slots:[5461-10922] (5462 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">[OK] All nodes agree about slots configuration.</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Check <span class="keyword">for</span> open slots...</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Check slots coverage...</span></span><br><span class="line">[OK] All 16384 slots covered.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-4-集群检验和测试"><a href="#2-4-集群检验和测试" class="headerlink" title="2.4 集群检验和测试"></a>2.4 集群检验和测试</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 检查集群，查看所有节点信息</span></span><br><span class="line">/usr/local/redis/bin/redis-cli -c -h 192.168.254.161 -p 6381 cluster nodes</span><br><span class="line"><span class="meta">#</span><span class="bash"> 执行后的信息</span></span><br><span class="line">[root@localhost redis]# /usr/local/redis/bin/redis-cli -c -h 192.168.254.161 -p 6381 cluster nodes</span><br><span class="line">0f9efafbb18f79fd3dd6acf276e070b899326409 192.168.254.161:6381@16381 myself,master - 0 1608216564000 1 connected 0-5460</span><br><span class="line">47273962f527e7da0690f6e165f7530ef41f7561 192.168.254.161:6383@16383 master - 0 1608216564000 3 connected 10923-16383</span><br><span class="line">a36f7ab201f8745b230a8ac99086961380f93ab9 192.168.254.161:6384@16384 slave 47273962f527e7da0690f6e165f7530ef41f7561 0 1608216564627 4 connected</span><br><span class="line">113419e01cca0a645d038226c466ae56a779d79b 192.168.254.161:6385@16385 slave 0f9efafbb18f79fd3dd6acf276e070b899326409 0 1608216565131 5 connected</span><br><span class="line">8953e3d208654223fa3d1f9af2acbde3f8bcfbb0 192.168.254.161:6386@16386 slave bc5b3d29e9900ba90e01d45992f958fa346af0bb 0 1608216564123 6 connected</span><br><span class="line">bc5b3d29e9900ba90e01d45992f958fa346af0bb 192.168.254.161:6382@16382 master - 0 1608216563518 2 connected 5461-10922</span><br><span class="line"><span class="meta">#</span><span class="bash"> 节点id ip+端口 角色 masterid 处理的ping数量 最后一个pong时间 节点配置版本 节点连接状态 slot槽分配情况</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 测试Redis Cluster的一种简单方法是使用redis-cli命令行实用程序</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> -c 是支持cluster重定向</span></span><br><span class="line">[root@localhost redis]# /usr/local/redis/bin/redis-cli -c -h 192.168.254.161 -p 6381</span><br><span class="line">192.168.254.161:6381&gt; set a 1</span><br><span class="line"><span class="meta">-&gt;</span><span class="bash"> Redirected to slot [15495] located at 192.168.254.161:6383</span></span><br><span class="line">OK</span><br><span class="line">192.168.254.161:6383&gt; get a</span><br><span class="line">&quot;1&quot;</span><br><span class="line">192.168.254.161:6383&gt; set hello tony</span><br><span class="line"><span class="meta">-&gt;</span><span class="bash"> Redirected to slot [866] located at 192.168.254.161:6381</span></span><br><span class="line">OK</span><br><span class="line">192.168.254.161:6381&gt; get hello</span><br><span class="line">&quot;tony&quot;</span><br><span class="line">192.168.254.161:6381&gt; get a</span><br><span class="line"><span class="meta">-&gt;</span><span class="bash"> Redirected to slot [15495] located at 192.168.254.161:6383</span></span><br><span class="line">&quot;1&quot;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看一个key属于哪一个节点</span></span><br><span class="line">CLUSTER KEYSLOT key</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-5-集群slot数量整理-reshard"><a href="#2-5-集群slot数量整理-reshard" class="headerlink" title="2.5 集群slot数量整理 reshard"></a>2.5 集群slot数量整理 reshard</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">  /usr/<span class="built_in">local</span>/redis/bin/redis-cli --cluster <span class="built_in">help</span> 可以查看所有这个命令和子命令的帮助信息</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 默认是master平均分了0-16383的所有虚拟slot</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 可以进行调整，部分节点放多一点slot(槽或者位置)。</span></span><br><span class="line">/usr/local/redis/bin/redis-cli --cluster reshard  &lt;host&gt;:&lt;port&gt; --cluster-from &lt;node-id&gt; --cluster-to &lt;node-id&gt; --cluster-slots &lt;number of slots&gt; --cluster-yes</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 重新检查集群</span></span><br><span class="line">[root@localhost redis]# /usr/local/redis/bin/redis-cli --cluster check 192.168.254.161:6382</span><br><span class="line">192.168.254.161:6382 (bc5b3d29...) -&gt; 0 keys | 5462 slots | 1 slaves.</span><br><span class="line">192.168.254.161:6381 (0f9efafb...) -&gt; 1 keys | 5461 slots | 1 slaves.</span><br><span class="line">192.168.254.161:6383 (47273962...) -&gt; 1 keys | 5461 slots | 1 slaves.</span><br><span class="line">[OK] 2 keys in 3 masters.</span><br><span class="line">0.00 keys per slot on average.</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Performing Cluster Check (using node 192.168.254.161:6382)</span></span><br><span class="line">M: bc5b3d29e9900ba90e01d45992f958fa346af0bb 192.168.254.161:6382</span><br><span class="line">   slots:[5461-10922] (5462 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">S: a36f7ab201f8745b230a8ac99086961380f93ab9 192.168.254.161:6384</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 47273962f527e7da0690f6e165f7530ef41f7561</span><br><span class="line">M: 0f9efafbb18f79fd3dd6acf276e070b899326409 192.168.254.161:6381</span><br><span class="line">   slots:[0-5460] (5461 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">S: 8953e3d208654223fa3d1f9af2acbde3f8bcfbb0 192.168.254.161:6386</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates bc5b3d29e9900ba90e01d45992f958fa346af0bb</span><br><span class="line">M: 47273962f527e7da0690f6e165f7530ef41f7561 192.168.254.161:6383</span><br><span class="line">   slots:[10923-16383] (5461 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">S: 113419e01cca0a645d038226c466ae56a779d79b 192.168.254.161:6385</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 0f9efafbb18f79fd3dd6acf276e070b899326409</span><br><span class="line">[OK] All nodes agree about slots configuration.</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Check <span class="keyword">for</span> open slots...</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Check slots coverage...</span></span><br><span class="line">[OK] All 16384 slots covered.</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-6-测试自动故障转移"><a href="#2-6-测试自动故障转移" class="headerlink" title="2.6 测试自动故障转移"></a>2.6 测试自动故障转移</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cluster集群不保证数据一致，数据也可能丢失</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 首先是运行客户端不断的写入或读取数据，以便能够发现问题</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 然后是模拟节点故障：找一个主节点关闭，主从故障切换的过程中，这个时间端的操作，客户端而言，只能是失败</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 官方描述 https://redis.io/topics/cluster-spec</span></span><br><span class="line">There is always a window of time when it is possible to lose writes during partitions.</span><br><span class="line">分区的时间窗口内总是有可能丢失写操作。</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-7-手动故障转移"><a href="#2-7-手动故障转移" class="headerlink" title="2.7 手动故障转移"></a>2.7 手动故障转移</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 可能某个节点需要维护（机器下线、硬件升级、系统版本调整等等场景），需要手动的实现转移</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 在slave节点上执行命令</span></span><br><span class="line">CLUSTER FAILOVER </span><br><span class="line"><span class="meta">#</span><span class="bash"> 注：CLUSTER  <span class="built_in">help</span> 可以看到帮助文档和简介。 相对安全的做法</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-8-扩容"><a href="#2-8-扩容" class="headerlink" title="2.8 扩容"></a>2.8 扩容</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 1、 启动新节点</span></span><br><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/6387.conf</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 2、 加入到已经存在的集群作为master</span></span><br><span class="line">/usr/local/redis/bin/redis-cli --cluster add-node 192.168.254.161:6387 192.168.254.161:6382</span><br><span class="line"><span class="meta">#</span><span class="bash"> 本质就是发送一个新节点通过 CLUSTER MEET命令加入集群</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 新节点没有分配<span class="built_in">hash</span>槽</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 3、 加入到已经存在的集群作为slave</span></span><br><span class="line">/usr/local/redis/bin/redis-cli --cluster add-node 192.168.254.161:7006 192.168.254.161:7000 --cluster-slave</span><br><span class="line"><span class="meta">#</span><span class="bash"> 可以手工指定master，否则就是选择一个slave数量较少的master </span></span><br><span class="line">/usr/local/redis/bin/redis-cli --cluster add-node 192.168.254.161:7006 192.168.254.161:7000 --cluster-slave --cluster-master-id &lt;node-id&gt;</span><br><span class="line"><span class="meta">#</span><span class="bash"> 还可以将空master，转换为slave</span></span><br><span class="line">cluster replicate &lt;master-node-id&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 4、 检查集群</span></span><br><span class="line">/usr/local/redis/bin/redis-cli --cluster check 192.168.254.161:6382</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-9-缩容（删除节点）"><a href="#2-9-缩容（删除节点）" class="headerlink" title="2.9 缩容（删除节点）"></a>2.9 缩容（删除节点）</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 注意：删除master的时候要把数据清空或者分配给其他主节点</span><br><span class="line"># 192.168.254.161:6381 表示由该节点执行删除节点操作</span><br><span class="line">&#x2F;usr&#x2F;local&#x2F;redis&#x2F;bin&#x2F;redis-cli --cluster del-node 192.168.254.161:6381 &lt;node-id&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-10-关心的问题"><a href="#2-10-关心的问题" class="headerlink" title="2.10 关心的问题"></a>2.10 关心的问题</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 1、 增加了slot槽的计算，是不是比单机性能差？</span></span><br><span class="line">共16384个槽，slots槽计算方式公开的，java客户端中就使用了：HASH_SLOT = CRC16(key) mod 16384</span><br><span class="line">为了避免每次都需要服务器计算重定向，优秀的java客户端都实现了本地计算，和服务器slots分配进行映射，有变动时再更新本地内容。</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 2、 redis集群大小</span></span><br><span class="line">理论是可以做到16384个槽，但是redis官方建议是最大1000个实例</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 3、 批量操作或者</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 4、cluster meet命令中的bus-port是什么？</span></span><br><span class="line">MEET &lt;ip&gt; &lt;port&gt; [bus-port]</span><br><span class="line">每个Redis群集节点都有一个额外的TCP端口，用于接收来自其他Redis群集节点的传入连接</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 5、集群节点间的通信方式</span></span><br><span class="line">每个节点使用TCP连接与每个其他节点连接。</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 6、ask和moved重定向的区别</span></span><br><span class="line">重定向包括两种情况</span><br><span class="line">如果是确定slot不属于当前节点，redis会返回moved</span><br><span class="line">如果当前redis节点正在处理slot迁移，则代表此处请求对应的key暂时不在此节点，返回ask，告诉客户端本次请求重定向</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 7、数据倾斜和访问倾斜的问题</span></span><br><span class="line">解决办法 调整key的策略 + slot迁移</span><br><span class="line">迁移过程如下，完整的迁移流程：</span><br><span class="line">在迁移目的节点执行cluster setslot &lt;slot&gt; IMPORTING &lt;node ID&gt;命令，指明需要迁移的slot和迁移源节点。</span><br><span class="line">在迁移源节点执行cluster setslot &lt;slot&gt; MIGRATING &lt;node ID&gt;命令，指明需要迁移的slot和迁移目的节点。</span><br><span class="line">在迁移源节点执行cluster getkeysinslot获取该slot的key列表。</span><br><span class="line">在迁移源节点执行对每个key执行migrate命令，该命令会同步把该key迁移到目的节点。</span><br><span class="line">在迁移源节点反复执行cluster getkeysinslot命令，直到该slot的列表为空。</span><br><span class="line">在迁移源节点和目的节点执行cluster setslot &lt;slot&gt; NODE &lt;node ID&gt;，完成迁移操作。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="3-cluster集群性能分析"><a href="#3-cluster集群性能分析" class="headerlink" title="3 cluster集群性能分析"></a>3 cluster集群性能分析</h1><p><strong>1、增加了slot槽的计算，是不是比单机性能差？</strong></p>
+<p>共16384个槽，slots槽计算方式公开的， HASH_SLOT = CRC16(key) mod 16384 。</p>
+<p>为了避免每次都需要服务器计算重定向，优秀的java客户端都实现了本地计算，并且缓存服务器slots分配，有变动时再更新本地内容，从而避免了多次重定向带来的性能损耗。（结合画图过程理解）</p>
+<p><strong>2、 redis集群大小，到底可以装多少数据？</strong></p>
+<p>理论是可以做到16384个槽，每个槽对应一个实例，但是redis官方建议是最大1000个实例。存储足够大了</p>
+<p><strong>3、 集群节点间是怎么通信的？</strong></p>
+<p>每个Redis群集节点都有一个额外的TCP端口，每个节点使用TCP连接与每个其他节点连接。检测和故障转移这些步骤基本和哨兵模式类似（毕竟是同一个软件，同一个作者设计）。</p>
+<p><strong>4、 ask和moved重定向的区别</strong></p>
+<p>重定向包括两种情况</p>
+<ul>
+<li><p>若确定slot不属于当前节点，redis会返回moved。 </p>
+</li>
+<li><p>若当前redis节点正在处理slot迁移，则代表此处请求对应的key暂时不在此节点，返回ask，告诉客户端本次请求重定向。</p>
+</li>
+</ul>
+<p><strong>5、数据倾斜和访问倾斜的问题</strong></p>
+<p>倾斜导致集群中部分节点数据多，压力大。解决方案分为前期和后期：</p>
+<ul>
+<li><p>前期是业务层面提前预测，哪些key是热点，在设计的过程中规避。</p>
+</li>
+<li><p>后期是slot迁移，尽量将压力分摊（slot调整有自动rebalance、reshard和手动）。</p>
+</li>
+</ul>
+<p><strong>6、节点之间会交换信息，传递的消息包括槽的信息，带来带宽消耗。</strong></p>
+<p>注意：避免使用大的一个集群，可以分多个集群。</p>
+<p><strong>7、 Pub/Sub发布订阅机制</strong></p>
+<p>注意：对集群内任意的一个节点执行publish发布消息，这个消息会在集群中进行传播，其他节点接收到发布的消息。</p>
+<p><strong>8、读写分离</strong></p>
+<ul>
+<li><p>redis-cluster默认所有从节点上的读写，都会重定向到key对接槽的主节点上。</p>
+</li>
+<li><p>可以通过readonly设置当前连接可读，通过readwrite取消当前连接的可读状态。</p>
+</li>
+</ul>
+<p>注意：主从节点依然存在数据不一致的问题</p>
+<h1 id="4-非官方集群方案"><a href="#4-非官方集群方案" class="headerlink" title="4 非官方集群方案"></a>4 非官方集群方案</h1><p>豌豆荚团队开源产品</p>
+<img src="/2020/12/13/Redis%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E6%A1%88/image-20201217231226691.png" class="" title="image-20201217231226691">
+
+<p>推特开源产品</p>
+<img src="/2020/12/13/Redis%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E6%A1%88/image-20201217231325112.png" class="" title="image-20201217231325112">
+
+
+
+<h1 id="5-集群数据迁移方式"><a href="#5-集群数据迁移方式" class="headerlink" title="5 集群数据迁移方式"></a>5 集群数据迁移方式</h1><h2 id="5-1-集群slot迁移"><a href="#5-1-集群slot迁移" class="headerlink" title="5.1 集群slot迁移"></a>5.1 集群slot迁移</h2><p><strong>slot手动迁移怎么做？</strong></p>
+<p>迁移过程如下，大致描述如下：</p>
+<ul>
+<li><p>在迁移目的节点执行cluster setslot <slot> IMPORTING <node ID>命令，指明需要迁移的slot和迁移源节点。</p>
+</li>
+<li><p>在迁移源节点执行cluster setslot <slot> MIGRATING <node ID>命令，指明需要迁移的slot和迁移目的节点。</p>
+</li>
+<li><p>在迁移源节点执行cluster getkeysinslot获取该slot的key列表。</p>
+</li>
+<li><p>在迁移源节点执行对每个key执行migrate命令，该命令会同步把该key迁移到目的节点。</p>
+</li>
+<li><p>在迁移源节点反复执行cluster getkeysinslot命令，直到该slot的列表为空。</p>
+</li>
+<li><p>在迁移源节点和目的节点执行cluster setslot <slot> NODE <node ID>，完成迁移操作。</p>
+</li>
+</ul>
+<h2 id="5-2-集群从节点迁移"><a href="#5-2-集群从节点迁移" class="headerlink" title="5.2 集群从节点迁移"></a>5.2 集群从节点迁移</h2><p><strong>假设集群有三个主节点 A，B，C。 A、B都各有一个从节点，A1 和 B1。节点C有两个从节点：C1 和 C2</strong></p>
+<p>迁移过程如下，大致描述如下： </p>
+<ul>
+<li>主节点 A 失效。A1 被提升为主节点。</li>
+<li>节点 C2 迁移成为节点 A1 的从节点，要不然 A1 就没有任何从节点。</li>
+<li>三个小时后节点 A1 也失效了。</li>
+<li>节点 C2 被提升为取代 A1 的新主节点。</li>
+<li>集群仍然能继续正常工作。</li>
+</ul>
+<h1 id="6-其它"><a href="#6-其它" class="headerlink" title="6 其它"></a>6 其它</h1><h2 id="6-1-cluster集群tag"><a href="#6-1-cluster集群tag" class="headerlink" title="6.1 cluster集群tag"></a>6.1 cluster集群tag</h2><p>因为cluster不支持mget在不同的节点进行操作，引出tag</p>
+<p>哈希标签是确保两个键都在同一个哈希槽里的一种方式</p>
+<p>官网网址：<a target="_blank" rel="noopener" href="http://www.redis.cn/topics/cluster-spec.html">http://www.redis.cn/topics/cluster-spec.html</a></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/12/13/Redis%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E6%A1%88/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/12/19/Redis%E7%BC%93%E5%AD%98%E5%A4%B1%E6%95%88%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Redis缓存失效解决方案
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/12/13/Redis%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Redis哨兵机制</div>
+      </a>
+    
+  </nav>
+
+  
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2020
+        <i class="ri-heart-fill heart_icon"></i> Hash
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/assets/head.png" alt="Hash的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>

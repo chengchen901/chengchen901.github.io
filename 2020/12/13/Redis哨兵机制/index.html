@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="java" />
+   
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Redis哨兵机制 |  
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/assets/favicon.png" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Redis哨兵机制"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Redis哨兵机制
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/12/13/Redis%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/" class="article-date">
+  <time datetime="2020-12-13T08:46:50.000Z" itemprop="datePublished">2020-12-13</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">4.1k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">19 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>Redis哨兵机制</p>
+<a id="more"></a>
+
+<h1 id="1-哨兵使用架构"><a href="#1-哨兵使用架构" class="headerlink" title="1 哨兵使用架构"></a>1 哨兵使用架构</h1><h2 id="1-1-哨兵-Sentinel-机制核心作用"><a href="#1-1-哨兵-Sentinel-机制核心作用" class="headerlink" title="1.1 哨兵(Sentinel)机制核心作用"></a>1.1 哨兵(Sentinel)机制核心作用</h2><img src="/2020/12/13/Redis%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/image-20201213164817347.png" class="" title="image-20201213164817347">
+
+<img src="/2020/12/13/Redis%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/image-20201213204449445.png" class="" title="image-20201213204449445">
+
+
+
+<h2 id="1-2-核心运作流程"><a href="#1-2-核心运作流程" class="headerlink" title="1.2 核心运作流程"></a>1.2 核心运作流程</h2><p><strong>服务发现和健康检查流程</strong></p>
+<ul>
+<li>搭建redis主从集群</li>
+<li>启动哨兵(客户端通过哨兵发现Redis实例信息)</li>
+<li>哨兵通过连接master发现主从集群内的所有实例信息</li>
+<li>哨兵监控redis实例的健康状况</li>
+</ul>
+<p><strong>故障切换流程</strong></p>
+<ul>
+<li>哨兵一旦发现master不能正常提供服务，则通知给其他哨兵</li>
+<li>当一定数量的哨兵都认为master挂了</li>
+<li>选举一个哨兵作为故障转移的执行者</li>
+<li>执行者在slave中选取一个作为新的master</li>
+<li>将其他slave重新设定为新master的从属</li>
+</ul>
+<h1 id="2-哨兵如何监控redis"><a href="#2-哨兵如何监控redis" class="headerlink" title="2 哨兵如何监控redis"></a>2 哨兵如何监控redis</h1><h2 id="2-1-7大核心概念"><a href="#2-1-7大核心概念" class="headerlink" title="2.1 7大核心概念"></a>2.1 7大核心概念</h2><ol>
+<li><p>哨兵如何知道Redis主从信息（自动发现机制）</p>
+</li>
+<li><p>什么是master主观下线</p>
+</li>
+<li><p>什么是客观下线</p>
+</li>
+<li><p>哨兵之间如何通信（哨兵之间的自动发现）</p>
+</li>
+<li><p>哪个哨兵负责故障转移？(哨兵领导选举机制)</p>
+</li>
+<li><p>slave选举机制</p>
+</li>
+<li><p>最终主从切换的过程</p>
+</li>
+</ol>
+<h2 id="2-2-哨兵启动和配置"><a href="#2-2-哨兵启动和配置" class="headerlink" title="2.2 哨兵启动和配置"></a>2.2 哨兵启动和配置</h2><p>启动命令： redis-server /path/to/sentinel.conf –sentinel</p>
+<p>配置文件启动时指定，运行过程中会自动变更，记录哨兵的监测结果</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 配置文件在sentinel运行期间是会被动态修改的</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> sentinel如果重启时，就可以根据这个配置来恢复其之前所监控的redis集群的状态</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 绑定IP</span></span><br><span class="line">bind 0.0.0.0</span><br><span class="line"><span class="meta">#</span><span class="bash"> 默认yes，没指定密码或者指定IP的情况下，外网无法访问</span></span><br><span class="line">protected-mode no</span><br><span class="line"><span class="meta">#</span><span class="bash"> 哨兵的端口，客户端通过这个端口来发现redis</span></span><br><span class="line">port 26380</span><br><span class="line"><span class="meta">#</span><span class="bash"> 哨兵自己的IP，手动设定也可自动发现，用于与其他哨兵通信</span></span><br><span class="line">sentinel announce-ip</span><br><span class="line"><span class="meta">#</span><span class="bash"> 临时文件夹</span></span><br><span class="line">dir /tmp</span><br><span class="line"><span class="meta">#</span><span class="bash"> sentinel监控的master的名字叫做mymaster,地址为 60.205.209.106 6380,两个及以上哨兵认定为死亡，才认为是真的死亡</span></span><br><span class="line">sentinel monitor mymaster 60.205.209.106 6380 2</span><br><span class="line"><span class="meta">#</span><span class="bash"> 发送心跳PING来确认master是否存活</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 如果master在“一定时间范围”内不回应ping 或者是回复了一个错误消息，那么这个sentinel会主观地(单方面地)认为这个master已经不可用了</span></span><br><span class="line">sentinel down-after-milliseconds mymaster 1000</span><br><span class="line"><span class="meta">#</span><span class="bash"> 如果在该时间（ms）内未能完成failover操作，则认为该failover失败</span></span><br><span class="line">sentinel failover-timeout mymaster 3000</span><br><span class="line"><span class="meta">#</span><span class="bash"> 指定了在执行故障转移时，最多可以有多少个从Redis实例在同步新的主实例，在从Redis实例较多的情况下这个数字越小，同步的时间越长，完成故障转移所需的时间就越长</span></span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-3-哨兵如何知道Redis主从信息"><a href="#2-3-哨兵如何知道Redis主从信息" class="headerlink" title="2.3 哨兵如何知道Redis主从信息"></a>2.3 哨兵如何知道Redis主从信息</h2><img src="/2020/12/13/Redis%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/image-20201213170138083.png" class="" title="image-20201213170138083">
+
+<p>哨兵配置文件中，保存着主从集群中master的信息，可以通过info命令，进行主从信息自动发现。</p>
+<h2 id="2-4-什么是主观下线-sdown"><a href="#2-4-什么是主观下线-sdown" class="headerlink" title="2.4 什么是主观下线(sdown)"></a>2.4 什么是主观下线(sdown)</h2><img src="/2020/12/13/Redis%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/image-20201213170138083.png" class="" title="image-20201213170138083">
+
+<p>主观下线：单个哨兵自身认为redis实例已经不能提供服务</p>
+<p>检测机制：哨兵向redis发送ping请求，+PONG、-LOADING、 -MASTERDOWN这三种情况视为正常，其他回复均视为无效。</p>
+<p>对应配置文件的配置项：sentinel down-after-milliseconds mymaster 1000</p>
+<h2 id="2-5-什么是客观下线-odown"><a href="#2-5-什么是客观下线-odown" class="headerlink" title="2.5 什么是客观下线(odown)"></a>2.5 什么是客观下线(odown)</h2><img src="/2020/12/13/Redis%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/image-20201213170323857.png" class="" title="image-20201213170323857">
+
+<p>客观下线：一定数量值的哨兵认为master已经下线。</p>
+<p>检测机制：当哨兵主观认为master下线后，则会通过 SENTINEL is-master-down-by-addr命令 询问其他哨兵是否认为master已经下线，如果达成共识（达到quorum个数），就会认为master节点客观下线，开始故障转移流程。</p>
+<p>对应配置文件的配置项：sentinel monitor mymaster 60.205.209.106 6380 2</p>
+<h2 id="2-6-slave选举方案"><a href="#2-6-slave选举方案" class="headerlink" title="2.6 slave选举方案"></a>2.6 slave选举方案</h2><p>从服务器实例中，按下面顺序依次筛选</p>
+<p><strong>slave 节点状态</strong>，非 S_DOWN,O_DOWN，DISCONNECTED</p>
+<p>判断规则：(down-after-milliseconds * 10) + milliseconds_since_master_is_in_SDOWN_state</p>
+<p>排除宕机时间超过 : down-after-milliseconds * 10 ,节点状态非 S_DOWN,O_DOWN，DISCONNECTED</p>
+<p>SENTINEL slaves mymaster ：列出给定主服务器的所有从服务器，以及这些从服务器的当前状态。</p>
+<p><strong>优先级</strong></p>
+<p>redis.conf中的一个配置项： slave-priority 值越小，优先级越高</p>
+<p><strong>数据同步情况</strong></p>
+<p>偏移量比较是否为最新的偏移量</p>
+<p>Replication offset processed</p>
+<p><strong>最小的run id(info server 可以看到)</strong></p>
+<p>run id 比较方案： 字典顺序， ASCII码</p>
+<h2 id="2-7-最终主从切换的过程"><a href="#2-7-最终主从切换的过程" class="headerlink" title="2.7 最终主从切换的过程"></a>2.7 最终主从切换的过程</h2><ul>
+<li><p>针对即将成为master的slave节点，将其撤出主从集群<br>自动执行：slaveof NO ONE</p>
+</li>
+<li><p>针对其他slave节点，使它们成为新master的从属<br>自动执行：slaveof new_master_host new_master_port</p>
+</li>
+</ul>
+<h1 id="3-哨兵如何高可用"><a href="#3-哨兵如何高可用" class="headerlink" title="3 哨兵如何高可用"></a>3 哨兵如何高可用</h1><h2 id="3-1-哨兵服务部署方案"><a href="#3-1-哨兵服务部署方案" class="headerlink" title="3.1 哨兵服务部署方案"></a>3.1 哨兵服务部署方案</h2><p>两个哨兵，不建议</p>
+<img src="/2020/12/13/Redis%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/image-20201213171212742.png" class="" title="image-20201213171212742">
+
+<p>1主2从，三个哨兵</p>
+<img src="/2020/12/13/Redis%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/image-20201213171238382.png" class="" title="image-20201213171238382">
+
+<p>1主2从，网络分区下</p>
+<p>可能出现数据不一致或丢失。</p>
+<p>Redis集群非强一致</p>
+<img src="/2020/12/13/Redis%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/image-20201213171247755.png" class="" title="image-20201213171247755">
+
+
+
+<h1 id="4-哨兵内部通讯原理"><a href="#4-哨兵内部通讯原理" class="headerlink" title="4 哨兵内部通讯原理"></a>4 哨兵内部通讯原理</h1><h2 id="4-1-哨兵之间如何通信"><a href="#4-1-哨兵之间如何通信" class="headerlink" title="4.1 哨兵之间如何通信"></a>4.1 哨兵之间如何通信</h2><p>哨兵之间通过在master上pub/sub来发现其它哨兵</p>
+<p>哨兵之间通过2000偏移量端口进行命令通信,例如:SENTINEL slaves等</p>
+<p>哨兵之间通过2000偏移量端口进行pub/sub来通信</p>
+<img src="/2020/12/13/Redis%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/image-20201213171442535.png" class="" title="image-20201213171442535">
+
+
+
+<h2 id="4-2-哨兵领导选举机制"><a href="#4-2-哨兵领导选举机制" class="headerlink" title="4.2 哨兵领导选举机制"></a>4.2 哨兵领导选举机制</h2><p>基于<strong>Raft算法实现的选举机制</strong>，流程简述如下：</p>
+<ol>
+<li><p>拉票阶段：每个哨兵节点希望自己成为领导者；</p>
+</li>
+<li><p>sentinel节点收到拉票命令后，如果没有收到或同意过其他sentinel节点的请求，就同意该sentinel节点的请求（每个sentinel只持有一个同意票数）；</p>
+</li>
+<li><p>如果sentinel节点发现自己的票数已经超过一半的数值，那么它将成为领导者，去执行故障转移；</p>
+</li>
+<li><p>投票结束后，如果超过failover-timeout的时间内，没进行实际的故障转移操作，则重新拉票选举。</p>
+</li>
+</ol>
+<p>注： 以了解raft协议为主。<a target="_blank" rel="noopener" href="https://raft.github.io/%E3%80%81http://thesecretlivesofdata.com/raft/">https://raft.github.io/、http://thesecretlivesofdata.com/raft/</a></p>
+<h1 id="5-redis哨兵高可用搭建"><a href="#5-redis哨兵高可用搭建" class="headerlink" title="5 redis哨兵高可用搭建"></a>5 redis哨兵高可用搭建</h1><h2 id="5-1-Redis下载安装"><a href="#5-1-Redis下载安装" class="headerlink" title="5.1 Redis下载安装"></a>5.1 Redis下载安装</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">下载redis</span><br><span class="line">https://redis.io/download</span><br><span class="line"><span class="meta">#</span><span class="bash"> 下载</span></span><br><span class="line">wget http://download.redis.io/releases/redis-5.0.3.tar.gz</span><br><span class="line"><span class="meta">#</span><span class="bash"> Installation</span></span><br><span class="line">tar xzf redis-5.0.3.tar.gz</span><br><span class="line">cd redis-5.0.3</span><br><span class="line">make</span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建文件夹 </span></span><br><span class="line">mkdir /usr/local/redis/conf</span><br><span class="line">mkdir /usr/local/redis/data</span><br><span class="line">mkdir /usr/local/redis/logs</span><br><span class="line"><span class="meta">#</span><span class="bash"> run</span></span><br><span class="line">src/redis-server</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> warning 1 &gt; 提示修改 linux内核参数</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is <span class="built_in">set</span> to the lower value of 128.</span></span><br><span class="line">echo 1024 &gt;/proc/sys/net/core/somaxconn</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> warn 2 &gt; 提示如下</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> WARNING overcommit_memory is <span class="built_in">set</span> to 0! Background save may fail under low memory condition. To fix this issue add <span class="string">&#x27;vm.overcommit_memory = 1&#x27;</span> to /etc/sysctl.conf and <span class="keyword">then</span> reboot or run the <span class="built_in">command</span> <span class="string">&#x27;sysctl vm.overcommit_memory=1&#x27;</span> <span class="keyword">for</span> this to take effect.</span></span><br><span class="line">echo &quot;vm.overcommit_memory = 1&quot; &gt;&gt; /etc/sysctl.conf</span><br><span class="line">sysctl vm.overcommit_memory=1</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> warning 3</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> WARNING you have Transparent Huge Pages (THP) support enabled <span class="keyword">in</span> your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the <span class="built_in">command</span> <span class="string">&#x27;echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled&#x27;</span> as root, and add it to your /etc/rc.local <span class="keyword">in</span> order to retain the setting after a reboot. Redis must be restarted after THP is disabled</span></span><br><span class="line">echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 云服务器要注意ip要写对，端口要开放</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 虚拟机要注意防火墙要关闭 systemctl stop firewalld.service</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="5-2-准备配置文件"><a href="#5-2-准备配置文件" class="headerlink" title="5.2 准备配置文件"></a>5.2 准备配置文件</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 配置文件进行了精简，完整配置可自行和官方提供的完整conf文件进行对照。端口号自行对应修改</span></span><br><span class="line"><span class="meta">#</span><span class="bash">后台启动的意思</span></span><br><span class="line">daemonize yes </span><br><span class="line"><span class="meta"> #</span><span class="bash">端口号(如果同一台服务器上启动，注意要修改为不同的端口)</span></span><br><span class="line">port 6380</span><br><span class="line"><span class="meta">#</span><span class="bash"> IP绑定，redis不建议对公网开放，直接绑定0.0.0.0没毛病</span></span><br><span class="line">bind 0.0.0.0</span><br><span class="line"><span class="meta">#</span><span class="bash"> 这个文件会自动生成(如果同一台服务器上启动，注意要修改为不同的端口)</span></span><br><span class="line">pidfile /var/run/redis_6380.pid </span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="5-3-准备三个redis服务"><a href="#5-3-准备三个redis服务" class="headerlink" title="5.3 准备三个redis服务"></a>5.3 准备三个redis服务</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 1、启动三个Redis</span></span><br><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/redis-6380.conf</span><br><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/redis-6381.conf</span><br><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/redis-6382.conf</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 2、配置为 1主2从</span></span><br><span class="line">/usr/local/redis/bin/redis-cli -p 6381 slaveof 192.168.100.241 6380</span><br><span class="line">/usr/local/redis/bin/redis-cli -p 6382 slaveof 192.168.100.241 6380</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 3、检查集群</span></span><br><span class="line">/usr/local/redis/bin/redis-cli -p 6380 info Replication</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="5-4-准备哨兵配置文件"><a href="#5-4-准备哨兵配置文件" class="headerlink" title="5.4 准备哨兵配置文件"></a>5.4 准备哨兵配置文件</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 配置文件：sentinel.conf，在sentinel运行期间是会被动态修改的</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> sentinel如果重启时，根据这个配置来恢复其之前所监控的redis集群的状态</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 绑定IP</span></span><br><span class="line">bind 0.0.0.0</span><br><span class="line"><span class="meta">#</span><span class="bash"> 后台运行</span></span><br><span class="line">daemonize yes</span><br><span class="line"><span class="meta">#</span><span class="bash"> 默认yes，没指定密码或者指定IP的情况下，外网无法访问</span></span><br><span class="line">protected-mode no</span><br><span class="line"><span class="meta">#</span><span class="bash"> 哨兵的端口，客户端通过这个端口来发现redis</span></span><br><span class="line">port 26380</span><br><span class="line"><span class="meta">#</span><span class="bash"> 哨兵自己的IP，手动设定也可自动发现，用于与其他哨兵通信</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> sentinel announce-ip</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 临时文件夹</span></span><br><span class="line">dir /tmp</span><br><span class="line"><span class="meta">#</span><span class="bash"> 日志</span></span><br><span class="line">logfile &quot;/usr/local/redis/logs/sentinel-26380.log&quot;</span><br><span class="line"><span class="meta">#</span><span class="bash"> sentinel监控的master的名字叫做mymaster,初始地址为 192.168.100.241 6380,2代表两个及以上哨兵认定为死亡，才认为是真的死亡</span></span><br><span class="line">sentinel monitor mymaster 192.168.100.241 6380 2</span><br><span class="line"><span class="meta">#</span><span class="bash"> 发送心跳PING来确认master是否存活</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 如果master在“一定时间范围”内不回应PONG 或者是回复了一个错误消息，那么这个sentinel会主观地(单方面地)认为这个master已经不可用了</span></span><br><span class="line">sentinel down-after-milliseconds mymaster 1000</span><br><span class="line"><span class="meta">#</span><span class="bash"> 如果在该时间（ms）内未能完成failover操作，则认为该failover失败,失败后选择新的哨兵进行failover</span></span><br><span class="line">sentinel failover-timeout mymaster 3000</span><br><span class="line"><span class="meta">#</span><span class="bash"> 指定了在执行故障转移时，最多可以有多少个从Redis实例在同步新的主实例，在从Redis实例较多的情况下这个数字越小，同步的时间越长，完成故障转移所需的时间就越长</span></span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="5-5-启动哨兵集群"><a href="#5-5-启动哨兵集群" class="headerlink" title="5.5 启动哨兵集群"></a>5.5 启动哨兵集群</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/sentinel-26380.conf --sentinel</span><br><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/sentinel-26381.conf --sentinel</span><br><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/conf/sentinel-26382.conf --sentinel</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="5-6-测试"><a href="#5-6-测试" class="headerlink" title="5.6 测试"></a>5.6 测试</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 停掉master，主从切换过程</span></span><br><span class="line">启动哨兵(客户端通过哨兵发现Redis实例信息)</span><br><span class="line">哨兵通过连接master发现主从集群内的所有实例信息</span><br><span class="line">哨兵监控redis实例的健康状况</span><br><span class="line">哨兵一旦发现master不能正常提供服务，则通知给其他哨兵</span><br><span class="line">当一定数量的哨兵都认为master挂了</span><br><span class="line">选举一个哨兵作为故障转移的执行者</span><br><span class="line">执行者在slave中选取一个作为新的master</span><br><span class="line">将其他slave重新设定为新master的从属</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="5-6-哨兵同步pubsub机制发出来的消息"><a href="#5-6-哨兵同步pubsub机制发出来的消息" class="headerlink" title="5.6 哨兵同步pubsub机制发出来的消息"></a>5.6 哨兵同步pubsub机制发出来的消息</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> https://redis.io/topics/sentinel<span class="comment">#pubsub-messages</span></span></span><br><span class="line">+reset-master &lt;instance details&gt; -- 当master被重置时.</span><br><span class="line">+slave &lt;instance details&gt; -- 当检测到一个slave并添加进slave列表时.</span><br><span class="line">+failover-state-reconf-slaves &lt;instance details&gt; -- Failover状态变为reconf-slaves状态时</span><br><span class="line">+failover-detected &lt;instance details&gt; -- 当failover发生时</span><br><span class="line">+slave-reconf-sent &lt;instance details&gt; -- sentinel发送SLAVEOF命令把它重新配置时</span><br><span class="line">+slave-reconf-inprog &lt;instance details&gt; -- slave被重新配置为另外一个master的slave，但数据复制还未发生时。</span><br><span class="line">+slave-reconf-done &lt;instance details&gt; -- slave被重新配置为另外一个master的slave并且数据复制已经与master同步时。</span><br><span class="line">-dup-sentinel &lt;instance details&gt; -- 删除指定master上的冗余sentinel时 (当一个sentinel重新启动时，可能会发生这个事件).</span><br><span class="line">+sentinel &lt;instance details&gt; -- 当master增加了一个sentinel时。</span><br><span class="line">+sdown &lt;instance details&gt; -- 进入SDOWN状态时;</span><br><span class="line">-sdown &lt;instance details&gt; -- 离开SDOWN状态时。</span><br><span class="line">+odown &lt;instance details&gt; -- 进入ODOWN状态时。</span><br><span class="line">-odown &lt;instance details&gt; -- 离开ODOWN状态时。</span><br><span class="line">+new-epoch &lt;instance details&gt; -- 当前配置版本被更新时。</span><br><span class="line">+try-failover &lt;instance details&gt; -- 达到failover条件，正等待其他sentinel的选举。</span><br><span class="line">+elected-leader &lt;instance details&gt; -- 被选举为去执行failover的时候。</span><br><span class="line">+failover-state-select-slave &lt;instance details&gt; -- 开始要选择一个slave当选新master时。</span><br><span class="line">+no-good-slave &lt;instance details&gt; -- 没有合适的slave来担当新master</span><br><span class="line">+selected-slave &lt;instance details&gt; -- 找到了一个适合的slave来担当新master</span><br><span class="line">+promoted-slave -- 确认成功</span><br><span class="line">+failover-state-reconf-slaves -- 开始对slaves进行reconfig操作</span><br><span class="line">+slave-reconf-sent -- 向指定的slave发送“slaveof”指令，告知此slave跟随新的master</span><br><span class="line">+slave-reconf-inprog -- 此slave正在执行slaveof + SYNC过程，slave收到“+slave-reconf-sent”之后将会执行slaveof操作</span><br><span class="line">+slave-reconf-done -- 此slave同步完成，此后leader可以继续下一个slave的reconfig操作</span><br><span class="line">failover-state-send-slaveof-noone &lt;instance details&gt; -- 当把选择为新master的slave的身份进行切换的时候。</span><br><span class="line">failover-end-for-timeout &lt;instance details&gt; -- failover由于超时而失败时。</span><br><span class="line">failover-end &lt;instance details&gt; -- failover成功完成,故障转移结束</span><br><span class="line">switch-master &lt;master name&gt; &lt;oldip&gt; &lt;oldport&gt; &lt;newip&gt; &lt;newport&gt; -- 当master的地址发生变化时。通常这是客户端最感兴趣的消息了。</span><br><span class="line">+tilt -- 进入Tilt模式。</span><br><span class="line">-tilt -- 退出Tilt模式。</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="5-7-哨兵日志分析"><a href="#5-7-哨兵日志分析" class="headerlink" title="5.7 哨兵日志分析"></a>5.7 哨兵日志分析</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">sdow (sdown subjectively down)</span><br><span class="line">odown (objectively down)</span><br><span class="line"># 通过日志逐步分析</span><br><span class="line">996:X 23 Nov 01:00:30.020 # +sdown master mymaster 60.205.209.106 6381</span><br><span class="line">996:X 23 Nov 01:00:30.143 # +new-epoch 4</span><br><span class="line">996:X 23 Nov 01:00:30.144 # +vote-for-leader 699538b978f33f677c8be471eed344b3933eca8c 4</span><br><span class="line">996:X 23 Nov 01:00:31.111 # +odown master mymaster 60.205.209.106 6381 #quorum 3&#x2F;2</span><br><span class="line">996:X 23 Nov 01:00:31.111 # Next failover delay: I will not start a failover before Thu Nov 23 01:00:36 2017</span><br><span class="line">996:X 23 Nov 01:00:31.200 # +config-update-from sentinel 699538b978f33f677c8be471eed344b3933eca8c 172.17.171.34 26381 @ mymaster 60.205.209.106 6381</span><br><span class="line">996:X 23 Nov 01:00:31.200 # +switch-master mymaster 60.205.209.106 6381 60.205.209.106 6380</span><br><span class="line">996:X 23 Nov 01:00:31.200 * +slave slave 60.205.209.106:6382 60.205.209.106 6382 @ mymaster 60.205.209.106 6380</span><br><span class="line">996:X 23 Nov 01:00:31.200 * +slave slave 60.205.209.106:6381 60.205.209.106 6381 @ mymaster 60.205.209.106 6380</span><br><span class="line">996:X 23 Nov 01:00:32.233 # +sdown slave 60.205.209.106:6381 60.205.209.106 6381 @ mymaster 60.205.209.106 6380</span><br><span class="line">1073:X 23 Nov 01:00:30.087 # +sdown master mymaster 60.205.209.106 6381</span><br><span class="line">1073:X 23 Nov 01:00:30.139 # +odown master mymaster 60.205.209.106 6381 #quorum 3&#x2F;2</span><br><span class="line">1073:X 23 Nov 01:00:30.139 # +new-epoch 4</span><br><span class="line">1073:X 23 Nov 01:00:30.139 # +try-failover master mymaster 60.205.209.106 6381</span><br><span class="line">1073:X 23 Nov 01:00:30.141 # +vote-for-leader 699538b978f33f677c8be471eed344b3933eca8c 4</span><br><span class="line">1073:X 23 Nov 01:00:30.142 # 8412b6b2ac39a3d36c171590cd23cbe025517c15 voted for 8412b6b2ac39a3d36c171590cd23cbe025517c15 4</span><br><span class="line">1073:X 23 Nov 01:00:30.144 # f8c7e052744926747ef1f31c27da4721fde3faf4 voted for 699538b978f33f677c8be471eed344b3933eca8c 4</span><br><span class="line">1073:X 23 Nov 01:00:30.232 # +elected-leader master mymaster 60.205.209.106 6381</span><br><span class="line">1073:X 23 Nov 01:00:30.232 # +failover-state-select-slave master mymaster 60.205.209.106 6381</span><br><span class="line">1073:X 23 Nov 01:00:30.294 # +selected-slave slave 60.205.209.106:6380 60.205.209.106 6380 @ mymaster 60.205.209.106 6381</span><br><span class="line">1073:X 23 Nov 01:00:30.294 * +failover-state-send-slaveof-noone slave 60.205.209.106:6380 60.205.209.106 6380 @ mymaster 60.205.209.106 6381</span><br><span class="line">1073:X 23 Nov 01:00:30.356 * +failover-state-wait-promotion slave 60.205.209.106:6380 60.205.209.106 6380 @ mymaster 60.205.209.106 6381</span><br><span class="line">1073:X 23 Nov 01:00:31.153 # +promoted-slave slave 60.205.209.106:6380 60.205.209.106 6380 @ mymaster 60.205.209.106 6381</span><br><span class="line">1073:X 23 Nov 01:00:31.153 # +failover-state-reconf-slaves master mymaster 60.205.209.106 6381</span><br><span class="line">1073:X 23 Nov 01:00:31.200 * +slave-reconf-sent slave 60.205.209.106:6382 60.205.209.106 6382 @ mymaster 60.205.209.106 6381</span><br><span class="line">1073:X 23 Nov 01:00:32.149 * +slave-reconf-inprog slave 60.205.209.106:6382 60.205.209.106 6382 @ mymaster 60.205.209.106 6381</span><br><span class="line">1073:X 23 Nov 01:00:32.149 * +slave-reconf-done slave 60.205.209.106:6382 60.205.209.106 6382 @ mymaster 60.205.209.106 6381</span><br><span class="line">1073:X 23 Nov 01:00:32.220 # -odown master mymaster 60.205.209.106 6381</span><br><span class="line">1073:X 23 Nov 01:00:32.220 # +failover-end master mymaster 60.205.209.106 6381</span><br><span class="line">1073:X 23 Nov 01:00:32.220 # +switch-master mymaster 60.205.209.106 6381 60.205.209.106 6380</span><br><span class="line">1073:X 23 Nov 01:00:32.220 * +slave slave 60.205.209.106:6382 60.205.209.106 6382 @ mymaster 60.205.209.106 6380</span><br><span class="line">1073:X 23 Nov 01:00:32.220 * +slave slave 60.205.209.106:6381 60.205.209.106 6381 @ mymaster 60.205.209.106 6380</span><br><span class="line">1073:X 23 Nov 01:00:33.227 # +sdown slave 60.205.209.106:6381 60.205.209.106 6381 @ mymaster 60.205.209.106 6380</span><br><span class="line">1009:X 23 Nov 01:00:30.039 # +sdown master mymaster 60.205.209.106 6381</span><br><span class="line">1009:X 23 Nov 01:00:30.139 # +odown master mymaster 60.205.209.106 6381 #quorum 2&#x2F;2</span><br><span class="line">1009:X 23 Nov 01:00:30.139 # +new-epoch 4</span><br><span class="line">1009:X 23 Nov 01:00:30.139 # +try-failover master mymaster 60.205.209.106 6381</span><br><span class="line">1009:X 23 Nov 01:00:30.142 # +vote-for-leader 8412b6b2ac39a3d36c171590cd23cbe025517c15 4</span><br><span class="line">1009:X 23 Nov 01:00:30.142 # 699538b978f33f677c8be471eed344b3933eca8c voted for 699538b978f33f677c8be471eed344b3933eca8c 4</span><br><span class="line">1009:X 23 Nov 01:00:30.144 # f8c7e052744926747ef1f31c27da4721fde3faf4 voted for 699538b978f33f677c8be471eed344b3933eca8c 4</span><br><span class="line">1009:X 23 Nov 01:00:31.200 # +config-update-from sentinel 699538b978f33f677c8be471eed344b3933eca8c 172.17.171.34 26381 @ mymaster 60.205.209.106 6381</span><br><span class="line">1009:X 23 Nov 01:00:31.200 # +switch-master mymaster 60.205.209.106 6381 60.205.209.106 6380</span><br><span class="line">1009:X 23 Nov 01:00:31.200 * +slave slave 60.205.209.106:6382 60.205.209.106 6382 @ mymaster 60.205.209.106 6380</span><br><span class="line">1009:X 23 Nov 01:00:31.200 * +slave slave 60.205.209.106:6381 60.205.209.106 6381 @ mymaster 60.205.209.106 6380</span><br><span class="line">1009:X 23 Nov 01:00:32.258 # +sdown slave 60.205.209.106:6381 60.205.209.106 6381 @ mymaster 60.205.209.106 6380</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="5-8-数据一致性的处理办法之一"><a href="#5-8-数据一致性的处理办法之一" class="headerlink" title="5.8 数据一致性的处理办法之一"></a>5.8 数据一致性的处理办法之一</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 这些配置仅当redis为master时才有效</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 当master不符合这些条件时，它将停止对外的服务。这种场景主要是用于master在网络上被孤立了。</span></span><br><span class="line">min-slaves-to-write 1</span><br><span class="line">min-slaves-max-lag 10</span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/12/13/Redis%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/12/13/Redis%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E6%A1%88/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Redis海量数据存储方案
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/12/13/Redis%E9%9B%86%E7%BE%A4/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Redis集群</div>
+      </a>
+    
+  </nav>
+
+  
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2020
+        <i class="ri-heart-fill heart_icon"></i> Hash
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/assets/head.png" alt="Hash的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>
