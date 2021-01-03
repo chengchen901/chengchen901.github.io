@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="java" />
+   
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Zookeeper集群 |  
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/assets/favicon.png" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Zookeeper集群"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Zookeeper集群
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/" class="article-date">
+  <time datetime="2021-01-02T08:57:26.000Z" itemprop="datePublished">2021-01-02</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">4.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">15 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>ZooKeeper集群</p>
+<a id="more"></a>
+
+<h1 id="1-ZK集群简介"><a href="#1-ZK集群简介" class="headerlink" title="1 ZK集群简介"></a>1 ZK集群简介</h1><h2 id="1-1-ZooKeeper集群"><a href="#1-1-ZooKeeper集群" class="headerlink" title="1.1 ZooKeeper集群"></a>1.1 ZooKeeper集群</h2><img src="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/image-20210102170225976.png" class="" title="image-20210102170225976">
+
+<ul>
+<li>可靠的ZooKeeper服务</li>
+<li>只要集群的大多数都准备好了，就可以使用这项服务</li>
+<li>容错集群设置至少需要三个服务器，强烈建议使用奇数个服务器</li>
+<li>建议每个服务运行在单独的机器上</li>
+</ul>
+<h2 id="1-2-ZooKeeper集群搭建"><a href="#1-2-ZooKeeper集群搭建" class="headerlink" title="1.2 ZooKeeper集群搭建"></a>1.2 ZooKeeper集群搭建</h2><p><strong>配置</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">tickTime=2000</span><br><span class="line">dataDir=/software/DevlopTools/ZooKeeper/zookeeper-cluster/zookeeper-3.4.13-1/dataDir</span><br><span class="line">dataLogDir=/software/DevlopTools/ZooKeeper/zookeeper-cluster/zookeeper-3.4.13-1/dataLogDir</span><br><span class="line">clientPort=2181</span><br><span class="line">initLimit=5</span><br><span class="line">syncLimit=2</span><br><span class="line">server.1=127.0.0.1:2881:3881</span><br><span class="line">server.2=127.0.0.1:2882:3882</span><br><span class="line">server.3=127.0.0.1:2883:3883</span><br></pre></td></tr></table></figure>
+
+<p><strong>initLimit</strong><br>集群中的follower服务器(F)与leader服务器(L)之间完成初始化同 步连接时能容忍的最多心跳数（tickTime的数量）。如果zk集群 环境数量确实很大，同步数据的时间会变长，因此这种情况下 可以适当调大该参数。</p>
+<p><strong>syncLimit</strong><br>集群中的follower服务器与leader服务器之间请求和应答之间能 容忍的最多心跳数（tickTime的数量）。</p>
+<p><strong>集群节点</strong><br>server.id=host:port:port<br>id，通过在各自的dataDir目录下创建一个名为myid的文件来为每 台机器赋予一个服务器id。<br>两个端口号，第一个跟随者用来连接到领导者，第二个用来选举领导者。</p>
+<p><strong>创建myid文件</strong></p>
+<p>在dataDir目录下创建myid文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<p>一行只包含机器id的文本。id在集群中必须是唯一的，其值应在1到255之间。如服务器1的id为“1”。（1到255指的是推荐zk集群数量）</p>
+<h2 id="1-3-连接ZooKeeper集群"><a href="#1-3-连接ZooKeeper集群" class="headerlink" title="1.3 连接ZooKeeper集群"></a>1.3 连接ZooKeeper集群</h2><p>集群的所有节点都可以提供服务，客户端连接时，连接串中可以指定多个或全部集群节点的连接地址。当一个节点不通时，客户端将自动切换另一个节点。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-4-ZooKeeper集群监控"><a href="#1-4-ZooKeeper集群监控" class="headerlink" title="1.4 ZooKeeper集群监控"></a>1.4 ZooKeeper集群监控</h2><h3 id="1-4-1-四字命令"><a href="#1-4-1-四字命令" class="headerlink" title="1.4.1 四字命令"></a>1.4.1 四字命令</h3><p>示例：echo ruok | telnet 127.0.0.1 2181</p>
+<p>windows可以先 telnet 127.0.0.1 2181，再输入四字命令</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>conf</td>
+<td>输出相关服务配置的详细信息</td>
+</tr>
+<tr>
+<td>cons</td>
+<td>列出所有连接到服务器的客户端的完全的连接/会话的详细信息。包括“接受/发送”的包数量、会话id、操作延迟、最后的操作执行等等信息。</td>
+</tr>
+<tr>
+<td>crst</td>
+<td>重置当前这台服务器所有连接/会话的统计信息</td>
+</tr>
+<tr>
+<td>dump</td>
+<td>列出未经处理的会话和临时节点</td>
+</tr>
+<tr>
+<td>envi</td>
+<td>输出关于服务环境的详细信息（区别于conf命令）</td>
+</tr>
+<tr>
+<td>reqs</td>
+<td>列出未经处理的请求</td>
+</tr>
+<tr>
+<td>ruok</td>
+<td>测试服务是否处于正确状态。如果确实如此，那么服务返回“imok”，否则不做任何响应</td>
+</tr>
+<tr>
+<td>srst</td>
+<td>重置服务器统计信息</td>
+</tr>
+<tr>
+<td>srvr</td>
+<td>列出服务器详细的信息，zk版本、接收/发送包数量、连接数、模式（leader/follower）、节点总数</td>
+</tr>
+<tr>
+<td>stat</td>
+<td>输出关于性能和连接的客户端的列表</td>
+</tr>
+<tr>
+<td>wchs</td>
+<td>列出服务器watch的详细信息</td>
+</tr>
+<tr>
+<td>wchc</td>
+<td>通过session列出服务器watch的详细信息，它的输出是一个与watch相关的会话的列表</td>
+</tr>
+<tr>
+<td>wchp</td>
+<td>通过路径列出服务器watch的详细信息。它输出一个与session相关的路径</td>
+</tr>
+<tr>
+<td>mntr</td>
+<td>列出集群的健康状态。包括“接受/发送”的包数量、操作延迟、当前服务模式（leader/follower）、节点总数、watch总数、临时节点总数</td>
+</tr>
+</tbody></table>
+<h3 id="1-4-2-JMX"><a href="#1-4-2-JMX" class="headerlink" title="1.4.2 JMX"></a>1.4.2 JMX</h3><p>JMX（Java Management Extensions）Java管理扩展，是一个为应用程序、设备、系统等植入管理功能的框架。</p>
+<p>软件路径：JAVA_HOME/bin/jconsole.exe</p>
+<img src="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/image-20210102175357061.png" class="" title="image-20210102175357061">
+
+
+
+<h1 id="2-ZK集群灵魂-Leader"><a href="#2-ZK集群灵魂-Leader" class="headerlink" title="2 ZK集群灵魂 - Leader"></a>2 ZK集群灵魂 - Leader</h1><h2 id="2-1-每个人都是Leader？"><a href="#2-1-每个人都是Leader？" class="headerlink" title="2.1 每个人都是Leader？"></a>2.1 每个人都是Leader？</h2><p>到底谁是Leader？</p>
+<img src="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/image-20210102175544235.png" class="" title="image-20210102175544235">
+
+<p>每台服务器都可能成为Leader</p>
+<h2 id="2-2-Paxos算法"><a href="#2-2-Paxos算法" class="headerlink" title="2.2 Paxos算法"></a>2.2 Paxos算法</h2><p><strong>分布式一致性算法，Paxos</strong></p>
+<p>Paxos算法是LeslieLamport于1990年提出的一种基于消息传递且具有高度容错特性的一致性算法，是分布式一致性中的经典算法。</p>
+<p> Phase1. (a)A proposer selects a proposal number n and sends a prepare request with number n to a majority of acceptors.<br> (b) If anacceptor receives a prepare request with number n greater than that of any prepare request to which it has already responded, then it responds to the request with a promise not to accept any more proposals numbered less than n and with the highest-numbered pro- posal (if any) that it has accepted. </p>
+<p>Phase2. (a) If the proposer receives a response to its prepare requests (numbered n) from a majority of acceptors, then it sends an accept request to each of those acceptors for a proposal numbered n with a value v, where v is the value of the highest-numbered proposal among the responses, or is any value if the responses reported no proposals.<br> (b) If an acceptor receives anaccept request for a proposal numbered n,it accepts the proposal unless it has already responded to a prepare request having a number greater than n.  </p>
+<p>P1a∶提议发起者选择一个提案编号n，并且给大多数接受者发送一个带有编号n的提案预请求。</p>
+<p> P1b∶ 如果接受者收到了一个编号n提案预请求，请求的编号n大于前面已经响应过的预请求编号，这时接受者作出响应，承诺不再接受比编号n小的提案预请求，并且如果存在自己接受过的最高编号提案，则在响应中带上。 </p>
+<p>P2a∶如果提议发起者接收到了大多数接受者对于编号n预请求的响应，这时会给这些接受者的每一个服务发送接受请求，接受请求内容为，编号n的提案并带上value值v。v的取值从哪里选择呢?如果接受者响应中有其他提议内容，则取接受者响应中取最高编号对应的值，如果响应中没有其他提议内容，则可以是任意的值。 </p>
+<p>P2b∶ 如果接受者收到一个编号n的提案接受请求，它接受该提案;如果它已经准备对大于编号n的预请求作出响应，则不接受编号n的提案。  </p>
+<h3 id="2-2-1-Paxos中的角色"><a href="#2-2-1-Paxos中的角色" class="headerlink" title="2.2.1 Paxos中的角色"></a>2.2.1 Paxos中的角色</h3><p>在Paxos算法中，节点可以分为:Proposer（提议者）、Acceptor（接收者）、Learner（学习者）三种角色，可以同时扮演多种角色。</p>
+<p>Proposer：负责提议，提出想要达成一致的value；</p>
+<p>Acceptor：对提议投票，决定是否接受此value；</p>
+<p>Learner：不参与投票，只接收投票结果。</p>
+<img src="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/image-20210102185653922.png" class="" title="image-20210102185653922">
+
+<h3 id="2-2-2-Paxos的约束"><a href="#2-2-2-Paxos的约束" class="headerlink" title="2.2.2 Paxos的约束"></a>2.2.2 Paxos的约束</h3><p>最终只有一个提议值会被选择，只有被选择的提议值才会被Learner节点学习。</p>
+<p>最终总会有一个提议生效，Paxos协议能够让Peoposer发送的提议朝着能被大多数Acceptor接受的那个提议靠拢，因此能够保证可终止性。（少数服从多数）</p>
+<h3 id="2-2-3-Paxos流程"><a href="#2-2-3-Paxos流程" class="headerlink" title="2.2.3 Paxos流程"></a>2.2.3 Paxos流程</h3><p><strong>Paxos的流程 prepare a</strong></p>
+<p>Proposer会发送俩种类型的消息给Acceptors：prepare（准备）和accept（接受）请求。</p>
+<p>Proposer发送的提议请求由两部分组成，（n，v），n为序号（不可重复，具有唯一性），v为提议值。</p>
+<img src="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/image-20210102192934408.png" class="" title="image-20210102192934408">
+
+<p>Proposer A、B都可以发送prepare提议请求，Acceptor C、D先接收到Proposer A的请求，Acceptor E先接收到Proposer B的请求。</p>
+<p><strong>Paxos的流程 prepare b</strong></p>
+<p>如果Acceptor接收到一个prepare提议请求（n1，v1），并且之前还未接收过任何提议请求，会发送一个提议请求的响应，设置当前收到的提议为（n1，v1），保证不再接受序号小于n1的提议请求。</p>
+<img src="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/image-20210102193327287.png" class="" title="image-20210102193327287">
+
+
+
+<p><strong>Paxos的流程 accept a</strong></p>
+<p>随后，Acceptor C、D会收到Proposer B的提议请求（n=4，v=8），先前的提议请求（n=2，v=5），由于4&gt;2，因此发送（n=2，v=5）的提议响应，设置当前接受的提议为（n=4，v=5），并且保证不再接受序号小于4的提议请求；Acceptor E先收到Proposer B的提议请求（n=4，v=8），后收到Proposer A的提议请求（n=2，v=5），由于2&lt;4，因此抛弃该提议请求。</p>
+<img src="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/image-20210102194512426.png" class="" title="image-20210102194512426">
+
+
+
+<p><strong>Paxos的流程 accept b</strong></p>
+<p>一旦Proposer收到超过半数Acceptor所发的prepare提议响应，便会向所有Acceptor发送一个accept提议请求。</p>
+<img src="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/image-20210102193606304.png" class="" title="image-20210102193606304">
+
+<p>Proposer A收到两个提议响应（no previous）后，发送accept提议请求（n=2，v=5），会被所有Acceptor丢弃；</p>
+<p>Proposer B收到两个提议响应（n=2，v=5）后，发送accept提议请求（n=4，v=5），需要注意：n=4是最初Proposer B使用的序号，v=5不是初始值，而是提议响应中更高的v值。 </p>
+<p><strong>Paxos的流程 learner</strong></p>
+<p>Acceptor C、D、E收到accept提议请求后，会通知所有Learner</p>
+<img src="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/image-20210102200312647.png" class="" title="image-20210102200312647">
+
+
+
+<h2 id="2-3-ZooKeeper集群Learder选举"><a href="#2-3-ZooKeeper集群Learder选举" class="headerlink" title="2.3 ZooKeeper集群Learder选举"></a>2.3 ZooKeeper集群Learder选举</h2><img src="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/image-20210102200428861.png" class="" title="image-20210102200428861">
+
+<p>对选举Leader的要求：</p>
+<ul>
+<li>选出的Leader节点上要持有最高的zxid</li>
+<li>过半数节点同意</li>
+</ul>
+<p>内置实现的选举算法，可以通过配置文件进行配置：</p>
+<ul>
+<li>LeaderElection</li>
+<li>FastLeaderElection默认的</li>
+<li>AuthFastLeaderElection</li>
+</ul>
+<h2 id="2-4-ZooKeeper集群Learder选举机制概念"><a href="#2-4-ZooKeeper集群Learder选举机制概念" class="headerlink" title="2.4 ZooKeeper集群Learder选举机制概念"></a>2.4 ZooKeeper集群Learder选举机制概念</h2><p>选举消息内容：</p>
+<ul>
+<li>服务器id</li>
+<li>事务id</li>
+<li>逻辑时钟</li>
+<li>选举状态</li>
+</ul>
+<p>选举机制中的概念：</p>
+<ul>
+<li>服务器id myid</li>
+<li>事务id，服务器中存放的最大Zxid</li>
+<li>逻辑时钟，发起的投票轮数计数</li>
+<li>选举状态<ul>
+<li>LOOKING，竞选状态。</li>
+<li>FOLLOWING，随从状态，同步leader状态，参与投票。</li>
+<li>OBSERVING，观察状态，同步leader状态，不参与投票。</li>
+<li>LEADING，领导者状态。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-5-ZooKeeper集群Leader选举算法"><a href="#2-5-ZooKeeper集群Leader选举算法" class="headerlink" title="2.5 ZooKeeper集群Leader选举算法"></a>2.5 ZooKeeper集群Leader选举算法</h2><p>选举算法：</p>
+<ol>
+<li>每个服务实例均发起选举自己为领导者的投票（自己的投给自己）；</li>
+<li>其他服务实例收到投票邀请时，比较发起者的数据事务ID是否比自己最新的事务ID大，大则给它投一票，小则不投票给它，相等则比较发起者的服务器ID，大则投票给它；</li>
+<li>发起者收到大家的投票反馈后，看投票数（含自己的）是否大于集群的半数，大于则胜出，担任领导者；未超过半数且领导者未选出，则再次发起投票</li>
+</ol>
+<p>胜出条件：</p>
+<p>投票赞成数大于半数则胜出的逻辑。</p>
+<h2 id="2-6-ZooKeeper集群Leader选举流程示例说明"><a href="#2-6-ZooKeeper集群Leader选举流程示例说明" class="headerlink" title="2.6 ZooKeeper集群Leader选举流程示例说明"></a>2.6 ZooKeeper集群Leader选举流程示例说明</h2><p>有5台服务器，每台服务器均没有数据，它们的编号分别是1，2，3，4，5按编号依次启动，它们的选举过程如下：</p>
+<ul>
+<li>服务器1启动，给自己投票，然后发投票信息，由于其它机器还没有启动所以它收不到反馈信息，服务器1的状态一直属于Looking，</li>
+<li>服务器2启动，给自己投票，同时与之前启动的服务器1交换结果，由于服务器2的编号大所以服务器2胜出，但此时投票数没有大于半数，所以两个服务器的状态依然时LOOKING。</li>
+<li>服务器3启动该，给自己投票，同时与之前启动的服务器1，2交换信息，由于服务器3的编号最大所以服务器3胜出，此时投票数正好大于半数，所以服务器3成为领导者，服务器1，2成为小弟。</li>
+<li>服务器4启动，给自己投票，同时与之前启动的服务器1，2，3交换信息，尽管服务器4的编号大，但之前服务器3已胜出，所以服务器4只能成为小弟。</li>
+<li>服务器5启动，后面的逻辑同服务器4成为小弟。</li>
+</ul>
+<h1 id="3-问题"><a href="#3-问题" class="headerlink" title="3 问题"></a>3 问题</h1><ol>
+<li>有3台zk服务器，编号1，2，3按编号依次启动，谁会成为Leader？<br>2</li>
+<li>有5台zk服务器，编号是1，2，3，4，5按1，3，5，2，4编号依次启动，谁会成为Leader？<br>5</li>
+<li>每次都会这样的规律吗？到底是怎么样？<br>不一定，如果某一台机器中的存在数据，zxid会相对其它未写数据的要大。</li>
+</ol>
+<h1 id="4-ZK集群工作原理"><a href="#4-ZK集群工作原理" class="headerlink" title="4 ZK集群工作原理"></a>4 ZK集群工作原理</h1><h2 id="4-1-ZK集群-ZAB协议"><a href="#4-1-ZK集群-ZAB协议" class="headerlink" title="4.1 ZK集群-ZAB协议"></a>4.1 ZK集群-ZAB协议</h2><p>ZAB协议（ZooKeeper Atomic Broadcast，ZooKeeper原子消息广播协议）是专为ZooKeeper设计的数据一致性协议。参考Paxos来实现的。</p>
+<img src="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/image-20210103105819663.png" class="" title="image-20210103105819663">
+
+<p>关注点数据的一致性，无关数据的准确性、权威性、实时性</p>
+<h3 id="4-1-1-ZAB协议过程"><a href="#4-1-1-ZAB协议过程" class="headerlink" title="4.1.1 ZAB协议过程"></a>4.1.1 ZAB协议过程</h3><img src="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/image-20210103110001356.png" class="" title="image-20210103110001356">
+
+<ol>
+<li>所有事务请求转发给leader</li>
+<li>Leader分配全局单调递增事务id（Zxid），广播事务提议</li>
+<li>Follower处理提议，做出反馈</li>
+<li>Leader收到过半数反馈，广播Commit</li>
+<li>Leader做出响应</li>
+</ol>
+<p>Leader维护一个队列，保证执行命令的先进先出</p>
+<p>ZAB协议重要特性：有序性</p>
+<p>适合写少读多的场景</p>
+<h3 id="4-1-2-ZAB协议-崩溃恢复"><a href="#4-1-2-ZAB协议-崩溃恢复" class="headerlink" title="4.1.2 ZAB协议-崩溃恢复"></a>4.1.2 ZAB协议-崩溃恢复</h3><p>Leader服务器出现崩溃，或者说由于网络原因导致Leader服务器失去了与过半Follower的联系，那么就会进入崩溃恢复模式。</p>
+<img src="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/image-20210103110807210.png" class="" title="image-20210103110807210">
+
+<ul>
+<li>ZAB协议规定如果一个事务Proposal在一台机器上被处理成功，那么应该在所有的机器上都被处理成功，哪怕机器出现故障崩溃。</li>
+<li>ZAB协议确保那些已经在Leader服务器上提交的事务最终被所有服务器都提交</li>
+<li>ZAB协议确保丢弃那些只在Leader服务器上被提出的事务</li>
+</ul>
+<p>​    ZAB协议需要设计的选举算法应该满足：确保提交已经被Leader提交的事务Proposal，同时丢弃已经被跳过的事务Proposal。</p>
+<p>​    如果让Leader选举算法能够保证新选举出来的Leader服务器拥有集群中所有机器最高ZXID的事务Proposal，那么就可以保证这个新选举出来的Leader一定具有所有已经提交的提案。同时，如果让具有最高编号事务Proposal的机器来成为Leader，就可以省去Leader服务器检查Proposal的提交和丢弃工作的这一步操作。</p>
+<h3 id="4-1-3-ZAB协议-数据同步"><a href="#4-1-3-ZAB协议-数据同步" class="headerlink" title="4.1.3 ZAB协议-数据同步"></a>4.1.3 ZAB协议-数据同步</h3><p>​    Leader选举出来后，需完成Followers与Leader的数据同步，当半数的Followers完成同步，则可以开始提供服务。同步的过程如下。</p>
+<p>​    Leader服务器会为每一个Follower服务器都准备一个队列，并将那些没有被各Follower服务器同步的事务以Proposal消息的形式逐个发送给Follower服务器，并在每一个Proposal消息后面紧接着再发送一个Commit消息，以表示该事务已经被提交。等到Follower服务器将所有其尚未同步的事务Proposal都从Leader服务器上同步过来并成功应用到本地数据库中后，Leader服务器就会将该Follower服务器加入到真正的可用Follower列表中，并开始之后的其它流程。</p>
+<h3 id="4-1-4-ZAB协议-丢弃事务Proposal处理"><a href="#4-1-4-ZAB协议-丢弃事务Proposal处理" class="headerlink" title="4.1.4 ZAB协议-丢弃事务Proposal处理"></a>4.1.4 ZAB协议-丢弃事务Proposal处理</h3><p>​    在ZAB协议的事务编号ZXID设计中，ZXID是一个64位的数字，低32位是一个简单的单调递增的计数器，针对客户端的每一个事务请求，Leader服务器在产生一个新的事务Proposal的时候，都会对该计数器进行加1操作；高32位代表了Leader周期纪元的编号，每当选举产生一个新的Leader服务器，就会从这个Leader服务器上取出其本地日志中最大事务Proposal的ZXID，并从该ZXID中解析出对应的纪元值，然后对其进行加1操作，之后就会以此编号作为新的纪元，并将低32位置0来开始生成新的ZXID。</p>
+<p>​    基于这样的策略，当一个包含了上一个Leader周期中尚未提交过的事务Proposal的服务器启动加入到集群中，发现此时集群中已经存在Leader，将自身以Follower角色连接上Leader服务器之后，Leader服务器会根据自己服务器上最后被提交的Proposal来和Follower服务器的Proposal进行对比，发现Follower中有上一个Leader周期的事务Proposal时，Leader会要求Follower进行一个回退操作，回退到一个确实已经被集群中过半机器提交的最新的事务Proposal。</p>
+<h1 id="5-ZooKeeper参数配置"><a href="#5-ZooKeeper参数配置" class="headerlink" title="5 ZooKeeper参数配置"></a>5 ZooKeeper参数配置</h1><p>官网文档：</p>
+<p><a target="_blank" rel="noopener" href="https://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_configuration">https://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_configuration</a></p>
+<h1 id="6-其它"><a href="#6-其它" class="headerlink" title="6 其它"></a>6 其它</h1><ol>
+<li>三个节点组成的ZK集群，当集群中一个两个节点分别挂掉，验证ZK集群，写事件如何处理<br>一个节点挂掉，还有两个节点，大于等于大多数，写正常<br>两个节点挂掉，还有一个节点，小于大多数，无法写入数据</li>
+<li>三个节点组成的ZK集群，当集群中一个两个节点分别挂掉，验证ZK集群，读事件如何处理<br>一个节点挂掉，还有两个节点，大于等于大多数，读正常<br>两个节点挂掉，还有一个节点，小于大多数，无法读取数据</li>
+<li>三个节点组成的ZK集群，tickTime=20000，只连接leader节点，主动关闭俩个从节点，此时只剩leader节点，是否会里面停止服务？<br>对leader节点的读操作还可以在tickTime时间范围内继续执行，写操作则不行</li>
+</ol>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Zookeeper/" rel="tag">Zookeeper</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            ZooKeeper经典应用场景
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2021/01/02/ZooKeeper%E5%85%A5%E9%97%A8/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">ZooKeeper入门</div>
+      </a>
+    
+  </nav>
+
+  
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2021
+        <i class="ri-heart-fill heart_icon"></i> Hash
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/assets/head.png" alt="Hash的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="java" />
+   
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Redis高级特性 |  
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/assets/favicon.png" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Redis高级特性"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Redis高级特性
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/12/12/Redis%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7/" class="article-date">
+  <time datetime="2020-12-12T13:36:40.000Z" itemprop="datePublished">2020-12-12</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">4.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">19 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>Redis高级特性</p>
+<a id="more"></a>
+
+<h1 id="1-常用数据结构及使用场景"><a href="#1-常用数据结构及使用场景" class="headerlink" title="1 常用数据结构及使用场景"></a>1 常用数据结构及使用场景</h1><h2 id="1-1-数据结构-Hash"><a href="#1-1-数据结构-Hash" class="headerlink" title="1.1 数据结构 - Hash"></a>1.1 数据结构 - Hash</h2><p>Hash 是一个string类型的field和value的映射表</p>
+<p>使用场景：存储部分变更数据，如用户信息、热门商品</p>
+<p>常用命令</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Hget</td>
+<td>获取存储在哈希表中指定字段的值</td>
+</tr>
+<tr>
+<td>Hset</td>
+<td>将哈希表 key 中的字段 field 的值设为 value</td>
+</tr>
+<tr>
+<td>Hgetall</td>
+<td>获取在哈希表中指定 key 的所有字段和值</td>
+</tr>
+</tbody></table>
+<p>代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 类似：在redis里面存储一个hashmap</span></span><br><span class="line"><span class="comment"> * 推荐的方式，无特殊需求是，一般的缓存都用这个。</span></span><br><span class="line"><span class="comment"> * 比如粉丝列表、关注列表、热门商品列表、热搜新闻列表</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">hash</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    HashMap&lt;String, Object&gt; user = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    user.put(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;hash&quot;</span>);</span><br><span class="line">    user.put(<span class="string">&quot;age&quot;</span>, <span class="number">18</span>);</span><br><span class="line">    user.put(<span class="string">&quot;userId&quot;</span>, <span class="number">10001</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;map user 数据：&quot;</span>+user);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//redisTemplate.opsForHash().putAll(&quot;user_10001&quot;, user);</span></span><br><span class="line"></span><br><span class="line">    redisTemplate.opsForHash().put(<span class="string">&quot;user_10001&quot;</span>, <span class="string">&quot;name&quot;</span>, <span class="string">&quot;hash&quot;</span>);</span><br><span class="line">    redisTemplate.opsForHash().put(<span class="string">&quot;user_10001&quot;</span>, <span class="string">&quot;age&quot;</span>, <span class="string">&quot;18&quot;</span>);</span><br><span class="line">    redisTemplate.opsForHash().put(<span class="string">&quot;user_10001&quot;</span>, <span class="string">&quot;userId&quot;</span>, <span class="string">&quot;10001&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;redis操作~~~~~&quot;</span>);</span><br><span class="line">    Map&lt;?, ?&gt; map = redisTemplate.opsForHash().entries(<span class="string">&quot;user_10001&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;redis结果：&quot;</span>+map);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-2-数据结构-List"><a href="#1-2-数据结构-List" class="headerlink" title="1.2 数据结构 - List"></a>1.2 数据结构 - List</h2><p>List 就是链表，相信略有数据结构知识的人都应该能理解其结构。</p>
+<p>使用场景：微博的关注列表，粉丝列表</p>
+<p>常用命令</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Lpush</td>
+<td>将一个或多个值插入到列表头部</td>
+</tr>
+<tr>
+<td>Rpush</td>
+<td>在列表中添加一个或多个值</td>
+</tr>
+<tr>
+<td>Lpop</td>
+<td>移出并获取列表的第一个元素</td>
+</tr>
+<tr>
+<td>Rpop</td>
+<td>移除列表的最后一个元素，返回值为移除的元素</td>
+</tr>
+<tr>
+<td>Lrange</td>
+<td>获取所有(一个或多个)给定 key 的值</td>
+</tr>
+</tbody></table>
+<p>为什么会用链表？</p>
+<p>redis号称性能最强，链表比数据新增、删除、修改会很快，利用list链表实现了Stream。并没有提供获取所有数据的命令，为了更好的为写、删除提供支持，redis作为一个分布式缓存需要快速将数据进行存储，使用数据会遇到扩容的问题，这个是比较消耗性能的</p>
+<p>应用场景：经常查询的信息列表</p>
+<p>代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 列表~ 集合数据存储~ java.util.List，java.util.Stack</span></span><br><span class="line"><span class="comment"> * 生产者消费者（简单MQ）</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">list</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 从右侧，插入数据1 --- 2 --- 3</span></span><br><span class="line">    <span class="comment">// 从左侧插入，数据会怎样排列呢？</span></span><br><span class="line">    redisTemplate.opsForList().rightPush(<span class="string">&quot;queue_1&quot;</span>, <span class="string">&quot;1&quot;</span>);</span><br><span class="line">    redisTemplate.opsForList().rightPush(<span class="string">&quot;queue_1&quot;</span>, <span class="string">&quot;1&quot;</span>);</span><br><span class="line">    <span class="comment">// 在1这个值右边插入数据</span></span><br><span class="line">    redisTemplate.opsForList().rightPush(<span class="string">&quot;queue_1&quot;</span>, <span class="string">&quot;1&quot;</span>, <span class="string">&quot;3&quot;</span>);</span><br><span class="line">    redisTemplate.opsForList().rightPush(<span class="string">&quot;queue_1&quot;</span>, <span class="string">&quot;4&quot;</span>);</span><br><span class="line"></span><br><span class="line">    List&lt;String&gt; list = redisTemplate.opsForList().range(<span class="string">&quot;queue_1&quot;</span>, <span class="number">0</span>, -<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (String item : list) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;列表数据：&quot;</span>+item);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 消费者线程简例</span></span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        String item = (String) redisTemplate.opsForList().leftPop(<span class="string">&quot;queue_1&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (item == <span class="keyword">null</span>) <span class="keyword">break</span>;</span><br><span class="line">        System.out.println(<span class="string">&quot;从左侧消费数据：&quot;</span>+item);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-3-数据结构-Set"><a href="#1-3-数据结构-Set" class="headerlink" title="1.3 数据结构 - Set"></a>1.3 数据结构 - Set</h2><p>Set 就是一个集合，集合的概念就是一堆不重复值的组合。利用Redis提供的Set数</p>
+<p>据结构，可以存储一些集合性的数据。</p>
+<p>使用场景：实现如共同关注、共同喜好、二度好友</p>
+<p>常用命令</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Sadd</td>
+<td>向集合中添加一个或多个成员</td>
+</tr>
+<tr>
+<td>Spop</td>
+<td>移除并返回集合中的一个随机元素</td>
+</tr>
+<tr>
+<td>Smembers</td>
+<td>返回集合中的所有成员</td>
+</tr>
+<tr>
+<td>Sunion</td>
+<td>返回所有给定集合的并集</td>
+</tr>
+</tbody></table>
+<p><strong>使用场景</strong></p>
+<p>微博被点赞+转发的人：并集</p>
+<p>推荐好友：二度好友，交集</p>
+<p>代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 用set实现（交集 并集）</span></span><br><span class="line"><span class="comment"> * 交集示例： 共同关注的好友</span></span><br><span class="line"><span class="comment"> * 并集示例：给同一个帖子，点赞的人+转发的人</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 取出两个人共同关注的好友</span></span><br><span class="line">    <span class="comment">// 每个人维护一个set</span></span><br><span class="line">    redisTemplate.opsForSet().add(<span class="string">&quot;user_hash&quot;</span>, <span class="string">&quot;userC&quot;</span>, <span class="string">&quot;userD&quot;</span>, <span class="string">&quot;userE&quot;</span>);</span><br><span class="line">    redisTemplate.opsForSet().add(<span class="string">&quot;user_peak&quot;</span>, <span class="string">&quot;userC&quot;</span>, <span class="string">&quot;userE&quot;</span>, <span class="string">&quot;userF&quot;</span>);</span><br><span class="line">    <span class="comment">// 取出共同关注</span></span><br><span class="line">    Set&lt;String&gt; sinter = redisTemplate.opsForSet().intersect(<span class="string">&quot;user_hash&quot;</span>, <span class="string">&quot;user_peak&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;共同关注了hash、peak的学员：&quot;</span>+sinter);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 检索给某一个帖子点赞/转发的</span></span><br><span class="line">    redisTemplate.opsForSet().add(<span class="string">&quot;trs_tp_1001&quot;</span>, <span class="string">&quot;userC&quot;</span>, <span class="string">&quot;userD&quot;</span>, <span class="string">&quot;userE&quot;</span>);</span><br><span class="line">    redisTemplate.opsForSet().add(<span class="string">&quot;star_tp_1001&quot;</span>, <span class="string">&quot;userE&quot;</span>, <span class="string">&quot;userF&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 取出共同人群</span></span><br><span class="line">    Set&lt;String&gt; union = redisTemplate.opsForSet().union(<span class="string">&quot;star_tp_1001&quot;</span>, <span class="string">&quot;trs_tp_1001&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;点赞、转发了tp_1001贴子的人：&quot;</span>+union);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-4-数据结构-Sorted-set"><a href="#1-4-数据结构-Sorted-set" class="headerlink" title="1.4 数据结构 - Sorted set"></a>1.4 数据结构 - Sorted set</h2><p>Sorted set的使用场景与set类似，区别是set不是自动有序的，而sorted set可以</p>
+<p>通过用户额外提供一个优先级(score)的参数来为成员排序，并且是插入有序的，即</p>
+<p>自动排序。</p>
+<p>使用场景：排行榜 、按照用户投票和时间排序</p>
+<p>常用命令</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Zadd</td>
+<td>向有序集合添加一个或多个成员，或者更新已存在成员的分数</td>
+</tr>
+<tr>
+<td>Zrange</td>
+<td>通过索引区间返回有序集合中指定区间内的成员</td>
+</tr>
+<tr>
+<td>Zrem</td>
+<td>移除有序集合中的一个或多个成员</td>
+</tr>
+<tr>
+<td>Zcard</td>
+<td>获取有序集合的成员数</td>
+</tr>
+</tbody></table>
+<p>使用场景：游戏积分榜</p>
+<p>代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 游戏排行榜</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">zset</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// lol 得分排行</span></span><br><span class="line">    String ranksKeyName = <span class="string">&quot;lol_core&quot;</span>;</span><br><span class="line">    redisTemplate.opsForZSet().add(ranksKeyName, <span class="string">&quot;redis&quot;</span>, <span class="number">100.0</span>);</span><br><span class="line">    redisTemplate.opsForZSet().add(ranksKeyName, <span class="string">&quot;java&quot;</span>, <span class="number">82.0</span>);</span><br><span class="line">    redisTemplate.opsForZSet().add(ranksKeyName, <span class="string">&quot;hash&quot;</span>, <span class="number">90.0</span>);</span><br><span class="line">    redisTemplate.opsForZSet().add(ranksKeyName, <span class="string">&quot;map&quot;</span>, <span class="number">96.0</span>);</span><br><span class="line">    redisTemplate.opsForZSet().add(ranksKeyName, <span class="string">&quot;ali&quot;</span>, <span class="number">89.0</span>);</span><br><span class="line"></span><br><span class="line">    Set&lt;String&gt; stringSet = redisTemplate.opsForZSet().reverseRange(ranksKeyName, <span class="number">0</span>, <span class="number">2</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;返回前三名:&quot;</span>);</span><br><span class="line">    <span class="keyword">for</span> (String s : stringSet) &#123;</span><br><span class="line">        System.out.println(s);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Long zcount = redisTemplate.opsForZSet().count(ranksKeyName, <span class="number">85</span>, <span class="number">100</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;超过85分的数量：&quot;</span> + zcount);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-5-数据结构-GEO"><a href="#1-5-数据结构-GEO" class="headerlink" title="1.5 数据结构 - GEO"></a>1.5 数据结构 - GEO</h2><p>GEO 3.2版本开始对GEO(地理位置)的支持</p>
+<p>使用场景：LBS应用开发</p>
+<p>常用命令</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GEOADD</td>
+<td>增加地理位置的坐标，可以批量添加地理位置</td>
+</tr>
+<tr>
+<td>GEODIST</td>
+<td>获取两个地理位置的距离</td>
+</tr>
+<tr>
+<td>GEOHASH</td>
+<td>获取某个地理位置的geohash值</td>
+</tr>
+<tr>
+<td>GEOPOS</td>
+<td>获取指定位置的坐标，可以批量获取多个地理位置的坐标</td>
+</tr>
+<tr>
+<td>GEORADIUS</td>
+<td>根据给定地理位置坐标获取指定范围内的地理位置集合（注意：该命令的中心点由输入的经度和纬度决定）</td>
+</tr>
+<tr>
+<td>GEORADIUSBYMEMBER</td>
+<td>根据给定成员的位置获取指定范围内的位置信息集合（注意：该命令的中心点是由给定的位置元素决定）</td>
+</tr>
+</tbody></table>
+<p>使用场景：膜拜单车、附近的人</p>
+<p>代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 上传位置</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Point point, String userId)</span> </span>&#123;</span><br><span class="line">    redisTemplate.opsForGeo().add(<span class="string">&quot;user_geo&quot;</span>, <span class="keyword">new</span> RedisGeoCommands.GeoLocation&lt;&gt;(userId, point));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 附近的人</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> point 用户自己的位置</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> radius 范围，半径</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> GeoResults&lt;RedisGeoCommands.GeoLocation&gt; near(Point point, <span class="keyword">int</span> radius) &#123;</span><br><span class="line">    <span class="comment">// 半径 100米</span></span><br><span class="line">    Distance distance = <span class="keyword">new</span> Distance(radius, RedisGeoCommands.DistanceUnit.METERS);</span><br><span class="line">    Circle circle = <span class="keyword">new</span> Circle(point, distance);</span><br><span class="line">    <span class="comment">// 附近5个人</span></span><br><span class="line">    RedisGeoCommands.GeoRadiusCommandArgs geoRadiusCommandArgs = RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs().includeDistance().limit(<span class="number">5</span>);</span><br><span class="line">    GeoResults&lt;RedisGeoCommands.GeoLocation&gt; user_geo = redisTemplate.opsForGeo().radius(<span class="string">&quot;user_geo&quot;</span>, circle, geoRadiusCommandArgs);</span><br><span class="line">    <span class="keyword">return</span> user_geo;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="2-发布订阅"><a href="#2-发布订阅" class="headerlink" title="2 发布订阅"></a>2 发布订阅</h1><h2 id="2-1-发布订阅"><a href="#2-1-发布订阅" class="headerlink" title="2.1 发布订阅"></a>2.1 发布订阅</h2><p><strong>Pub/Sub</strong></p>
+<p>生产者发布消息到频道</p>
+<p>消费者订阅频道，从频道接收消息</p>
+<p>生产者、消费者彼此相互不了解</p>
+<img src="/2020/12/12/Redis%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7/image-20201212224151946.png" class="" title="image-20201212224151946">
+
+
+
+<p><strong>Pub/Sub命令</strong></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PUBLISH</td>
+<td>将信息 message 发送到指定的频道 channel</td>
+</tr>
+<tr>
+<td>PUBSUB</td>
+<td>检测PUB/SUB子系统的状态，由描述的子命令组成</td>
+</tr>
+<tr>
+<td>SUBSCRIBE</td>
+<td>订阅指定的频道消息</td>
+</tr>
+<tr>
+<td>UNSUBSCRIBE</td>
+<td>退订给定的频道，若没有指定频道，则退订所有频道</td>
+</tr>
+<tr>
+<td>PSUBSCRIBE</td>
+<td>订阅者希望订阅的模式，可以通过?、*、[]三种方式来指定</td>
+</tr>
+<tr>
+<td>PUNSUBSCRIBE</td>
+<td>退订指定模式，若果没有提供模式则退出所有模式</td>
+</tr>
+</tbody></table>
+<p><strong>发布/订阅 Redis事件通知</strong></p>
+<p>​    <strong>发布事件类型</strong></p>
+<p>​    键空间事件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PUBLISH __keyspace@0__:mykey del</span><br></pre></td></tr></table></figure>
+
+<p>​    键事件事件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PUBLISH __keyevent@0__:del mykey        </span><br></pre></td></tr></table></figure>
+
+<p>​    <strong>配置</strong></p>
+<p>​    修改配置redis.conf文件，启用所有事件（有消耗，不建议全开）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">notify-keyspace-events：AKE</span><br></pre></td></tr></table></figure>
+
+<p>​    <strong>监听事件</strong></p>
+<p>​    监听删除事件事件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">subscribe __keyevent@0__:del        </span><br></pre></td></tr></table></figure>
+
+
+
+<p>java代码示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.study.redis.apply.lesson2_othertype.pusub;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.dao.DataAccessException;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.connection.RedisConnection;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.core.RedisCallback;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.core.RedisTemplate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.annotation.PostConstruct;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 接收消息通知，直接用客户端的方式</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Hash</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2020/12/12</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MsgChannelListener</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    RedisTemplate redisTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 用于测试的通道名称 */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> String PUBSUB_CHANNEL_NAME = <span class="string">&quot;msg_channel&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostConstruct</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        redisTemplate.execute(<span class="keyword">new</span> RedisCallback() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Object <span class="title">doInRedis</span><span class="params">(RedisConnection connection)</span> <span class="keyword">throws</span> DataAccessException </span>&#123;</span><br><span class="line">                connection.subscribe((message, pattern) -&gt; &#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;使用redisTemplate收到消息：&quot;</span> + message);</span><br><span class="line">                &#125;, MsgChannelListener.PUBSUB_CHANNEL_NAME.getBytes());</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>spring代码示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.study.redis.apply.lesson2_othertype.pusub;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.connection.Message;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.connection.MessageListener;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.connection.RedisConnectionFactory;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.listener.ChannelTopic;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.listener.RedisMessageListenerContainer;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 接收消息通知</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Hash</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2020/12/12</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MsgChannelListenerBySpring</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 定义监听器</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RedisMessageListenerContainer <span class="title">smsMessageListener</span><span class="params">(RedisConnectionFactory redisConnectionFactory)</span> </span>&#123;</span><br><span class="line">        RedisMessageListenerContainer container = <span class="keyword">new</span> RedisMessageListenerContainer();</span><br><span class="line">        container.setConnectionFactory(redisConnectionFactory);</span><br><span class="line">        SmsSendListener smsSendListener = <span class="keyword">new</span> SmsSendListener();</span><br><span class="line">        container.addMessageListener(smsSendListener, Arrays.asList(<span class="keyword">new</span> ChannelTopic(MsgChannelListener.PUBSUB_CHANNEL_NAME)));</span><br><span class="line">        <span class="keyword">return</span> container;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 定义触发的方法</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">SmsSendListener</span> <span class="keyword">implements</span> <span class="title">MessageListener</span> </span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onMessage</span><span class="params">(Message message, <span class="keyword">byte</span>[] pattern)</span> </span>&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;通道：&quot;</span> + <span class="keyword">new</span> String(pattern));</span><br><span class="line">            System.out.println(<span class="string">&quot;借助spring容器收到消息：&quot;</span> + message);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">  <span class="comment">// 隐藏功能~~黑科技~~当key被删除，或者key过期之后，也会有通知~</span></span><br><span class="line">  <span class="meta">@Test</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testKeyDelEventChannel</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line"><span class="comment">// 监听所有以键 hkkkk 为目标的所有事件</span></span><br><span class="line">      redisTemplate.execute(<span class="keyword">new</span> RedisCallback&lt;Long&gt;() &#123;</span><br><span class="line">          <span class="meta">@Override</span></span><br><span class="line">          <span class="function"><span class="keyword">public</span> Long <span class="title">doInRedis</span><span class="params">(RedisConnection connection)</span> <span class="keyword">throws</span> DataAccessException </span>&#123;</span><br><span class="line">              connection.subscribe((message, pattern) -&gt; &#123;</span><br><span class="line">                  System.out.println(<span class="string">&quot;通过Key删除事件通道，收到消息：&quot;</span> + message);</span><br><span class="line">              &#125;, <span class="string">&quot;__keyspace@0__:hkkkk&quot;</span>.getBytes());</span><br><span class="line">              <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      redisTemplate.opsForValue().set(<span class="string">&quot;hkkkk&quot;</span>, <span class="string">&quot;hash&quot;</span>);</span><br><span class="line">      Thread.sleep(<span class="number">1000L</span>);</span><br><span class="line"></span><br><span class="line">      redisTemplate.delete(<span class="string">&quot;hkkkk&quot;</span>);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="3-Stream"><a href="#3-Stream" class="headerlink" title="3 Stream"></a>3 Stream</h1><h2 id="3-1-数据结构-Stream"><a href="#3-1-数据结构-Stream" class="headerlink" title="3.1 数据结构 - Stream"></a>3.1 数据结构 - Stream</h2><p>Stream 5.0版本开始的新结构“流”</p>
+<p>使用场景：消费者生产者场景(类似MQ)</p>
+<p>常用命令</p>
+<p><strong>Pub/Sub命令</strong></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>XADD</td>
+<td>往指定的流中添加消息</td>
+</tr>
+<tr>
+<td>XLEN</td>
+<td>stream流中的消息数量</td>
+</tr>
+<tr>
+<td>XDEL</td>
+<td>删除流中的消息</td>
+</tr>
+<tr>
+<td>XRANGE</td>
+<td>返回流中满足给定ID范围的消息</td>
+</tr>
+<tr>
+<td>XREAD</td>
+<td>从一个或者多个流中读取消息</td>
+</tr>
+<tr>
+<td>XINFO</td>
+<td>检索关于流和关联的消费者组的不同的信息</td>
+</tr>
+</tbody></table>
+<p>操作示例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Stream类似于 <span class="built_in">hash</span>数据结构 key key1 value1 key2 value2</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 添加一个流数据，名称为：myStream  * 表示id自动生成 </span></span><br><span class="line">127.0.0.1:6379&gt; xadd myStream * key1 value1 key2 value2</span><br><span class="line">&quot;1607829748599-0&quot;</span><br><span class="line">127.0.0.1:6379&gt; xadd myStream * field1 string1 field2 string2</span><br><span class="line">&quot;1607829790758-0&quot;</span><br><span class="line"><span class="meta">#</span><span class="bash"> 返回流数据条数长度</span></span><br><span class="line">127.0.0.1:6379&gt; xlen myStream</span><br><span class="line">(integer) 2</span><br><span class="line"><span class="meta">#</span><span class="bash"> 根据范围查询流数据，- 表示最小id + 表示最大id count 10 表示列出10条数据,可以不加count 10 则列出全部</span></span><br><span class="line">127.0.0.1:6379&gt; xrange myStream - + count 10</span><br><span class="line">1) 1) &quot;1607829748599-0&quot;</span><br><span class="line">   2) 1) &quot;key1&quot;</span><br><span class="line">      2) &quot;value1&quot;</span><br><span class="line">      3) &quot;key2&quot;</span><br><span class="line">      4) &quot;value2&quot;</span><br><span class="line">2) 1) &quot;1607829790758-0&quot;</span><br><span class="line">   2) 1) &quot;field1&quot;</span><br><span class="line">      2) &quot;string1&quot;</span><br><span class="line">      3) &quot;field2&quot;</span><br><span class="line">      4) &quot;string2&quot;</span><br><span class="line"><span class="meta">#</span><span class="bash"> 倒叙查询</span></span><br><span class="line">127.0.0.1:6379&gt; xrevrange myStream + - count 10</span><br><span class="line">1) 1) &quot;1607829790758-0&quot;</span><br><span class="line">   2) 1) &quot;field1&quot;</span><br><span class="line">      2) &quot;string1&quot;</span><br><span class="line">      3) &quot;field2&quot;</span><br><span class="line">      4) &quot;string2&quot;</span><br><span class="line">2) 1) &quot;1607829748599-0&quot;</span><br><span class="line">   2) 1) &quot;key1&quot;</span><br><span class="line">      2) &quot;value1&quot;</span><br><span class="line">      3) &quot;key2&quot;</span><br><span class="line">      4) &quot;value2&quot;</span><br><span class="line"><span class="meta">#</span><span class="bash"> 删除stream中某一条数据</span></span><br><span class="line">127.0.0.1:6379&gt; xdel myStream 1607829748599-0</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; xlen myStream</span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta">#</span><span class="bash"> 以非阻塞形式读取10条数据，0-0表示列出id大于0-0的消息，通常在程序中消费的时候需要消费下一个消息时把上一个消息id作为参数传入得到大于这个id的消息数据</span></span><br><span class="line">127.0.0.1:6379&gt; xread count 10 streams myStream 0-0</span><br><span class="line">1) 1) &quot;myStream&quot;</span><br><span class="line">   2) 1) 1) &quot;1607829790758-0&quot;</span><br><span class="line">         2) 1) &quot;field1&quot;</span><br><span class="line">            2) &quot;string1&quot;</span><br><span class="line">            3) &quot;field2&quot;</span><br><span class="line">            4) &quot;string2&quot;</span><br><span class="line"><span class="meta">#</span><span class="bash"> block 表示以阻塞形式读取数据，0表示超时时间为0毫秒（意味永不超时），$是一个特殊的id，表示mystream已经存储的最大ID作为最后一个ID，仅接收从我们开始监听时间以后的新消息。这在某种程度上相似于Unix命令tail -f。</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 注意：你需要在另一个redis-cli连接发送消息才可以读取到数据</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 127.0.0.1:6379&gt; xadd myStream * hello1 today hello2 world</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="string">&quot;1607830264098-0&quot;</span></span></span><br><span class="line">127.0.0.1:6379&gt; xread count 10 block 0 streams myStream $</span><br><span class="line">1) 1) &quot;myStream&quot;</span><br><span class="line">   2) 1) 1) &quot;1607830264098-0&quot;</span><br><span class="line">         2) 1) &quot;hello1&quot;</span><br><span class="line">            2) &quot;today&quot;</span><br><span class="line">            3) &quot;hello2&quot;</span><br><span class="line">            4) &quot;world&quot;</span><br><span class="line">(30.19s)</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建分组，0-0表示从id最小的开始读取数据</span></span><br><span class="line">127.0.0.1:6379&gt; xgroup create myStream group1 0-0</span><br><span class="line">OK</span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建分组，$表示从id最大的开始读取数据</span></span><br><span class="line">127.0.0.1:6379&gt; xgroup create myStream group2 $</span><br><span class="line">OK</span><br><span class="line"><span class="meta">#</span><span class="bash"> 读取分组1中的数据，cousummer1为消费者自定义名称， count 1 读取1条数据，&gt; 表示从上传创建分组的时的id的位置开始读取数据，即0-0</span></span><br><span class="line">127.0.0.1:6379&gt; xreadgroup group group1 cousummer1 count 1 streams myStream &gt;</span><br><span class="line">1) 1) &quot;myStream&quot;</span><br><span class="line">   2) 1) 1) &quot;1607829790758-0&quot;</span><br><span class="line">         2) 1) &quot;field1&quot;</span><br><span class="line">            2) &quot;string1&quot;</span><br><span class="line">            3) &quot;field2&quot;</span><br><span class="line">            4) &quot;string2&quot;</span><br><span class="line"><span class="meta">#</span><span class="bash"> 阻塞读取数据</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 另一个redis-cli</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 127.0.0.1:6379&gt; xadd myStream * one 1 two 2 three 3</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="string">&quot;1607838773764-0&quot;</span></span></span><br><span class="line">127.0.0.1:6379&gt;  xreadgroup group group2 consummer2 count 1 block 0 streams myStream &gt;</span><br><span class="line">1) 1) &quot;myStream&quot;</span><br><span class="line">   2) 1) 1) &quot;1607838773764-0&quot;</span><br><span class="line">         2) 1) &quot;one&quot;</span><br><span class="line">            2) &quot;1&quot;</span><br><span class="line">            3) &quot;two&quot;</span><br><span class="line">            4) &quot;2&quot;</span><br><span class="line">            5) &quot;three&quot;</span><br><span class="line">            6) &quot;3&quot;</span><br><span class="line">(24.77s)</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查询流中分组的信息，consumers为1表示这个组有一个消费者，pending为消费者读取到了消息还没有ACK的消息有1条，last-delivered-id为最后消费的消息id，可以理解为一个游标</span></span><br><span class="line">127.0.0.1:6379&gt; xinfo groups myStream</span><br><span class="line">1) 1) &quot;name&quot;</span><br><span class="line">   2) &quot;group1&quot;</span><br><span class="line">   3) &quot;consumers&quot;</span><br><span class="line">   4) (integer) 1</span><br><span class="line">   5) &quot;pending&quot;</span><br><span class="line">   6) (integer) 1</span><br><span class="line">   7) &quot;last-delivered-id&quot;</span><br><span class="line">   8) &quot;1607829790758-0&quot;</span><br><span class="line">2) 1) &quot;name&quot;</span><br><span class="line">   2) &quot;group2&quot;</span><br><span class="line">   3) &quot;consumers&quot;</span><br><span class="line">   4) (integer) 1</span><br><span class="line">   5) &quot;pending&quot;</span><br><span class="line">   6) (integer) 1</span><br><span class="line">   7) &quot;last-delivered-id&quot;</span><br><span class="line">   8) &quot;1607838773764-0&quot;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 获取group1这个组中的消费者的信息</span></span><br><span class="line">127.0.0.1:6379&gt; xinfo consumers myStream group1</span><br><span class="line">1) 1) &quot;name&quot;</span><br><span class="line">   2) &quot;cousummer1&quot;</span><br><span class="line">   3) &quot;pending&quot;</span><br><span class="line">   4) (integer) 1</span><br><span class="line">   5) &quot;idle&quot;</span><br><span class="line">   6) (integer) 592419</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 消息确认，确认指定id的消息处理完成</span></span><br><span class="line">127.0.0.1:6379&gt; xack myStream group1 1607829790758-0</span><br><span class="line">(integer) 1</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看消费者信息发现pending数为0了</span></span><br><span class="line">127.0.0.1:6379&gt; xinfo consumers myStream group1</span><br><span class="line">1) 1) &quot;name&quot;</span><br><span class="line">   2) &quot;cousummer1&quot;</span><br><span class="line">   3) &quot;pending&quot;</span><br><span class="line">   4) (integer) 0</span><br><span class="line">   5) &quot;idle&quot;</span><br><span class="line">   6) (integer) 1027630</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查询group2组中状态为pending的消息</span></span><br><span class="line">127.0.0.1:6379&gt; xpending myStream group2</span><br><span class="line">1) (integer) 1</span><br><span class="line">2) &quot;1607838773764-0&quot;</span><br><span class="line">3) &quot;1607838773764-0&quot;</span><br><span class="line">4) 1) 1) &quot;consummer2&quot;</span><br><span class="line">      2) &quot;1&quot;</span><br><span class="line"><span class="meta">#</span><span class="bash"> 对状态为pending的消息进行认领，10000表示超过多长时间没有认领则重新进行认领</span></span><br><span class="line">127.0.0.1:6379&gt; xclaim myStream group2 consummer2 10000 1607838773764-0</span><br><span class="line">1) 1) &quot;1607838773764-0&quot;</span><br><span class="line">   2) 1) &quot;one&quot;</span><br><span class="line">      2) &quot;1&quot;</span><br><span class="line">      3) &quot;two&quot;</span><br><span class="line">      4) &quot;2&quot;</span><br><span class="line">      5) &quot;three&quot;</span><br><span class="line">      6) &quot;3&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>代码示例:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.study.redis.apply.lesson2_othertype;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.study.redis.apply.RedisApplyApplicationTests;</span><br><span class="line"><span class="keyword">import</span> io.lettuce.core.Consumer;</span><br><span class="line"><span class="keyword">import</span> io.lettuce.core.RedisClient;</span><br><span class="line"><span class="keyword">import</span> io.lettuce.core.StreamMessage;</span><br><span class="line"><span class="keyword">import</span> io.lettuce.core.XReadArgs;</span><br><span class="line"><span class="keyword">import</span> io.lettuce.core.api.StatefulRedisConnection;</span><br><span class="line"><span class="keyword">import</span> io.lettuce.core.api.sync.RedisCommands;</span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Hash</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2020/12/13</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StreamTests</span> <span class="keyword">extends</span> <span class="title">RedisApplyApplicationTests</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// stream 流，5.0新特性，redisTemplate、jedis还没有支持,Redisson和Lettuce支持了</span></span><br><span class="line">    <span class="comment">// 我们使用springboot中默认的redis客户端Lettuce</span></span><br><span class="line">    <span class="comment">// 添加： XADD mystream * sensor-id 1234 temperature 19.8</span></span><br><span class="line">    <span class="comment">// 遍历： XRANGE mystream - + COUNT 2</span></span><br><span class="line">    <span class="comment">// 消费：XREAD COUNT 2 STREAMS mystream 0</span></span><br><span class="line">    <span class="comment">// 阻塞式消费： XREAD BLOCK 0 STREAMS mystream $</span></span><br><span class="line">    <span class="comment">// 创建消费者组：   XGROUP CREATE mystream mygroup $</span></span><br><span class="line">    <span class="comment">// 分组消费： XREADGROUP GROUP mygroup Alice COUNT 1 STREAMS mystream &gt;</span></span><br><span class="line">    <span class="comment">// 消费确认： XACK mystream mygroup 1526569495631-0</span></span><br><span class="line">    <span class="comment">// 查看未确认的消息： XPENDING mystream mygroup - + 10</span></span><br><span class="line">    <span class="comment">// 重新认领消费：XCLAIM mystream mygroup Alice 3600000 1526569498055-0</span></span><br><span class="line">    <span class="comment">// XINFO 查看stream信息，监控</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">producer</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        RedisClient redisClient = RedisClient.create(<span class="string">&quot;redis://192.168.254.160:6379&quot;</span>);</span><br><span class="line">        StatefulRedisConnection&lt;String, String&gt; connect = redisClient.connect();</span><br><span class="line">        RedisCommands&lt;String, String&gt; redisSyncCommands = connect.sync();</span><br><span class="line">        redisSyncCommands.xadd(<span class="string">&quot;stream_sms_send&quot;</span>, <span class="string">&quot;smsid&quot;</span>, <span class="string">&quot;10001&quot;</span>, <span class="string">&quot;content&quot;</span>, <span class="string">&quot;收到短信请回复&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 普通消费 -- 最后一条消息</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">consumer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        RedisClient redisClient = RedisClient.create(<span class="string">&quot;redis://192.168.254.160:6379&quot;</span>);</span><br><span class="line">        StatefulRedisConnection&lt;String, String&gt; connect = redisClient.connect();</span><br><span class="line">        RedisCommands&lt;String, String&gt; redisSyncCommands = connect.sync();</span><br><span class="line">        List&lt;StreamMessage&lt;String, String&gt;&gt; stream_sms_send = redisSyncCommands.xread(XReadArgs.StreamOffset.from(<span class="string">&quot;stream_sms_send&quot;</span>, <span class="string">&quot;0&quot;</span>));</span><br><span class="line">        <span class="keyword">for</span> (StreamMessage&lt;String, String&gt; stringStringStreamMessage : stream_sms_send) &#123;</span><br><span class="line">            System.out.println(stringStringStreamMessage);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">createGroup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        RedisClient redisClient = RedisClient.create(<span class="string">&quot;redis://192.168.254.160:6379&quot;</span>);</span><br><span class="line">        StatefulRedisConnection&lt;String, String&gt; connect = redisClient.connect();</span><br><span class="line">        RedisCommands&lt;String, String&gt; redisSyncCommands = connect.sync();</span><br><span class="line">        <span class="comment">// 创建分组</span></span><br><span class="line">        redisSyncCommands.xgroupCreate(XReadArgs.StreamOffset.from(<span class="string">&quot;stream_sms_send&quot;</span>, <span class="string">&quot;0&quot;</span>), <span class="string">&quot;group_1&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">consumerGroup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        RedisClient redisClient = RedisClient.create(<span class="string">&quot;redis://192.168.254.160:6379&quot;</span>);</span><br><span class="line">        StatefulRedisConnection&lt;String, String&gt; connect = redisClient.connect();</span><br><span class="line">        RedisCommands&lt;String, String&gt; redisSyncCommands = connect.sync();</span><br><span class="line">        <span class="comment">// 按组消费</span></span><br><span class="line">        List&lt;StreamMessage&lt;String, String&gt;&gt; xreadgroup = redisSyncCommands.xreadgroup(Consumer.from(<span class="string">&quot;group_1&quot;</span>, <span class="string">&quot;consumer_1&quot;</span>), XReadArgs.StreamOffset.lastConsumed(<span class="string">&quot;stream_sms_send&quot;</span>));</span><br><span class="line">        <span class="keyword">for</span> (StreamMessage&lt;String, String&gt; message : xreadgroup) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;分组得到消息，并且ack消息：&quot;</span>+message);</span><br><span class="line">            <span class="comment">// 告知redis，消息已经完成了消费</span></span><br><span class="line">            redisSyncCommands.xack(<span class="string">&quot;stream_sms_send&quot;</span>, <span class="string">&quot;group_1&quot;</span>, message.getId());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3-2-Stream工作示意图"><a href="#3-2-Stream工作示意图" class="headerlink" title="3.2 Stream工作示意图"></a>3.2 Stream工作示意图</h2><img src="/2020/12/12/Redis%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7/image-20201213003842658.png" class="" title="image-20201213003842658">
+
+
+
+<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4 总结"></a>4 总结</h1><p><strong>Redis除了做缓存功能，还有一些实用的功能</strong></p>
+<ul>
+<li><p>Redis中的hashmap hash</p>
+</li>
+<li><p>粉丝列表 list</p>
+</li>
+<li><p>共同好友 set</p>
+</li>
+<li><p>积分榜 sortSet</p>
+</li>
+<li><p>附近的ta geo</p>
+</li>
+<li><p>发布订阅 Pub/sub</p>
+</li>
+<li><p>类似Kafa的Stream</p>
+</li>
+</ul>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/12/12/Redis%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/12/13/Redis%E9%9B%86%E7%BE%A4/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Redis集群
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/12/12/Redis%E5%85%A5%E9%97%A8/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Redis入门</div>
+      </a>
+    
+  </nav>
+
+  
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2021
+        <i class="ri-heart-fill heart_icon"></i> Hash
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/assets/head.png" alt="Hash的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>

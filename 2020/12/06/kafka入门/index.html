@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="java" />
+   
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    kafka入门 |  
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/assets/favicon.png" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-kafka入门"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  kafka入门
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/12/06/kafka%E5%85%A5%E9%97%A8/" class="article-date">
+  <time datetime="2020-12-06T09:26:24.000Z" itemprop="datePublished">2020-12-06</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">2.4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">12 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>ActiveMQ是一款用Java开发的、开源的、支持多种协议的、非常流行的消息服务（消息中间件）。因为它的支持多协议，支持工业标准的协议，所以我们可以跨平台、跨语言来使用它。</p>
+<a id="more"></a>
+
+<h1 id="1-Kafka入门"><a href="#1-Kafka入门" class="headerlink" title="1 Kafka入门"></a>1 Kafka入门</h1><p>目标：掌握Kafka是什么，主要用途是什么，了解Kafka的特性</p>
+<h2 id="1-1-简介"><a href="#1-1-简介" class="headerlink" title="1.1 简介"></a>1.1 简介</h2><img src="/2020/12/06/kafka%E5%85%A5%E9%97%A8/image-20201206172928913.png" class="" title="image-20201206172928913">
+
+<img src="/2020/12/06/kafka%E5%85%A5%E9%97%A8/image-20201206174041361.png" class="" title="image-20201206174041361">
+
+<h3 id="1-1-1-kafka是什么"><a href="#1-1-1-kafka是什么" class="headerlink" title="1.1.1 kafka是什么"></a>1.1.1 kafka是什么</h3><ul>
+<li>一个分布式的流式数据处理平台。</li>
+<li>可以用它来发布和订阅流式的记录。这一方面与消息队列或者企业消息系统类似</li>
+<li>它将流式的数据安全地存储在分布式、有副本备份、容错的集群上</li>
+<li>可以用来做流式计算</li>
+</ul>
+<p>它可以用于两大类别的应用: </p>
+<ol>
+<li><p>构造实时流数据管道，它可以在系统或应用之间可靠地获取数据。 (相当于message queue)</p>
+</li>
+<li><p>构建实时流式应用程序，对这些流数据进行转换或者影响。 (就是流处理，通过kafka stream<br>topic和topic之间内部进行变化)</p>
+</li>
+</ol>
+<h3 id="1-1-2-kafka的体系结构"><a href="#1-1-2-kafka的体系结构" class="headerlink" title="1.1.2 kafka的体系结构"></a>1.1.2 kafka的体系结构</h3><p>5大组件</p>
+<img src="/2020/12/06/kafka%E5%85%A5%E9%97%A8/kafka-apis.png" class="" title="img">
+
+
+
+<h1 id="1-2-安装"><a href="#1-2-安装" class="headerlink" title="1.2 安装"></a>1.2 安装</h1><h2 id="1-2-1-环境要求"><a href="#1-2-1-环境要求" class="headerlink" title="1.2.1 环境要求"></a>1.2.1 环境要求</h2><ul>
+<li>生产环境linux 学习可以windows</li>
+<li>java1.8 及以上环境要求</li>
+</ul>
+<h2 id="1-2-2-安装"><a href="#1-2-2-安装" class="headerlink" title="1.2.2 安装"></a>1.2.2 安装</h2><ol>
+<li><p>下载安装包：<a target="_blank" rel="noopener" href="https://www.apache.org/dyn/closer.cgi?path=/kafka/2.3.0/kafka_2.12-2.3.0.tgz">https://www.apache.org/dyn/closer.cgi?path=/kafka/2.3.0/kafka_2.12-2.3.0.tgz</a><br>windows 和 linux都是同一个安装包，window命令在 bin/windows/ 下。</p>
+</li>
+<li><p>安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir /usr/kafka</span><br><span class="line">tar -xzf kafka_2.12-2.3.0.tgz -C /usr/kafka/</span><br><span class="line">ln -s /usr/kafka/kafka_2.12-2.3.0 /usr/kafka/latest</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>了解目录结构</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost latest]# ll /usr/kafka/latest/</span><br><span class="line">总用量 52</span><br><span class="line">drwxr-xr-x. 3 root root  4096 6月  20 2019 bin</span><br><span class="line">drwxr-xr-x. 2 root root  4096 6月  20 2019 config</span><br><span class="line">drwxr-xr-x. 2 root root  4096 12月  6 17:56 libs</span><br><span class="line">-rw-r--r--. 1 root root 32216 6月  20 2019 LICENSE</span><br><span class="line">-rw-r--r--. 1 root root   337 6月  20 2019 NOTICE</span><br><span class="line">drwxr-xr-x. 2 root root    44 6月  20 2019 site-docs</span><br></pre></td></tr></table></figure>
+
+<p>了解 bin 、confifig 、libs 下都有些什么。</p>
+</li>
+</ol>
+<h4 id="1-2-2-1-配置文件说明"><a href="#1-2-2-1-配置文件说明" class="headerlink" title="1.2.2.1 配置文件说明"></a>1.2.2.1 配置文件说明</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Licensed to the Apache Software Foundation (ASF) under one or more</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> contributor license agreements.  See the NOTICE file distributed with</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> this work <span class="keyword">for</span> additional information regarding copyright ownership.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> The ASF licenses this file to You under the Apache License, Version 2.0</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> (the <span class="string">&quot;License&quot;</span>); you may not use this file except <span class="keyword">in</span> compliance with</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> the License.  You may obtain a copy of the License at</span></span><br><span class="line"><span class="meta">#</span></span><br><span class="line"><span class="meta">#</span><span class="bash">    http://www.apache.org/licenses/LICENSE-2.0</span></span><br><span class="line"><span class="meta">#</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Unless required by applicable law or agreed to <span class="keyword">in</span> writing, software</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> distributed under the License is distributed on an <span class="string">&quot;AS IS&quot;</span> BASIS,</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> See the License <span class="keyword">for</span> the specific language governing permissions and</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> limitations under the License.</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> see kafka.server.KafkaConfig <span class="keyword">for</span> additional details and defaults</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">############################ Server Basics #############################</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The id of the broker. This must be <span class="built_in">set</span> to a unique <span class="built_in">integer</span> <span class="keyword">for</span> each broker.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 节点的唯一编号（整数）</span></span><br><span class="line">broker.id=0</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">############################ Socket Server Settings #############################</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The address the socket server listens on. It will get the value returned from </span></span><br><span class="line"><span class="meta">#</span><span class="bash"> java.net.InetAddress.getCanonicalHostName() <span class="keyword">if</span> not configured.</span></span><br><span class="line"><span class="meta">#</span><span class="bash">   FORMAT:</span></span><br><span class="line"><span class="meta">#</span><span class="bash">     listeners = listener_name://host_name:port</span></span><br><span class="line"><span class="meta">#</span><span class="bash">   EXAMPLE:</span></span><br><span class="line"><span class="meta">#</span><span class="bash">     listeners = PLAINTEXT://your.host.name:9092</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 服务端口，默认是9092</span></span><br><span class="line"><span class="meta">#</span><span class="bash">listeners=PLAINTEXT://:9092</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Hostname and port the broker will advertise to producers and consumers. If not <span class="built_in">set</span>, </span></span><br><span class="line"><span class="meta">#</span><span class="bash"> it uses the value <span class="keyword">for</span> <span class="string">&quot;listeners&quot;</span> <span class="keyword">if</span> configured.  Otherwise, it will use the value</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> returned from java.net.InetAddress.getCanonicalHostName().</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 发布给producers and consumers用的连接地址</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 如果没有配置这个，它会使用listener的配置值</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 如果listeners也没指定，则使用的是主机名。主机名的情况下可能会外界访问不通。</span></span><br><span class="line"><span class="meta">#</span><span class="bash">advertised.listeners=PLAINTEXT://your.host.name:9092</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Maps listener names to security protocols, the default is <span class="keyword">for</span> them to be the same. See the config documentation <span class="keyword">for</span> more details</span></span><br><span class="line"><span class="meta">#</span><span class="bash">listener.security.protocol.map=PLAINTEXT:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_SSL:SASL_SSL</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The number of threads that the server uses <span class="keyword">for</span> receiving requests from the network and sending responses to the network</span></span><br><span class="line">num.network.threads=3</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The number of threads that the server uses <span class="keyword">for</span> processing requests, <span class="built_in">which</span> may include disk I/O</span></span><br><span class="line">num.io.threads=8</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The send buffer (SO_SNDBUF) used by the socket server</span></span><br><span class="line">socket.send.buffer.bytes=102400</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The receive buffer (SO_RCVBUF) used by the socket server</span></span><br><span class="line">socket.receive.buffer.bytes=102400</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The maximum size of a request that the socket server will accept (protection against OOM)</span></span><br><span class="line">socket.request.max.bytes=104857600</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">############################ Log Basics #############################</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> A comma separated list of directories under <span class="built_in">which</span> to store <span class="built_in">log</span> files</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 数据存储目录，一定要改为你的存储目录，逗号间隔的多个目录</span></span><br><span class="line">log.dirs=/tmp/kafka-logs</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The default number of <span class="built_in">log</span> partitions per topic. More partitions allow greater</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> parallelism <span class="keyword">for</span> consumption, but this will also result <span class="keyword">in</span> more files across</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> the brokers.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 默认的主题分片数量，当你创建主题没有指定分片数使用这个值</span></span><br><span class="line">num.partitions=1</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The number of threads per data directory to be used <span class="keyword">for</span> <span class="built_in">log</span> recovery at startup and flushing at shutdown.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> This value is recommended to be increased <span class="keyword">for</span> installations with data <span class="built_in">dirs</span> located <span class="keyword">in</span> RAID array.</span></span><br><span class="line">num.recovery.threads.per.data.dir=1</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">############################ Internal Topic Settings  #############################</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> The replication factor <span class="keyword">for</span> the group metadata internal topics <span class="string">&quot;__consumer_offsets&quot;</span> and <span class="string">&quot;__transaction_state&quot;</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> For anything other than development testing, a value greater than 1 is recommended <span class="keyword">for</span> to ensure availability such as 3.</span></span><br><span class="line">offsets.topic.replication.factor=1</span><br><span class="line">transaction.state.log.replication.factor=1</span><br><span class="line">transaction.state.log.min.isr=1</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">############################ Log Flush Policy #############################</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Messages are immediately written to the filesystem but by default we only fsync() to sync</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> the OS cache lazily. The following configurations control the flush of data to disk.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> There are a few important trade-offs here:</span></span><br><span class="line"><span class="meta">#</span><span class="bash">    1. Durability: Unflushed data may be lost <span class="keyword">if</span> you are not using replication.</span></span><br><span class="line"><span class="meta">#</span><span class="bash">    2. Latency: Very large flush intervals may lead to latency spikes when the flush does occur as there will be a lot of data to flush.</span></span><br><span class="line"><span class="meta">#</span><span class="bash">    3. Throughput: The flush is generally the most expensive operation, and a small flush interval may lead to excessive seeks.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> The settings below allow one to configure the flush policy to flush data after a period of time or</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> every N messages (or both). This can be <span class="keyword">done</span> globally and overridden on a per-topic basis.</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The number of messages to accept before forcing a flush of data to disk</span></span><br><span class="line"><span class="meta">#</span><span class="bash">log.flush.interval.messages=10000</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The maximum amount of time a message can sit <span class="keyword">in</span> a <span class="built_in">log</span> before we force a flush</span></span><br><span class="line"><span class="meta">#</span><span class="bash">log.flush.interval.ms=1000</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">############################ Log Retention Policy #############################</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The following configurations control the disposal of <span class="built_in">log</span> segments. The policy can</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> be <span class="built_in">set</span> to delete segments after a period of time, or after a given size has accumulated.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> A segment will be deleted whenever *either* of these criteria are met. Deletion always happens</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> from the end of the <span class="built_in">log</span>.</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The minimum age of a <span class="built_in">log</span> file to be eligible <span class="keyword">for</span> deletion due to age</span></span><br><span class="line">log.retention.hours=168</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> A size-based retention policy <span class="keyword">for</span> logs. Segments are pruned from the <span class="built_in">log</span> unless the remaining</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> segments drop below log.retention.bytes. Functions independently of log.retention.hours.</span></span><br><span class="line"><span class="meta">#</span><span class="bash">log.retention.bytes=1073741824</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The maximum size of a <span class="built_in">log</span> segment file. When this size is reached a new <span class="built_in">log</span> segment will be created.</span></span><br><span class="line">log.segment.bytes=1073741824</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The interval at <span class="built_in">which</span> <span class="built_in">log</span> segments are checked to see <span class="keyword">if</span> they can be deleted according</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> to the retention policies</span></span><br><span class="line">log.retention.check.interval.ms=300000</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">############################ Zookeeper #############################</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Zookeeper connection string (see zookeeper docs <span class="keyword">for</span> details).</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> This is a comma separated host:port pairs, each corresponding to a zk</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> server. e.g. <span class="string">&quot;127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002&quot;</span>.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> You can also append an optional chroot string to the urls to specify the</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> root directory <span class="keyword">for</span> all kafka znodes.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 元数据存放的zookeeper的连接地址</span></span><br><span class="line">zookeeper.connect=localhost:2181</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Timeout <span class="keyword">in</span> ms <span class="keyword">for</span> connecting to zookeeper</span></span><br><span class="line">zookeeper.connection.timeout.ms=6000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">############################ Group Coordinator Settings #############################</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> The following configuration specifies the time, <span class="keyword">in</span> milliseconds, that the GroupCoordinator will delay the initial consumer rebalance.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> The rebalance will be further delayed by the value of group.initial.rebalance.delay.ms as new members join the group, up to a maximum of max.poll.interval.ms.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> The default value <span class="keyword">for</span> this is 3 seconds.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> We override this to 0 here as it makes <span class="keyword">for</span> a better out-of-the-box experience <span class="keyword">for</span> development and testing.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> However, <span class="keyword">in</span> production environments the default value of 3 seconds is more suitable as this will <span class="built_in">help</span> to avoid unnecessary, and potentially expensive, rebalances during application startup.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 消费组的重平衡延时（单位：毫秒），【注意】生产环境请恢复为默认值3秒，或根据实际需要增大</span></span><br><span class="line">group.initial.rebalance.delay.ms=0</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-2-3-启动"><a href="#1-2-3-启动" class="headerlink" title="1.2.3 启动"></a>1.2.3 启动</h2><ol>
+<li><p>Kafka是用zookeeper来存储元数据，生产环境请一定要部署一个独立的zookeeper集群（至少3个节点）。</p>
+<pre><code>    学习用，用Kafka里带的zookeeper。
+       首先要启动zookeeper 。</code></pre>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# cd /usr/kafka/latest/ </span><br><span class="line">[root@localhost latest]# bin/zookeeper-server-start.sh config/zookeeper.properties &amp;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动Kafka</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost latest]# bin/kafka-server-start.sh config/server.properties &amp;</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ol>
+<h2 id="1-2-4-集群搭建"><a href="#1-2-4-集群搭建" class="headerlink" title="1.2.4 集群搭建"></a>1.2.4 集群搭建</h2><p>【生产集群】在其他机器上同样安装kafka，配置它们连接到同一个zookeeper集群、它们的唯一id，数</p>
+<p>据目录，启动Broker实例即加入集群。</p>
+<p>【学习用集群】在同一台机器上启动多个broker实例，按如下步骤操作来搭建一个3节点的集群：</p>
+<p><strong>学习用集群搭建</strong></p>
+<ol>
+<li><p>拷贝配置文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost latest]# cp config/server.properties config/server-1.properties </span><br><span class="line">[root@localhost latest]# cp config/server.properties config/server-2.properties</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改配置文件：</p>
+<p>confifig/server-1.properties:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">broker.id=1 </span><br><span class="line">listeners=PLAINTEXT://:9093 </span><br><span class="line">log.dirs=/var/kafka-logs-1</span><br></pre></td></tr></table></figure>
+
+<p>confifig/server-2.properties:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">broker.id=2 </span><br><span class="line">listeners=PLAINTEXT://:9094 </span><br><span class="line">log.dirs=/var/kafka-logs-2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动这两个broker实例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost latest]# bin&#x2F;kafka-server-start.sh config&#x2F;server-1.properties &amp; </span><br><span class="line">[root@localhost latest]# bin&#x2F;kafka-server-start.sh config&#x2F;server-2.properties &amp;</span><br></pre></td></tr></table></figure>
+
+<p><strong>【启动失败说明】</strong> 如果启动第二个或第三个broker时提示内存不够用，可以做如下调整：</p>
+<p>1、调大你的虚拟机的内存（1G 或更多）</p>
+<p>2、调小Kafka的堆大小，默认是1G，生产用时可以调大。这里学习用可以调为256M（不能太小</p>
+<p>了，启动时会heap OOM)</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost latest]# vi bin/kafka-server-start.sh</span><br></pre></td></tr></table></figure>
+
+<p>export KAFKA_HEAP_OPTS=”-Xmx256M -Xms256M” 最大最小设为同一值（减少内存的申请和</p>
+<p>回收）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost latest]# bin/kafka-topics.sh --create --bootstrap-server 192.168.254.159:9092 --replication-factor 3 --partitions 1 --topic my-13-topic </span><br><span class="line">[root@localhost latest]# </span><br><span class="line">[root@localhost latest]# bin/kafka-topics.sh --describe --bootstrap-server 192.168.254.159:9092 --topic my-13-topic </span><br><span class="line">Topic:my-13-topic    PartitionCount:1    ReplicationFactor:1    Configs:segment.bytes=1073741824</span><br><span class="line">    Topic: my-13-topic    Partition: 0    Leader: 0    Replicas: 0    Isr: 0</span><br></pre></td></tr></table></figure>
+
+<p>–replication-factor 3 备份因子 副本数 3</p>
+<p>–partitions 1 分片数 这个主题有几个分片</p>
+<p>创建了一个有一个分片，每个分片有3个副本的主题 my-13-topic 。</p>
+<p>分片是对主题Topic 的数据的分布式存储，它是对数据的物理分割 。 但它本身是一个逻辑概念。分片的存储实体是副本 3个副本，就是这个分片的数据会存3份。</p>
+<p>Topic: my-13-topic Partition: 0 Leader: 0 Replicas: 0,2,1 Isr: 0,2,1</p>
+<p>Partition: 0 分片号</p>
+<p>Leader: 0 leader 副本在 0号Broker上</p>
+<p>Replicas: 0,2,1 三个副本位于 0 2 1 号broker上</p>
+<p>Isr: 0,2,1 in sync 处于同步状态的broker</p>
+<p>分片和broker的关系</p>
+<p>broker: 一般是一台计算机上一个Broker</p>
+<p>分片： 分片的一个副本存放在一个broker上。</p>
+</li>
+</ol>
+<p>1.02.56</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/12/06/kafka%E5%85%A5%E9%97%A8/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/12/12/Redis%E5%85%A5%E9%97%A8/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Redis入门
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/11/29/RabbitMQ%E5%8D%95%E6%9C%BA%E5%88%B0%E9%9B%86%E7%BE%A4%E5%AE%8C%E6%95%B4%E6%90%AD%E5%BB%BA/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">RabbitMQ单机到集群完整搭建</div>
+      </a>
+    
+  </nav>
+
+  
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2021
+        <i class="ri-heart-fill heart_icon"></i> Hash
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/assets/head.png" alt="Hash的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>

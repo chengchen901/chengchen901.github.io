@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="java" />
+   
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    ZooKeeper经典应用场景 |  
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/assets/favicon.png" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-ZooKeeper经典应用场景"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  ZooKeeper经典应用场景
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="article-date">
+  <time datetime="2021-01-03T08:23:39.000Z" itemprop="datePublished">2021-01-03</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">1.1k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">4 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>ZooKeeper经典应用场景</p>
+<a id="more"></a>
+
+<h1 id="1-典型应用场景"><a href="#1-典型应用场景" class="headerlink" title="1 典型应用场景"></a>1 典型应用场景</h1><ol>
+<li>数据发布订阅（配置中心）</li>
+<li>命名服务</li>
+<li>Master选举</li>
+<li>集群管理</li>
+<li>分布式队列</li>
+<li>分布式锁</li>
+</ol>
+<h1 id="2-ZK分布式队列"><a href="#2-ZK分布式队列" class="headerlink" title="2 ZK分布式队列"></a>2 ZK分布式队列</h1><h2 id="2-1-解耦"><a href="#2-1-解耦" class="headerlink" title="2.1 解耦"></a>2.1 解耦</h2><img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103163510947.png" class="" title="image-20210103163510947">
+
+<h2 id="2-2-异步"><a href="#2-2-异步" class="headerlink" title="2.2 异步"></a>2.2 异步</h2><img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103163531798.png" class="" title="image-20210103163531798">
+
+<h2 id="2-3-削峰填谷"><a href="#2-3-削峰填谷" class="headerlink" title="2.3 削峰填谷"></a>2.3 削峰填谷</h2><img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103163559415.png" class="" title="image-20210103163559415">
+
+<h2 id="2-4-队列的特点"><a href="#2-4-队列的特点" class="headerlink" title="2.4 队列的特点"></a>2.4 队列的特点</h2><p><strong>先进先出</strong></p>
+<img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103163628459.png" class="" title="image-20210103163628459">
+
+<p>队列空，消费者没有元素可以进行消费</p>
+<p>队列满了，生产者没有空间可存放元素</p>
+<h2 id="2-5-ZooKeeper实现分布式队列逻辑"><a href="#2-5-ZooKeeper实现分布式队列逻辑" class="headerlink" title="2.5 ZooKeeper实现分布式队列逻辑"></a>2.5 ZooKeeper实现分布式队列逻辑</h2><p><strong>顺序节点</strong></p>
+<img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103163804220.png" class="" title="image-20210103163804220">
+
+<h3 id="2-5-1-入队逻辑"><a href="#2-5-1-入队逻辑" class="headerlink" title="2.5.1 入队逻辑"></a>2.5.1 入队逻辑</h3><img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103163849142.png" class="" title="image-20210103163849142">
+
+<h3 id="2-5-2-出队逻辑"><a href="#2-5-2-出队逻辑" class="headerlink" title="2.5.2 出队逻辑"></a>2.5.2 出队逻辑</h3><img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103163934328.png" class="" title="image-20210103163934328">
+
+<h3 id="2-5-3-JDK阻塞队列操作"><a href="#2-5-3-JDK阻塞队列操作" class="headerlink" title="2.5.3 JDK阻塞队列操作"></a>2.5.3 JDK阻塞队列操作</h3><p><strong>阻塞队列BlockingQueue</strong></p>
+<ul>
+<li>阻塞队列，线程安全的</li>
+</ul>
+<p>在队列为空时的获取阻塞，在队列满时放入阻塞。</p>
+<p>BlockingQueue方法以四种形式出现，对于不能立即满足但可能在将来某一时刻可以满足的操作，这四种形式的处理方式不同:</p>
+<p>第一种是抛出一个异常</p>
+<p>第二种是返回一个特殊值（null或false，具体取决于操作）</p>
+<p>第三种是在操作可以成功前，无限期地阻塞当前线程</p>
+<p>第四种是在放弃前只在给定的最大事件限制内阻塞</p>
+<p>插入移除方法，四种形式总结二</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>抛出异常</th>
+<th>特殊值</th>
+<th>阻塞</th>
+<th>超时</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>插入</td>
+<td>add(e)</td>
+<td>offer(e)</td>
+<td>put(e)</td>
+<td>offer(e,time,unit)</td>
+</tr>
+<tr>
+<td>移除</td>
+<td>remove()</td>
+<td>poll()</td>
+<td>take()</td>
+<td>poll(time,unit)</td>
+</tr>
+<tr>
+<td>检查</td>
+<td>element()</td>
+<td>peek()</td>
+<td>不可用</td>
+<td>不可用</td>
+</tr>
+</tbody></table>
+<h2 id="2-6-队列代码实现"><a href="#2-6-队列代码实现" class="headerlink" title="2.6 队列代码实现"></a>2.6 队列代码实现</h2><p>github地址：<a target="_blank" rel="noopener" href="https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/ZkDistributeQueue.java">https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/ZkDistributeQueue.java</a></p>
+<h2 id="2-7-队列整体逻辑"><a href="#2-7-队列整体逻辑" class="headerlink" title="2.7 队列整体逻辑"></a>2.7 队列整体逻辑<img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103164717123.png" class="" title="image-20210103164717123"></h2><h1 id="3-ZK配置中心"><a href="#3-ZK配置中心" class="headerlink" title="3 ZK配置中心"></a>3 ZK配置中心</h1><h2 id="3-1-ZooKeeper实现配置中心"><a href="#3-1-ZooKeeper实现配置中心" class="headerlink" title="3.1 ZooKeeper实现配置中心"></a>3.1 ZooKeeper实现配置中心</h2><p>何为配置中心？</p>
+<img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103171144424.png" class="" title="image-20210103171144424">
+
+<h2 id="3-2-配置中心操作图"><a href="#3-2-配置中心操作图" class="headerlink" title="3.2 配置中心操作图"></a>3.2 配置中心操作图</h2><img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103171214324.png" class="" title="image-20210103171214324">
+
+<h2 id="3-3-ZooKeeper实现配置中心"><a href="#3-3-ZooKeeper实现配置中心" class="headerlink" title="3.3 ZooKeeper实现配置中心"></a>3.3 ZooKeeper实现配置中心</h2><img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103171304783.png" class="" title="image-20210103171304783">
+
+<p><strong>用ZooKeeper实现配置中心</strong></p>
+<ul>
+<li>znode能存储数据</li>
+<li>Watch能监听数据改变</li>
+</ul>
+<p>一个配置项一个znode</p>
+<p>一个配置文件一个znode</p>
+<h2 id="3-4-配置中心代码实现"><a href="#3-4-配置中心代码实现" class="headerlink" title="3.4 配置中心代码实现"></a>3.4 配置中心代码实现</h2><p>github地址：<a target="_blank" rel="noopener" href="https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/ZkConfigureCenter.java">https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/ZkConfigureCenter.java</a></p>
+<h1 id="4-Master选举应用"><a href="#4-Master选举应用" class="headerlink" title="4 Master选举应用"></a>4 Master选举应用</h1><h2 id="4-1-ZooKeeper实现Master选举"><a href="#4-1-ZooKeeper实现Master选举" class="headerlink" title="4.1 ZooKeeper实现Master选举"></a>4.1 ZooKeeper实现Master选举</h2><p><strong>何为Master选举？</strong></p>
+<img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103180504165.png" class="" title="image-20210103180504165">
+
+
+
+<p><strong>ZooKeeper如何来实现Master选举？</strong></p>
+<img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103180631666.png" class="" title="image-20210103180631666">
+
+<h2 id="4-2-代码实现"><a href="#4-2-代码实现" class="headerlink" title="4.2 代码实现"></a>4.2 代码实现</h2><p>github地址：<a target="_blank" rel="noopener" href="https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/MasterElectionDemo.java">https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/MasterElectionDemo.java</a></p>
+<h1 id="5-ZooKeeper官网"><a href="#5-ZooKeeper官网" class="headerlink" title="5 ZooKeeper官网"></a>5 ZooKeeper官网</h1><h2 id="5-1-为什么要介绍ZooKeeper官网？"><a href="#5-1-为什么要介绍ZooKeeper官网？" class="headerlink" title="5.1 为什么要介绍ZooKeeper官网？"></a>5.1 为什么要介绍ZooKeeper官网？</h2><p>良好的学习方法</p>
+<ul>
+<li>我是怎么学的</li>
+<li>遇到问题百度？</li>
+<li>学到知识，不如会学知识</li>
+</ul>
+<p>一切从官网开始</p>
+<ul>
+<li>最权威准确，但也浅显简单</li>
+<li>官网的结构</li>
+<li>有哪些重要的点</li>
+</ul>
+<h2 id="5-2-ZooKeeper官网结构"><a href="#5-2-ZooKeeper官网结构" class="headerlink" title="5.2 ZooKeeper官网结构"></a>5.2 ZooKeeper官网结构</h2><p><strong>怎么看ZooKeeper官网？</strong></p>
+<p>官网地址：<a target="_blank" rel="noopener" href="https://zookeeper.apache.org/doc/r3.6.2/index.html">https://zookeeper.apache.org/doc/r3.6.2/index.html</a></p>
+<p>​    把握官网目录结构，就把握住了ZooKeeper的主骨架</p>
+<img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103181723545.png" class="" title="image-20210103181723545">
+
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ZooKeeper Overview</td>
+<td>ZooKeeper总览：概览、开始使用、发布说明</td>
+</tr>
+<tr>
+<td>Developers</td>
+<td>开发者如何使用Client API：API文档、程序员开发指南、ZK Java代码示例、队列和栅栏教程、分布式下高级别通用问题解决方案</td>
+</tr>
+<tr>
+<td>Administrators &amp; Operators</td>
+<td>管理员、运维人员部署内容：部署指南、配额指南、开启使用JMX、法定人数分级、观察者</td>
+</tr>
+<tr>
+<td>Contributors</td>
+<td>贡献代码给ZK人员的文档，ZK内部工作的各种主题</td>
+</tr>
+<tr>
+<td>Miscellaneous ZooKeeper Documentation</td>
+<td>ZK其他的各种文档，wiki、见问题解答</td>
+</tr>
+<tr>
+<td>BookKeeper Documentation</td>
+<td>图书管理员文档，一个高可用的具有高性能的日志预写系统，使用ZK作为元数据，ZK的捐献者。</td>
+</tr>
+</tbody></table>
+<h2 id="5-3-开发者常用部分的目录"><a href="#5-3-开发者常用部分的目录" class="headerlink" title="5.3 开发者常用部分的目录"></a>5.3 开发者常用部分的目录</h2><h3 id="5-3-1-程序员指南，zk的核心功能、客户端编程"><a href="#5-3-1-程序员指南，zk的核心功能、客户端编程" class="headerlink" title="5.3.1 程序员指南，zk的核心功能、客户端编程"></a>5.3.1 程序员指南，zk的核心功能、客户端编程</h3><center class="half">
+    <img src="ZooKeeper经典应用场景/image-20210103182907043.png" width="50%"><img src="ZooKeeper经典应用场景/image-20210103182653225.png" width="50%">
+</center>
+
+<h3 id="5-3-2-管理员指南，集群、管理员常规操作、参数配置"><a href="#5-3-2-管理员指南，集群、管理员常规操作、参数配置" class="headerlink" title="5.3.2 管理员指南，集群、管理员常规操作、参数配置"></a>5.3.2 管理员指南，集群、管理员常规操作、参数配置</h3><center class="half">
+    <img src="ZooKeeper经典应用场景/image-20210103182646083.png" width="50%"><img src="ZooKeeper经典应用场景/image-20210103182931085.png" width="50%">
+</center>
+
+<h3 id="5-3-3-源码贡献，zk的内部运行，zab协议、leader选举、请求流程"><a href="#5-3-3-源码贡献，zk的内部运行，zab协议、leader选举、请求流程" class="headerlink" title="5.3.3 源码贡献，zk的内部运行，zab协议、leader选举、请求流程"></a>5.3.3 源码贡献，zk的内部运行，zab协议、leader选举、请求流程</h3><center class="half">
+    <img src="ZooKeeper经典应用场景/image-20210103183707540.png" width="50%"><img src="ZooKeeper经典应用场景/image-20210103183711556.png" width="50%">
+</center>
+
+<h3 id="5-3-4-开发者常用部分的目录"><a href="#5-3-4-开发者常用部分的目录" class="headerlink" title="5.3.4 开发者常用部分的目录"></a>5.3.4 开发者常用部分的目录</h3><p>Wiki，其他语言客户端、有用的工具、性能测试报告、Zab协议深入、集群故障处理场景</p>
+<center class="half">
+    <img src="ZooKeeper经典应用场景/image-20210103183933481.png" width="50%"><img src="ZooKeeper经典应用场景/image-20210103183936479.png" width="50%">
+</center>
+
+
+
+<h1 id="6-ZooKeeper拓展"><a href="#6-ZooKeeper拓展" class="headerlink" title="6 ZooKeeper拓展"></a>6 ZooKeeper拓展</h1><h2 id="6-1-其它语言的客户端支持"><a href="#6-1-其它语言的客户端支持" class="headerlink" title="6.1 其它语言的客户端支持"></a>6.1 其它语言的客户端支持</h2><img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103184548690.png" class="" title="image-20210103184548690">
+
+<p><a target="_blank" rel="noopener" href="https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZKClientBindings">https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZKClientBindings</a></p>
+<h2 id="6-2-一些有用的工具"><a href="#6-2-一些有用的工具" class="headerlink" title="6.2 一些有用的工具"></a>6.2 一些有用的工具</h2><p><strong>KeptCollections</strong></p>
+<left class="half">
+    <img src="ZooKeeper经典应用场景/image-20210103184640506.png" width="50%">
+</left>
+
+<p><a target="_blank" rel="noopener" href="https://github.com/anthonyu/KeptCollections">https://github.com/anthonyu/KeptCollections</a></p>
+<p>KeptCollections是一个替换了数据结构的，Java Collections框架库。</p>
+<p>由于KeptCollections使用ZK作为数据存储，使得数据结构是分布式的可升级的。</p>
+<p>里面的功能不多也不难，但是适合我们去学习zk在里面用法及扩展方式，带给我们不一样的思路。</p>
+<h2 id="6-3-一些有用的工具"><a href="#6-3-一些有用的工具" class="headerlink" title="6.3 一些有用的工具"></a>6.3 一些有用的工具</h2><p><strong>Curator</strong></p>
+<left class="half">
+    <img src="ZooKeeper经典应用场景/image-20210103185055651.png" width="20%">
+</left>
+
+<img src="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/image-20210103185049210.png" class="" title="image-20210103185049210">
+
+<p>GitHub：<a target="_blank" rel="noopener" href="https://github.com/apache/curator">https://github.com/apache/curator</a></p>
+<p>Apache：<a target="_blank" rel="noopener" href="http://curator.apache.org/">http://curator.apache.org/</a></p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2021/01/02/Zookeeper%E9%9B%86%E7%BE%A4/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Zookeeper集群</div>
+      </a>
+    
+  </nav>
+
+  
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2021
+        <i class="ri-heart-fill heart_icon"></i> Hash
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/assets/head.png" alt="Hash的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>
