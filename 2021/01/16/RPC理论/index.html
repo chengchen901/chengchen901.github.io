@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="java" />
+   
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    RPC理论 |  
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/assets/favicon.png" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-RPC理论"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  RPC理论
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/01/16/RPC%E7%90%86%E8%AE%BA/" class="article-date">
+  <time datetime="2021-01-16T05:18:54.000Z" itemprop="datePublished">2021-01-16</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">2.7k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">9 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>RPC理论</p>
+<a id="more"></a>
+
+<h1 id="1-RPC概述"><a href="#1-RPC概述" class="headerlink" title="1 RPC概述"></a>1 RPC概述</h1><h2 id="1-1-RPC是什么"><a href="#1-1-RPC是什么" class="headerlink" title="1.1 RPC是什么"></a>1.1 RPC是什么</h2><p>RPC（Remote Procedure Call Protocol） 远程过程调用协议，一种通过网络从远程计算机程序上请求服务，而不需要了解底层网络技术的协议。RPC协议假定某些传输协议的存在，如TCP或UDP，为通信程序之间携带信息数据。在OSI网络通信模型中，RPC跨越了<span style="color:red">传输层</span>和<span style="color:red">应用层</span>。RPC使得开发包括网络分布式多程序在内的应用程序更加容易。</p>
+<img src="/2021/01/16/RPC%E7%90%86%E8%AE%BA/image-20210116132620423.png" class="" title="image-20210116132620423">
+
+
+
+<p>RPC不是新事物，1960/70年代就有，1981年Bruce Jay Nelson首次提出这个叫法。近些年因分布式系统、服务化、微服务的兴起而再次成为热点，为大众吹捧!</p>
+<p>过程是什么?<br>过程就是业务处理、计算任务，更直白理解，就是程序。像调用本地方法一样调用远程的过程。</p>
+<h2 id="1-2-与本地调用的区别"><a href="#1-2-与本地调用的区别" class="headerlink" title="1.2 与本地调用的区别"></a>1.2 与本地调用的区别</h2><p><strong>远程调用中间需要通过网络</strong></p>
+<ul>
+<li>响应要慢几个数量级</li>
+<li>不那么可靠</li>
+</ul>
+<h2 id="1-3-RPC-C-S模式"><a href="#1-3-RPC-C-S模式" class="headerlink" title="1.3 RPC C/S模式"></a>1.3 RPC C/S模式</h2><p><strong>RPC采用客户机/服务器模式</strong></p>
+<p>​    RPC采用Client-Server结构，通过request-reponse消息模式实现</p>
+<img src="/2021/01/16/RPC%E7%90%86%E8%AE%BA/image-20210116133201239.png" class="" title="image-20210116133201239">
+
+
+
+<h2 id="1-4-RPC的三个过程"><a href="#1-4-RPC的三个过程" class="headerlink" title="1.4 RPC的三个过程"></a>1.4 RPC的三个过程</h2><ol>
+<li>通讯协议<img src="/2021/01/16/RPC%E7%90%86%E8%AE%BA/image-20210116133540474.png" class="" title="image-20210116133540474"></li>
+<li>寻址<img src="/2021/01/16/RPC%E7%90%86%E8%AE%BA/image-20210116133553306.png" class="" title="image-20210116133553306"></li>
+<li>序列化<img src="/2021/01/16/RPC%E7%90%86%E8%AE%BA/image-20210116133603397.png" class="" title="image-20210116133603397">
+
+
+
+</li>
+</ol>
+<h2 id="1-5-为什么要用RPC"><a href="#1-5-为什么要用RPC" class="headerlink" title="1.5 为什么要用RPC"></a>1.5 为什么要用RPC</h2><ul>
+<li>服务化/微服务</li>
+<li>分布式系统架构</li>
+<li>服务可重用</li>
+<li>系统间交互调用</li>
+</ul>
+<h2 id="1-6-RPC与其他协议的区别"><a href="#1-6-RPC与其他协议的区别" class="headerlink" title="1.6 RPC与其他协议的区别"></a>1.6 RPC与其他协议的区别</h2><p><strong>RPC 和 RMI有什么区别?</strong></p>
+<p>RMI（remote method invocation）远程方法调用是oop领域中RPC的一种具体实现。</p>
+<p>我们熟悉的webservice、restfull接口调用是RPC吗?</p>
+<p>都是RPC，只是消息的组织方式、消息协议不同罢了!</p>
+<h2 id="1-7-RPC特性和使用场景"><a href="#1-7-RPC特性和使用场景" class="headerlink" title="1.7 RPC特性和使用场景"></a>1.7 RPC特性和使用场景</h2><p><strong>与MQ做对比</strong></p>
+<p>在架构上，RPC和MQ的差异点是，Message Queue有一个中间结点Queue，可以把消息存储 </p>
+<p>RPC的特性</p>
+<p>​    同步调用，对于要等待返回结果的场景，RPC可以非常自然直觉的使用（RPC也可以是异步调用）。由于等待结果，Consumer会有线程消耗。如果以异步RPC的方式使用，Consumer线程消耗可以去掉。但不能做到像MQ一样暂存请求，压力会直接传导到服务Provider。</p>
+<p>消息的特性</p>
+<ol>
+<li><p>Message Queue把请求的压力保存一下，逐渐释放出来，让处理者按照自己的节奏来处理。 </p>
+</li>
+<li><p>Message Queue引入一下新的结点，系统的可靠性会受Message Queue结点的影响。 </p>
+</li>
+<li><p>MessageQueue是异步单向的消息。发送消息设计成是不需要等待消息处理的完成。所以对于有同步返回需求，用Message Queue则变得麻烦了</p>
+</li>
+</ol>
+<p><strong>RPC、MQ适用场合差异</strong></p>
+<ol>
+<li>希望同步得到结果的场合，RPC合适。</li>
+<li>希望使用简单，则RPC;RPC操作基于接口，使用简单，使用方式模拟本地调用。异步的方式编程比较<br>复杂。</li>
+<li>不希望发送端受限于处理端的速度时，使用Message Queue。</li>
+<li>随着业务增长，有的处理端处理量会成为瓶颈，会进行同步调用到异步消息的改造。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>通信方式</th>
+<th>一对一</th>
+<th>一对多</th>
+<th>同步</th>
+<th>异步</th>
+<th>发布/订阅</th>
+<th>耦合度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RPC</td>
+<td>√</td>
+<td>×</td>
+<td>√</td>
+<td>√</td>
+<td>×</td>
+<td>高</td>
+</tr>
+<tr>
+<td>MQ</td>
+<td>√</td>
+<td>√</td>
+<td>×</td>
+<td>√</td>
+<td>√</td>
+<td>低</td>
+</tr>
+</tbody></table>
+<h1 id="2-RPC的流程及RPC协议"><a href="#2-RPC的流程及RPC协议" class="headerlink" title="2 RPC的流程及RPC协议"></a>2 RPC的流程及RPC协议</h1><h2 id="2-1-RPC的流程"><a href="#2-1-RPC的流程" class="headerlink" title="2.1 RPC的流程"></a>2.1 RPC的流程</h2><img src="/2021/01/16/RPC%E7%90%86%E8%AE%BA/image-20210116134701764.png" class="" title="image-20210116134701764">
+
+<ol>
+<li><p>客户端处理过程中调用Client stub（就像调用本地方法一样），传入参数; </p>
+</li>
+<li><p>Client stub 将参数编组为消息，然后通过系统调用向服务端发送消息; </p>
+</li>
+<li><p>客户端本地操作系统将消息从客户端机器发送到服务端机器; </p>
+</li>
+<li><p>服务端操作系统将接收到的数据包传递给Server stub; </p>
+</li>
+<li><p>Server stub 解组消息为参数;</p>
+</li>
+<li><p>Sever stub再调用服务端的过程，过程执行结果以反方向的相同步骤响应给客户端。</p>
+</li>
+</ol>
+<p>stub（存根）∶分布式计算中的存根是一段代码，它转换在远程过程调用（RPC）期间Client和server之间传递<br>  的参数。</p>
+<p><span style="color:red">请思考∶ 该流程中需要处理哪些问题?</span></p>
+<h2 id="2-2-RPC流程中需要处理的问题"><a href="#2-2-RPC流程中需要处理的问题" class="headerlink" title="2.2 RPC流程中需要处理的问题"></a>2.2 RPC流程中需要处理的问题</h2><img src="/2021/01/16/RPC%E7%90%86%E8%AE%BA/image-20210116134701764.png" class="" title="image-20210116134701764">
+
+
+
+<ol>
+<li>Client stub、Server stub的开发; </li>
+<li>参数如何编组为消息，以及解组消息; </li>
+<li>消息如何发送;</li>
+<li>过程结果如何表示、异常情况如何处理; </li>
+<li>如何实现安全的访问控制。</li>
+</ol>
+<h2 id="2-3-RPC核心概念术语"><a href="#2-3-RPC核心概念术语" class="headerlink" title="2.3 RPC核心概念术语"></a>2.3 RPC核心概念术语</h2><ul>
+<li><p>Client、Server、calls、replies、serverices,programs,procedures, version,marshalling（编组）、unmarshalling（解组）</p>
+</li>
+<li><p>一个网络服务由一个或多个远程程序集构成</p>
+</li>
+<li><p>一个远程程序实现一个或多个远程过程</p>
+</li>
+<li><p>过程、过程的参数、结果在程序协议说明书中定义说明</p>
+</li>
+<li><p>为兼容程序协议变更、一个服务端可能支持多个版本的远程程序</p>
+</li>
+</ul>
+<h2 id="2-4-RPC协议是什么"><a href="#2-4-RPC协议是什么" class="headerlink" title="2.4 RPC协议是什么"></a>2.4 RPC协议是什么</h2><p>RPC调用过程中需要将参数编组为消息进行发送，接收方需要解组消息为参数，过程处理结果同样需要经编组、解组。消息由哪些部分构成及消息的表示形式就构成了消息协议。</p>
+<p>RPC调用过程中采用的消息协议称为RPC协议。</p>
+<p>RPC是要做的事，RPC协议规定请求、响应消息的格式。在TCP（网络传输控制协议）之上我们可以选用或自定义消息协议来完成我们的RPC消息交互。</p>
+<p>我们可以选用通用的标准协议，如∶ http、https，也可根据自身的需要定义自己的消息协议!</p>
+<h1 id="3-RPC框架"><a href="#3-RPC框架" class="headerlink" title="3 RPC框架"></a>3 RPC框架</h1><h2 id="3-1-RPC框架是什么？"><a href="#3-1-RPC框架是什么？" class="headerlink" title="3.1 RPC框架是什么？"></a>3.1 RPC框架是什么？</h2><p>封装好了参数编组、消息解组、底层网络通信的RPC程序开发框架，让我们可以直接在其基础上只需专注于我们的过程代码编写。</p>
+<p>常用RPC框架 </p>
+<p>java领域∶<br>传统的webservice框架∶ Apache CXF、ApacheAxis2、java自带的JAXWS等等。webService框架大多基于标准的SOAP协议。</p>
+<p>新兴的微服务框架∶ Dubbo、spring cloud、Apache Thrift、ICE、GRPC等等</p>
+<h2 id="3-2-RPC框架的服务暴露"><a href="#3-2-RPC框架的服务暴露" class="headerlink" title="3.2 RPC框架的服务暴露"></a>3.2 RPC框架的服务暴露</h2><p>​    远程提供者需要以某种形式提供服务调用相关的信息，包括但不限于服务接口定义、数据结构、或者中间态的服务定义文件。例如Facebook的Thrift的IDL文件，Web service的WSDL文件;服务的调用者需要通过一定的途径获取远程服务调用相关的信息。</p>
+<table>
+<thead>
+<tr>
+<th align="center">暴露服务方式</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+</table>
+<p>| 根据IDL生成  | 跨语言平台 RPC 框架，根据 IDL（Interface description language接口描述语言） 定 义在编译期用代码生成器生成 stub 代码。这是跨语言平台 RPC框架的必然选择。比如protocol buffer。 |<br>|   共享接口   |           同一语言平台可以通过共享接口定义来实现。           |</p>
+<h2 id="3-3-RPC框架的远程代理对象"><a href="#3-3-RPC框架的远程代理对象" class="headerlink" title="3.3 RPC框架的远程代理对象"></a>3.3 RPC框架的远程代理对象</h2><p><strong>代理处理技术</strong></p>
+<p>服务调用者用的服务实际是远程服务的本地代理。说白了就是通过动态代理来实现。</p>
+<p>java 里至少提供了两种技术来提供动态代码生成，一种是 jdk动态代理，另外一种是字节码生成。</p>
+<p>动态代理相比字节码生成使用起来更方便，但动态代理方式在性能上是要逊色于直接的字节码生成的，而字节码生成在代码可读性上要差很多。<br>两者权衡起来，牺牲一些性能来获得代码可读性和可维护性显得更重要。</p>
+<h2 id="3-4-RPC框架的通信"><a href="#3-4-RPC框架的通信" class="headerlink" title="3.4 RPC框架的通信"></a>3.4 RPC框架的通信</h2><p>RPC框架通信与具体的协议无关。RPC可基于HTTP或TCP协议，Web Service就是基于HTTP协议的RPC，它具有良好的跨平台性，但其性能却不如基于 TCP 协议的 RPC。  </p>
+<table>
+<thead>
+<tr>
+<th>通信内容</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>协议</td>
+<td>TCP是传输层协议，HTTP是应用层协议，传输层比应用层更加底层，越底层数据传输越快，一般情况下，TCP比HTTP快</td>
+</tr>
+<tr>
+<td>消息ID</td>
+<td>RPC的应用场景实质是一种可靠的请求/应答消息流。选择长连接方式的TCP协议会更高效，为更容易的复用连接，定义了每个消息的唯一id。</td>
+</tr>
+<tr>
+<td>IO方式</td>
+<td>为支持高并发，NIO比BIO更合适。Java提供了NIO接口和Netty通信框架。</td>
+</tr>
+<tr>
+<td>多连接</td>
+<td>client和server之间到底需要多少个连接？单连接和多连接在使用上没有区别，对于数据传输量较小的应用类型，单连接基本足够。单连接和多连接最大的区别在于，每个连接都有自己私有的发送和接收缓冲区，因此大数据量传输时分散在不同的连接缓冲区会得到更好的吞吐效率。如果数据传输量不足以让单连接的缓冲区一直处于饱和状态的话，使用多连接的效率不会明显提升，反而会增加连接管理的开销。</td>
+</tr>
+<tr>
+<td>心跳</td>
+<td>连接是由client端发起建立并维持。如果client和server之间是直连的，那么连接一般不会中断（物理链路故障除外）。如果client和server连接经过一些负载中转设备，有可能连接一段时间不活跃时会被这些中间设备中断。为了保持连接有必要定时为每个连接发送心跳数据以维持连接不中断。</td>
+</tr>
+</tbody></table>
+<h2 id="3-5-RPC框架的序列化"><a href="#3-5-RPC框架的序列化" class="headerlink" title="3.5 RPC框架的序列化"></a>3.5 RPC框架的序列化</h2><p>两方面会直接影响RPC的性能，一是传输方式，二是序列化</p>
+<table>
+<thead>
+<tr>
+<th>序列化</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>序列化方式</td>
+<td>远程通信，需要将对象转化成二进制流进行传输。不同的RPC框架应用的场景不同，在序列化上也会采取不同的技术。比如∶ Protobuf、Kryo、Hessian、Jackson等，它们可以取代Java默认的序列化，从而提供更高效的性能</td>
+</tr>
+<tr>
+<td>元信息</td>
+<td>元信息以方便程序编解码以及未来可能的扩展。这样我们的编码消息里面就分成了两部分，一部分是元信息、另一部分是调用的必要信息。如果设计一种 RPC协议消息的话，元信息我们把它放在协议消息头中，而必要信息放在协议消息体中。</td>
+</tr>
+<tr>
+<td>编码内容</td>
+<td>编码的信息越少网络上传输数据越少，编码的规则越简单执行效率越高</td>
+</tr>
+</tbody></table>
+<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4 总结"></a>4 总结</h1><h2 id="4-1-知识总结"><a href="#4-1-知识总结" class="headerlink" title="4.1 知识总结"></a>4.1 知识总结</h2><p><strong>RPC概述</strong> </p>
+<p>​    rpc是什么，采用的模式、三个过程、为什么要用RPC、RPC特性及适用场景 </p>
+<p><strong>RPC的流程及RPC协议</strong> </p>
+<p>​    RPC流程及需要处理的问题、RPC协议定义 </p>
+<p><strong>RPC框架</strong> </p>
+<p>​    RPC框架基本定义、常用RPC框架、RPC框架核心功能要点  </p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2021/01/16/RPC%E7%90%86%E8%AE%BA/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rpc/" rel="tag">rpc</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2021/01/16/%E6%89%8B%E5%86%99RPC%E6%A1%86%E6%9E%B6/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            手写RPC框架
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2021/01/03/ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">ZooKeeper经典应用场景</div>
+      </a>
+    
+  </nav>
+
+  
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2021
+        <i class="ri-heart-fill heart_icon"></i> Hash
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/assets/head.png" alt="Hash的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>

@@ -126,7 +126,7 @@
 <p>执行rabbitmqctl restart命令前必须停止RabbitMQ应用（比如先执行rabbitmqctl stop_app）</p>
 <p><strong>rabbitmqctl force_reset</strong></p>
 <p>强制将RabbitMQ节点重置还原到最初状态。此命令不论当前管理数据库的状态和集群配置是什么，都会无条件地重置节点，只能在数据库或集群配置已损坏的情况下使用。</p>
-<h2 id="2-2-集群管理"><a href="#2-2-集群管理" class="headerlink" title="2.2 集群管理"></a>2.2 集群管理</h2><p><strong>rabbitmqctl [-n nodename] joio_cluster {cluster_node} [–ram]</strong></p>
+<h2 id="2-2-集群管理"><a href="#2-2-集群管理" class="headerlink" title="2.2 集群管理"></a>2.2 集群管理</h2><p><strong>rabbitmqctl [-n nodename] join_cluster {cluster_node} [–ram]</strong></p>
 <p>将节点加入指定集群中。在这个命令执行前需要停止RabbitMQ应用并重置节点。</p>
 <p>-n nodename：指定需要操作的目标节点，列如：rabbit@node1</p>
 <p>cluster_node：需要加入的集群节点名，格式同上</p>

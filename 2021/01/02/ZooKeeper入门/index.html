@@ -110,9 +110,9 @@
 <h2 id="1-3-领袖风范—ZooKeeper"><a href="#1-3-领袖风范—ZooKeeper" class="headerlink" title="1.3 领袖风范—ZooKeeper"></a>1.3 领袖风范—ZooKeeper</h2><p>简介：Apache ZooKeeper是一种用于分布式应用程序的高性能协调服务。提供一种集中式信息存储服务。</p>
 <p>特点：数据存在内存中，类似文件系统的树形结构(文件和目录)，高吞吐量和低延迟，集群高可靠。</p>
 <p>作用：基于zookeeper可以实现分布式统一配置中心、服务注册中心，分布式锁等功能的实现；</p>
-<center class="half">
-    <img src="ZooKeeper入门/image-20210102143613589.png" width="50%"><img src="ZooKeeper入门/image-20210102143618213.png" width="50%">
-</center>
+<img src="/2021/01/02/ZooKeeper%E5%85%A5%E9%97%A8/image-20210102143613589.png" class="" title="image-20210102143613589.png">
+
+<img src="/2021/01/02/ZooKeeper%E5%85%A5%E9%97%A8/image-20210102143618213.png" class="" title="image-20210102143618213.png">
 
 <p>基于3.4.13版本进行讲解，官网地址： <a target="_blank" rel="noopener" href="https://zookeeper.apache.org/">https://zookeeper.apache.org/</a></p>
 <h2 id="1-4-安装Zookeeper"><a href="#1-4-安装Zookeeper" class="headerlink" title="1.4 安装Zookeeper"></a>1.4 安装Zookeeper</h2><ul>
@@ -127,15 +127,11 @@
 <li><p>测试，客户端连接： bin/zkCli.sh -server 127.0.0.1:2181</p>
 </li>
 </ul>
-<left class="half">
-    <img src="ZooKeeper入门/image-20210102145007966.png" width="50%">
-</left>
+<img src="/2021/01/02/ZooKeeper%E5%85%A5%E9%97%A8/image-20210102145007966.png" class="" title="image-20210102145007966.png">
 
 <h2 id="1-5-ZooKeeper特点-数据结构简单"><a href="#1-5-ZooKeeper特点-数据结构简单" class="headerlink" title="1.5 ZooKeeper特点-数据结构简单"></a>1.5 ZooKeeper特点-数据结构简单</h2><p>数据结构简单</p>
 <p>​    类似Unix文件系统树形结构，每个目录称为Znode节点，但是又不同于文件系统，既可以做目录拥有子节点，又可以做文件存放数据。</p>
-<left class="half">
-    <img src="ZooKeeper入门/image-20210102145323899.png" width="50%">
-</left>
+<img src="/2021/01/02/ZooKeeper%E5%85%A5%E9%97%A8/image-20210102145323899.png" class="" title="image-20210102145323899.png">
 
 <ul>
 <li>同节点下的子节点名称不能相同</li>
@@ -376,9 +372,7 @@
 
 
 <h2 id="2-5-Watch监听机制"><a href="#2-5-Watch监听机制" class="headerlink" title="2.5 Watch监听机制"></a>2.5 Watch监听机制</h2><p>客户端可以在znodes上设置watch ，监听znode的变化。</p>
-<left class="half">
-    <img src="ZooKeeper入门/image-20210102151701244.png" width="50%">
-</left>
+<img src="/2021/01/02/ZooKeeper%E5%85%A5%E9%97%A8/image-20210102151701244.png" class="" title="image-20210102151701244.png">
 
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[zk: localhost:2181(CONNECTED) 17] <span class="built_in">help</span></span><br><span class="line">    <span class="built_in">stat</span> path [watch]</span><br><span class="line">        ls path [watch]</span><br><span class="line">        ls2 path [watch]</span><br><span class="line">    get path [watch]</span><br></pre></td></tr></table></figure>
 
@@ -474,16 +468,16 @@
 <p>不支持递归创建节点</p>
 <p>需要手动序列化</p>
 <p><strong>第三方客户端，Zkclient，使用操作更方便</strong></p>
-<center class="half">
-    <img src="ZooKeeper入门/image-20210102152959783.png" width="50%"><img src="ZooKeeper入门/image-20210102153009547.png" width="50%">
-</center>
+<img src="/2021/01/02/ZooKeeper%E5%85%A5%E9%97%A8/image-20210102152959783.png" class="" title="image-20210102152959783.png">
+
+<img src="/2021/01/02/ZooKeeper%E5%85%A5%E9%97%A8/image-20210102153009547.png" class="" title="image-20210102153009547.png">
 
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.101tec<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>zkclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.10<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p><strong>第三方客户端，Curator，功能更加丰富</strong></p>
-<left class="half">
-    <img src="ZooKeeper入门/image-20210102153159670.png" width="50%"><img src="ZooKeeper入门/image-20210102162832143.png" width="50%">
-</left>
+<img src="/2021/01/02/ZooKeeper%E5%85%A5%E9%97%A8/image-20210102153159670.png" class="" title="image-20210102153159670.png">
+
+<img src="/2021/01/02/ZooKeeper%E5%85%A5%E9%97%A8/image-20210102162832143.png" class="" title="image-20210102162832143.png">
 
 <p><a target="_blank" rel="noopener" href="http://curator.apache.org/">http://curator.apache.org/</a></p>
 <p>Curator Apache 的开源项目</p>

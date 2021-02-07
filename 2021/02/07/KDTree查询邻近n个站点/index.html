@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="java" />
+   
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    KDTree查询邻近n个站点 |  
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/assets/favicon.png" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-KDTree查询邻近n个站点"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  KDTree查询邻近n个站点
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/" class="article-date">
+  <time datetime="2021-02-07T05:46:21.000Z" itemprop="datePublished">2021-02-07</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">3.6k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">15 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>​    kdtree是一种树形的数据结构，k指k维空间，d指维度。是一种对k维空间中的实例点进行存储以便对其进行快速检索的树形数据结构。主要应用于多维空间指定坐标邻近n个点的搜索。    </p>
+<a id="more"></a>
+
+<h1 id="1-什么是KDTree"><a href="#1-什么是KDTree" class="headerlink" title="1 什么是KDTree"></a>1 什么是KDTree</h1><p>​    kdtree是一种树形的数据结构，k指k维空间，d指维度。是一种对k维空间中的实例点进行存储以便对其进行快速检索的树形数据结构。主要应用于多维空间指定坐标邻近n个点的搜索。    </p>
+<h1 id="2-在什么场景使用KDTree"><a href="#2-在什么场景使用KDTree" class="headerlink" title="2 在什么场景使用KDTree"></a>2 在什么场景使用KDTree</h1><ul>
+<li>离散点，为什么格点不推荐？<br>如果是格点中查询最近点，完全可以通过计算指定坐标在格点中的位置找到近似最近的几个点再查找最近点</li>
+<li>在k维情况下，数据点数目N应当远远大于2的k次方时，kdtree最邻近搜索才能发挥作用。不然大部分点都会被查询，最终算法效率也不会比全体查询一遍要好到哪里去。</li>
+</ul>
+<h1 id="3-为什么要用KDTree"><a href="#3-为什么要用KDTree" class="headerlink" title="3 为什么要用KDTree"></a>3 为什么要用KDTree</h1><p>​    使用kdtree的原因是在多维空间中查询指定坐标点邻近n个点速度要快的多，kdtree算法复杂度为：K log(n)</p>
+<h1 id="4-如何使用KDTree"><a href="#4-如何使用KDTree" class="headerlink" title="4 如何使用KDTree"></a>4 如何使用KDTree</h1><h2 id="4-1-KDTree-建树"><a href="#4-1-KDTree-建树" class="headerlink" title="4.1 KDTree 建树"></a>4.1 KDTree 建树</h2><ul>
+<li><p>传入坐标点</p>
+<img src="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/image-20210206211426892.png" class="" title="image-20210206211426892">
+</li>
+<li><p>对点数据中的第一个维度进行排序，取中位数进行分隔</p>
+<img src="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/image-20210206211528507.png" class="" title="image-20210206211528507"></li>
+<li><p>按下一个维度进行排序，再进行分隔</p>
+<img src="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/image-20210206211644857.png" class="" title="image-20210206211644857"></li>
+<li><p>重复上面步骤，二维分隔之后继续按一维进行分隔</p>
+<img src="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/image-20210206211859022.png" class="" title="image-20210206211859022">
+
+</li>
+</ul>
+<p>最终得到一个KDTree，如下图</p>
+<img src="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/image-20210206160740035.png" class="" title="image-20210206160740035">
+
+<p>代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 构建kd树  返回根节点</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> nodeList 坐标节点集合</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> index    维度，建立树的时候判断的维度</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span> 根节点</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> Node <span class="title">buildKDTree</span><span class="params">(List&lt;Node&gt; nodeList, <span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (nodeList == <span class="keyword">null</span> || nodeList.size() == <span class="number">0</span>) &#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 中位数排序</span></span><br><span class="line">       nodeList.sort(Comparator.comparingDouble(node -&gt; node.getData(index)));</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 中位数 当做根节点</span></span><br><span class="line">       <span class="keyword">final</span> <span class="keyword">int</span> midIndex = nodeList.size() / <span class="number">2</span>;</span><br><span class="line">       Node root = nodeList.get(midIndex);</span><br><span class="line">       root.axis = index;</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 放入左侧区域的节点  包括包含与中位数等值的节点</span></span><br><span class="line">       List&lt;Node&gt; leftNodeList = nodeList.subList(<span class="number">0</span>, midIndex);</span><br><span class="line">       List&lt;Node&gt; rightNodeList = nodeList.subList(midIndex + <span class="number">1</span>, nodeList.size());</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 计算从哪一维度切分</span></span><br><span class="line">       <span class="keyword">int</span> nextAxis = (index + <span class="number">1</span>) % root.data.length;</span><br><span class="line"></span><br><span class="line">       root.left = buildKDTree(leftNodeList, nextAxis);</span><br><span class="line">       root.right = buildKDTree(rightNodeList, nextAxis);</span><br><span class="line"></span><br><span class="line">       <span class="keyword">if</span> (root.left != <span class="keyword">null</span>) &#123;</span><br><span class="line">           root.left.parent = root;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">if</span> (root.right != <span class="keyword">null</span>) &#123;</span><br><span class="line">           root.right.parent = root;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> root;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> <span class="keyword">implements</span> <span class="title">Comparable</span>&lt;<span class="title">Node</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">       <span class="comment">/**</span></span><br><span class="line"><span class="comment">        * 树上节点的数据，是一个多维的向量</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       <span class="keyword">double</span>[] data;</span><br><span class="line"></span><br><span class="line">       <span class="comment">/**</span></span><br><span class="line"><span class="comment">        * 与当前查询点的距离，初始化的时候是没有的</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       <span class="keyword">double</span> distance;</span><br><span class="line"></span><br><span class="line">       <span class="comment">/**</span></span><br><span class="line"><span class="comment">        * 左右子节点以及父节点</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       Node left, right, parent;</span><br><span class="line"></span><br><span class="line">       <span class="comment">/**</span></span><br><span class="line"><span class="comment">        * 维度，建立树的时候判断的维度</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       <span class="keyword">int</span> axis = -<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="title">Node</span><span class="params">(<span class="keyword">double</span>[] data)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">this</span>.data = data;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-2-KDTree-查询邻近n个点"><a href="#4-2-KDTree-查询邻近n个点" class="headerlink" title="4.2 KDTree 查询邻近n个点"></a>4.2 KDTree 查询邻近n个点</h2><p>首先我们先通过<strong>递归查找到KD-Tree上的叶子节点</strong>，也就是找到样本所在的子空间。本质上来说我们就是将当前样本不停地与分割线进行比较，看看是在分割线的左侧还是右侧。和二叉搜索树的元素查找是一样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 查询到叶子节点最近近似点</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> node   kd树节点</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> target 需要查询的坐标点</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 最近近似点</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Node <span class="title">iterDown</span><span class="params">(Node node, Node target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 如果是叶子节点，则返回</span></span><br><span class="line">    <span class="keyword">if</span> (node.left == <span class="keyword">null</span> &amp;&amp; node.right == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> node;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果左节点为空，则递归右节点</span></span><br><span class="line">    <span class="keyword">if</span> (node.left == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> iterDown(node.right, target);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果右节点为空，则递归左节点</span></span><br><span class="line">    <span class="keyword">if</span> (node.right == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> iterDown(node.left, target);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//都不为空,判断是左还是右</span></span><br><span class="line">    <span class="keyword">int</span> axis = node.axis;</span><br><span class="line">    Node nextNode = target.getData(axis) &lt;= node.getData(axis) ? node.left : node.right;</span><br><span class="line">    <span class="keyword">return</span> iterDown(nextNode, target);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们来实际走一下整个流程，假设我们要查找3个点。首先，我们会创建一个候选集，用来存储答案。当我们找到叶子节点之后，这个区域当中只有一个点，我们把它加入候选集。</p>
+<img src="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/image-20210206212154426.png" class="" title="image-20210206212154426">
+
+<p>​    上图的红色点代表我们查询的样本，我们查找到的叶子节点之后，在俩种情况下我们会把当前节点加入候选集。第一种情况是<strong>候选集还有空余</strong>，也就是还没有满K个，这里的K是我们查询的数量，也就是3。第二种情况是<strong>当前点到样本的距离小于候选集中最大的一个</strong>，那么我们需要更新候选集。</p>
+<p>​    这个时候我们需要判断，整棵树当中的搜索是否已经结束，如果当前节点已经是根节点了，说明我们的遍历结束了，那么返回候选集，否则说明还没有，我们需要继续搜索。上图当中我们用<strong>绿色表示样本被放入了候选集当中</strong>。</p>
+<p>​    由于我们的搜索还没有结束，所以需要继续搜索。继续搜索需要判断<strong>样本和当前分割线的距离</strong>来判断和分割线的另一侧有没有可能存在答案。我们发现这一次<strong>样本到分割线的距离要比之前候选集当中的最大距离要小</strong>，所以分割线的另一侧很有可能存在答案：</p>
+<img src="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/image-20210206212418256.png" class="" title="image-20210206212418256">
+
+
+
+<p>​    这里的d1是样本到分割线的距离，d2是样本到候选集当中最远点的距离。由于到分割线更近，所以分割线的另一侧很有可能也存在答案，这个时候我们需要<strong>搜索分割线另一侧的子树</strong>，一直搜索到叶子节点。</p>
+<img src="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/image-20210206212540882.png" class="" title="image-20210206212540882">
+
+<p>​    我们再往上，遍历到它的父亲节点，我们执行同样的判断，发现此时候选集还有空余，于是将它继续加入答案：</p>
+<img src="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/image-20210206212645608.png" class="" title="image-20210206212645608">
+
+<p>​    我们再往上，遍历到它的父亲节点，计算距离，发现<strong>样本到分割线的距离要比之前候选集当中的最大距离要小</strong>，所以分割线的另一侧很有可能存在答案：</p>
+<img src="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/image-20210206212920466.png" class="" title="image-20210206212920466">
+
+<p>​    这个时候我们需要<strong>搜索分割线另一侧的子树</strong>，一直搜索到叶子节点。</p>
+<img src="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/image-20210206213310190.png" class="" title="image-20210206213310190">
+
+<p>​    我们找到了叶子节点，计算距离，发现此时<strong>候选集已经满了</strong>，并且它的距离大于候选集当中任何一个答案，所以不能构成新的答案。同样，我们继续往上遍历，到它的父节点：</p>
+<img src="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/image-20210207132530672.png" class="" title="image-20210207132530672">
+
+<p>​    比较之后发现，样本到它的<strong>距离小于候选集当中最大的那个</strong>，于是我们更新候选集，去掉距离大于它的答案。我们继续往上遍历，到它的父节点：</p>
+<img src="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/image-20210207132603109.png" class="" title="image-20210207132603109">
+
+<p>​    计算距离，发现此时<strong>候选集已经满了</strong>，比较之后发现，样本到它的<strong>距离小于候选集当中最大的那个</strong>，于是我们更新候选集，去掉距离大于它的答案。然后我们重复上述的过程，直到根节点为止。</p>
+<p>​    由于后面没有更近的点，所以候选集一直没有更新，最后上图当中的三个打了绿标的点就是答案。</p>
+<p>​    我们有了建树和查询功能之后就可以用在KNN算法上进行优化了。但是我们现在的KD-tree只支持建树以及查询，如果我们<strong>想要插入或者删除集合当中的数据应该怎么办</strong>？难道每次修改都重新建树吗？这显然不行，但是插入和删除节点都会引起树结构的变化很有可能导致树不再平衡，这个时候我们应该怎么办呢？欢迎各位小伙伴感觉兴趣的思考一下这个问题。</p>
+<p>注意：</p>
+<ul>
+<li>这里存储K个邻近站点使用的是最大堆，可以做到log(n)的插入和弹出，最后再对数据进行排序返回，这样效率先比每次都要排序快的对</li>
+<li>传入的样本点不能为NaN值，如果为NaN则会在建立最大堆时造成死循环。需要大家自行添加判断逻辑即可</li>
+</ul>
+<p>github地址：<a target="_blank" rel="noopener" href="https://github.com/chengchen901/KDTree.git">https://github.com/chengchen901/KDTree.git</a></p>
+<p>完整代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.study.kdtree;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Hash</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2021/2/1</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">KDTree</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 构建kd树  返回根节点</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> nodeList 坐标节点集合</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 根节点</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Node <span class="title">buildKDTree</span><span class="params">(List&lt;Node&gt; nodeList)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> buildKDTree(nodeList, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 构建kd树  返回根节点</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> nodeList 坐标节点集合</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> index    维度，建立树的时候判断的维度</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 根节点</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Node <span class="title">buildKDTree</span><span class="params">(List&lt;Node&gt; nodeList, <span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (nodeList == <span class="keyword">null</span> || nodeList.size() == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 中位数排序</span></span><br><span class="line">        nodeList.sort(Comparator.comparingDouble(node -&gt; node.getData(index)));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 中位数 当做根节点</span></span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> midIndex = nodeList.size() / <span class="number">2</span>;</span><br><span class="line">        Node root = nodeList.get(midIndex);</span><br><span class="line">        root.axis = index;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 放入左侧区域的节点  包括包含与中位数等值的节点</span></span><br><span class="line">        List&lt;Node&gt; leftNodeList = nodeList.subList(<span class="number">0</span>, midIndex);</span><br><span class="line">        List&lt;Node&gt; rightNodeList = nodeList.subList(midIndex + <span class="number">1</span>, nodeList.size());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 计算从哪一维度切分</span></span><br><span class="line">        <span class="keyword">int</span> nextAxis = (index + <span class="number">1</span>) % root.data.length;</span><br><span class="line"></span><br><span class="line">        root.left = buildKDTree(leftNodeList, nextAxis);</span><br><span class="line">        root.right = buildKDTree(rightNodeList, nextAxis);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (root.left != <span class="keyword">null</span>) &#123;</span><br><span class="line">            root.left.parent = root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (root.right != <span class="keyword">null</span>) &#123;</span><br><span class="line">            root.right.parent = root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> root;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询最近邻</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> root   kd树根节点</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> target 需要查询的坐标点</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> k      邻近站点数</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 坐标点邻近k个点数据</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Node&gt; <span class="title">searchKNN</span><span class="params">(Node root, Node target, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        List&lt;Node&gt; knnList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        searchBrother(knnList, root, target, k);</span><br><span class="line">        Collections.sort(knnList);</span><br><span class="line">        <span class="keyword">return</span> knnList;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询目标点邻近k个点站点</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> knnList 邻近点数据存储集合</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> root    kd树根节点</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> k       邻近站点数</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> target  需要查询的坐标点</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">searchBrother</span><span class="params">(List&lt;Node&gt; knnList, Node root, Node target, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 查询到叶子节点最近近似点</span></span><br><span class="line">        Node leafNNode = iterDown(root, target);</span><br><span class="line">        leafNNode.distance = target.computeDistance(leafNNode);</span><br><span class="line">        maintainMaxHeap(knnList, leafNNode, k);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (leafNNode != root) &#123;</span><br><span class="line">            Node brother = getBrother(leafNNode);</span><br><span class="line">            <span class="keyword">if</span> (brother != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                 * 样本到分割线的距离要比之前候选集当中的最大距离要小，所以分割线的另一侧很有可能存在答案</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                <span class="keyword">if</span> (knnList.get(<span class="number">0</span>).distance &gt; Math.abs(target.getData(leafNNode.parent.axis) - leafNNode.parent.getData(leafNNode.parent.axis)) || knnList.size() &lt; k) &#123;</span><br><span class="line">                    searchBrother(knnList, brother, target, k);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 返回上一级</span></span><br><span class="line">            leafNNode = leafNNode.parent;</span><br><span class="line">            leafNNode.distance = target.computeDistance(leafNNode);</span><br><span class="line">            maintainMaxHeap(knnList, leafNNode, k);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询到叶子节点最近近似点</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> node   kd树节点</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> target 需要查询的坐标点</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 最近近似点</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Node <span class="title">iterDown</span><span class="params">(Node node, Node target)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 如果是叶子节点，则返回</span></span><br><span class="line">        <span class="keyword">if</span> (node.left == <span class="keyword">null</span> &amp;&amp; node.right == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> node;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果左节点为空，则递归右节点</span></span><br><span class="line">        <span class="keyword">if</span> (node.left == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> iterDown(node.right, target);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果右节点为空，则递归左节点</span></span><br><span class="line">        <span class="keyword">if</span> (node.right == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> iterDown(node.left, target);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//都不为空,判断是左还是右</span></span><br><span class="line">        <span class="keyword">int</span> axis = node.axis;</span><br><span class="line">        Node nextNode = target.getData(axis) &lt;= node.getData(axis) ? node.left : node.right;</span><br><span class="line">        <span class="keyword">return</span> iterDown(nextNode, target);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取兄弟节点</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> node 当前节点</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 兄弟节点</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Node <span class="title">getBrother</span><span class="params">(Node node)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (node == node.parent.left) &#123;</span><br><span class="line">            <span class="keyword">return</span> node.parent.right;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> node.parent.left;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 维护一个k的最大堆</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> listNode 邻近点数据存储集合</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> newNode  最近近似点</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> k        邻近站点数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">maintainMaxHeap</span><span class="params">(List&lt;Node&gt; listNode, Node newNode, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">         * 我们查找到的叶子节点之后，在两种情况下我们会把当前点加入候选集。</span></span><br><span class="line"><span class="comment">         * 第一种情况是候选集还有空余，也就是还没有满K个，这里的K是我们查询的数量。</span></span><br><span class="line"><span class="comment">         * 第二种情况是当前点到样本的距离小于候选集中最大的一个，那么我们需要更新候选集。</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">if</span> (listNode.size() &lt; k) &#123;</span><br><span class="line">            <span class="comment">// 不足k个堆   直接向上修复</span></span><br><span class="line">            maxHeapFixUp(listNode, newNode);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (newNode.distance &lt; listNode.get(<span class="number">0</span>).distance) &#123;</span><br><span class="line">            <span class="comment">// 比堆顶的要小   还需要向下修复 覆盖堆顶</span></span><br><span class="line">            maxHeapFixDown(listNode, newNode);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 从上往下修复  将会覆盖第一个节点</span></span><br><span class="line"><span class="comment">     * 如果一个节点比它的子节点小（最大堆）或者大（最小堆），那么需要将它向下移动。这个操作也称作“堆化（heapify）”。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> listNode 邻近点数据存储集合</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> newNode  最近近似点</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">maxHeapFixDown</span><span class="params">(List&lt;Node&gt; listNode, Node newNode)</span> </span>&#123;</span><br><span class="line">        listNode.set(<span class="number">0</span>, newNode);</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 获取当前节点的左节点</span></span><br><span class="line">        <span class="keyword">int</span> j = i * <span class="number">2</span> + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (j &lt; listNode.size()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (j + <span class="number">1</span> &lt; listNode.size() &amp;&amp; listNode.get(j).distance &lt; listNode.get(j + <span class="number">1</span>).distance) &#123;</span><br><span class="line">                <span class="comment">// 选出子结点中较大的点，第一个条件是要满足右子树不为空</span></span><br><span class="line">                j++;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (listNode.get(i).distance &gt;= listNode.get(j).distance) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            Node t = listNode.get(i);</span><br><span class="line">            listNode.set(i, listNode.get(j));</span><br><span class="line">            listNode.set(j, t);</span><br><span class="line"></span><br><span class="line">            i = j;</span><br><span class="line">            j = i * <span class="number">2</span> + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 最大堆修复</span></span><br><span class="line"><span class="comment">     * 如果一个节点比它的父节点大（最大堆）或者小（最小堆），那么需要将它同父节点交换位置。这样是这个节点在数组的位置上升。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> listNode 邻近点数据存储集合</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> newNode  最近近似点</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@author</span> Hash</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">maxHeapFixUp</span><span class="params">(List&lt;Node&gt; listNode, Node newNode)</span> </span>&#123;</span><br><span class="line">        listNode.add(newNode);</span><br><span class="line">        <span class="comment">// 当前数据节点</span></span><br><span class="line">        <span class="keyword">int</span> j = listNode.size() - <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">         * i是j的parent节点</span></span><br><span class="line"><span class="comment">         * 计算公式为：(数据下标 - 1) / 2 = 父节点下标</span></span><br><span class="line"><span class="comment">         * 关于堆数据结构的相关知识点见博客：https://www.jianshu.com/p/6b526aa481b1</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">int</span> i = j / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (listNode.get(i).distance &gt;= listNode.get(j).distance) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            Node t = listNode.get(i);</span><br><span class="line">            listNode.set(i, listNode.get(j));</span><br><span class="line">            listNode.set(j, t);</span><br><span class="line"></span><br><span class="line">            j = i;</span><br><span class="line">            i = (j - <span class="number">1</span>) / <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> <span class="keyword">implements</span> <span class="title">Comparable</span>&lt;<span class="title">Node</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 树上节点的数据，是一个多维的向量</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">double</span>[] data;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 与当前查询点的距离，初始化的时候是没有的</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">double</span> distance;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 左右子节点以及父节点</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        Node left, right, parent;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 维度，建立树的时候判断的维度</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">int</span> axis = -<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Node</span><span class="params">(<span class="keyword">double</span>[] data)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.data = data;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 返回指定维度上的数值</span></span><br><span class="line"><span class="comment">         *</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> axis 维度</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@return</span> 指定维度上的数值</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getData</span><span class="params">(<span class="keyword">int</span> axis)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (data == <span class="keyword">null</span> || data.length &lt;= axis) &#123;</span><br><span class="line">                <span class="keyword">return</span> Integer.MIN_VALUE;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> data[axis];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Node o)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> Double.compare(<span class="keyword">this</span>.distance, o.distance);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 计算距离 这里返回欧式距离</span></span><br><span class="line"><span class="comment">         *</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@param</span> that 另一个节点</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@return</span> 欧式距离</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">computeDistance</span><span class="params">(Node that)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">this</span>.data == <span class="keyword">null</span> || that.data == <span class="keyword">null</span> || <span class="keyword">this</span>.data.length != that.data.length) &#123;</span><br><span class="line">                <span class="comment">// 出问题了  距离最远</span></span><br><span class="line">                <span class="keyword">return</span> Double.MAX_VALUE;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">double</span> d = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="keyword">this</span>.data.length; i++) &#123;</span><br><span class="line">                d += Math.pow(<span class="keyword">this</span>.data[i] - that.data[i], <span class="number">2</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> Math.sqrt(d);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;Node&#123;&quot;</span> +</span><br><span class="line">                    <span class="string">&quot;data=&quot;</span> + Arrays.toString(data) +</span><br><span class="line">                    <span class="string">&quot;, distance=&quot;</span> + distance +</span><br><span class="line">                    <span class="string">&quot;, left=&quot;</span> + left +</span><br><span class="line">                    <span class="string">&quot;, right=&quot;</span> + right +</span><br><span class="line">                    <span class="string">&quot;, parent=&quot;</span> + parent +</span><br><span class="line">                    <span class="string">&quot;, axis=&quot;</span> + axis +</span><br><span class="line">                    <span class="string">&#x27;&#125;&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+    
+      <a href="/2021/01/16/%E6%89%8B%E5%86%99RPC%E6%A1%86%E6%9E%B6/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">手写RPC框架</div>
+      </a>
+    
+  </nav>
+
+  
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2021
+        <i class="ri-heart-fill heart_icon"></i> Hash
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/assets/head.png" alt="Hash的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>
