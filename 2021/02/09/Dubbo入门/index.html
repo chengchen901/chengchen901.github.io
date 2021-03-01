@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="java" />
+   
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Dubbo入门 |  
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/assets/favicon.png" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-Dubbo入门"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Dubbo入门
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/" class="article-date">
+  <time datetime="2021-02-09T07:10:38.000Z" itemprop="datePublished">2021-02-09</time>
+</a>   
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">2.5k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">9 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>Dubbo入门</p>
+<a id="more"></a>
+
+<h1 id="1-Dubbo概述"><a href="#1-Dubbo概述" class="headerlink" title="1 Dubbo概述"></a>1 Dubbo概述</h1><h2 id="1-1-Dubbo是什么"><a href="#1-1-Dubbo是什么" class="headerlink" title="1.1 Dubbo是什么"></a>1.1 Dubbo是什么</h2><p>官网对于Dubbo的解释</p>
+<img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210209152012465.png" class="" title="image-20210209152012465">
+
+<p>Apache Dubbo 是一款高性能、轻量级的开源 Java 服务框架</p>
+<p>Apache Dubbo |ˈdʌbəʊ| 提供了六大核心能力：面向接口代理的高性能RPC调用，智能容错和负载均衡，服务自动注册和发现，高度可扩展能力，运行期流量调度，可视化的服务治理与运维。</p>
+<h2 id="1-2-Dubbo能做什么？"><a href="#1-2-Dubbo能做什么？" class="headerlink" title="1.2 Dubbo能做什么？"></a>1.2 Dubbo能做什么？</h2><table>
+<thead>
+<tr>
+<th>功能</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>服务开发（rpc应用开发）</td>
+<td>RMI或Hessian只能简单的暴露和引用远程服务，进行开发。通过配置服务的URL地址进行调用，F5 等硬件进行负载均衡。</td>
+</tr>
+<tr>
+<td>服务软负载均衡</td>
+<td>通过服务注册中心，动态地注册发现服务，使服务的位置透明，实现软负载均衡和容错机制，降低对硬件负载均衡器的依赖，减少部分成本。</td>
+</tr>
+<tr>
+<td>服务依赖管理</td>
+<td>服务间依赖关系错踪复杂时，人工难以描述，需要自动画出应用间的依赖关系图。</td>
+</tr>
+<tr>
+<td>服务监控</td>
+<td>统计服务每天的调用量、响应时间，作为容量规划的参考指标。将某台机器的权重一直加大，并在加大的过程中记录响应时间的变化，直到响应时间到达阈值，记录此时的访问量，再以此访问量乘以机器数反推总容量。</td>
+</tr>
+<tr>
+<td>服务治理</td>
+<td>可在线动态调整机器权重、服务分组隔离、禁启用服务。</td>
+</tr>
+</tbody></table>
+<img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210209160757374.png" class="" title="image-20210209160757374">
+
+<h2 id="1-3-Dubbo架构"><a href="#1-3-Dubbo架构" class="headerlink" title="1.3 Dubbo架构"></a>1.3 Dubbo架构</h2><img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210209161221109.png" class="" title="image-20210209161221109">
+
+<p><strong>Provider 服务提供者：</strong></p>
+<p>​    我们的service，实际执行业务逻辑的服务层。</p>
+<p><strong>Consumer 服务消费者：</strong></p>
+<p>​    专门调用service的，不关注service具体实现的应用层。</p>
+<p><strong>Registry 注册中心：</strong></p>
+<p>​    存储Provider，consumer信息的中介。</p>
+<p><strong>Monitor：</strong></p>
+<p>​    Dubbo负责收集服务调用信息的监控中心。</p>
+<h2 id="1-4-Dubbo架构调用流程"><a href="#1-4-Dubbo架构调用流程" class="headerlink" title="1.4 Dubbo架构调用流程"></a>1.4 Dubbo架构调用流程</h2><p><strong>Dubbo调用关系</strong></p>
+<ol>
+<li>服务容器负责启动，加载，运行服务提供者。 </li>
+<li>服务提供者在启动时，向注册中心注册自己提供的服务。</li>
+<li>服务消费者在启动时，向注册中心订阅自己所需的服务。</li>
+<li>注册中心返回服务提供者地址列表给消费者，如果有变更，注册中心将基于长连接推送变更数据给消费者。</li>
+<li>服务消费者，从提供者地址列表中，基于软负载均衡算法，选一台提供者进行调用，如果调用失败，再选另一台调用。</li>
+<li>服务消费者和提供者，在内存中累计调用次数和调用时间，定时每分钟发送一次统计数据到监控中心。</li>
+</ol>
+<h2 id="1-5-Dubbo架构特点"><a href="#1-5-Dubbo架构特点" class="headerlink" title="1.5 Dubbo架构特点"></a>1.5 Dubbo架构特点</h2><p>Dubbo 架构具有以下几个特点，分别是连通性、健壮性、伸缩性、以及向未来架构的升级性。  </p>
+<table>
+<thead>
+<tr>
+<th>特点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>连通性</td>
+<td>注册中心、监控中心宕机不影响连通性，俩个组件可选，服务消费端可直连。</td>
+</tr>
+<tr>
+<td>健壮性</td>
+<td>服务提供者无状态，任意一台宕机不影响使用，全宕机，无限重连。</td>
+</tr>
+<tr>
+<td>伸缩性</td>
+<td>注册中心集群，可动态增加部署实例，客户端自动发现新的注册中心。可动态增减服务者实例，注册中心将推送新的服务提供者信息给消费者。</td>
+</tr>
+<tr>
+<td>升级性</td>
+<td>升级到流动式计算，目前的架构毫无压力</td>
+</tr>
+</tbody></table>
+<h2 id="1-6-Dubbo的依赖"><a href="#1-6-Dubbo的依赖" class="headerlink" title="1.6 Dubbo的依赖"></a>1.6 Dubbo的依赖</h2><p><strong>必须依赖</strong></p>
+<p>​    JDK1.6+，理论上 Dubbo 可以只依赖 JDK，不依赖于任何三方库运行，只需配置使用 JDK相关实现策略  </p>
+<p><strong>缺省依赖</strong></p>
+<p>​    通过<code>mvn dependency∶tree&gt;dep.log</code>命令分析</p>
+<p>​    [INFO]]+- com.alibaba:dubbo:jar:2.5.9-SNAPSHOT:compile </p>
+<p>​    [INFO+-org.springframework:spring-context;jar:4.3.10.RELEASE:compile</p>
+<p>​    [INFO]+-org.javassist:javassist:jar:3.21.0-GA:compile</p>
+<p>​    [INFO]-org.jboss.netty:nettyjar:3.2.5.Final:compile  </p>
+<p><strong>可选依赖</strong></p>
+<p>​    其他三方相关依赖的jar包，有用到则需要依赖。  </p>
+<h2 id="1-7-Dubbo使用方式"><a href="#1-7-Dubbo使用方式" class="headerlink" title="1.7 Dubbo使用方式"></a>1.7 Dubbo使用方式</h2><p><strong>服务端提供</strong></p>
+<ol>
+<li>独立的服务（以普通的java程序方式，不需要依赖tomacat，直接以main函数启动）</li>
+<li>集成在应用中（在应用中增加远程服务能力）</li>
+</ol>
+<p><strong>消费客户端</strong></p>
+<ol>
+<li><p>在应用中调用远程服务。 </p>
+</li>
+<li><p>也可是在服务提供者中调用远程服务。</p>
+</li>
+</ol>
+<h2 id="1-8-Dubbo的三种配置方式"><a href="#1-8-Dubbo的三种配置方式" class="headerlink" title="1.8  Dubbo的三种配置方式"></a>1.8  Dubbo的三种配置方式</h2><p><strong>使用Dubbo注解</strong> </p>
+<p>​    使用简单，有一定的侵入性，需要实现类需要依赖Dubbo注解  </p>
+<p><strong>集成Spring XML</strong> </p>
+<p>​    使用稍显麻烦，可做到无侵入性，方便以后改用其他RPC框架 </p>
+<p><strong>使用原生API</strong> </p>
+<p>​    编程开发麻烦，一般用于测试、开放API的场景  </p>
+<h2 id="1-9-使用Dubbo的步骤"><a href="#1-9-使用Dubbo的步骤" class="headerlink" title="1.9 使用Dubbo的步骤"></a>1.9 使用Dubbo的步骤</h2><ol>
+<li>引入dubobo相关依赖 </li>
+<li>配置dubbo框架（提供了3中配置方式） </li>
+<li>开发服务 </li>
+<li>配置服务 </li>
+<li>启动、调用  </li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>dubbo<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.6<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--这里我们使用netty--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.netty<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>netty-all<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.1.32.Final<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-10-Dubbo的使用"><a href="#1-10-Dubbo的使用" class="headerlink" title="1.10 Dubbo的使用"></a>1.10 Dubbo的使用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DemoService</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">sayHello</span><span class="params">(String name)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">DemoService demoService = (DemoService) context.getBean(<span class="string">&quot;demoService&quot;</span>); <span class="comment">// 获取远程服务代理</span></span><br><span class="line">String hello = annotationAction.doSayHello(<span class="string">&quot;world&quot;</span>); <span class="comment">// 执行远程方法</span></span><br><span class="line">System.out.println(hello); <span class="comment">// 显示调用结果</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 生成远程服务代理，可以和本地bean一样使用demoService --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:reference</span> <span class="attr">id</span>=<span class="string">&quot;demoService&quot;</span> <span class="attr">interface</span>=<span class="string">&quot;com.study.dubbo.DemoService&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoServiceImpl</span> <span class="keyword">implements</span> <span class="title">DemoService</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello &quot;</span> + name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 声明需要暴露的服务接口 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:service</span> <span class="attr">interface</span>=<span class="string">&quot;com.study.dubbo.DemoService&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;demoService&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-11-SpringBoot中集成Dubbo"><a href="#1-11-SpringBoot中集成Dubbo" class="headerlink" title="1.11 SpringBoot中集成Dubbo"></a>1.11 SpringBoot中集成Dubbo</h2><p><strong>方式一，@EnableDubbo 注解</strong> </p>
+<ol>
+<li>引入对应的jar </li>
+<li>在springboot的启动类上加@EnableDubbo注解开启dubbo（服务提供者、消费者的是一样 的，扫描的包可能不一样） </li>
+<li>在application.yml中配置dubbo 具体引入jar和配置，见代码示例  </li>
+</ol>
+<p>具体引入jar和配置，见代码示例</p>
+<p><strong>方式二，dubbo-spring-boot-starter方式</strong> </p>
+<ol>
+<li><p>引入dubbo-spring-boot-starter 及对应的dubbo jar </p>
+</li>
+<li><p>在application.yml完成和方式一相同的配置。在application.yml中通过dubbo.scan.base- packages参数指定dubbo扫描的包（服务提供者、消费者设置方式一样） </p>
+</li>
+</ol>
+<p>具体引入jar和配置，见代码示例 </p>
+<p>最主要的区别，引入的jar不一样，从而扫描包的方式不一样。  </p>
+<h1 id="2-Dubbo核心功能"><a href="#2-Dubbo核心功能" class="headerlink" title="2 Dubbo核心功能"></a>2 Dubbo核心功能</h1><img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210211104918251.png" class="" title="image-20210211104918251">
+
+<h2 id="2-1-Dubbo面向接口的远程调用"><a href="#2-1-Dubbo面向接口的远程调用" class="headerlink" title="2.1 Dubbo面向接口的远程调用"></a>2.1 Dubbo面向接口的远程调用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DemoService</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">sayHello</span><span class="params">(String name)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">DemoService demoService = (DemoService) context.getBean(<span class="string">&quot;demoService&quot;</span>); <span class="comment">// 获取远程服务代理</span></span><br><span class="line">String hello = annotationAction.doSayHello(<span class="string">&quot;world&quot;</span>); <span class="comment">// 执行远程方法</span></span><br><span class="line">System.out.println(hello); <span class="comment">// 显示调用结果</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 生成远程服务代理，可以和本地bean一样使用demoService --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:reference</span> <span class="attr">id</span>=<span class="string">&quot;demoService&quot;</span> <span class="attr">interface</span>=<span class="string">&quot;com.study.dubbo.DemoService&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="-1"><a href="#-1" class="headerlink" title=""></a></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoServiceImpl</span> <span class="keyword">implements</span> <span class="title">DemoService</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello &quot;</span> + name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 声明需要暴露的服务接口 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:service</span> <span class="attr">interface</span>=<span class="string">&quot;com.study.dubbo.DemoService&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;demoService&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210211113651619.png" class="" title="image-20210211113651619">
+
+
+
+<h2 id="2-2-Dubbo注册中心"><a href="#2-2-Dubbo注册中心" class="headerlink" title="2.2 Dubbo注册中心"></a>2.2 Dubbo注册中心</h2><img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210211114125376.png" class="" title="image-20210211114125376">
+
+<h2 id="2-3-Dubbo智能负载均衡"><a href="#2-3-Dubbo智能负载均衡" class="headerlink" title="2.3 Dubbo智能负载均衡"></a>2.3 Dubbo智能负载均衡</h2><img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210211115646628.png" class="" title="image-20210211115646628">
+
+<h2 id="2-4-负载均衡"><a href="#2-4-负载均衡" class="headerlink" title="2.4  负载均衡"></a>2.4  负载均衡</h2><p><strong>Dubbo有几种负载均衡策略？适用哪些场景？</strong></p>
+<table>
+<thead>
+<tr>
+<th>负载均衡策略</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Random LoadBalance</td>
+<td>随机，按权重设置随机概率（默认）</td>
+</tr>
+<tr>
+<td>RoundRobin LoadBalance</td>
+<td>轮询，按公约后的权重设置轮询比率</td>
+</tr>
+<tr>
+<td>LeastActive LoadBalance</td>
+<td>最少活跃调用数，相同活跃数的随机</td>
+</tr>
+<tr>
+<td>ConsistentHash LoadBalance</td>
+<td>一致性Hash，相同参数的请求总是发到同一提供者</td>
+</tr>
+</tbody></table>
+<p>LeastActive LoadBalance：例如有10个请求，发送到3台机器，A每秒处理8个，B每秒处理5个，C每秒处理3个，请求前计数10，每响应回来10减1，最后数最小的表示处理能力越强，则大部分请求都发送到该服务者。</p>
+<h2 id="2-5-容错机制"><a href="#2-5-容错机制" class="headerlink" title="2.5 容错机制"></a>2.5 容错机制</h2><p><strong>Dubbo中有哪些容错方案？都适合哪些场景？</strong></p>
+<table>
+<thead>
+<tr>
+<th>集群容错方案</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Failover Cluster</td>
+<td>失败自动切换，自动重试其它服务器（默认，需要考虑服务幂等性问题）</td>
+</tr>
+<tr>
+<td>Failfast Cluster</td>
+<td>快速失败，立即报错，只发起一次调用（需要保证幂等性的服务，例如插入数据）</td>
+</tr>
+<tr>
+<td>Failsafe Cluster</td>
+<td>失败安全，出现异常时，直接忽略（日志、监控信息查询）</td>
+</tr>
+<tr>
+<td>Failback Cluster</td>
+<td>失败自动恢复，记录失败请求，定时重发（默认5秒重试，重试一定次数或直到服务找不到，场景短信发送场景）</td>
+</tr>
+<tr>
+<td>Forking Cluster</td>
+<td>并行调用多个服务器，只要一个成功即返回（消耗资源，更可靠，快速返回）</td>
+</tr>
+<tr>
+<td>Broadcast Cluster</td>
+<td>广播逐个调用所有提供者，任意一个报错则报错（测试，配置中心，缓存更新场景）</td>
+</tr>
+</tbody></table>
+<h2 id="2-6-Dubbo远程调用"><a href="#2-6-Dubbo远程调用" class="headerlink" title="2.6 Dubbo远程调用"></a>2.6 Dubbo远程调用</h2><img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210212081510378.png" class="" title="image-20210212081510378">
+
+<h2 id="2-7-Dubbo中的RPC协议"><a href="#2-7-Dubbo中的RPC协议" class="headerlink" title="2.7 Dubbo中的RPC协议"></a>2.7 Dubbo中的RPC协议</h2><img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210212084854319.png" class="" title="image-20210212084854319">
+
+<p>其它协议：</p>
+<img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210212084935516.png" class="" title="image-20210212084935516">
+
+<p><strong>Dubbo协议性能测试报告分析</strong></p>
+<p>tps：每秒事务提交数</p>
+<p>1k（1024个字节大小的对象） POJO场景</p>
+<p>64位操作系统，对象头压缩12字节，然后再加所有基础数据类型，12 + 1(boolean) + 1(byte) + 2(short) + 2(char) + 4 (int) + 4(float) + 8(long) + 8(double) = 42个字节，8字节对齐，42 + 6 = 48</p>
+<img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210212085115956.png" class="" title="image-20210212085115956">
+
+<p>50k（50 * 1024个字节大小的对象） String场景</p>
+<img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210212085138367.png" class="" title="image-20210212085138367">
+
+
+
+<h1 id="3-Dubbo协议"><a href="#3-Dubbo协议" class="headerlink" title="3 Dubbo协议"></a>3 Dubbo协议</h1><h2 id="3-1-Dubbo-RPC协议报文"><a href="#3-1-Dubbo-RPC协议报文" class="headerlink" title="3.1 Dubbo RPC协议报文"></a>3.1 Dubbo RPC协议报文</h2><p>头部：请求/响应 都包含的数据</p>
+<p>Magic：一个固定的特殊标志，标识是否是自己需要处理的数据包</p>
+<p>Flag：区分请求/响应/序列化方式</p>
+<p>Status：请求执行后的响应状态</p>
+<p>messageId：序列号，第几次请求</p>
+<p>bodyLength：Body内容的长度</p>
+<img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210212091535675.png" class="" title="image-20210212091535675">
+
+<img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210212091732576.png" class="" title="image-20210212091732576">
+
+<img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210212091756329.png" class="" title="image-20210212091756329">
+
+<p>结果类型：0&gt;异常信息 1&gt;方法返回值 2&gt;返回值为NULL</p>
+<h2 id="3-2-Dubbo-RPC协议报文"><a href="#3-2-Dubbo-RPC协议报文" class="headerlink" title="3.2 Dubbo RPC协议报文"></a>3.2 Dubbo RPC协议报文</h2><p>代码实现</p>
+<h2 id="3-3-为啥需要messageId（消息ID）"><a href="#3-3-为啥需要messageId（消息ID）" class="headerlink" title="3.3 为啥需要messageId（消息ID）"></a>3.3 为啥需要messageId（消息ID）</h2><img src="/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/image-20210212093407561.png" class="" title="image-20210212093407561">
+
+<p>需要将每个请求和响应一一对应起来</p>
+<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4 总结"></a>4 总结</h1><p><strong>Dubbo 概述</strong></p>
+<p>​    Dubbo框架的特性了解，Dubbo的用法</p>
+<p><strong>Dubbo核心功能</strong></p>
+<p>​    基于接口编程、智能负载均衡容错、服务自动注册与发现</p>
+<p><strong>Dubbo协议</strong></p>
+<p>​    Dubbo协议报文、实现一个Dubbo客户端</p>
+ 
+      <!-- reward -->
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <div class="declare">
+      <ul class="post-copyright">
+        <li>
+          <i class="ri-copyright-line"></i>
+          <strong>Copyright： </strong>
+          Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source.
+        </li>
+      </ul>
+    </div>
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2021/02/09/Dubbo%E5%85%A5%E9%97%A8/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2021/02/12/Dubbo%E9%85%8D%E7%BD%AE%E5%8F%8A%E7%89%B9%E6%80%A7/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Dubbo配置及特性
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2021/02/07/KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">KDTree查询邻近n个站点</div>
+      </a>
+    
+  </nav>
+
+  
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2015-2021
+        <i class="ri-heart-fill heart_icon"></i> Hash
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/assets/head.png" alt="Hash的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/img/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+    
+  </div>
+</body>
+
+</html>

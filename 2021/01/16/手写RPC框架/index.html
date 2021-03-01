@@ -72,7 +72,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">1k</span>
+            <span class="post-count">1.4k</span>
         </span>
     </span>
 
@@ -81,7 +81,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> Reading time≈</span>
-            <span class="post-count">3 min</span>
+            <span class="post-count">5 min</span>
         </span>
     </span>
 </div>
@@ -212,6 +212,57 @@
 <li>ServiceRegister模块实现服务注册、发布。 </li>
 <li>RequestHandler中实现消息协议处理、过程调用</li>
 </ol>
+<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4 总结"></a>4 总结</h1><h2 id="4-1-知识总结"><a href="#4-1-知识总结" class="headerlink" title="4.1 知识总结"></a>4.1 知识总结</h2><p><strong>RPC的流程及任务</strong></p>
+<p>​    RPC流程、流程中需要处理的事情</p>
+<ul>
+<li>RPC流程</li>
+</ul>
+<ol>
+<li><p>客户端处理过程中调用Client stub（就像调用本地方法一样），传入参数; </p>
+</li>
+<li><p>Client stub 将参数编组为消息，然后通过系统调用向服务端发送消息; </p>
+</li>
+<li><p>客户端本地操作系统将消息从客户端机器发送到服务端机器; </p>
+</li>
+<li><p>服务端操作系统将接收到的数据包传递给Server stub; </p>
+</li>
+<li><p>Server stub 解组消息为参数;</p>
+</li>
+<li><p>Sever stub再调用服务端的过程，过程执行结果以反方向的相同步骤响应给客户端。</p>
+</li>
+</ol>
+<ul>
+<li>流程中需要处理的事情</li>
+</ul>
+<ol>
+<li>Client stub、Server stub的开发; </li>
+<li>参数如何编组为消息，以及解组消息; </li>
+<li>消息如何发送;</li>
+<li>过程结果如何表示、异常情况如何处理; </li>
+<li>如何实现安全的访问控制。</li>
+</ol>
+<p><strong>RPC框架设计实现</strong></p>
+<p>​    框架客户端设计、服务端设计、RPC框架代码实现</p>
+<ul>
+<li>客户端设计</li>
+</ul>
+<ol>
+<li>使用jdk动态代理生成接口代理类</li>
+<li>服务注册，本地注册、ZooKeeper注册等方式</li>
+<li>协议层，http、json等方式进行消息编解码</li>
+<li>网络层，bio、netty等方式进行与服务端通信</li>
+</ol>
+<ul>
+<li>服务端设计</li>
+</ul>
+<ol>
+<li>服务注册，本地注册、ZooKeeper注册等方式</li>
+<li>协议层，http、json等方式进行消息编解码</li>
+<li>网络层，bio、netty等方式进行与服务端通信</li>
+</ol>
+<p><strong>学习目标</strong></p>
+<p>​    通过手写掌握RPC的核心环节</p>
+<h2 id="4-2-扩展"><a href="#4-2-扩展" class="headerlink" title="4.2 扩展"></a>4.2 扩展</h2><p>思考：如何与spring集成</p>
  
       <!-- reward -->
       
