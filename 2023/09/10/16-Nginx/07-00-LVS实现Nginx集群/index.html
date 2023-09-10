@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="LVS简介什么是LVSLVS（Linux Virtual Server）linux 虚拟服务，由中国人章文嵩创造和开发的linux内核项目。一句话理解：将一堆的linux服务节点虚拟成一台服务器，对外提供相同的ip访问，对内实现各服务器的负载调度。 特点  有一个负载调度器—负载均衡 内部结构对客户端透明—封装 无感知的增删服务节点—可伸缩 检测服务健康状态—高可用   官网地址： http:&#x2F;&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/16-Nginx/07-00-LVS%E5%AE%9E%E7%8E%B0Nginx%E9%9B%86%E7%BE%A4/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="LVS简介什么是LVSLVS（Linux Virtual Server）linux 虚拟服务，由中国人章文嵩创造和开发的linux内核项目。一句话理解：将一堆的linux服务节点虚拟成一台服务器，对外提供相同的ip访问，对内实现各服务器的负载调度。 特点  有一个负载调度器—负载均衡 内部结构对客户端透明—封装 无感知的增删服务节点—可伸缩 检测服务健康状态—高可用   官网地址： http:&#x2F;&#x2F;">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206232127.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206232616.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206233005.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206233236.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206233329.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206235500.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206235605.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206235803.png">
+<meta property="article:published_time" content="2023-09-10T03:59:07.837Z">
+<meta property="article:modified_time" content="2022-12-23T02:48:46.297Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206232127.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-16-Nginx/07-00-LVS实现Nginx集群" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/16-Nginx/07-00-LVS%E5%AE%9E%E7%8E%B0Nginx%E9%9B%86%E7%BE%A4/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:07.837Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="LVS简介"><a href="#LVS简介" class="headerlink" title="LVS简介"></a>LVS简介</h1><h2 id="什么是LVS"><a href="#什么是LVS" class="headerlink" title="什么是LVS"></a>什么是LVS</h2><p>LVS（Linux Virtual Server）linux 虚拟服务，由中国人章文嵩创造和开发的linux内核项目。一句话理解：将一堆的linux服务节点虚拟成一台服务器，对外提供相同的ip访问，对内实现各服务器的负载调度。</p>
+<p><strong>特点</strong></p>
+<ul>
+<li>有一个负载调度器—负载均衡</li>
+<li>内部结构对客户端透明—封装</li>
+<li>无感知的增删服务节点—可伸缩</li>
+<li>检测服务健康状态—高可用</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206232127.png"></p>
+<p>官网地址： <a target="_blank" rel="noopener" href="http://www.linuxvirtualserver.org/">http://www.linuxvirtualserver.org</a></p>
+<h2 id="为什么要用LVS？"><a href="#为什么要用LVS？" class="headerlink" title="为什么要用LVS？"></a>为什么要用LVS？</h2><p><strong>互联网发展需求</strong><br>要求web服务能具有可伸缩性、高可用性、可管理、性价比高这几个特性</p>
+<p><strong>服务器面临提升瓶颈</strong><br>升级单台硬件设备显然代价非常大，服务集群化更具可扩展性和成本效益。</p>
+<p><strong>构建集群的方法</strong><br>基于DNS，DNS将域名解析为服务器的不同IP地址来将请求分发到不同的服务器，实现集群负载<br>基于客户端，客户端需要值得服务集群信息。<br>基于调度程序，调度程序可以以精细的粒度调度请求（例如每个连接） ，以便在服务器之间实现更好的负载平衡。<br>基于IP</p>
+<p>LVS属于基于IP级负载均衡，IP级的开销很小，服务器节点的最大数量可以达到25或高达100</p>
+<h2 id="LVS应用框架结构"><a href="#LVS应用框架结构" class="headerlink" title="LVS应用框架结构"></a>LVS应用框架结构</h2><p>在LVS框架中，提供了含有三种IP负载均衡技术的IP虚拟服务器软件IPVS，基于内容请求分发的内核Layer-7交换机KTCPVS和集群管理软件。再上层则是集群管理、网络服务、电子商务应用。</p>
+<p>IP级负载均衡—IPVS<br>应用级负载均衡—KTCPVS</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206232616.png"></p>
+<h2 id="LVS如何工作？"><a href="#LVS如何工作？" class="headerlink" title="LVS如何工作？"></a>LVS如何工作？</h2><p>第四层负载均衡IPVS</p>
+<p>IPVS (IP Virtual Server) 在Linux内核中实现传输层负载平衡，即所谓的第4层交换。在主机上运行的IPVS充当真实服务器集群前端的负载均衡器，它可以将对基于TCP &#x2F; UDP的服务的请求定向到真实服务器，并使真实服务器的服务在虚拟服务上显示为虚拟服务。单个IP地址。LinuxDirector中共有三种IP负载均衡技术（数据包转发方法）。它们是通过<strong>NAT</strong>的虚拟服务器、通过<strong>IP隧道</strong>的虚拟服务器、通过<strong>直接路由</strong>的虚拟服务器。</p>
+<p>第七层负载均衡KTCPVS</p>
+<p>由于用户空间TCP Gateway的开销太大，我们提出在操作系统的内核中实现Layer-7交换方法，来避免用户空间与核心空间的切换和内存复制的开销。在Linux操作系统的内核中，我们实现了Layer-7交换，称之为KTCPVS（Kernel TCP Virtual Server）。目前，KTCPVS已经能对HTTP请求进行基于内容的调度，但它<strong>还不很成熟</strong>，在其调度算法和各种协议的功能支持等方面，有大量的工作需要做。</p>
+<h3 id="IPVS-NAT"><a href="#IPVS-NAT" class="headerlink" title="IPVS - NAT"></a>IPVS - NAT</h3><p>NAT —（Network Address Translation网络地址转换）。将IP地址从一个组映射到另一个组的功能，<strong>易于设置</strong>。负载均衡器可能是服务器数量超过20的整个系统的瓶颈，因为请求数据包和响应数据包都需要由负载均衡器重写。</p>
+<p>通过NAT的虚拟服务器的优点是真实服务器可以运行任何支持TCP&#x2F;IP协议的操作系统，真实服务器可以使用私有Internet地址，并且负载均衡器只需要IP地址。</p>
+<p>缺点是通过NAT的虚拟服务器的可扩展性是有限的。当服务器节点（通用PC服务器）的数量增加到大约20或更多时，负载平衡器可能是整个系统的瓶颈，因为请求包和响应包都需要由负载平衡器重写。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206233005.png"></p>
+<h3 id="IPVS-IP-TUN"><a href="#IPVS-IP-TUN" class="headerlink" title="IPVS - IP TUN"></a>IPVS - IP TUN</h3><p>IP TUN — IP（tunnel 隧道）。将发往一个IP地址的数据报包装并重定向到另一个IP地址。是<strong>最具扩展性</strong>的。</p>
+<p>TUN模式是通过ip隧道技术减轻lvs调度服务器的压力，许多Internet服务（例如WEB服务器）的请求包很短小，而应答包通常很大，负载均衡器只负责将请求包分发给物理服务器，而物理服务器将应答包直接发给用户。所以，负载均衡器能处理很巨大的请求量。</p>
+<p>相比NAT性能要高的多，比DR模式的优点是不限制负载均衡器与RS在一个物理段上。</p>
+<p><strong>缺点</strong>，需要所有的服务器（lvs、RS）支持”IP Tunneling”(IP Encapsulation)协议</p>
+<p><strong>优点</strong>，由于服务器通过使用IP隧道相互连接，负载均衡器和真实服务器可以驻留在不同的LAN甚至WAN上。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206233236.png"></p>
+<h3 id="IPVS-DR"><a href="#IPVS-DR" class="headerlink" title="IPVS - DR"></a>IPVS - DR</h3><p>DR —（direct route 直接路由）虚拟IP地址由真实服务器和负载均衡器共享。负载均衡器的接口也配置了虚拟IP地址，用于接受请求数据包，并直接将数据包路由到选定的服务器。所有真实服务器的<strong>非arp别名</strong>接口都配置了虚拟IP地址，或者将发往虚拟IP地址的数据包重定向到本地套接字，以便真实服务器可以在本地处理数据包。</p>
+<p>具有<strong>最佳性能</strong>。VS &#x2F; DR使用MAC欺骗技术，因此它要求负载均衡器的NIC和真实服务器的NIC之一必须位于同一IP网段和物理段中。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206233329.png"></p>
+<h1 id="LVS负载策略分析"><a href="#LVS负载策略分析" class="headerlink" title="LVS负载策略分析"></a>LVS负载策略分析</h1><h2 id="LVS负载策略"><a href="#LVS负载策略" class="headerlink" title="LVS负载策略"></a>LVS负载策略</h2><p><strong>轮询（Round Robin）</strong><br>        调度器通过”轮询”调度算法将外部请求按顺序轮流分配到集群中的真实服务器上，它均等地对待每一台服务器，而不管服务器上实际的连接数和系统负载。</p>
+<p><strong>加权轮询（Weighted Round Robin）</strong><br>        调度器通过”加权轮询”调度算法根据真实服务器的不同处理能力来调度访问请求。这样可以保证处理能力强的服务器处理更多的访问流量。调度器可以自动问询真实服务器的负载情况，并动态地调整其权值。</p>
+<p><strong>最少连接（Least Connections）</strong><br>        调度器通过”最少连接”调度算法动态地将网络请求调度到已建立的链接数最少的服务器上。如果集群系统的真实服务器具有相近的系统性能，采用”最小连接”调度算法可以较好地均衡负载。</p>
+<p><strong>加权最少链接（Weighted Least Connections）</strong><br>        在集群系统中的服务器性能差异较大的情况下，调度器采用”加权最少链接”调度算法优化负载均衡性能，具有较高权值的服务器将承受较大比例的活动连接负载。调度器可以自动问询真实服务器的负载情况，并动态地调整其权值。</p>
+<p><strong>基于局部性的最少链接（Locality-Based Least Connections）</strong><br>        针对目标IP地址的负载均衡，主要用于Cache集群系统。根据请求的目标IP地址找出该目标IP地址最近使用的服务器，若该服务器 是可用的且没有超载，将请求发送到该服务器；若服务器不存在，或者该服务器超载且有服务器处于一半的工作负载，则用“最少连接”的原则选出一个可用的服务器，将请求发送到该服务器。 </p>
+<p><strong>带复制的基于局部性最少链接（Locality-Based Least Connections with Replication）</strong><br>        与LBLC算法类似，不同的是它维护一个从目标IP地址到一组服务器的映射，LBLC算法维护一个从目标IP地址到一台服务器的映射。根据请求的目标IP地址找出该目标IP地址对应的服务器组，按“最少连接”原则从服务器组中选出一台服务器，若服务器没有超载，将请求发送到该服务器，若服务器超载；则按”最少连接”原则从这个集群中选出一台服务器，将该服务器加入到服务器组中，将请求发送到该服务器。同时，当该服务器组有一段时间没有被修改，将最忙的服务器从服务器组中删除，以降低复制的程度。</p>
+<p><strong>目标地址散列（Destination Hashing）</strong><br>        “目标地址散列”调度算法根据请求的目标IP地址，作为散列键（Hash Key）从静态分配的散列表找出对应的服务器，若该服务器是可用的且未超载，将请求发送到该服务器，否则返回空。</p>
+<p><strong>源地址散列（Source Hashing）</strong><br>        “源地址散列”调度算法根据请求的源IP地址，作为散列键（Hash Key）从静态分配的散列表找出对应的服务器，若该服务器是可用的且未超载，将请求发送到该服务器，否则返回空。</p>
+<h2 id="LVS实现Nginx负载均衡"><a href="#LVS实现Nginx负载均衡" class="headerlink" title="LVS实现Nginx负载均衡"></a>LVS实现Nginx负载均衡</h2><p>《高可用Nginx集群安装搭建手册》</p>
+<h1 id="基于Keepalived实现LVS高可用"><a href="#基于Keepalived实现LVS高可用" class="headerlink" title="基于Keepalived实现LVS高可用"></a>基于Keepalived实现LVS高可用</h1><h2 id="什么是Keepalived？"><a href="#什么是Keepalived？" class="headerlink" title="什么是Keepalived？"></a>什么是Keepalived？</h2><p>Keepalived是一款为Linux系统、基于Linux的基础架构，提供<strong>负载平衡</strong>和<strong>高可用性</strong>的网络路由软件。由C语言编写，简单而强大。一句话理解，类似于heartbeat，用来防止单点故障的软件。</p>
+<p><strong>负载平衡</strong>，通过LVS的IPVS内核模块，实现第四层负载均衡。</p>
+<p><strong>高可用性</strong>，通过虚拟冗余路由协议（VRRP），实现了动态自适应地管理负载平衡的服务器池。</p>
+<p>Keepalived可以独立使用，也可以一起使用提供弹性基础架构</p>
+<p>Keepalived提供两个主要功能： </p>
+<ul>
+<li>LVS系统的健康检查</li>
+<li>实现VRRPv2堆栈以处理负载均衡器故障转移</li>
+</ul>
+<p>官网地址： <a target="_blank" rel="noopener" href="https://www.keepalived.org/">https://www.keepalived.org</a></p>
+<h2 id="Keepalived的设计"><a href="#Keepalived的设计" class="headerlink" title="Keepalived的设计"></a>Keepalived的设计</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Keepalived有三个不同的进程，一个父进程，两个子进程</span><br><span class="line">PID 111 Keepalived &lt;--父进程负责fork、监控子进程</span><br><span class="line">    112 \_ Keepalived &lt;-- VRRP 子进程</span><br><span class="line">    113 \_ Keepalived &lt;-- Healthchecking 子进程</span><br></pre></td></tr></table></figure>
+
+<p>子进程都有自己的I&#x2F;O多路复用调度器，这样可以优化VRRP调度抖动，VRRP调度比健康检查器更敏感关键。这样拆分最小化了健康检查外部库的使用，并将其自身操作最小化到空闲主循环，以避免由自身引起的故 障。</p>
+<p>父进程监视框架称为看门狗。每个子进程打开一个接受unix域套接字，然后在守护进程引导时，父进程连接到那些unix域套接字并向子进程发送周期性（5s）hello数据包。如果父进程无法向远程连接的unix域套接字发送hello数据包，则只需重启子进程。</p>
+<p>这样的设计确保Keepalived的健壮性和稳定性，另外两个好处：</p>
+<ol>
+<li>父进程发给远程连接的hello数据包是通过子进程I&#x2F;O多路复用器调度程序完成的，可以检测子进程调度框架中的deadloop</li>
+<li>通过使用sysV信号来检测死亡的子进程</li>
+</ol>
+<h2 id="Keepalived的结构"><a href="#Keepalived的结构" class="headerlink" title="Keepalived的结构"></a>Keepalived的结构</h2><p>Keepalived由控制平面、IO多路复用调度器、内存管理、核心组件构成。核心组件中包含了前面提到的三个进程，父进程WatchDog程序、子进程检查程序、子进程VRRP协议栈程序。</p>
+<p><strong>WatchDog</strong></p>
+<p>派生、监控(VRRP &amp; Healthchecking)子进程。</p>
+<p><strong>检查程序</strong></p>
+<p>负责realserver的运行状况检查。检查器测试realserver是否还活着，从而决定，自动从LVS拓扑中删除或添加realserver。</p>
+<p><strong>VRRP协议栈</strong></p>
+<p>VRRP（Virtual Router Redundancy Protocol 虚拟路由器冗余协议）专门用于处理一组路由器组中路由器故障接管工作。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206235500.png"></p>
+<h2 id="健康检查—Checkers"><a href="#健康检查—Checkers" class="headerlink" title="健康检查—Checkers"></a>健康检查—Checkers</h2><p>健康检查注册在全局调度框架中，有以下类型的运行状况检查：</p>
+<p><strong>TCP_CHECK</strong><br>在第4层工作，使用无阻塞&#x2F;超时的TCP连接，如果远程服务器未回复此请求（超时），则测试错误，并从服务器池中删除该服务器。</p>
+<p><strong>HTTP_GET</strong><br>在第5层工作，对指定的URL执行HTTP GET。使用MD5算法对HTTP GET结果进行摘要, 与期望值不匹配，则测试不通过，并将服务器从服务器池中删除。</p>
+<p><strong>SSL_GET</strong><br>与HTTP_GET相同，但使用到远程Web服务器的SSL连接。</p>
+<p><strong>MISC_CHECK</strong><br>通过System call调用自定义的脚本作为运行状况检查器运行，结果必须为0或1。脚用来测试内部应用程序的理想方法。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206235605.png"></p>
+<h2 id="高可用特性—VRRP-Stack"><a href="#高可用特性—VRRP-Stack" class="headerlink" title="高可用特性—VRRP Stack"></a>高可用特性—VRRP Stack</h2><p>在设计网络的时候必须考虑冗余容灾，包括线路冗余，设备冗余等，防止网络存在单点故障，在路由器或三层交换机处实现冗余就显得尤为重要。 在网络里面VRRP协议就是来做这事的，Keepalived运用VRRP协议来实现高可用性。</p>
+<p>VRRP是用来实现路由器冗余的协议，VRRP协议将多台路由器设备虚拟成一个设备，对外提供虚拟路由器IP。路由器组内部，路由器分为Master、Backup两种状态，Master是一台对外提供服务的IP的路由器，或者是通过算法选举产生的，其他的状态为BACKUP 。</p>
+<p>MASTER路由器，实现针对虚拟路由器IP的各种网络功能，如ARP请求，ICMP，以及数据的转发等。</p>
+<p>BACKUP状态路由器，只接收MASTER的VRRP状态信息，不执行对外的网络功能。当Master失效时，BACKUP将接管原先MASTER的网络功能。</p>
+<p>由于设计和健壮性的原因，这个模块已完全集成在Keepalived守护程序中</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221206235803.png"></p>
+<h2 id="安装Keepalived"><a href="#安装Keepalived" class="headerlink" title="安装Keepalived"></a>安装Keepalived</h2><p>二进制安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install keepalived</span><br></pre></td></tr></table></figure>
+
+<p>源码编译安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 安装依赖</span><br><span class="line">sudo yum install -y curl gcc openssl-devel libnl3-devel net-snmp-devel</span><br><span class="line"># 下载解压</span><br><span class="line">sudo wget https://github.com/acassen/keepalived/archive/v2.0.18.tar.gz</span><br><span class="line">tar -xvf keepalived.tar.gz</span><br><span class="line">cd keepalived </span><br><span class="line"># 编译安装，安装到/usr/local/keepalived目录</span><br><span class="line">./configure --prefix=/usr/local/keepalived --sysconf=/etc </span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+
+<h2 id="通过Keepalived保证LVS高可用"><a href="#通过Keepalived保证LVS高可用" class="headerlink" title="通过Keepalived保证LVS高可用"></a>通过Keepalived保证LVS高可用</h2><p>参考《高可用Nginx集群安装搭建手册》</p>
+<h1 id="LVS和Nginx异同分析"><a href="#LVS和Nginx异同分析" class="headerlink" title="LVS和Nginx异同分析"></a>LVS和Nginx异同分析</h1><p><strong>LVS后面的服务一定要接Nginx服务吗？能直接接Tomcat吗？能直接接RPC服务吗？为什么不这样做呢？</strong></p>
+<p>LVS基于网络模型的第四层负载均衡，即传输层。<br>Nginx基于网络模型的第七层负载均衡，及应用用层。<br>两个都可以用来做Web服务器的负载均衡<br>传输层的LVS比Nginx能够处理的并发更高，性能更强大<br>应用层的Nginx则比LVS的功能特性更加丰富、更加成熟稳定</p>
+<p><strong>Nginx VS LVS</strong><br>都有第四层、第七层负载均衡的机制</p>
+<ol>
+<li>Nginx在第七层更加成熟稳定，功能更加丰富，大量的第三方模块和插件。LVS比拟不了，LVS应用层的负载均衡还不够成熟。</li>
+<li>LVS处于第四层负载均衡，并且集成到了Linux内核中，基于IP级别的负载均衡，又Nginx 四层负载均衡无法比拟。在内核中，效率更加的高效。</li>
+</ol>
+<p><strong>LVS只能够Nginx做负载均衡吗</strong><br>LVS 第四层内核，意味着可以对所有的应用服务做负载均衡</p>
+<p><strong>Keepalived与LVS的区别</strong><br>他们是一个功能包含关系，Keepalived依赖了LVS的IPVS模块。<br>Keepalived除了能进行负载均衡、还能提供解决高可用特性，单点故障的问题。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/16-Nginx/07-00-LVS%E5%AE%9E%E7%8E%B0Nginx%E9%9B%86%E7%BE%A4/" data-id="clmcxeccx0030u8wa6bs8ahfh" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/16-Nginx/07-01-%E9%AB%98%E5%8F%AF%E7%94%A8Nginx%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/16-Nginx/06-01-Nginx%E5%B8%B8%E7%94%A8%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

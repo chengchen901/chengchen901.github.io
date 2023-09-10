@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Dubbo入门 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Apache Dubbo 是一款高性能、轻量级的开源 Java 服务框架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dubbo入门">
+<meta property="og:url" content="http://example.com/2021/02/09/06-Dubbo/03-Dubbo%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Apache Dubbo 是一款高性能、轻量级的开源 Java 服务框架">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/Dubbo%E5%AD%A6%E4%B9%A0%E7%9F%A5%E8%AF%86%E7%82%B9.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210209152012465.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210209160757374.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210209161221109.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210211104918251.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210211113651619.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210211114125376.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210211115646628.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212081510378.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212084854319.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212084935516.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212085115956.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212085138367.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212091535675.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212091732576.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212091756329.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212093407561.png">
+<meta property="article:published_time" content="2021-02-09T07:10:38.000Z">
+<meta property="article:modified_time" content="2022-09-25T13:15:26.298Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Dubbo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/Dubbo%E5%AD%A6%E4%B9%A0%E7%9F%A5%E8%AF%86%E7%82%B9.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-06-Dubbo/03-Dubbo入门" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/09/06-Dubbo/03-Dubbo%E5%85%A5%E9%97%A8/" class="article-date">
+  <time class="dt-published" datetime="2021-02-09T07:10:38.000Z" itemprop="datePublished">2021-02-09</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dubbo/">Dubbo</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Dubbo入门
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Apache Dubbo 是一款高性能、轻量级的开源 Java 服务框架</p>
+<span id="more"></span>
+
+<p>Dubbo学习知识点</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/Dubbo%E5%AD%A6%E4%B9%A0%E7%9F%A5%E8%AF%86%E7%82%B9.png" alt="Dubbo学习知识点"></p>
+<p><strong>Dubbo学习代码：</strong><a target="_blank" rel="noopener" href="https://github.com/chengchen901/springboot-dubbo-study.git">https://github.com/chengchen901/springboot-dubbo-study.git</a></p>
+<h1 id="1-Dubbo概述"><a href="#1-Dubbo概述" class="headerlink" title="1 Dubbo概述"></a>1 Dubbo概述</h1><h2 id="1-1-Dubbo是什么"><a href="#1-1-Dubbo是什么" class="headerlink" title="1.1 Dubbo是什么"></a>1.1 Dubbo是什么</h2><p>官网对于Dubbo的解释</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210209152012465.png" alt="image-20210209152012465"></p>
+<p>Apache Dubbo 是一款高性能、轻量级的开源 Java 服务框架</p>
+<p>Apache Dubbo |ˈdʌbəʊ| 提供了六大核心能力：面向接口代理的高性能RPC调用，智能容错和负载均衡，服务自动注册和发现，高度可扩展能力，运行期流量调度，可视化的服务治理与运维。</p>
+<h2 id="1-2-Dubbo能做什么？"><a href="#1-2-Dubbo能做什么？" class="headerlink" title="1.2 Dubbo能做什么？"></a>1.2 Dubbo能做什么？</h2><table>
+<thead>
+<tr>
+<th>功能</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>服务开发（rpc应用开发）</td>
+<td>RMI或Hessian只能简单的暴露和引用远程服务，进行开发。通过配置服务的URL地址进行调用，F5 等硬件进行负载均衡。</td>
+</tr>
+<tr>
+<td>服务软负载均衡</td>
+<td>通过服务注册中心，动态地注册发现服务，使服务的位置透明，实现软负载均衡和容错机制，降低对硬件负载均衡器的依赖，减少部分成本。</td>
+</tr>
+<tr>
+<td>服务依赖管理</td>
+<td>服务间依赖关系错踪复杂时，人工难以描述，需要自动画出应用间的依赖关系图。</td>
+</tr>
+<tr>
+<td>服务监控</td>
+<td>统计服务每天的调用量、响应时间，作为容量规划的参考指标。将某台机器的权重一直加大，并在加大的过程中记录响应时间的变化，直到响应时间到达阈值，记录此时的访问量，再以此访问量乘以机器数反推总容量。</td>
+</tr>
+<tr>
+<td>服务治理</td>
+<td>可在线动态调整机器权重、服务分组隔离、禁启用服务。</td>
+</tr>
+</tbody></table>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210209160757374.png" alt="image-20210209160757374"></p>
+<h2 id="1-3-Dubbo架构"><a href="#1-3-Dubbo架构" class="headerlink" title="1.3 Dubbo架构"></a>1.3 Dubbo架构</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210209161221109.png" alt="image-20210209161221109"></p>
+<p><strong>Provider 服务提供者：</strong></p>
+<p>​	我们的service，实际执行业务逻辑的服务层。</p>
+<p><strong>Consumer 服务消费者：</strong></p>
+<p>​	专门调用service的，不关注service具体实现的应用层。</p>
+<p><strong>Registry 注册中心：</strong></p>
+<p>​	存储Provider，consumer信息的中介。</p>
+<p><strong>Monitor：</strong></p>
+<p>​	Dubbo负责收集服务调用信息的监控中心。</p>
+<h2 id="1-4-Dubbo架构调用流程"><a href="#1-4-Dubbo架构调用流程" class="headerlink" title="1.4 Dubbo架构调用流程"></a>1.4 Dubbo架构调用流程</h2><p><strong>Dubbo调用关系</strong></p>
+<ol>
+<li>服务容器负责启动，加载，运行服务提供者。 </li>
+<li>服务提供者在启动时，向注册中心注册自己提供的服务。</li>
+<li>服务消费者在启动时，向注册中心订阅自己所需的服务。</li>
+<li>注册中心返回服务提供者地址列表给消费者，如果有变更，注册中心将基于长连接推送变更数据给消费者。</li>
+<li>服务消费者，从提供者地址列表中，基于软负载均衡算法，选一台提供者进行调用，如果调用失败，再选另一台调用。</li>
+<li>服务消费者和提供者，在内存中累计调用次数和调用时间，定时每分钟发送一次统计数据到监控中心。</li>
+</ol>
+<h2 id="1-5-Dubbo架构特点"><a href="#1-5-Dubbo架构特点" class="headerlink" title="1.5 Dubbo架构特点"></a>1.5 Dubbo架构特点</h2><p>Dubbo 架构具有以下几个特点，分别是连通性、健壮性、伸缩性、以及向未来架构的升级性。  </p>
+<table>
+<thead>
+<tr>
+<th>特点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>连通性</td>
+<td>注册中心、监控中心宕机不影响连通性，俩个组件可选，服务消费端可直连。</td>
+</tr>
+<tr>
+<td>健壮性</td>
+<td>服务提供者无状态，任意一台宕机不影响使用，全宕机，无限重连。</td>
+</tr>
+<tr>
+<td>伸缩性</td>
+<td>注册中心集群，可动态增加部署实例，客户端自动发现新的注册中心。可动态增减服务者实例，注册中心将推送新的服务提供者信息给消费者。</td>
+</tr>
+<tr>
+<td>升级性</td>
+<td>升级到流动式计算，目前的架构毫无压力</td>
+</tr>
+</tbody></table>
+<h2 id="1-6-Dubbo的依赖"><a href="#1-6-Dubbo的依赖" class="headerlink" title="1.6 Dubbo的依赖"></a>1.6 Dubbo的依赖</h2><p><strong>必须依赖</strong></p>
+<p>​	JDK1.6+，理论上 Dubbo 可以只依赖 JDK，不依赖于任何三方库运行，只需配置使用 JDK相关实现策略  </p>
+<p><strong>缺省依赖</strong></p>
+<p>​	通过<code>mvn dependency∶tree&gt;dep.log</code>命令分析</p>
+<p>​	[INFO]]+- com.alibaba:dubbo:jar:2.5.9-SNAPSHOT:compile </p>
+<p>​	[INFO+-org.springframework:spring-context;jar:4.3.10.RELEASE:compile</p>
+<p>​	[INFO]+-org.javassist:javassist:jar:3.21.0-GA:compile</p>
+<p>​	[INFO]-org.jboss.netty:nettyjar:3.2.5.Final:compile  </p>
+<p><strong>可选依赖</strong></p>
+<p>​	其他三方相关依赖的jar包，有用到则需要依赖。  </p>
+<h2 id="1-7-Dubbo使用方式"><a href="#1-7-Dubbo使用方式" class="headerlink" title="1.7 Dubbo使用方式"></a>1.7 Dubbo使用方式</h2><p><strong>服务端提供</strong></p>
+<ol>
+<li>独立的服务（以普通的java程序方式，不需要依赖tomacat，直接以main函数启动）</li>
+<li>集成在应用中（在应用中增加远程服务能力）</li>
+</ol>
+<p><strong>消费客户端</strong></p>
+<ol>
+<li><p>在应用中调用远程服务。 </p>
+</li>
+<li><p>也可是在服务提供者中调用远程服务。</p>
+</li>
+</ol>
+<h2 id="1-8-Dubbo的三种配置方式"><a href="#1-8-Dubbo的三种配置方式" class="headerlink" title="1.8  Dubbo的三种配置方式"></a>1.8  Dubbo的三种配置方式</h2><p><strong>使用Dubbo注解</strong> </p>
+<p>​	使用简单，有一定的侵入性，需要实现类需要依赖Dubbo注解  </p>
+<p><strong>集成Spring XML</strong> </p>
+<p>​	使用稍显麻烦，可做到无侵入性，方便以后改用其他RPC框架 </p>
+<p><strong>使用原生API</strong> </p>
+<p>​	编程开发麻烦，一般用于测试、开放API的场景  </p>
+<h2 id="1-9-使用Dubbo的步骤"><a href="#1-9-使用Dubbo的步骤" class="headerlink" title="1.9 使用Dubbo的步骤"></a>1.9 使用Dubbo的步骤</h2><ol>
+<li>引入dubobo相关依赖 </li>
+<li>配置dubbo框架（提供了3中配置方式） </li>
+<li>开发服务 </li>
+<li>配置服务 </li>
+<li>启动、调用</li>
+</ol>
+<p>  </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>dubbo<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.6<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--这里我们使用netty--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.netty<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>netty-all<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">version</span>&gt;</span>4.1.32.Final<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-10-Dubbo的使用"><a href="#1-10-Dubbo的使用" class="headerlink" title="1.10 Dubbo的使用"></a>1.10 Dubbo的使用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">DemoService</span> &#123;</span><br><span class="line">	String <span class="title function_">sayHello</span><span class="params">(String name)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">DemoService</span> <span class="variable">demoService</span> <span class="operator">=</span> (DemoService) context.getBean(<span class="string">&quot;demoService&quot;</span>); <span class="comment">// 获取远程服务代理</span></span><br><span class="line"><span class="type">String</span> <span class="variable">hello</span> <span class="operator">=</span> annotationAction.doSayHello(<span class="string">&quot;world&quot;</span>); <span class="comment">// 执行远程方法</span></span><br><span class="line">System.out.println(hello); <span class="comment">// 显示调用结果</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 生成远程服务代理，可以和本地bean一样使用demoService --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:reference</span> <span class="attr">id</span>=<span class="string">&quot;demoService&quot;</span> <span class="attr">interface</span>=<span class="string">&quot;com.study.dubbo.DemoService&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DemoServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">DemoService</span> &#123;</span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">(String name)</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;Hello &quot;</span> + name;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 声明需要暴露的服务接口 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:service</span> <span class="attr">interface</span>=<span class="string">&quot;com.study.dubbo.DemoService&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;demoService&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-11-SpringBoot中集成Dubbo"><a href="#1-11-SpringBoot中集成Dubbo" class="headerlink" title="1.11 SpringBoot中集成Dubbo"></a>1.11 SpringBoot中集成Dubbo</h2><p><strong>方式一，@EnableDubbo 注解</strong> </p>
+<ol>
+<li>引入对应的jar </li>
+<li>在springboot的启动类上加@EnableDubbo注解开启dubbo（服务提供者、消费者的是一样 的，扫描的包可能不一样） </li>
+<li>在application.yml中配置dubbo 具体引入jar和配置，见代码示例</li>
+</ol>
+<p>  </p>
+<p>具体引入jar和配置，见代码示例</p>
+<p><strong>方式二，dubbo-spring-boot-starter方式</strong> </p>
+<ol>
+<li><p>引入dubbo-spring-boot-starter 及对应的dubbo jar </p>
+</li>
+<li><p>在application.yml完成和方式一相同的配置。在application.yml中通过dubbo.scan.base- packages参数指定dubbo扫描的包（服务提供者、消费者设置方式一样）</p>
+</li>
+</ol>
+<p> </p>
+<p>具体引入jar和配置，见代码示例 </p>
+<p>最主要的区别，引入的jar不一样，从而扫描包的方式不一样。  </p>
+<h1 id="2-Dubbo核心功能"><a href="#2-Dubbo核心功能" class="headerlink" title="2 Dubbo核心功能"></a>2 Dubbo核心功能</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210211104918251.png" alt="image-20210211104918251"></p>
+<h2 id="2-1-Dubbo面向接口的远程调用"><a href="#2-1-Dubbo面向接口的远程调用" class="headerlink" title="2.1 Dubbo面向接口的远程调用"></a>2.1 Dubbo面向接口的远程调用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">DemoService</span> &#123;</span><br><span class="line">	String <span class="title function_">sayHello</span><span class="params">(String name)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">DemoService</span> <span class="variable">demoService</span> <span class="operator">=</span> (DemoService) context.getBean(<span class="string">&quot;demoService&quot;</span>); <span class="comment">// 获取远程服务代理</span></span><br><span class="line"><span class="type">String</span> <span class="variable">hello</span> <span class="operator">=</span> annotationAction.doSayHello(<span class="string">&quot;world&quot;</span>); <span class="comment">// 执行远程方法</span></span><br><span class="line">System.out.println(hello); <span class="comment">// 显示调用结果</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 生成远程服务代理，可以和本地bean一样使用demoService --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:reference</span> <span class="attr">id</span>=<span class="string">&quot;demoService&quot;</span> <span class="attr">interface</span>=<span class="string">&quot;com.study.dubbo.DemoService&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DemoServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">DemoService</span> &#123;</span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">(String name)</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;Hello &quot;</span> + name;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 声明需要暴露的服务接口 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:service</span> <span class="attr">interface</span>=<span class="string">&quot;com.study.dubbo.DemoService&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;demoService&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210211113651619.png" alt="image-20210211113651619"></p>
+<h2 id="2-2-Dubbo注册中心"><a href="#2-2-Dubbo注册中心" class="headerlink" title="2.2 Dubbo注册中心"></a>2.2 Dubbo注册中心</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210211114125376.png" alt="image-20210211114125376"></p>
+<h2 id="2-3-Dubbo智能负载均衡"><a href="#2-3-Dubbo智能负载均衡" class="headerlink" title="2.3 Dubbo智能负载均衡"></a>2.3 Dubbo智能负载均衡</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210211115646628.png" alt="image-20210211115646628"></p>
+<h2 id="2-4-负载均衡"><a href="#2-4-负载均衡" class="headerlink" title="2.4  负载均衡"></a>2.4  负载均衡</h2><p><strong>Dubbo有几种负载均衡策略？适用哪些场景？</strong></p>
+<table>
+<thead>
+<tr>
+<th>负载均衡策略</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Random LoadBalance</td>
+<td>随机，按权重设置随机概率（默认）</td>
+</tr>
+<tr>
+<td>RoundRobin LoadBalance</td>
+<td>轮询，按公约后的权重设置轮询比率</td>
+</tr>
+<tr>
+<td>LeastActive LoadBalance</td>
+<td>最少活跃调用数，相同活跃数的随机</td>
+</tr>
+<tr>
+<td>ConsistentHash LoadBalance</td>
+<td>一致性Hash，相同参数的请求总是发到同一提供者</td>
+</tr>
+</tbody></table>
+<p>LeastActive LoadBalance：例如有10个请求，发送到3台机器，A每秒处理8个，B每秒处理5个，C每秒处理3个，请求前计数10，每响应回来10减1，最后数最小的表示处理能力越强，则大部分请求都发送到该服务者。</p>
+<h2 id="2-5-容错机制"><a href="#2-5-容错机制" class="headerlink" title="2.5 容错机制"></a>2.5 容错机制</h2><p><strong>Dubbo中有哪些容错方案？都适合哪些场景？</strong></p>
+<table>
+<thead>
+<tr>
+<th>集群容错方案</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Failover Cluster</td>
+<td>失败自动切换，自动重试其它服务器（默认，需要考虑服务幂等性问题）</td>
+</tr>
+<tr>
+<td>Failfast Cluster</td>
+<td>快速失败，立即报错，只发起一次调用（需要保证幂等性的服务，例如插入数据）</td>
+</tr>
+<tr>
+<td>Failsafe Cluster</td>
+<td>失败安全，出现异常时，直接忽略（日志、监控信息查询）</td>
+</tr>
+<tr>
+<td>Failback Cluster</td>
+<td>失败自动恢复，记录失败请求，定时重发（默认5秒重试，重试一定次数或直到服务找不到，场景短信发送场景）</td>
+</tr>
+<tr>
+<td>Forking Cluster</td>
+<td>并行调用多个服务器，只要一个成功即返回（消耗资源，更可靠，快速返回）</td>
+</tr>
+<tr>
+<td>Broadcast Cluster</td>
+<td>广播逐个调用所有提供者，任意一个报错则报错（测试，配置中心，缓存更新场景）</td>
+</tr>
+</tbody></table>
+<h2 id="2-6-Dubbo远程调用"><a href="#2-6-Dubbo远程调用" class="headerlink" title="2.6 Dubbo远程调用"></a>2.6 Dubbo远程调用</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212081510378.png" alt="image-20210212081510378"></p>
+<h2 id="2-7-Dubbo中的RPC协议"><a href="#2-7-Dubbo中的RPC协议" class="headerlink" title="2.7 Dubbo中的RPC协议"></a>2.7 Dubbo中的RPC协议</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212084854319.png" alt="image-20210212084854319"></p>
+<p>其它协议：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212084935516.png" alt="image-20210212084935516"></p>
+<p><strong>Dubbo协议性能测试报告分析</strong></p>
+<p>tps：每秒事务提交数</p>
+<p>1k（1024个字节大小的对象） POJO场景</p>
+<p>64位操作系统，对象头压缩12字节，然后再加所有基础数据类型，12 + 1(boolean) + 1(byte) + 2(short) + 2(char) + 4 (int) + 4(float) + 8(long) + 8(double) &#x3D; 42个字节，8字节对齐，42 + 6 &#x3D; 48</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212085115956.png" alt="image-20210212085115956"></p>
+<p>50k（50 * 1024个字节大小的对象） String场景</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212085138367.png" alt="image-20210212085138367"></p>
+<h1 id="3-Dubbo协议"><a href="#3-Dubbo协议" class="headerlink" title="3 Dubbo协议"></a>3 Dubbo协议</h1><h2 id="3-1-Dubbo-RPC协议报文"><a href="#3-1-Dubbo-RPC协议报文" class="headerlink" title="3.1 Dubbo RPC协议报文"></a>3.1 Dubbo RPC协议报文</h2><p>头部：请求&#x2F;响应 都包含的数据</p>
+<p>Magic：一个固定的特殊标志，标识是否是自己需要处理的数据包</p>
+<p>Flag：区分请求&#x2F;响应&#x2F;序列化方式</p>
+<p>Status：请求执行后的响应状态</p>
+<p>messageId：序列号，第几次请求</p>
+<p>bodyLength：Body内容的长度</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212091535675.png" alt="image-20210212091535675"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212091732576.png" alt="image-20210212091732576"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212091756329.png" alt="image-20210212091756329"></p>
+<p>结果类型：0&gt;异常信息 1&gt;方法返回值 2&gt;返回值为NULL</p>
+<h2 id="3-2-Dubbo-RPC协议报文"><a href="#3-2-Dubbo-RPC协议报文" class="headerlink" title="3.2 Dubbo RPC协议报文"></a>3.2 Dubbo RPC协议报文</h2><p>代码实现</p>
+<h2 id="3-3-为啥需要messageId（消息ID）"><a href="#3-3-为啥需要messageId（消息ID）" class="headerlink" title="3.3 为啥需要messageId（消息ID）"></a>3.3 为啥需要messageId（消息ID）</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210212093407561.png" alt="image-20210212093407561"></p>
+<p>需要将每个请求和响应一一对应起来</p>
+<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4 总结"></a>4 总结</h1><p><strong>Dubbo 概述</strong></p>
+<p>​	Dubbo框架的特性了解，Dubbo的用法</p>
+<p><strong>Dubbo核心功能</strong></p>
+<p>​	基于接口编程、智能负载均衡容错、服务自动注册与发现</p>
+<p><strong>Dubbo协议</strong></p>
+<p>​	Dubbo协议报文、实现一个Dubbo客户端</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/09/06-Dubbo/03-Dubbo%E5%85%A5%E9%97%A8/" data-id="clmcxecyc0096u8wad4lo0fp7" data-title="Dubbo入门" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/02/12/06-Dubbo/04-Dubbo%E9%85%8D%E7%BD%AE%E5%8F%8A%E7%89%B9%E6%80%A7/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Dubbo配置及特性
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/02/07/00-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01-KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">KDTree查询邻近n个站点</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

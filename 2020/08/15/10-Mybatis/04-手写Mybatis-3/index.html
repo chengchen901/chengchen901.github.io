@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>手写Mybatis-3 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="执行结果处理执行结果处理要干的是什么事pst.executeUpate()的返回结果是int，影响的行数。 pst.executeQuery()的返回结果是ResultSet。 在得到语句执行的结果后，要转为方法的返回结果进行返回。这就是执行结果处理要干的事根据方法的返回值类型来进行相应的处理。 这里我们根据语句执行结果的不同，分开处理： 12345678910111213141516171819">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手写Mybatis-3">
+<meta property="og:url" content="http://example.com/2020/08/15/10-Mybatis/04-%E6%89%8B%E5%86%99Mybatis-3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="执行结果处理执行结果处理要干的是什么事pst.executeUpate()的返回结果是int，影响的行数。 pst.executeQuery()的返回结果是ResultSet。 在得到语句执行的结果后，要转为方法的返回结果进行返回。这就是执行结果处理要干的事根据方法的返回值类型来进行相应的处理。 这里我们根据语句执行结果的不同，分开处理： 12345678910111213141516171819">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921192631.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921192725.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921192859.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921193027.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921193219.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921193242.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921193556.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921200159.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921201905.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921202233.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921203108.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921203222.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921203243.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921203742.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921204357.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921204605.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921204735.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921204939.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921205151.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921205205.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921205341.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921205513.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:50:53.757Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Mybatis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921192631.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-10-Mybatis/04-手写Mybatis-3" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/10-Mybatis/04-%E6%89%8B%E5%86%99Mybatis-3/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mybatis/">Mybatis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      手写Mybatis-3
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="执行结果处理"><a href="#执行结果处理" class="headerlink" title="执行结果处理"></a>执行结果处理</h1><h2 id="执行结果处理要干的是什么事"><a href="#执行结果处理要干的是什么事" class="headerlink" title="执行结果处理要干的是什么事"></a>执行结果处理要干的是什么事</h2><p>pst.executeUpate()的返回结果是int，影响的行数。</p>
+<p>pst.executeQuery()的返回结果是ResultSet。</p>
+<p>在得到语句执行的结果后，要转为方法的返回结果进行返回。这就是执行结果处理要干的事根据方法的返回值类型来进行相应的处理。</p>
+<p>这里我们根据语句执行结果的不同，分开处理：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span></span><br><span class="line">Throwable &#123;</span><br><span class="line"><span class="comment">// TODO 这里需要完成哪些事？</span></span><br><span class="line"><span class="comment">// 1、获得方法对应的SQL语句</span></span><br><span class="line"><span class="type">String</span> <span class="variable">id</span> <span class="operator">=</span> <span class="built_in">this</span>.mapper.getName() + <span class="string">&quot;.&quot;</span> + method.getName();</span><br><span class="line"><span class="type">MappedStatement</span> <span class="variable">ms</span> <span class="operator">=</span> <span class="built_in">this</span>.configuration.getMappedStatement(id);</span><br><span class="line"><span class="comment">// 2、解析SQL参数与方法参数的对应关系，得到真正的SQL与语句参数值</span></span><br><span class="line"><span class="type">RealSqlAndParamValues</span> <span class="variable">rsp</span> <span class="operator">=</span> ms.getRealSqlAndParamValues(args);</span><br><span class="line"><span class="comment">// 3、获得数据库连接</span></span><br><span class="line"><span class="type">Connection</span> <span class="variable">conn</span> <span class="operator">=</span></span><br><span class="line"><span class="built_in">this</span>.configuration.getDataSource().getConnection();</span><br><span class="line"><span class="comment">// 4、创建语句对象。</span></span><br><span class="line"><span class="type">PreparedStatement</span> <span class="variable">pst</span> <span class="operator">=</span> conn.prepareStatement(rsp.getSql());</span><br><span class="line"><span class="comment">// 5、设置语句参数</span></span><br><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"><span class="keyword">for</span> (ParamValue p : rsp.getParamValues()) &#123;</span><br><span class="line"><span class="type">TypeHandler</span> <span class="variable">th</span> <span class="operator">=</span> p.getTypeHandler()</span><br><span class="line">th.setParameter(pst,i++,p.getValue());</span><br><span class="line"> &#125;</span><br><span class="line">    <span class="comment">// 6、执行语句并处理结果 </span></span><br><span class="line">    <span class="keyword">switch</span> (ms.getSqlCommandType()) &#123; </span><br><span class="line">        <span class="keyword">case</span> INSERT: </span><br><span class="line">        <span class="keyword">case</span> UPDATE: </span><br><span class="line">        <span class="keyword">case</span> DELETE: </span><br><span class="line">            <span class="type">int</span> <span class="variable">rows</span> <span class="operator">=</span> pst.executeUpdate();</span><br><span class="line">            <span class="keyword">return</span> handleUpdateReturn(rows, ms, method); </span><br><span class="line">        <span class="keyword">case</span> SELECT: </span><br><span class="line">            <span class="type">ResultSet</span> <span class="variable">rs</span> <span class="operator">=</span> pst.executeQuery(); </span><br><span class="line">            <span class="keyword">return</span> handleResultSetReturn(rs, ms, method); </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Object <span class="title function_">handleUpdateReturn</span><span class="params">(<span class="type">int</span> rows, MappedStatement ms, Method method)</span> &#123; </span><br><span class="line">    <span class="comment">// TODO Auto-generated method stub </span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Object <span class="title function_">handleResultSetReturn</span><span class="params">(ResultSet rs, MappedStatement ms, Method method)</span> &#123; </span><br><span class="line">    <span class="comment">// TODO Auto-generated method stub </span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="pst-executeUpate-的返回结果处理"><a href="#pst-executeUpate-的返回结果处理" class="headerlink" title="pst.executeUpate()的返回结果处理"></a>pst.executeUpate()的返回结果处理</h2><p>pst.executeUpate()的返回结果是int</p>
+<p>方法的返回值可以是什么？</p>
+<p>void、int、long 、 其他的不可以！</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Object <span class="title function_">handleUpdateReturn</span><span class="params">(<span class="type">int</span> rows, MappedStatement ms, Method method)</span> &#123; </span><br><span class="line">    Class&lt;?&gt; returnType = method.getReturnType(); </span><br><span class="line">    <span class="keyword">if</span> (returnType == Void.TYPE) &#123; </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>; </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (returnType == <span class="type">int</span>.class || returnType == Integer.class) &#123; </span><br><span class="line">        <span class="keyword">return</span> rows; </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (returnType == <span class="type">long</span>.class || returnType == Long.class) &#123; </span><br><span class="line">        <span class="keyword">return</span> (<span class="type">long</span>) rows; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;update类方法的返回值只能是： void/int/Integer/long/Long&quot;</span>); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="pst-executeQuery-的返回结果处理"><a href="#pst-executeQuery-的返回结果处理" class="headerlink" title="pst.executeQuery()的返回结果处理"></a>pst.executeQuery()的返回结果处理</h2><p>pst.executeQuery()的返回结果是ResultSet</p>
+<p>方法的返回值可以是什么？</p>
+<p>可以是void、单个值、集合。</p>
+<p>单个值可以是什么类型的值？</p>
+<p>任意值、（map)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Select(&quot;select count(1) from t_user where sex = #&#123;sex&#125;&quot;)</span> </span><br><span class="line"><span class="type">int</span> <span class="title function_">query</span><span class="params">(String sex)</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Select(&quot;select id,name,sex,age,address from t_user where id = #&#123;id&#125;&quot;)</span> </span><br><span class="line">User <span class="title function_">queryUser</span><span class="params">(String id)</span>; </span><br><span class="line"></span><br><span class="line"><span class="meta">@Select(&quot;select id,name,sex,age,address from t_user where id = #&#123;id&#125;&quot;)</span> </span><br><span class="line">Map <span class="title function_">queryUser1</span><span class="params">(String id)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>集合可以是什么类型？</p>
+<p>List、Set、数组、Vector</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Select(&quot;select id,name,sex,age,address from t_user where sex = #&#123;sex&#125; order by #&#123;orderColumn&#125;&quot;)</span> </span><br><span class="line">List&lt;User&gt; <span class="title function_">query</span><span class="params">(String sex, String orderColumn)</span>; </span><br><span class="line"></span><br><span class="line"><span class="meta">@Select(&quot;select id,name,sex,age,address from t_user where sex = #&#123;sex&#125; order by #&#123;orderColumn&#125;&quot;)</span> </span><br><span class="line">List&lt;Map&gt; <span class="title function_">query1</span><span class="params">(String sex, String orderColumn)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>集合的元素可以是什么类型的？</p>
+<p>任意类型的，集合只是单个值多做几遍。</p>
+<p>结果集中的列如何与结果、结果的属性对应？</p>
+<p>根据结果集列名与属性名对应</p>
+<p>如果属性名与列名不一样呢？</p>
+<p>则需用户显式说明映射规则。</p>
+<p>需要考虑JDBCType — JavaType的处理吗？</p>
+<p>无论结果是什么类型的，在这里我们都是要完成一件事：从查询结果中获得数据返回，只是返回类型不同，有不同的获取数据的方式。</p>
+<p>请思考：如何让下面这个方法的代码的写好后不再改变？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Object <span class="title function_">handleResultSetReturn</span><span class="params">(ResultSet rs, MappedStatement ms, Object[] args)</span> &#123; </span><br><span class="line">    <span class="comment">// TODO Auto-generated method stub </span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我需要在此做个抽象，应用策略模式，不同的处理实现这个抽象接口。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921192631.png"></p>
+<p>那么在handleResultSetReturn()方法中我们从哪得到ResultHandler呢？</p>
+<p>从MappedStatement 中获取，每个语句对象（查询类型的）中都持有它对应的结果处理器。</p>
+<p>在解析准备MappedStatement对象时根据方法的返回值类型选定对应的ResultHandler。 </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921192725.png"></p>
+<p>在handleResultSetReturn方法中只需调用ms中的ResultHandler：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Object <span class="title function_">handleResultSetReturn</span><span class="params">(ResultSet rs, MappedStatement ms, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123; </span><br><span class="line">    <span class="keyword">return</span> ms.getResultHandler().handle(rs, args); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以来看具体的放回值情况了！</p>
+<h3 id="方法返回单个值"><a href="#方法返回单个值" class="headerlink" title="方法返回单个值"></a>方法返回单个值</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Select(&quot;select count(1) from t_user where sex = #&#123;sex&#125;&quot;)</span> </span><br><span class="line"><span class="type">int</span> <span class="title function_">query</span><span class="params">(String sex)</span>; </span><br><span class="line"></span><br><span class="line"><span class="meta">@Select(&quot;select id,name,sex,age,address from t_user where id = #&#123;id&#125;&quot;)</span> </span><br><span class="line">User <span class="title function_">queryUser</span><span class="params">(String id)</span>; </span><br><span class="line"></span><br><span class="line"><span class="meta">@Select(&quot;select id,name,sex,age,address from t_user where id = #&#123;id&#125;&quot;)</span> </span><br><span class="line">Map <span class="title function_">queryUser1</span><span class="params">(String id)</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-基本数据类型、String-如何处理？"><a href="#1-基本数据类型、String-如何处理？" class="headerlink" title="1 基本数据类型、String 如何处理？"></a>1 基本数据类型、String 如何处理？</h4><p>针对这种情况，提供对应的ResultHandler实现：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921192859.png"></p>
+<p>SimpleTypeResultHandler中需要定义什么属性？</p>
+<p>handle方法中的逻辑该是怎样的？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">handle</span><span class="params">(ResultSet rs, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123; </span><br><span class="line">    <span class="comment">//从rs中取对应值 </span></span><br><span class="line">    <span class="keyword">return</span> rs.getXXX(OOO); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>问题1：该调用rs的哪个get方法？</p>
+<p>得根据返回值来，返回值类型从哪来？</p>
+<p>从SimpleTypeResultHandler中取，在创建MappedStatement时，根据反射获得的返回值类型给入到SimpleTypeResultHandler中。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921193027.png"></p>
+<p>SimpleTypeResultHandler的handle方法中的代码逻辑如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">handle</span><span class="params">(ResultSet rs, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123; </span><br><span class="line">    <span class="keyword">if</span> (returnType == <span class="type">short</span>.class || returnType == Short.class) &#123; </span><br><span class="line">        <span class="keyword">return</span> rs.getShort(xxx); </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (returnType == <span class="type">int</span>.class || returnType == Integer.class) &#123;</span><br><span class="line">        <span class="keyword">return</span> rs.getInt(xxx); </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (returnType == <span class="type">long</span>.class || returnType == Long.class) &#123; </span><br><span class="line">        <span class="keyword">return</span> rs.getLong(xxx); </span><br><span class="line">    &#125;</span><br><span class="line">    ... </span><br><span class="line">	<span class="keyword">return</span> <span class="literal">null</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>问题2：该取结果集中的哪一列？</p>
+<p>如果结果集中只有一列：那就取第1列。</p>
+<p>如果结果集中是有多列呢？</p>
+<p>问题：结果集中应不应该有多列？</p>
+<p>两种方案：</p>
+<p>1、该返回值情况下不允许结果集多列。</p>
+<p>2、不限制，用户指定列名，不指定则取第一列。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921193219.png"></p>
+<p>问题3：这么多if else 合适吗？</p>
+<p>不合适，咋办？</p>
+<p>策略模式</p>
+<p>该定义怎样的策略？</p>
+<p>这是要做什么事情？</p>
+<p>从结果集中获取值，跟pst.setXXX一样。</p>
+<p>可不可以在TypeHandler中加方法？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921193242.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">TypeHandler</span>&lt;T&gt; &#123; </span><br><span class="line">    Type <span class="title function_">getType</span><span class="params">()</span>; </span><br><span class="line">    JDBCType <span class="title function_">getJDBCType</span><span class="params">()</span>; </span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">setParameter</span><span class="params">(PreparedStatement pst, <span class="type">int</span> index, Object paramValue)</span> <span class="keyword">throws</span> SQLException; </span><br><span class="line">    T <span class="title function_">getResult</span><span class="params">(ResultSet rs, String columnName)</span> <span class="keyword">throws</span> SQLException; </span><br><span class="line">    T <span class="title function_">getResult</span><span class="params">(ResultSet rs, <span class="type">int</span> columnIndex)</span> <span class="keyword">throws</span> SQLException; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringTypeHandler</span> <span class="keyword">implements</span> <span class="title class_">TypeHandler</span>&lt;String&gt; &#123; </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="keyword">public</span> Type <span class="title function_">getType</span><span class="params">()</span> &#123; </span><br><span class="line">        <span class="keyword">return</span> String.class; </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span> <span class="keyword">public</span> JDBCType <span class="title function_">getJDBCType</span><span class="params">()</span> &#123; </span><br><span class="line">        <span class="keyword">return</span> JDBCType.VARCHAR; </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setParameter</span><span class="params">(PreparedStatement pst, <span class="type">int</span> index, Object paramValue)</span> <span class="keyword">throws</span> SQLException &#123; </span><br><span class="line">        pst.setString(index, (String) paramValue); </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getResult</span><span class="params">(ResultSet rs, String columnName)</span> <span class="keyword">throws</span> SQLException &#123; </span><br><span class="line">        <span class="keyword">return</span> rs.getString(columnName); </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getResult</span><span class="params">(ResultSet rs, <span class="type">int</span> columnIndex)</span> <span class="keyword">throws</span> SQLException &#123; </span><br><span class="line">        <span class="keyword">return</span> rs.getString(columnIndex); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一样的，在启动解析阶段完成结果的TypeHandler选定。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921193556.png"></p>
+<p>根据返回值类型，从TypeHandlerRegistry中取，要取，还得有JDBCType，用户可以指定，也可不指定，不指定则使用默认的该类型的TypeHandler。</p>
+<p>默认TypeHandler如何注册，修改registerTypeHandler方法的定义：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">registerTypeHandler</span><span class="params">(TypeHandler th，<span class="type">boolean</span> defalut)</span>&#123; </span><br><span class="line">    Map&lt;JDBCType,TypeHandler&gt; cmap = typeHandlerMap.get(th.getType); </span><br><span class="line">    <span class="keyword">if</span>(cmap == <span class="literal">null</span>)&#123; </span><br><span class="line">        cmap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;JDBCType,TypeHandler&gt;(); </span><br><span class="line">        typeHandlerMap.put(th.getType,cmap); </span><br><span class="line">    &#125;</span><br><span class="line">    camp.put(th.getJDBCType(),th); </span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">default</span>)&#123; </span><br><span class="line">        cmap.put(<span class="literal">null</span>,th); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>很好，那就可以在SimpleTypeResultHandler中持有对应的TypeHandler。</p>
+<p>问：在SimpleTypeResultHandler中还有必要持有Class&lt;?&gt; returnType吗？</p>
+<p>不需要，在TypeHandler中有了。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921200159.png"></p>
+<p>SimpleTypeResultHandler 的handle方法代码就简单了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">handle</span><span class="params">(ResultSet rs, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123; </span><br><span class="line">    <span class="keyword">if</span> (StringUtils.isNotEmpty(columnName)) &#123; </span><br><span class="line">        <span class="keyword">return</span> typeHandler.getResult(rs, columnName); </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123; </span><br><span class="line">        <span class="keyword">return</span> typeHandler.getResult(rs, columnIndex); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-对象类型返回结果的处理"><a href="#2-对象类型返回结果的处理" class="headerlink" title="2 对象类型返回结果的处理"></a>2 对象类型返回结果的处理</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Select(&quot;select id,name,sex,age,address from t_user where id = #&#123;id&#125;&quot;)</span> </span><br><span class="line">User <span class="title function_">queryUser</span><span class="params">(String id)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>分析：</p>
+<p>1、要完成的事情是什么？</p>
+<p>创建对象</p>
+<p>从结果集中取数据给到对象</p>
+<p>问题：</p>
+<h5 id="1、如何创建对象？"><a href="#1、如何创建对象？" class="headerlink" title="1、如何创建对象？"></a>1、如何创建对象？</h5><p>反射调用构造方法。</p>
+<p>构造方法有多种情况：</p>
+<ol>
+<li><p>未显式定义构造方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123; </span><br><span class="line">    <span class="keyword">private</span> String id; </span><br><span class="line">    <span class="keyword">private</span> String name; </span><br><span class="line">    <span class="keyword">private</span> String sex; </span><br><span class="line">    ... </span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">getId</span><span class="params">()</span> &#123; </span><br><span class="line">        <span class="keyword">return</span> id; </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setId</span><span class="params">(String id)</span> &#123; </span><br><span class="line">        <span class="built_in">this</span>.id = id; </span><br><span class="line">    &#125;</span><br><span class="line">    ... </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种情况不需要考虑什么，直接创建对象！</p>
+</li>
+<li><p>显式定义了一个构造方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123; </span><br><span class="line">    <span class="keyword">private</span> String id; </span><br><span class="line">    <span class="keyword">private</span> String name; </span><br><span class="line">    <span class="keyword">private</span> String sex; </span><br><span class="line">    ... </span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">User</span><span class="params">(String id, String name, String sex)</span> &#123; </span><br><span class="line">        <span class="built_in">super</span>(); </span><br><span class="line">        <span class="built_in">this</span>.id = id; </span><br><span class="line">        <span class="built_in">this</span>.name = name; </span><br><span class="line">        <span class="built_in">this</span>.sex = sex; </span><br><span class="line">    &#125;</span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">getId</span><span class="params">()</span> &#123; </span><br><span class="line">        <span class="keyword">return</span> id; </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setId</span><span class="params">(String id)</span> &#123; </span><br><span class="line">        <span class="built_in">this</span>.id = id; </span><br><span class="line">    &#125;</span><br><span class="line">    ... </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此种情况下，要创建对象，则需要对应的构造参数值。</p>
+<p>问题1：构造参数值从哪来？</p>
+<p>ResultSet</p>
+<p>问题2：怎么知道该从ResultSet中取哪个列的值，取什么类型的值？</p>
+<p>得定义构造参数与ResultSet中列的对应规则，下面的规则是否可以？</p>
+<p>1、优先采用指定列名的方式：用参数名称当列名、或用户为参数指定列名（参数名与列名不一致时、取不到参数名时）；</p>
+<p>2、如不能取得参数名，则按参数顺序来取对应顺序的列。</p>
+<p>问题3：用户如何来指定列名？</p>
+<p>注解、xml配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">User</span><span class="params">(<span class="meta">@Arg(column=&quot;id&quot;)</span>String id, <span class="meta">@Arg(column=&quot;xname&quot;)</span>String name, <span class="meta">@Arg(column=&quot;sex&quot;)</span>String sex)</span> &#123; </span><br><span class="line">    <span class="built_in">super</span>(); </span><br><span class="line">    <span class="built_in">this</span>.id = id; </span><br><span class="line">    <span class="built_in">this</span>.name = name; </span><br><span class="line">    <span class="built_in">this</span>.sex = sex; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Retention(RUNTIME)</span> </span><br><span class="line"><span class="meta">@Target(PARAMETER)</span> </span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Arg &#123; </span><br><span class="line">    String <span class="title function_">name</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;&quot;</span>; </span><br><span class="line">    String <span class="title function_">column</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;&quot;</span>; </span><br><span class="line">    Class&lt;?&gt; javaType() <span class="keyword">default</span> <span class="keyword">void</span>.class;</span><br><span class="line">    JdbcType <span class="title function_">jdbcType</span><span class="params">()</span> <span class="keyword">default</span> JdbcType.UNDEFINED;</span><br><span class="line">    Class&lt;? <span class="keyword">extends</span> <span class="title class_">TypeHandler</span>&gt; typeHandler() <span class="keyword">default</span> UndefinedTypeHandler.class; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;User&quot;</span> <span class="attr">type</span>=<span class="string">&quot;com.study.mybatis.sample.model.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">arg</span> <span class="attr">name</span>=<span class="string">&quot;&quot;</span>  <span class="attr">column</span>=<span class="string">&quot;&quot;</span>  <span class="attr">JdbcType</span>=<span class="string">&quot;&quot;</span> <span class="attr">javaType</span>=<span class="string">&quot;&quot;</span> <span class="attr">typeHandler</span>=<span class="string">&quot;&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">constructor</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>mybatis-mapper.dtd 中增加如下定义</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ELEMENT resultMap (constructor?)&gt;</span><br><span class="line">&lt;!ATTLIST resultMap</span><br><span class="line">id CDATA #REQUIRED</span><br><span class="line">type CDATA #REQUIRED</span><br><span class="line">&gt;</span><br><span class="line">&lt;!ELEMENT constructor (arg*)&gt;</span><br><span class="line">&lt;!ELEMENT arg EMPTY&gt;</span><br><span class="line">&lt;!ATTLIST arg</span><br><span class="line">javaType CDATA #IMPLIED</span><br><span class="line">column CDATA #IMPLIED</span><br><span class="line">jdbcType CDATA #IMPLIED</span><br><span class="line">typeHandler CDATA #IMPLIED</span><br><span class="line">name CDATA #IMPLIED</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+
+<p>问题4：这些映射信息得到后如何表示、存储？</p>
+<p>定义一个结果映射实体：ResultMap</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921201905.png"></p>
+<p>注意，在创建ResultMap时，当用户没有指定TypeHandler或是UndefinedTypeHandler时，要根据type、jdbcType取对应的typeHandler，没有则为null;</p>
+<p>问题5、ResultMap 元素怎么表示？</p>
+<p>ResultMap类定义本身就是表示一种java类型与JDBCType类型的映射，基本数据类型与复合类型（类）都是java类型。</p>
+<p>扩充一下ResultMap即可：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921202233.png"></p>
+<p><strong>注意：这里有个使用规则需要注意一下：</strong></p>
+<p>如果ResultMap中有TypeHandler，则该结果直接通过调用TypeHandler来获得。没有TypeHandler时则看有constructorResultMaps没，有则根据此取结果集中的值来调用对应的构造方法创建对象。</p>
+</li>
+<li><p>定义了多个构造方法，怎么办？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123; </span><br><span class="line">    <span class="keyword">private</span> String id; </span><br><span class="line">    <span class="keyword">private</span> String name; </span><br><span class="line">    <span class="keyword">private</span> String sex; </span><br><span class="line">    ... </span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">User</span><span class="params">(String id, String name, String sex)</span> &#123; </span><br><span class="line">        <span class="built_in">super</span>(); </span><br><span class="line">        <span class="built_in">this</span>.id = id; </span><br><span class="line">        <span class="built_in">this</span>.name = name; </span><br><span class="line">        <span class="built_in">this</span>.sex = sex; </span><br><span class="line">    &#125;</span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">User</span><span class="params">(String id, String name, String sex, <span class="type">int</span> age)</span> &#123; </span><br><span class="line">        <span class="built_in">super</span>(); </span><br><span class="line">        <span class="built_in">this</span>.id = id; </span><br><span class="line">        <span class="built_in">this</span>.name = name; </span><br><span class="line">        <span class="built_in">this</span>.sex = sex;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">getId</span><span class="params">()</span> &#123; </span><br><span class="line">        <span class="keyword">return</span> id; </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setId</span><span class="params">(String id)</span> &#123; </span><br><span class="line">        <span class="built_in">this</span>.id = id; </span><br><span class="line">    &#125;</span><br><span class="line">    ... </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用户指定构造方法，没有指定时则用默认构造方法（没有则报错）。</p>
+<p>用户怎么指定：</p>
+<p>注解 ：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@MapConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">User</span><span class="params">(<span class="meta">@Arg(&quot;id&quot;)</span>String id, <span class="meta">@Arg(&quot;xname&quot;)</span>String name, <span class="meta">@Arg(&quot;sex&quot;)</span>String sex)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>();</span><br><span class="line">    <span class="built_in">this</span>.id = id;</span><br><span class="line">    <span class="built_in">this</span>.name = name;</span><br><span class="line">    <span class="built_in">this</span>.sex = sex; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 标识选用的构造方法</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Retention(RUNTIME)</span></span><br><span class="line"><span class="meta">@Target(CONSTRUCTOR)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MapConstructor &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> xml：根据constructor元素中 arg元素的数量、javaType来确定构造函数。注意arg有顺序规则、必须指定构造方法的全部参数。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;User&quot;</span> <span class="attr">type</span>=<span class="string">&quot;com.study.mybatis.sample.model.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">arg</span> <span class="attr">column</span>=<span class="string">&quot;id&quot;</span> <span class="attr">javaType</span>=<span class="string">&quot;String&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">arg</span> <span class="attr">column</span>=<span class="string">&quot;name&quot;</span> <span class="attr">javaType</span>=<span class="string">&quot;String&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">arg</span> <span class="attr">column</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">javaType</span>=<span class="string">&quot;String&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">constructor</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h5 id="2、该给对象哪些属性值？"><a href="#2、该给对象哪些属性值？" class="headerlink" title="2、该给对象哪些属性值？"></a>2、该给对象哪些属性值？</h5><p>创建出对象后，可以从结果集中取值来填充对象的属性。</p>
+<p>问题1：该给哪些属性赋值？</p>
+<p>可以有两种规则：</p>
+<p>1、用户指定要给哪些属性赋值。</p>
+<p>2、自动映射赋值：取列的值赋给同名的属性。</p>
+<p>两者可以一起使用。</p>
+<p>那么这里就涉及两个事情：</p>
+<p>1、用户如何指定？</p>
+<p>注解方式： 我们给定义一个注解 @Result</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="meta">@Result</span></span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line">    <span class="meta">@Result(column=&quot;xname&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">     ... </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Retention(RUNTIME)</span></span><br><span class="line"><span class="meta">@Target(&#123; TYPE, FIELD &#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Result &#123;</span><br><span class="line">    String <span class="title function_">column</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">    Class&lt;?&gt; javaType() <span class="keyword">default</span> <span class="keyword">void</span>.class;</span><br><span class="line">    JdbcType <span class="title function_">jdbcType</span><span class="params">()</span> <span class="keyword">default</span> JdbcType.UNDEFINED;</span><br><span class="line">    Class&lt;? <span class="keyword">extends</span> <span class="title class_">TypeHandler</span>&gt; typeHandler() <span class="keyword">default</span></span><br><span class="line">    UndefinedTypeHandler.class; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>xml方式：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;User&quot;</span> <span class="attr">type</span>=<span class="string">&quot;com.study.mybatis.sample.model.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">arg</span> <span class="attr">column</span>=<span class="string">&quot;id&quot;</span> <span class="attr">javaType</span>=<span class="string">&quot;String&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">arg</span> <span class="attr">column</span>=<span class="string">&quot;name&quot;</span> <span class="attr">javaType</span>=<span class="string">&quot;String&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">arg</span> <span class="attr">column</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">javaType</span>=<span class="string">&quot;String&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">constructor</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;age&quot;</span> <span class="attr">column</span>=<span class="string">&quot;age&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>mybatis-mapper.dtd</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ELEMENT resultMap (constructor?,result*)&gt;</span><br><span class="line">&lt;!ATTLIST resultMap</span><br><span class="line">id CDATA #REQUIRED </span><br><span class="line">type CDATA #REQUIRED </span><br><span class="line">&gt;</span><br><span class="line"></span><br><span class="line">&lt;!ELEMENT constructor (arg*)&gt; </span><br><span class="line"></span><br><span class="line">&lt;!ELEMENT arg EMPTY&gt; </span><br><span class="line">&lt;!ATTLIST arg </span><br><span class="line">javaType CDATA #IMPLIED </span><br><span class="line">column CDATA #IMPLIED </span><br><span class="line">jdbcType CDATA #IMPLIED </span><br><span class="line">typeHandler CDATA #IMPLIED </span><br><span class="line">name CDATA #IMPLIED </span><br><span class="line">&gt;</span><br><span class="line"></span><br><span class="line">&lt;!ELEMENT result EMPTY&gt; </span><br><span class="line">&lt;!ATTLIST result </span><br><span class="line">property CDATA #IMPLIED </span><br><span class="line">javaType CDATA #IMPLIED </span><br><span class="line">column CDATA #IMPLIED </span><br><span class="line">jdbcType CDATA #IMPLIED </span><br><span class="line">typeHandler CDATA #IMPLIED </span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+
+<p>问题：这些信息如何表示、存储？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921203108.png"></p>
+<p>2、是否自动映射如何指定？</p>
+<p>增加一个属性即可：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;User&quot;</span> <span class="attr">type</span>=<span class="string">&quot;com.study..mybatis.sample.model.User&quot;</span> <span class="attr">autoMapping</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;age&quot;</span> <span class="attr">column</span>=<span class="string">&quot;age&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ELEMENT resultMap (constructor?,result*)&gt;</span><br><span class="line">&lt;!ATTLIST resultMap</span><br><span class="line">id CDATA #REQUIRED</span><br><span class="line">type CDATA #REQUIRED</span><br><span class="line">autoMapping (true|false) #IMPLIED</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+
+<p>注解方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">标识类对象要进行自动映射</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Retention(RUNTIME)</span></span><br><span class="line"><span class="meta">@Target(&#123; TYPE, FIELD &#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> AutoMapping &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AutoMapping</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="meta">@Result</span></span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line">    <span class="meta">@Result(column=&quot;xname&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">     ... </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921203222.png"></p>
+<p>为方便统一开启自动映射，我们可以在Configuration中设计一个全局配置参数，具体的可以覆盖全局的。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921203243.png"></p>
+<p>在哪可配置它？</p>
+<p>在mybatis-config.xml中增加一个配置项即可。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">settings</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">setting</span> <span class="attr">name</span>=<span class="string">&quot;autoMappingBehavior&quot;</span> <span class="attr">value</span>=<span class="string">&quot;PARTIAL&quot;</span>/&gt;</span> </span><br><span class="line">    <span class="tag">&lt;/<span class="name">settings</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="3、对象中包含对象该如何映射及处理"><a href="#3、对象中包含对象该如何映射及处理" class="headerlink" title="3、对象中包含对象该如何映射及处理"></a>3、对象中包含对象该如何映射及处理</h5><p>对象中包对象是个问题，先把问题搞清楚，看下面的语句示例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- Very Complex Statement --&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectBlogDetails&quot;</span> <span class="attr">resultMap</span>=<span class="string">&quot;detailedBlogResultMap&quot;</span>&gt;</span></span><br><span class="line">    select</span><br><span class="line">    B.id as blog_id,</span><br><span class="line">    B.title as blog_title, </span><br><span class="line">    B.author_id as blog_author_id, </span><br><span class="line">    A.id as author_id, </span><br><span class="line">    A.username as author_username, </span><br><span class="line">    A.password as author_password, </span><br><span class="line">    A.email as author_email, </span><br><span class="line">    A.bio as author_bio, </span><br><span class="line">    A.favourite_section as author_favourite_section, </span><br><span class="line">    P.id as post_id, </span><br><span class="line">    P.blog_id as post_blog_id, </span><br><span class="line">    P.author_id as post_author_id, </span><br><span class="line">    P.created_on as post_created_on, </span><br><span class="line">    P.section as post_section, </span><br><span class="line">    P.subject as post_subject, </span><br><span class="line">    P.draft as draft, </span><br><span class="line">    P.body as post_body </span><br><span class="line">from Blog B </span><br><span class="line">    left outer join Author A on B.author_id = A.id </span><br><span class="line">    left outer join Post P on B.id = P.blog_id </span><br><span class="line">where B.id = #&#123;id&#125; </span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>再看类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Blog</span> &#123; </span><br><span class="line">    <span class="keyword">private</span> String id; </span><br><span class="line">    <span class="keyword">private</span> String title; </span><br><span class="line">    <span class="keyword">private</span> Author author; </span><br><span class="line">    <span class="keyword">private</span> List&lt;Post&gt; posts; </span><br><span class="line">	.... </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Author</span> &#123; </span><br><span class="line">    <span class="keyword">private</span> String id; </span><br><span class="line">    <span class="keyword">private</span> String username; </span><br><span class="line">	... </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Post</span> &#123; </span><br><span class="line">    <span class="keyword">private</span> String id; </span><br><span class="line">    <span class="keyword">private</span> String subject; </span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这就是对象中包含对象，要从查询结果中得到Blog，Blog的Author posts数据。</p>
+<p>这就是ORM中的关系映射问题。</p>
+<p>结果的映射是简单的，因为就是指定里面的属性取哪个列的值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Blog</span> &#123; </span><br><span class="line">    <span class="meta">@Result(column=&quot;blog_id&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String id; </span><br><span class="line">    <span class="meta">@Result(column=&quot;blog_title&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String title; </span><br><span class="line">    <span class="meta">@Result</span></span><br><span class="line">    <span class="keyword">private</span> Author author; </span><br><span class="line">    <span class="meta">@Result</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;Post&gt; posts; </span><br><span class="line">	.... </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Author</span> &#123; </span><br><span class="line">    <span class="meta">@Result(column=&quot;author_id&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String id; </span><br><span class="line">    <span class="meta">@Result(column=&quot;author_username&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String username; </span><br><span class="line">	... </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Post</span> &#123; </span><br><span class="line">    <span class="meta">@Result(column=&quot;post_id&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String id; </span><br><span class="line">    <span class="meta">@Result(column=&quot;post_subject&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String subject; </span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们的ResultMap类也是支持的：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921203742.png"></p>
+<p>但是从结果集中取值来填装对象则是复杂的！</p>
+<p>请先看查询的结果示例：</p>
+<table>
+<thead>
+<tr>
+<th>blog_id</th>
+<th>blog_title</th>
+<th>author_id</th>
+<th>author_username</th>
+<th>post_id</th>
+<th>post_subject</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>b01</td>
+<td>成为架构师</td>
+<td>a888</td>
+<td>user</td>
+<td>p00000001</td>
+<td>集群架构原理</td>
+</tr>
+<tr>
+<td>b01</td>
+<td>成为架构师</td>
+<td>a888</td>
+<td>user</td>
+<td>p00000002</td>
+<td>缓存架构</td>
+</tr>
+<tr>
+<td>b01</td>
+<td>成为架构师</td>
+<td>a888</td>
+<td>use</td>
+<td>p00000003</td>
+<td>安全架构</td>
+</tr>
+<tr>
+<td>b02</td>
+<td>成为理发大师</td>
+<td>a666</td>
+<td>tony</td>
+<td>p10000011</td>
+<td>精洗之道</td>
+</tr>
+<tr>
+<td>b02</td>
+<td>成为理发大师</td>
+<td>a666</td>
+<td>tony</td>
+<td>p10000012</td>
+<td>精剪之道</td>
+</tr>
+<tr>
+<td>b02</td>
+<td>成为理发大师</td>
+<td>a666</td>
+<td>tony</td>
+<td>p10000013</td>
+<td>吹发绝技</td>
+</tr>
+</tbody></table>
+<p>while(rs.next()){</p>
+<p>}</p>
+<p>复杂点：不是一行一个Blog对象，处理行时要判断该行的blog是否已取过了。</p>
+<p>问题核心点在哪？</p>
+<p>当我操作一行，如何判断该行的Blog已经取过没？</p>
+<p>这就要求要知道区分Blog的唯一标识、区分Author的唯一标识。怎么知道？</p>
+<p>用户得告诉我们他们的id属性是哪个，对应的列是哪个。</p>
+<p>让用户怎么来指定id属性呢？</p>
+<p>注解方式：在@Arg 、@Rersult注解中增加id指定项。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Retention(RUNTIME)</span> </span><br><span class="line"><span class="meta">@Target(PARAMETER)</span> </span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Arg &#123; </span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">id</span><span class="params">()</span> <span class="keyword">default</span> <span class="literal">false</span>; </span><br><span class="line">    String <span class="title function_">name</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;&quot;</span>; </span><br><span class="line">    String <span class="title function_">column</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;&quot;</span>; </span><br><span class="line">    Class&lt;?&gt; javaType() <span class="keyword">default</span> <span class="keyword">void</span>.class; </span><br><span class="line">    JdbcType <span class="title function_">jdbcType</span><span class="params">()</span> <span class="keyword">default</span> JdbcType.UNDEFINED; </span><br><span class="line">    Class&lt;? <span class="keyword">extends</span> <span class="title class_">TypeHandler</span>&gt; typeHandler() <span class="keyword">default</span> UndefinedTypeHandler.class; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Documented</span> </span><br><span class="line"><span class="meta">@Retention(RUNTIME)</span> </span><br><span class="line"><span class="meta">@Target(&#123; TYPE, FIELD &#125;)</span> </span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Result &#123; </span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">id</span><span class="params">()</span> <span class="keyword">default</span> <span class="literal">false</span>; </span><br><span class="line">    String <span class="title function_">column</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;&quot;</span>; </span><br><span class="line">    Class&lt;?&gt; javaType() <span class="keyword">default</span> <span class="keyword">void</span>.class; </span><br><span class="line">    JdbcType <span class="title function_">jdbcType</span><span class="params">()</span> <span class="keyword">default</span> JdbcType.UNDEFINED; </span><br><span class="line">    Class&lt;? <span class="keyword">extends</span> <span class="title class_">TypeHandler</span>&gt; typeHandler() <span class="keyword">default</span> UndefinedTypeHandler.class; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>xml方式增加：增加argId、id元素</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;detailedBlogResultMap&quot;</span> <span class="attr">type</span>=<span class="string">&quot;Blog&quot;</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">idArg</span> <span class="attr">column</span>=<span class="string">&quot;blog_id&quot;</span> <span class="attr">javaType</span>=<span class="string">&quot;int&quot;</span>/&gt;</span> </span><br><span class="line">    	<span class="tag">&lt;/<span class="name">constructor</span>&gt;</span> </span><br><span class="line">    	.... </span><br><span class="line">	<span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span> </span><br><span class="line">	<span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;AuthorMap&quot;</span> <span class="attr">type</span>=<span class="string">&quot;Author&quot;</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;author_id&quot;</span>/&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;username&quot;</span> <span class="attr">column</span>=<span class="string">&quot;author_username&quot;</span>/&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;password&quot;</span> <span class="attr">column</span>=<span class="string">&quot;author_password&quot;</span>/&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在ResultMap中增加ID信息</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921204357.png"></p>
+<p>问题：要体现出一对一，一对多关系吗？我们会在哪里需要知道这个关系？</p>
+<p>看一个mybatis中的复杂xml ResultMap示例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 超复杂的 Result Map --&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;detailedBlogResultMap&quot;</span> <span class="attr">type</span>=<span class="string">&quot;Blog&quot;</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">idArg</span> <span class="attr">column</span>=<span class="string">&quot;blog_id&quot;</span> <span class="attr">javaType</span>=<span class="string">&quot;int&quot;</span>/&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">constructor</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;title&quot;</span> <span class="attr">column</span>=<span class="string">&quot;blog_title&quot;</span>/&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">association</span> <span class="attr">property</span>=<span class="string">&quot;author&quot;</span> <span class="attr">javaType</span>=<span class="string">&quot;Author&quot;</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;author_id&quot;</span>/&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;username&quot;</span> <span class="attr">column</span>=<span class="string">&quot;author_username&quot;</span>/&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;password&quot;</span> <span class="attr">column</span>=<span class="string">&quot;author_password&quot;</span>/&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;email&quot;</span> <span class="attr">column</span>=<span class="string">&quot;author_email&quot;</span>/&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;bio&quot;</span> <span class="attr">column</span>=<span class="string">&quot;author_bio&quot;</span>/&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;favouriteSection&quot;</span> <span class="attr">column</span>=<span class="string">&quot;author_favourite_section&quot;</span>/&gt;</span> </span><br><span class="line">    <span class="tag">&lt;/<span class="name">association</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">collection</span> <span class="attr">property</span>=<span class="string">&quot;posts&quot;</span> <span class="attr">ofType</span>=<span class="string">&quot;Post&quot;</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;post_id&quot;</span>/&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;subject&quot;</span> <span class="attr">column</span>=<span class="string">&quot;post_subject&quot;</span>/&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">association</span> <span class="attr">property</span>=<span class="string">&quot;author&quot;</span> <span class="attr">javaType</span>=<span class="string">&quot;Author&quot;</span>/&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">collection</span> <span class="attr">property</span>=<span class="string">&quot;comments&quot;</span> <span class="attr">ofType</span>=<span class="string">&quot;Comment&quot;</span>&gt;</span> </span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;comment_id&quot;</span>/&gt;</span> </span><br><span class="line">        <span class="tag">&lt;/<span class="name">collection</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;/<span class="name">collection</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>知道唯一标识了，要判断前面是否取过了，则还需要有个上下文持有取到的对象，并能根据id列值取到对应的对象。</p>
+<p>为对象类型返回结果定义一个ResultHandler实现ClassTypeResultHandler： </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921204605.png"></p>
+<h4 id="3-Map"><a href="#3-Map" class="headerlink" title="3 Map"></a>3 Map</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Select(&quot;select id,name,sex,age,address from t_user where id = #&#123;id&#125;&quot;)</span> </span><br><span class="line">Map <span class="title function_">queryUser1</span><span class="params">(String id)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>不能在解析阶段获得ResultMap</p>
+<p>当执行完第一次查询就可以确定下来</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921204735.png"></p>
+<p>我们从结果集中能得到的是JDBCType</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921204939.png"></p>
+<p>问题：</p>
+<p>1、key 用什么？</p>
+<p>用列名</p>
+<p>2、取成什么java类型的值？</p>
+<p>JDBCType中根据整型类型值获得对应的JDBCType</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns the &#123;<span class="doctag">@code</span> JDBCType&#125; that corresponds to the specified</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@code</span> Types&#125; value</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> type &#123;<span class="doctag">@code</span> Types&#125; value</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> The &#123;<span class="doctag">@code</span> JDBCType&#125; constant</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IllegalArgumentException if this enum type has no constant with</span></span><br><span class="line"><span class="comment"> * the specified &#123;<span class="doctag">@code</span> Types&#125; value</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> Types</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> JDBCType <span class="title function_">valueOf</span><span class="params">(<span class="type">int</span> type)</span> &#123;</span><br><span class="line">    <span class="keyword">for</span>( JDBCType sqlType : JDBCType.class.getEnumConstants()) &#123;</span><br><span class="line">        <span class="keyword">if</span>(type == sqlType.type)</span><br><span class="line">            <span class="keyword">return</span> sqlType;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Type:&quot;</span> + type + <span class="string">&quot; is not a valid &quot;</span></span><br><span class="line">            + <span class="string">&quot;Types.java value.&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>TypeHandler —&gt; javaType</p>
+<p>在TypehandlerRegistry中定义一个JDBCType类型对应的默认的TypeHandler集合，来完成取java值放入到Map中</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921205151.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921205205.png"></p>
+<p>第一次处理结果时，要把这个ResultMaps填充好，后需查询结果的处理就是直接使用resultMaps</p>
+<h3 id="方法返回集合"><a href="#方法返回集合" class="headerlink" title="方法返回集合"></a>方法返回集合</h3><p>返回集合就是单个的重复</p>
+<h1 id="动态SQL"><a href="#动态SQL" class="headerlink" title="动态SQL"></a>动态SQL</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921205341.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210921205513.png"></p>
+<h1 id="不同的语句类型"><a href="#不同的语句类型" class="headerlink" title="不同的语句类型"></a>不同的语句类型</h1><p>Statement</p>
+<p>PreparedStatement</p>
+<p>CallableStatement</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/10-Mybatis/04-%E6%89%8B%E5%86%99Mybatis-3/" data-id="clmcxed4s00c5u8wadpq91ia4" data-title="手写Mybatis-3" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/10-Mybatis/03-%E6%89%8B%E5%86%99Mybatis-2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          手写Mybatis-2
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/10-Mybatis/05-Mybatis%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Mybatis源码解读</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

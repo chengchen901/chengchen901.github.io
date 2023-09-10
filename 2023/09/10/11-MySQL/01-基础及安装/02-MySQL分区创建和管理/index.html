@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="环境MySQL5.7Centos7 查看是否支持分区从MySQL5.1开始引入分区功能，用如下方式查看是否支持： ​	“老”的版本用 1SHOW VARIABLES LIKE ‘%partition%’;  ​	新的版本用 1show plugins;  ​	查看支持的存储引擎 1show engines;  创建分区1 创建RANGE分区1234567891011CREATE TABLE tbl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/11-MySQL/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/02-MySQL%E5%88%86%E5%8C%BA%E5%88%9B%E5%BB%BA%E5%92%8C%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="环境MySQL5.7Centos7 查看是否支持分区从MySQL5.1开始引入分区功能，用如下方式查看是否支持： ​	“老”的版本用 1SHOW VARIABLES LIKE ‘%partition%’;  ​	新的版本用 1show plugins;  ​	查看支持的存储引擎 1show engines;  创建分区1 创建RANGE分区1234567891011CREATE TABLE tbl">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-09-10T03:59:08.847Z">
+<meta property="article:modified_time" content="2022-12-31T03:59:10.893Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-11-MySQL/01-基础及安装/02-MySQL分区创建和管理" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/11-MySQL/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/02-MySQL%E5%88%86%E5%8C%BA%E5%88%9B%E5%BB%BA%E5%92%8C%E7%AE%A1%E7%90%86/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.847Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>MySQL5.7<br>Centos7</p>
+<h1 id="查看是否支持分区"><a href="#查看是否支持分区" class="headerlink" title="查看是否支持分区"></a>查看是否支持分区</h1><p><strong>从MySQL5.1开始引入分区功能，用如下方式查看是否支持：</strong></p>
+<p>​	“老”的版本用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHOW VARIABLES LIKE ‘%partition%’;</span><br></pre></td></tr></table></figure>
+
+<p>​	新的版本用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show plugins;</span><br></pre></td></tr></table></figure>
+
+<p>​	查看支持的存储引擎</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show engines;</span><br></pre></td></tr></table></figure>
+
+<h1 id="创建分区"><a href="#创建分区" class="headerlink" title="创建分区"></a>创建分区</h1><h2 id="1-创建RANGE分区"><a href="#1-创建RANGE分区" class="headerlink" title="1 创建RANGE分区"></a>1 创建RANGE分区</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE tbl_users1 (</span><br><span class="line">	uuid INT NOT NULL,</span><br><span class="line">	name VARCHAR(20),</span><br><span class="line">	registerTime VARCHAR(100)</span><br><span class="line">)</span><br><span class="line">PARTITION BY RANGE (uuid) (</span><br><span class="line">	PARTITION p0 VALUES LESS THAN (5),</span><br><span class="line">	PARTITION p1 VALUES LESS THAN (10),</span><br><span class="line">	PARTITION p2 VALUES LESS THAN (15),</span><br><span class="line">	PARTITION p3 VALUES LESS THAN MAXVALUE</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-1-添加数据和测试"><a href="#1-1-添加数据和测试" class="headerlink" title="1.1 添加数据和测试"></a>1.1 添加数据和测试</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">show tables;</span><br><span class="line">insert into tbl_users1 values(1,&#x27;x&#x27;,&#x27;2001-01-01&#x27;);</span><br><span class="line">insert into tbl_users1 values(8,&#x27;x&#x27;,&#x27;2001-01-02&#x27;);</span><br><span class="line">insert into tbl_users1 values(80,&#x27;x&#x27;,&#x27;2001-01-03&#x27;);</span><br><span class="line">select * from tbl_users1;</span><br><span class="line">select * from tbl_users1 where uuid = 8;</span><br></pre></td></tr></table></figure>
+
+<p>表看不出来有任何区别，而且执行插入语句的时候也没有任何影响，然后查询看出来对应用是透明的，但是没看出分区啊！那这个分区体现在哪里呢？参考最后分区位置和信息查看张姐</p>
+<h2 id="2-创建List分区"><a href="#2-创建List分区" class="headerlink" title="2 创建List分区"></a>2 创建List分区</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE tbl_users2 (</span><br><span class="line">	uuid INT NOT NULL,</span><br><span class="line">	name VARCHAR(20),</span><br><span class="line">	registerTime VARCHAR(100)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">PARTITION BY List (uuid) (</span><br><span class="line">	PARTITION p0 VALUES in (1,2,3,5),</span><br><span class="line">	PARTITION p1 VALUES in (7,9,10),</span><br><span class="line">	PARTITION p2 VALUES in (11,15)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-1-添加数据和测试"><a href="#2-1-添加数据和测试" class="headerlink" title="2.1 添加数据和测试"></a>2.1 添加数据和测试</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">insert into tbl_users2 values(1,&#x27;x&#x27;,&#x27;2001-01-02&#x27;);</span><br><span class="line">insert into tbl_users2 values(2,&#x27;x&#x27;,&#x27;2001-01-03&#x27;);</span><br><span class="line">insert into tbl_users2 values(7,&#x27;x&#x27;,&#x27;2001-01-04&#x27;);</span><br><span class="line"></span><br><span class="line">select * from tbl_users2;</span><br><span class="line">select * from tbl_users2 where uuid = 1;</span><br><span class="line"></span><br><span class="line">select * from tbl_users2 partition(p0);</span><br><span class="line">select * from tbl_users2 partition(p1);</span><br><span class="line">select * from tbl_users2 partition(p2);</span><br></pre></td></tr></table></figure>
+
+<p><strong>（1）如果试图操作的列值不在分区值列表中时，那么会失败并报错。要注意的是，LIST分区没有类似如“VALUES LESS THAN MAXVALUE”这样的包含其他值在内的定义，将要匹配的任何值都必须在值列表中找到。</strong><br><strong>（2）LIST分区除了能和RANGE分区结合起来生成一个复合的子分区，与HASH和KEY分区结合起来生成复合的子分区也是可以的。</strong></p>
+<h2 id="3-创建非整形的RANGE-LIST分区"><a href="#3-创建非整形的RANGE-LIST分区" class="headerlink" title="3 创建非整形的RANGE,LIST分区"></a>3 创建非整形的RANGE,LIST分区</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE tbl_users3 (</span><br><span class="line">	uuid INT NOT NULL,</span><br><span class="line">	name VARCHAR(20),</span><br><span class="line">	registerTime VARCHAR(100)</span><br><span class="line">)</span><br><span class="line">PARTITION BY RANGE columns (name) (</span><br><span class="line">	PARTITION p0 VALUES LESS THAN (&#x27;id05&#x27;),	</span><br><span class="line">	PARTITION p1 VALUES LESS THAN (&#x27;id10&#x27;),</span><br><span class="line">	PARTITION p2 VALUES LESS THAN (&#x27;id15&#x27;)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-1-添加数据和测试"><a href="#3-1-添加数据和测试" class="headerlink" title="3.1 添加数据和测试"></a>3.1 添加数据和测试</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">insert into tbl_users3 values(2,&#x27;id07&#x27;,&#x27;2001-01-01&#x27;);</span><br><span class="line">insert into tbl_users3 values(3,&#x27;id02&#x27;,&#x27;2001-01-01&#x27;);</span><br><span class="line">insert into tbl_users3 values(4,&#x27;id12&#x27;,&#x27;2001-01-01&#x27;);</span><br><span class="line"></span><br><span class="line">select * from tbl_users3;</span><br><span class="line"></span><br><span class="line">select * from tbl_users3 partition(p0);</span><br><span class="line">select * from tbl_users3 partition(p1);</span><br><span class="line">select * from tbl_users3 partition(p2);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-创建Hash分区"><a href="#4-创建Hash分区" class="headerlink" title="4 创建Hash分区"></a>4 创建Hash分区</h2><p>HASH分区主要用来确保数据在预先确定数目的分区中平均分布。在RANGE和LIST分区中，必须明确指定一个给定的列值或列值集合以指定应该保存在哪个分区中；</p>
+<p>而在HASH分区中，MySQL自动完成这些工作，要做的只是基于将要被哈希的列值指定一个表达式，以及指定被分区的表将要被分割成的分区数量，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">	CREATE TABLE tbl_users4 (</span><br><span class="line">	uuid INT NOT NULL,</span><br><span class="line">	name VARCHAR(20),</span><br><span class="line">	registerTime VARCHAR(100)</span><br><span class="line">)</span><br><span class="line">	PARTITION BY HASH (uuid)	//uuid可以添加表达式，比如/2,或者mod(uuid,2)，性能低，每条数据要计算之后								在hash然后再插入</span><br><span class="line">	PARTITIONS 3;</span><br></pre></td></tr></table></figure>
+
+<p>（1）由于每次插入、更新、删除一行，这个表达式都要计算一次；这意味着非常复杂的表达式可能会引起性			能问题，尤其是在执行同时影响大量行的运算（例如批量插入）的时候。<br>（2）最有效率的哈希函数是只对单个表列进行计算，并且它的值随列值进行一致地增大或减小，因为这考虑了在分区范围上的“修剪”。也就是说，表达式值和它所基于的列的值变化越接近，就能越有效地使用该表达式来进行HASH分区。</p>
+<h3 id="4-1-添加数据和测试"><a href="#4-1-添加数据和测试" class="headerlink" title="4.1 添加数据和测试"></a>4.1 添加数据和测试</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">insert into tbl_users4 values(10,&#x27;id7&#x27;，&#x27;2001-01-01&#x27;);</span><br><span class="line">insert into tbl_users4 values(11,&#x27;id07&#x27;,&#x27;2001-01-01&#x27;);</span><br><span class="line">insert into tbl_users4 values(12,&#x27;id02&#x27;,&#x27;2001-01-01&#x27;);</span><br><span class="line"></span><br><span class="line">select * from tbl_users4;</span><br><span class="line"></span><br><span class="line">select * from tbl_users4 where uuid = 10;</span><br><span class="line">select * from tbl_users4 where uuid = 11;</span><br><span class="line">select * from tbl_users4 where uuid = 12;</span><br><span class="line"></span><br><span class="line">select * from tbl_users4 partition(p0);</span><br><span class="line">select * from tbl_users4 partition(p1);</span><br><span class="line">select * from tbl_users4 partition(p2);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="4-2-线性Hash分区"><a href="#4-2-线性Hash分区" class="headerlink" title="4.2 线性Hash分区"></a>4.2 线性Hash分区</h3><p>线性哈希分区在“PARTITION BY” 子句中添加“LINEAR”关键字。<br>线性哈希分区的优点在于增加、删除、合并和拆分分区将变得更加快捷，有利于处理含有极其大量数据的表。它的缺点在于，各个分区间数据的分布不大可能均衡。</p>
+<h2 id="5-Key分区"><a href="#5-Key分区" class="headerlink" title="5 Key分区"></a>5 Key分区</h2><p>类似于按照HASH分区，Hash分区允许用户自定义的表达式，而Key分区不允许使用用户自定义的表达式； Hash分区只支持整数分区，Key分区支持除了blob或text类型之外的其他数据类型分区。<br>与Hash分区不同，创建Key分区表的时候，可以不指定分区键，默认会选择使用主键或唯一键作为分区键，没有主键或唯一键，就必须指定分区键。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE tbl_users5 (</span><br><span class="line">	uuid INT NOT NULL,</span><br><span class="line">	name VARCHAR(20),</span><br><span class="line">	registerTime VARCHAR(100)</span><br><span class="line">)</span><br><span class="line">PARTITION BY LINEAR Key (uuid)</span><br><span class="line">PARTITIONS 3;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-1-添加数据和测试"><a href="#5-1-添加数据和测试" class="headerlink" title="5.1 添加数据和测试"></a>5.1 添加数据和测试</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">insert into tbl_users5 values(12,&#x27;id7&#x27;，&#x27;2001-01-01&#x27;);</span><br><span class="line">insert into tbl_users5 values(7,&#x27;id07&#x27;,&#x27;2001-01-01&#x27;);</span><br><span class="line"></span><br><span class="line">select * from tbl_users5;</span><br><span class="line">explain partition select * from tbl_user5 where uuid = 12;	//看看是key分区是如何分的？</span><br><span class="line"></span><br><span class="line">select * from tbl_users5 partition(p0);</span><br><span class="line">select * from tbl_users5 partition(p1);</span><br><span class="line">select * from tbl_users5 partition(p2);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="6-子分区-复合分区"><a href="#6-子分区-复合分区" class="headerlink" title="6 子分区(复合分区)"></a>6 子分区(复合分区)</h2><p>​	在每个分区内，子分区的名字必须是唯一的，目前在整个表中，也要保持唯一。例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE tbl_users6 (</span><br><span class="line">	uuid INT NOT NULL,</span><br><span class="line">	name VARCHAR(20),</span><br><span class="line">	registerTime Date</span><br><span class="line">)</span><br><span class="line">PARTITION BY RANGE(YEAR(registerTime))</span><br><span class="line">	SUBPARTITION BY HASH(TO_DAYS(registerTime))</span><br><span class="line">	SUBPARTITIONS 2</span><br><span class="line">	(</span><br><span class="line">		PARTITION p0 VALUES LESS THAN (2008),</span><br><span class="line">		PARTITION p1 VALUES LESS THAN (2015),</span><br><span class="line">		PARTITION p2 VALUES LESS THAN MAXVALUE</span><br><span class="line">		</span><br><span class="line">	);</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-1添加数据和测试"><a href="#6-1添加数据和测试" class="headerlink" title="6.1添加数据和测试"></a>6.1添加数据和测试</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">insert into tbl_users6 values(1,&#x27;x&#x27;,&#x27;2007-01-02&#x27;);</span><br><span class="line">insert into tbl_users6 values(2,&#x27;x&#x27;,&#x27;2009-01-03&#x27;);</span><br><span class="line">insert into tbl_users6 values(3,&#x27;x&#x27;,&#x27;2016-01-04&#x27;);</span><br><span class="line"></span><br><span class="line">select * from tbl_users6;</span><br><span class="line"></span><br><span class="line">explain partition select * from tbl_user6 \G;	//看看是子分区是如何分的？</span><br><span class="line">explain partition select * from tbl_user6  where registerTime=&#x27;2007-01-02&#x27; \G;</span><br><span class="line"></span><br><span class="line">select * from tbl_users6 partition(p0);</span><br><span class="line">select * from tbl_users6 partition(p1);</span><br><span class="line">select * from tbl_users6 partition(p2);</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="分区管理"><a href="#分区管理" class="headerlink" title="分区管理"></a>分区管理</h1><h2 id="1-RANGE和LIST分区的管理"><a href="#1-RANGE和LIST分区的管理" class="headerlink" title="1 RANGE和LIST分区的管理"></a>1 RANGE和LIST分区的管理</h2><h3 id="1-1-删除"><a href="#1-1-删除" class="headerlink" title="1.1 删除"></a>1.1 删除</h3><p>​			删除分区语句如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">show create table &#x27;tbl_users1&#x27; \G;</span><br><span class="line">alter table tbl_users1 drop partition p0;</span><br><span class="line">select * from tbl_user1;</span><br></pre></td></tr></table></figure>
+
+<p>​			（1）当删除了一个分区，也同时删除了该分区中所有的数据<br>​			（2）可以通过show create table tbl_users1;来查看新的创建表的语句<br>​			（3）如果是List分区的话，删除的数据不能新增进来，因为这些行的列值包含在已<br>​			经删除了的分区的值列表中</p>
+<h3 id="1-2-添加"><a href="#1-2-添加" class="headerlink" title="1.2 添加"></a>1.2 添加</h3><p>​			添加分区语句如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">alter table tbl_users1 add partition(partition p4 values less than(50));//p3是最大值，所以不能添加p4</span><br><span class="line">alter table tbl_users1 drop partition p3;						//p3是最大值，所以不能添加p4</span><br><span class="line">show create table &#x27;tbl_users1&#x27; \G;								//删除之后再看下分区</span><br><span class="line">alter table tbl_users1 add partition(partition p4 values less than(50));//不能用p0</span><br><span class="line">show create table &#x27;tbl_users1&#x27; \G;								//添加之后再看下分区</span><br></pre></td></tr></table></figure>
+
+<p>​			（1）对于RANGE分区的表，只可以添加新的分区到分区列表的高端<br>​			（2）对于List分区的表，不能添加已经包含在现有分区值列表中的任意值</p>
+<h3 id="1-3-重建（拆分合并）分区不丢失数据"><a href="#1-3-重建（拆分合并）分区不丢失数据" class="headerlink" title="1.3 重建（拆分合并）分区不丢失数据"></a>1.3 重建（拆分合并）分区不丢失数据</h3><p>​			如果希望能不丢失数据的条件下重新定义分区，可以使用如下语句：	</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE tbl_name REORGANIZE PARTITION partition_list INTO (partition_definitions)</span><br></pre></td></tr></table></figure>
+
+<p>​			（1）拆分分区如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">alter table tbl_users1 REORGANIZE PARTITION p1 INTO(partition s0 values less than(5), partition s1 values less than(10));</span><br><span class="line">show create table &#x27;tbl_users1&#x27; \G;	</span><br></pre></td></tr></table></figure>
+
+<p>​			或者如（针对LIST）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">alter table tbl_users2 REORGANIZE PARTITION p0 INTO(partition s0 values in(1,2,3), partition s1 values in(4,5));</span><br><span class="line">show create table &#x27;tbl_users2&#x27; \G;	</span><br><span class="line">select * from tbl_users2			//查看数据是否丢失</span><br></pre></td></tr></table></figure>
+
+<p>​			（2）合并分区如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">alter table tbl_users2 REORGANIZE PARTITION s0,s1 INTO(partition p0 values in(1,2,3,4,5));</span><br><span class="line">select * from tbl_users2			//查看数据是否丢失</span><br><span class="line">show create table &#x27;tbl_users2&#x27; \G;	//在查看分区信息</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-4-删除分区不丢失数据"><a href="#1-4-删除分区不丢失数据" class="headerlink" title="1.4 删除分区不丢失数据"></a>1.4 删除分区不丢失数据</h3><p>​			删除所有分区，但保留数据，形如： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">show create table &#x27;tbl_users1&#x27; \G;			//在查看分区信息</span><br><span class="line">alter table tbl_users1 remove partitioning;</span><br><span class="line">show create table &#x27;tbl_users1&#x27; \G;			//没有分区信息了</span><br><span class="line">select * from tbl_users1			//查看数据是否丢失</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-HASH和KEY分区的管理"><a href="#2-HASH和KEY分区的管理" class="headerlink" title="2 HASH和KEY分区的管理"></a>2 HASH和KEY分区的管理</h2><h3 id="2-1-减少分区数量"><a href="#2-1-减少分区数量" class="headerlink" title="2.1 减少分区数量"></a>2.1 减少分区数量</h3><p>​			减少分区数量语句如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">show create table &#x27;tbl_users4&#x27; \G;				//先看分区数量</span><br><span class="line">alter table tbl_users4 COALESCE PARTITION 1;</span><br><span class="line">show create table &#x27;tbl_users4&#x27; \G;				//减少再看分区数量</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-添加分区数量"><a href="#2-2-添加分区数量" class="headerlink" title="2.2 添加分区数量"></a>2.2 添加分区数量</h3><p>​			添加分区数量语句如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">alter table tbl_users4 add PARTITION partitions 2;</span><br><span class="line">  show create table &#x27;tbl_users4&#x27; \G;			//添加再看分区数量</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-其他分区管理"><a href="#3-其他分区管理" class="headerlink" title="3 其他分区管理"></a>3 其他分区管理</h2><h3 id="3-1：重建分区"><a href="#3-1：重建分区" class="headerlink" title="3.1：重建分区"></a>3.1：重建分区</h3><p>​			类似于先删除保存在分区中的所有记录，然后重新插入它们，可用于整理分区碎片。如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter table tbl_users REBUILD PARTITION p2,p3;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2：优化分区"><a href="#3-2：优化分区" class="headerlink" title="3.2：优化分区"></a>3.2：优化分区</h3><p>​			如果从分区中删除了大量的行，或者对一个带有可变长度的行（也就是说，有VARCHAR，BLOB，或TEXT类型的列）作了许多修改，可以使用“ALTER TABLE … OPTIMIZE PARTITION”来收回没有使用的空间，并整理分区数据文件的碎片。如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter table tbl_users OPTIMIZE PARTITION p2,p3;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3：分析分区"><a href="#3-3：分析分区" class="headerlink" title="3.3：分析分区"></a>3.3：分析分区</h3><p>​			读取并保存分区的键分布，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter table tbl_users ANALYZE PARTITION p2,p3;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4：检查分区"><a href="#3-4：检查分区" class="headerlink" title="3.4：检查分区"></a>3.4：检查分区</h3><p>​			检查分区中的数据或索引是否已经被破坏，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter table tbl_users CHECK PARTITION 	p2,p3;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5：修补分区"><a href="#3-5：修补分区" class="headerlink" title="3.5：修补分区"></a>3.5：修补分区</h3><p>​			 修补被破坏的分区，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter table tbl_users REPAIR PARTITION p2,p3;</span><br></pre></td></tr></table></figure>
+
+<h1 id="分区位置查看"><a href="#分区位置查看" class="headerlink" title="分区位置查看"></a>分区位置查看</h1><h2 id="到存放数据的地方查看文件，路经配置在"><a href="#到存放数据的地方查看文件，路经配置在" class="headerlink" title="到存放数据的地方查看文件，路经配置在"></a>到存放数据的地方查看文件，路经配置在</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">show global variables like &quot;%datadir%&quot;;</span><br><span class="line">cd 到数据库</span><br></pre></td></tr></table></figure>
+
+<p>​		frm：表结构   ibd：索引和数据文件	</p>
+<h2 id="可以通过下面的语句来查看表的分区信息："><a href="#可以通过下面的语句来查看表的分区信息：" class="headerlink" title="可以通过下面的语句来查看表的分区信息："></a>可以通过下面的语句来查看表的分区信息：</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from information_schema.partitions where table_schema=‘xxx’ and table_name=‘xxx’ \G; </span><br></pre></td></tr></table></figure>
+
+<p>​		\G：按列显示</p>
+<h2 id="可以通过下面的语句来查看分区上的数据"><a href="#可以通过下面的语句来查看分区上的数据" class="headerlink" title="可以通过下面的语句来查看分区上的数据"></a>可以通过下面的语句来查看分区上的数据</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from tbl_users partition(p0);</span><br></pre></td></tr></table></figure>
+
+<h2 id="可以使用下面的语句来查看MySQL会操作的分区"><a href="#可以使用下面的语句来查看MySQL会操作的分区" class="headerlink" title="可以使用下面的语句来查看MySQL会操作的分区"></a>可以使用下面的语句来查看MySQL会操作的分区</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">explain partitions select * from tbl_users where uuid=80;</span><br></pre></td></tr></table></figure>
+
+<p>​		explain：查询计划，分析性能用的</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/11-MySQL/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/02-MySQL%E5%88%86%E5%8C%BA%E5%88%9B%E5%BB%BA%E5%92%8C%E7%AE%A1%E7%90%86/" data-id="clmcxed4z00cbu8wadq3na65c" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/11-MySQL/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/03-MySQL%E5%88%86%E5%8C%BA%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/11-MySQL/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/01-MySQL%E5%AE%89%E8%A3%85/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

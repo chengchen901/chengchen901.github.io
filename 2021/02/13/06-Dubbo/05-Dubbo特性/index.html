@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Dubbo特性 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Dubbo特性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dubbo特性">
+<meta property="og:url" content="http://example.com/2021/02/13/06-Dubbo/05-Dubbo%E7%89%B9%E6%80%A7/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Dubbo特性">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210213202916332.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210213212634642.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210213212921673.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210215100645287.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210215101100922.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210215101119948.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210215102550850.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210215102958877.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210215103156662.png">
+<meta property="article:published_time" content="2021-02-13T12:25:58.000Z">
+<meta property="article:modified_time" content="2022-09-25T13:21:10.614Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Dubbo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210213202916332.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-06-Dubbo/05-Dubbo特性" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/13/06-Dubbo/05-Dubbo%E7%89%B9%E6%80%A7/" class="article-date">
+  <time class="dt-published" datetime="2021-02-13T12:25:58.000Z" itemprop="datePublished">2021-02-13</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Dubbo/">Dubbo</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Dubbo特性
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Dubbo特性</p>
+<span id="more"></span>
+
+
+
+<h1 id="1-Dubbo并发控制"><a href="#1-Dubbo并发控制" class="headerlink" title="1 Dubbo并发控制"></a>1 Dubbo并发控制</h1><h2 id="1-1-Dubbo中的线程模型"><a href="#1-1-Dubbo中的线程模型" class="headerlink" title="1.1 Dubbo中的线程模型"></a>1.1 Dubbo中的线程模型</h2><p>​	通过网络对外提服务的组件，都存在两类线程：网络IO线程、业务线程，Dubbo框架也不例外。</p>
+<p><strong>网络IO线程</strong></p>
+<p>​	用于接受网络请求，处理网络请求accept、connetion、read、write相关事件。如果事件处理的逻辑能迅速完成，直接在IO线程上处理更快，因为减少了线程池调度。如果事件逻辑较慢，IO线程一旦阻塞，就无法再处理新的网络请求。  </p>
+<p><strong>业务线程</strong></p>
+<p>​	用于处理复杂的业务逻辑，通过IO调用第三方服务获得数据，在进行相关计算，获得业务响应。处理业务存在时耗不确定的情况，可以减免对Dubbo网络IO线程的占用阻塞。  </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210213202916332.png" alt="image-20210213202916332"></p>
+<h2 id="1-2-Dubbo线程示例"><a href="#1-2-Dubbo线程示例" class="headerlink" title="1.2 Dubbo线程示例"></a>1.2 Dubbo线程示例</h2><p><strong>举例说明</strong></p>
+<p>​	将所有的消息都派遣给业务线程，业务线程池固定100个线程</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:protocol</span> <span class="attr">name</span>=<span class="string">&quot;dubbo&quot;</span> <span class="attr">dispatcher</span>=<span class="string">&quot;all&quot;</span> <span class="attr">threadpool</span>=<span class="string">&quot;fixed&quot;</span> <span class="attr">threads</span>=<span class="string">&quot;100&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>​	心跳网络事件给IO线程处理，将业务请求的消息都派遣给业务线程，业务线程池使用缓存策略</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:protocol</span> <span class="attr">name</span>=<span class="string">&quot;dubbo&quot;</span> <span class="attr">dispatcher</span>=<span class="string">&quot;message&quot;</span> <span class="attr">threadpool</span>=<span class="string">&quot;cached&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-3-Dubbo线程模型用法"><a href="#1-3-Dubbo线程模型用法" class="headerlink" title="1.3 Dubbo线程模型用法"></a>1.3 Dubbo线程模型用法</h2><p><strong>消息派遣方式</strong></p>
+<ol>
+<li><p>all所有消息都派发到线程池，包括请求，响应，连接事件，断开事件，心跳等。 </p>
+</li>
+<li><p>direct 所有消息都不派发到线程池，全部在IO线程上直接执行。 </p>
+</li>
+<li><p>message只有请求响应消息派发到线程池，其它连接断开事件，心跳等消息，直接在IO线程上执行。 </p>
+</li>
+<li><p>execution只请求消息派发到线程池，不含响应，响应和其它连接断开事件，心跳等消息，直接在IO线程上执行。</p>
+</li>
+<li><p>connection在IO线程上，将连接断开事件放入队列，有序逐个执行，其它消息派发到线程池。</p>
+</li>
+</ol>
+<p>  </p>
+<p><strong>线程池配置</strong></p>
+<ol>
+<li>fixed固定大小线程池，启动时建立线程，不关闭，一直持有。（缺省） </li>
+<li>cached 缓存线程池，空闲一分钟自动删除，需要时重建。 </li>
+<li>limited可伸缩线程池，但池中的线程数只会增长不会收缩。只增长不收缩的目的是为了避免收缩时突然来了大流量 引起的性能问题。 </li>
+<li>eager优先创建Worker线程池。在任务数量大于corePoolSize但是小于maximumPoolSize时，优先创建Worker来处理任务。当任务数量大于maximumPoolSize时，将任务放入阻塞队列中。阻塞队列充满时抛出 RejectedExecutionException。（相比于cached∶cached在任务数量超过maximumPoolSize时直接抛出异常而不是将任务放入阳塞队列）</li>
+</ol>
+<p>  </p>
+<p>通过日志打印的线程名来验证</p>
+<p>log4j.xml开通Dubbo日志打印</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">日志格式：[%d &#123;dd HH:mm:ss,SSS\&#125; %-5p] [%t] %c - %m%n</span><br><span class="line"><span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">&quot;org.apache.dubbo&quot;</span> <span class="attr">additivity</span>=<span class="string">&quot;false&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">priority</span> <span class="attr">value</span>=<span class="string">&quot;debug&quot;</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">&quot;console&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">logger</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>观察在提供者端的在不同类型消息处理时，线程名的打印输出</p>
+<p>通过Debug调试验证</p>
+<h2 id="1-4-Dubbo并发控制"><a href="#1-4-Dubbo并发控制" class="headerlink" title="1.4 Dubbo并发控制"></a>1.4 Dubbo并发控制</h2><p><strong>方法级占用线程数控制</strong></p>
+<p>​	如何控制每个方法或指定方法，服务器端并发执行（或占用线程池数）不能超过10个</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:service</span> <span class="attr">interface</span>=<span class="string">&quot;com.foo.BarService&quot;</span> <span class="attr">executes</span>=<span class="string">&quot;10&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dubbo:method</span> <span class="attr">name</span>=<span class="string">&quot;sayHello&quot;</span> <span class="attr">executes</span>=<span class="string">&quot;10&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dubbo:service</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>方法集占用连接数控制</strong></p>
+<p>​	每个方法或指定方法，每客户端并发执行（或占用连接的请求数）不能超过10个</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- dubbo:reference也可使用 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:service</span> <span class="attr">interface</span>=<span class="string">&quot;com.foo.BarService&quot;</span> <span class="attr">actives</span>=<span class="string">&quot;10&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dubbo:method</span> <span class="attr">name</span>=<span class="string">&quot;sayHello&quot;</span> <span class="attr">actives</span>=<span class="string">&quot;10&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dubbo:service</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>运行示例</strong></p>
+<ol>
+<li>提供者并发执行请求数设置为10，消费者并发执行调用数设置为10。</li>
+</ol>
+<p> 2. 提供者并发执行请求数设置为10，消费者并发执行调用数设置为15。 </p>
+<ol start="3">
+<li>提供者并发执行请求数设置为10，消费者并发执行调用数设置为5。</li>
+</ol>
+<h2 id="1-5-Dubbo并发控制负责均衡"><a href="#1-5-Dubbo并发控制负责均衡" class="headerlink" title="1.5 Dubbo并发控制负责均衡"></a>1.5 Dubbo并发控制负责均衡</h2><p><strong>客户端如何来识别每台服务提供者的并发情况？</strong></p>
+<p>​	Dubbo也通过配置loadbalance来调整服务端并发压力，leastactive负载均衡策略会调用并发数最小的服务提供者</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:service</span> <span class="attr">interface</span>=<span class="string">&quot;com.foo.BarService&quot;</span> <span class="attr">loadbalance</span>=<span class="string">&quot;leastactive&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:reference</span> <span class="attr">interface</span>=<span class="string">&quot;com.foo.BarService&quot;</span> <span class="attr">loadbalance</span>=<span class="string">&quot;leastactive&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-6-Dubbo连接控制"><a href="#1-6-Dubbo连接控制" class="headerlink" title="1.6 Dubbo连接控制"></a>1.6 Dubbo连接控制</h2><p><strong>限制服务器端接受的连接不超过10个</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:provider</span> <span class="attr">protocol</span>=<span class="string">&quot;dubbo&quot;</span> <span class="attr">accepts</span>=<span class="string">&quot;10&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:protocol</span> <span class="attr">name</span>=<span class="string">&quot;dubbo&quot;</span> <span class="attr">accepts</span>=<span class="string">&quot;10&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>客户端连接控制</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:reference</span> <span class="attr">interface</span>=<span class="string">&quot;com.foo.BarService&quot;</span> <span class="attr">connections</span>=<span class="string">&quot;10&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:service</span> <span class="attr">interface</span>=<span class="string">&quot;com.foo.BarService&quot;</span> <span class="attr">connections</span>=<span class="string">&quot;10&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>运行示例</strong> </p>
+<ol>
+<li><p>提供者接受连接数为10，消费者发起连接数为1。 </p>
+</li>
+<li><p>提供者接受连接数为10，消费者发起连接数为10。 </p>
+</li>
+<li><p>提供者接受连接数为10，消费者发起连接数为12。</p>
+</li>
+</ol>
+<p>  </p>
+<h2 id="1-7-Dubbo粘滞连接与延迟连接"><a href="#1-7-Dubbo粘滞连接与延迟连接" class="headerlink" title="1.7 Dubbo粘滞连接与延迟连接"></a>1.7 Dubbo粘滞连接与延迟连接</h2><p>​	<strong>粘滞连接的作用与配置</strong></p>
+<p>​	站滞连接用于有状态服务，尽可能让客户端总是向同一提供者发起调用，除非该提供者挂了，再连另一台。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:reference</span> <span class="attr">id</span>=<span class="string">&quot;xxxService&quot;</span> <span class="attr">interface</span>=<span class="string">&quot;com.xxx.XxxService&quot;</span> <span class="attr">sticky</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dubbo:method</span> <span class="attr">name</span>=<span class="string">&quot;sayHello&quot;</span> <span class="attr">sticky</span>=<span class="string">&quot;true&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dubbo:reference</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>​	站滞连接将自动开启延迟连接，以减少长连接数</p>
+<p>​	<strong>延迟连接的作用与配置</strong></p>
+<p>​	延迟连接用于减少长连接数。当有调用发起时，再创建长连接。只对使用长连接的dubbo协议生效。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:reference</span> <span class="attr">name</span>=<span class="string">&quot;dubbo&quot;</span> <span class="attr">lazy</span>=<span class="string">&quot;true&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="2-Dubbo多协议"><a href="#2-Dubbo多协议" class="headerlink" title="2 Dubbo多协议"></a>2 Dubbo多协议</h1><h2 id="2-1-Dubbo中的RPC协议"><a href="#2-1-Dubbo中的RPC协议" class="headerlink" title="2.1 Dubbo中的RPC协议"></a>2.1 Dubbo中的RPC协议</h2><p><strong>协议参考手册</strong></p>
+<p>​	<span style="color:red">RPC是要做的事，RPC协议规定请求、响应消息的格式。在TCP（网络传输控制协议）之上我们可以选用或自定义消息协议来完成我们的RPC消息交互。  </span></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210213212634642.png" alt="image-20210213212634642"></p>
+<p>其它协议：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210213212921673.png" alt="image-20210213212921673"></p>
+<h2 id="2-2-Dubbo协议"><a href="#2-2-Dubbo协议" class="headerlink" title="2.2 Dubbo协议"></a>2.2 Dubbo协议</h2><p><strong>Dubbo协议的构成</strong></p>
+<ol>
+<li>ransporter: mina,netty, grizzy</li>
+<li>Serialization: dubbo,hessian2,java,json </li>
+<li>Dispatcher alldirect,message,execution,connection </li>
+<li>ThreadPool: fixed, cached</li>
+</ol>
+<p>  </p>
+<p><strong>特性</strong></p>
+<ul>
+<li><p>连接个数∶单连接</p>
+</li>
+<li><p>连接方式∶ 长连接</p>
+</li>
+<li><p>传输协议∶ TCP</p>
+</li>
+<li><p>传输方式∶ NIO 异步传输</p>
+</li>
+<li><p>序列化∶ Hessian 二进制序列化 </p>
+</li>
+<li><p>适用范围∶传入传出参数数据包较小（建议小于100K），消费者比提供者个数多，单-消费者无法压满提供者，尽量不要用 dubbo 协议传输大文件或超大字符串。</p>
+</li>
+<li><p>适用场景∶常规远程服务方法调用</p>
+</li>
+</ul>
+<p>  </p>
+<p><strong>约束</strong></p>
+<ul>
+<li>参数及返回值需实现<code>Serializable</code>接口</li>
+<li>参数及返回值不能自定义实现<code>List</code>，<code>Map，Number</code>，<code>Date</code>，<code>Calendar</code>等接口，只能用JDK自带的实现，因为 hessian 会做特殊处理，自定义实现类中的属性值都会丢失。</li>
+</ul>
+<p>  </p>
+<table>
+<thead>
+<tr>
+<th>数据通讯</th>
+<th>情况</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A-&gt;B</td>
+<td>类A多一种属性（或者说类B少一种属性）</td>
+<td>不抛异常，A多的那个属性值，B没有，其它正常</td>
+</tr>
+<tr>
+<td>A-&gt;B</td>
+<td>枚举A多一种枚举(或者说B少一种枚举)，A使用多出来的枚举进行传输</td>
+<td>抛异常</td>
+</tr>
+<tr>
+<td>A-&gt;B</td>
+<td>枚举A多一种枚举(或者说B少一种枚举)，A不使用多出来的枚举进行传输</td>
+<td>不抛异常，B正常接收数据</td>
+</tr>
+<tr>
+<td>A-&gt;B</td>
+<td>A和B的属性名相同，但类型不同</td>
+<td>抛异常</td>
+</tr>
+<tr>
+<td>A-&gt;B</td>
+<td>serialld不相同</td>
+<td>正常传输</td>
+</tr>
+</tbody></table>
+<p>Hessian序列化，只传成员属性值和值的类型，不传方法或静态变量，兼容情况如上表。</p>
+<p><strong>详细配置</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:protocol</span> <span class="attr">name</span>=<span class="string">&quot;dubbo&quot;</span> <span class="attr">port</span>=<span class="string">&quot;9090&quot;</span></span></span><br><span class="line"><span class="tag"><span class="attr">--服务</span>、<span class="attr">客户端的通讯实现</span></span></span><br><span class="line"><span class="tag"><span class="attr">server</span>=<span class="string">&quot;netty&quot;</span> <span class="attr">client</span>=<span class="string">&quot;netty&quot;</span></span></span><br><span class="line"><span class="tag"><span class="attr">--编解码</span>、<span class="attr">序列化</span></span></span><br><span class="line"><span class="tag"><span class="attr">codec</span>=<span class="string">&quot;dubbo&quot;</span> <span class="attr">serialization</span>&quot;<span class="attr">hessian2</span>&quot; <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span></span></span><br><span class="line"><span class="tag"><span class="attr">--线程</span>、<span class="attr">队列配置</span></span></span><br><span class="line"><span class="tag"><span class="attr">threadpool</span>=<span class="string">&quot;fixed&quot;</span> <span class="attr">threads</span>=<span class="string">&quot;100&quot;</span> <span class="attr">queues</span>=<span class="string">&quot;0&quot;</span> <span class="attr">iothreads</span>=<span class="string">&quot;9&quot;</span></span></span><br><span class="line"><span class="tag"><span class="attr">--缓存区大小</span>、<span class="attr">接收连接数</span>、<span class="attr">请求响应数据包大小指定</span></span></span><br><span class="line"><span class="tag"><span class="attr">buffer</span>=<span class="string">&quot;8192&quot;</span> <span class="attr">accepts</span>=<span class="string">&quot;1000&quot;</span> <span class="attr">payload</span>=<span class="string">&quot;8388608&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-3-Dubbo协议的几个问题"><a href="#2-3-Dubbo协议的几个问题" class="headerlink" title="2.3 Dubbo协议的几个问题"></a>2.3 Dubbo协议的几个问题</h2><p><strong>为什么要消费者比提供者个数多？</strong></p>
+<p>​	因dubbo协议采用单一长连接，假设网络为千兆网卡（1024Mbit&#x3D;128MByte） 根据测试经验数据每条连接最多只能压满7MByte（不同环境可能不一样，供参考），理论上1个服务提供者需要20个服务消费者才能压满网卡。</p>
+<p><strong>为什么不能传大包？</strong></p>
+<p>​	<span style="color:red">前提：单一长连接、网络为千兆网卡（1024Nbit&#x3D;128MByte）</span></p>
+<p>​	假设每次请求的数据包大小为500KByte</p>
+<p>​	每条连接最大7MByte</p>
+<p>​	单个服务提供者的最大TPS：128MByte &#x2F; 500KByte &#x3D; 262</p>
+<p>​	单个消费者调用单个服务提供者的最大TPS：7MByte &#x2F; 500KByte &#x3D; 14</p>
+<p>​	如果能接受，可以考虑使用，否则网络将成为瓶颈</p>
+<p><strong>为什么采用异步单一长连接？</strong></p>
+<p>​	因为服务的现状大都是服务提供者少，通常只有几台机器，而服务的消费者多，可能整个网站都在访问该服务，比如 Morgan的提供者只有6台提供者，却有上百台消费者，每天有1.5亿次调用，如果采用常规的hessian服务，服务提供者很容易就被压跨，通过单一连接，保证单一消费者不会压死提供者，长连接，减少连接握手验证等，并使用异步I0，复用线程池，防止C10K 问题。</p>
+<h2 id="2-4-RMI协议"><a href="#2-4-RMI协议" class="headerlink" title="2.4 RMI协议"></a>2.4 RMI协议</h2><p>RMI协议采用JDK标准的java.rmi*实现，采用阻塞式短连接和JDK标准序列化方式。 </p>
+<p>如果正在使用RMI提供服务给外部访问，同时应用里依赖了老的common-collctions包的情况下，存在反序列化安全风险。</p>
+<p><strong>特性</strong></p>
+<ul>
+<li><p>连接个数∶多连接</p>
+</li>
+<li><p>连接方式∶短连接</p>
+</li>
+<li><p>传输协议∶ TCP</p>
+</li>
+<li><p>传输方式∶ 同步传输</p>
+</li>
+<li><p>序列化∶ Java 标准二进制序列化 </p>
+</li>
+<li><p>适用范围∶传入传出参数数据包大小混合，消费者与提供者个数差不多，可传文件。</p>
+</li>
+<li><p>适用场景∶常规远程服务方法调用，与原生RMI服务互操作</p>
+</li>
+</ul>
+<p><strong>服务接口定义</strong></p>
+<p>​	<strong>服务接口继承了<code>java.rmi.Remote</code>接口，可以和原生 RMI互操作</strong> </p>
+<ul>
+<li><p>提供者用Dubbo的RMI协议暴露服务，消费者直接用标准RMI接口调用，</p>
+</li>
+<li><p>或者提供方用标准RMI暴露服务，消费方用Dubbo的RMI协议调用。</p>
+</li>
+</ul>
+<p>​	<strong>服务接口没有继承<code>java.rmi.Remote</code>接口</strong></p>
+<ul>
+<li> 缺省Dubbo将自动生成一个<code>com.xxx.XxxService$Remote</code>的接口，并继承 <code>java.rmi.Remote</code> 接口，并以此接口暴露服务。 </li>
+<li>但如果设置了<code>&lt;dubbo:protocol name=&quot;rmi&quot;codec=&quot;spring&quot;/&gt;</code>，将不生成<code>$Remote</code>接口，而使用Spring的<code>RmilnvocationHandler</code>接口暴露服务，和Spring兼容。</li>
+</ul>
+<p><strong>约束</strong></p>
+<ul>
+<li>参数及返回值需实现<code>Serializable</code>接口</li>
+<li> dubbo配置中的超时时间对RMI无效，需使用java启动参数设置∶<code>-Dsun.rmi.transporttcp.responseTimeout3000</code></li>
+</ul>
+<p><strong>配置方式</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># dubbo.properties 配置</span><br><span class="line">dubbo.service.protocol=rmi</span><br><span class="line"></span><br><span class="line"># xml配置</span><br><span class="line">&lt;dubbo:protocol name=&quot;rmi&quot; port=&quot;1099&quot; /&gt;</span><br><span class="line">&lt;dubbo:protocol name=&quot;rmi&quot; codec=&quot;spring&quot; /&gt;</span><br><span class="line"></span><br><span class="line"># RMI配置</span><br><span class="line">java -Dsum.rmi.transport.tcp.responseTimeout=3000</span><br></pre></td></tr></table></figure>
+
+
+
+<p>更多RMI优化参数可查询<a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/6/docs/technotes/guides/rmi/sunrmiproperties.html">[JDK]</a>文档</p>
+<h2 id="2-5-Thrift协议"><a href="#2-5-Thrift协议" class="headerlink" title="2.5 Thrift协议"></a>2.5 Thrift协议</h2><p>​	当前dubbo支持的thrift协议是对thrift原生协议的扩展，在原生协议的基础上添加了一些额外的头信息，比如service name，magic number等。</p>
+<p>​	使用dubbo thrift协议同样<span style="color:red">需要使用thrift的idl compiler</span>编译生成相应的java代码，后续版本中会在这方面做一些增强。</p>
+<p><strong>Thrift idl使用步骤</strong></p>
+<ol>
+<li><p>去Thrift官网下载thriftid工具，设置thrif环不境变量<a target="_blank" rel="noopener" href="http://thrift.apache.org/download">http://thrift.apache.org/download</a> </p>
+</li>
+<li><p>定义thrift文件</p>
+</li>
+<li><p>使用thrift命令生成java接口文件<br> thrift -r -gen java HelloThrift.thrift </p>
+</li>
+<li><p>java实现接口文件 </p>
+</li>
+<li><p>踩坑，thrif生成的interface是一个内部类，在spring bean定义引用时，不是用.连接，而是$<br>com.study.dubbo.thrift.HelloThrift.lface(错误)<br>com.study.dubbo.thrift.HelloThrift$lface(正确)</p>
+</li>
+</ol>
+<p><strong>依赖</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.thrift<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>libthrift<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.8.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>配置</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:protocol</span> <span class="attr">name</span>=<span class="string">&quot;thrift&quot;</span> <span class="attr">port</span>=<span class="string">&quot;3030&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>常见问题</strong></p>
+<p>​	Thrift不支持null值，即：不能在协议中传递null值</p>
+<h2 id="2-6-HTTP协议"><a href="#2-6-HTTP协议" class="headerlink" title="2.6 HTTP协议"></a>2.6 HTTP协议</h2><p>基于HTTP表单的远程调用协议，采用Spring的HttpInvoker实现</p>
+<p>​	<strong>特性</strong></p>
+<ul>
+<li><p>连接个数∶ 多连接</p>
+</li>
+<li><p>连接方式∶短连接</p>
+</li>
+<li><p>传输协议∶ HTTP</p>
+</li>
+<li><p>传输方式∶ 同步传输</p>
+</li>
+<li><p>序列化∶ 表单序列化</p>
+</li>
+</ul>
+<p> - 适用范围∶传入传出参数数据包大小混合，提供者比消费者个数多，可用浏览器查看，可用表单或URL传入参数，暂不支持传文件。</p>
+<ul>
+<li>适用场景∶ 需同时给应用程序和浏览器 JS 使用的服务。</li>
+</ul>
+<p>  </p>
+<p><strong>约束</strong></p>
+<p>​	参数及返回值需符合Bean规范</p>
+<p><strong>配置及使用</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 配置协议</span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:protocol</span> <span class="attr">name</span>=<span class="string">&quot;http&quot;</span> <span class="attr">port</span>=<span class="string">&quot;8080&quot;</span> /&gt;</span></span><br><span class="line"># 配置 Jetty Server（默认）</span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:protocol</span> <span class="attr">..server</span>=<span class="string">&quot;jetty&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 配置Servlet Bridge Server（推荐使用）</span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:protocol</span> <span class="attr">...server</span>=<span class="string">&quot;servlet&quot;</span> /&gt;</span></span><br><span class="line"># 配置DispatcherServlet</span><br><span class="line"><span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>dubbo<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>org.apache.dubbo.remoting.http.servlet.DispatcherServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">load-on-startup</span>&gt;</span>1<span class="tag">&lt;/<span class="name">load-on-startup</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>dubbo<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>使用注意的问题</strong></p>
+<p>​	如果使用servlet派发请求：</p>
+<ul>
+<li>协议的端口<code>&lt;dubbo:protocol port=&quot;8080&quot; /&gt;</code> 必须与servlet容器的端口相同，</li>
+<li>协议的上下文路径<code>&lt;dubbo:protocol contextpath=&quot;foo&quot; /&gt;</code>必须与servlet应用的上下文路径相同</li>
+</ul>
+<h2 id="2-7-Dubbo多协议总结"><a href="#2-7-Dubbo多协议总结" class="headerlink" title="2.7 Dubbo多协议总结"></a>2.7 Dubbo多协议总结</h2><p>目前而言DubboRPC框架，是支持多协议的框架，在平时开发中Dubbo协议最常见，也是最重要的。</p>
+<p> 其他的协议，集成也非常容易与简单。为不同的协议服务通信提供了基础。  </p>
+<h1 id="3-Dubbo序列化方式"><a href="#3-Dubbo序列化方式" class="headerlink" title="3 Dubbo序列化方式"></a>3 Dubbo序列化方式</h1><h2 id="3-1-目标"><a href="#3-1-目标" class="headerlink" title="3.1 目标"></a>3.1 目标</h2><ul>
+<li>了解Dubbo所支持的序列化方式</li>
+<li>了解各序列化方式的特点</li>
+<li>了解各序列化方式的传输效率</li>
+</ul>
+<h2 id="3-2-序列化的意义"><a href="#3-2-序列化的意义" class="headerlink" title="3.2 序列化的意义"></a>3.2 序列化的意义</h2><p>Dubbo协议默认使用Hessina2序列化、Netty通讯框架。那么序列化可以换吗?</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210215100645287.png" alt="image-20210215100645287"></p>
+<h2 id="3-3-Dubbo中的序列化方式"><a href="#3-3-Dubbo中的序列化方式" class="headerlink" title="3.3 Dubbo中的序列化方式"></a>3.3 Dubbo中的序列化方式</h2><p><strong>Dubbo中所支持的序列化</strong></p>
+<p>2.6.6中支持的序列化方式</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210215101100922.png" alt="image-20210215101100922"></p>
+<p>2.7.2中支持的序列化方式</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210215101119948.png" alt="image-20210215101119948"></p>
+<p>新版本中新增了avro、protostuff</p>
+<p><strong>Dubbo中所支持的序列化特点</strong></p>
+<table>
+<thead>
+<tr>
+<th>序列化方式</th>
+<th>说明</th>
+<th>学习资料</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>hessian2</td>
+<td>一种跨语言的高效二进制序列化方式</td>
+<td><a target="_blank" rel="noopener" href="http://hessian.caucho.com/doc/hessian-serialization.html">http://hessian.caucho.com/doc/hessian-serialization.html</a></td>
+</tr>
+<tr>
+<td>json</td>
+<td>采用阿里fastjson实现的json序列化方式</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson">https://github.com/alibaba/fastjson</a><br /><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson/wiki/Quick-Start-CN">https://github.com/alibaba/fastjson/wiki/Quick-Start-CN</a></td>
+</tr>
+<tr>
+<td>jdk</td>
+<td>jdk自带的java序列化实现</td>
+<td></td>
+</tr>
+<tr>
+<td>kryo</td>
+<td>kryo是个高效的java序列化&#x2F;反序列化库，大数据领域用的较多</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/EsotericSoftware/kryo">https://github.com/EsotericSoftware/kryo</a></td>
+</tr>
+<tr>
+<td>avro</td>
+<td>Hadoop子项目，支持二进制序列化方式，可以便捷，快速地处理大量数据</td>
+<td><a target="_blank" rel="noopener" href="http://avro.apache.org/">http://avro.apache.org/</a></td>
+</tr>
+<tr>
+<td>protostuff</td>
+<td>基于谷歌Protocol Buffer地序列化库，不需要依赖.proto文件，可以直接对POJO进行序列化和反序列化</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/protostuff/protostuff">https://github.com/protostuff/protostuff</a></td>
+</tr>
+<tr>
+<td>fst</td>
+<td>FST是Java快速序列化地简易替代者，只支持Java到Java之间序列化</td>
+<td><a target="_blank" rel="noopener" href="http://ruedigermoeller.github.io/fast-serialization/">http://ruedigermoeller.github.io/fast-serialization/</a><br /><a target="_blank" rel="noopener" href="https://github.com/RuedigerMoeller/fast-serialization">https://github.com/RuedigerMoeller/fast-serialization</a></td>
+</tr>
+</tbody></table>
+<h2 id="3-4-序列化方式的性能对比"><a href="#3-4-序列化方式的性能对比" class="headerlink" title="3.4 序列化方式的性能对比"></a>3.4 序列化方式的性能对比</h2><p>Full Object Graph Serializers：<a target="_blank" rel="noopener" href="https://github.com/eishay/jvm-serializers/wiki">https://github.com/eishay/jvm-serializers/wiki</a></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210215102550850.png" alt="image-20210215102550850"></p>
+<p><a target="_blank" rel="noopener" href="http://developer.51cto.com/art/201506/480273.htm">http://developer.51cto.com/art/201506/480273.htm</a> 也可以参考</p>
+<h2 id="3-5-关于Avro的性能"><a href="#3-5-关于Avro的性能" class="headerlink" title="3.5 关于Avro的性能"></a>3.5 关于Avro的性能</h2><p>大对象序列化后所占空间大小</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210215102958877.png" alt="image-20210215102958877"></p>
+<p><a target="_blank" rel="noopener" href="https://labs.criteo.com/2017/05/serialization/">https://labs.criteo.com/2017/05/serialization/</a> Large Objects部分</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210215103156662.png" alt="image-20210215103156662"></p>
+<h1 id="4-服务治理"><a href="#4-服务治理" class="headerlink" title="4 服务治理"></a>4 服务治理</h1><h2 id="4-1-你可能遇到的问题"><a href="#4-1-你可能遇到的问题" class="headerlink" title="4.1 你可能遇到的问题"></a>4.1 你可能遇到的问题</h2><p>暴露的服务接口粒度比较粗，如何进行读写场景分离?</p>
+<p> 查询接口返回列表，单、多笔查询场景如何分离? </p>
+<p>在运行时需要对某个应用额外多提供几台服务，怎么做?</p>
+<p> 在运行时需要调整服务权重，怎么做?</p>
+<p> 在运行时怎么调整服务的负载均衡策略? </p>
+<p>在运行时如何不停止提供服务，又能发布服务? </p>
+<p><span style="color:red">你需要服务治理!</span></p>
+<h2 id="4-2-Dubbo的服务治理"><a href="#4-2-Dubbo的服务治理" class="headerlink" title="4.2 Dubbo的服务治理"></a>4.2 Dubbo的服务治理</h2><p><strong>Dubbo中的服务治理</strong> </p>
+<p>​	Dubbo中服务治理，主要作用是改变运行时服务的行为和选址逻辑，达到限流，权重配置等目的</p>
+<table>
+<thead>
+<tr>
+<th>不同版本</th>
+<th>提供的服务治理功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2.7.0-</td>
+<td>针对服务粒度<br />条件路由<br />黑白名单<br />动态配置<br />权重调节<br />负载均衡</td>
+</tr>
+<tr>
+<td>2.7.0+</td>
+<td>应用级别的服务治理<br /><span style="color:green">标签路由</span><br />条件路由<br />黑白名单<br />动态配置<br />权重调节<br />负载均衡<br /><span style="color:green">配置管理</span><br /><span style="color:green">元数据中心</span></td>
+</tr>
+</tbody></table>
+<h2 id="4-3-路由规则"><a href="#4-3-路由规则" class="headerlink" title="4.3 路由规则"></a>4.3 路由规则</h2><p><strong>Dubbo中的路由规则</strong></p>
+<p>​	路由规则决定一次dubbo服务调用的目标服务器，分为条件路由规则和脚本路由规则，并且支持可扩展</p>
+<p><strong>路由规则URL内容</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;route://0.0.0.0/com.foo.BarService?category=routers&amp;dynamic=false&amp;rule=&quot;</span>+</span><br><span class="line">URL.encode(<span class="string">&quot;host=10.20.153.10=&gt;host=10.20.153.11&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>​	基于条件表达式的路由规则，如∶<code>host=10.20.153.10→host=10.20.153.11</code></p>
+<ul>
+<li>&#x3D;&gt;之前的为消费者匹配条件，所有参数和消费者的URL进行对比，当消费者满足匹配条件时，对该消费者执行后面 的过滤规则。 </li>
+<li>&#x3D;&gt;之后为提供者地址列表的过滤条件，所有参数和提供者的URL进行对比，消费者最终只拿到过滤后的地址列表。</li>
+<li>如果匹配条件为空，表示对所有消费方应用，如∶<code>=&gt;host!=10.20.153.11</code></li>
+<li>如果过滤条件为空，表示禁止访问，如∶<code>host=10.20.153.10=&gt;</code></li>
+</ul>
+<h2 id="4-4-路由规则的应用"><a href="#4-4-路由规则的应用" class="headerlink" title="4.4 路由规则的应用"></a>4.4 路由规则的应用</h2><p><strong>读写分离</strong></p>
+<p>​	很多时候，在实际生产环境中，数据库进行了读写分离，主数据库用来提供写操作，多从数据库实例用来提供读操作提供写服务的应用连接的是主数据库，提供读服务的应用连接的是从数据库，并且相应的timeout也不一样。</p>
+<p>​	通过路由规则，针对这样的场景我们可以这样来治理∶</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">method = find*,list*,get*,is* =&gt; host= 172.22.3.94,172.22.3.95,172.22.3.95</span><br><span class="line">method != find*,list*,get*,is* =&gt; host= 172.22.3.97,172.22.3.98</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-5-动态配置"><a href="#4-5-动态配置" class="headerlink" title="4.5 动态配置"></a>4.5 动态配置</h2><p><strong>Dubbo中的动态配置</strong></p>
+<p>​	配置覆盖规则是Dubbo设计的在无需重启应用的情况下，动态调整RPC调用行为的一种能力。2.7.0版本开始，支持从服务和应用两个粒度来调整动态配置。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;override://0.0.0.0/com.foo.BarService?category=configurations&amp;dynamic=false&amp;application=foo&amp;timeout=1000&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-6-动态配置的应用"><a href="#4-6-动态配置的应用" class="headerlink" title="4.6 动态配置的应用"></a>4.6 动态配置的应用</h2><p><strong>禁用提供者</strong></p>
+<p>​	通常用于临时踢出某台服务提供者机器，相似的，禁止消费者访问请使用路由规则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">override://10.20.153.10/com.foo.BarService?category=configurators&amp;dynamic=false&amp;disbaled=true</span><br></pre></td></tr></table></figure>
+
+<p><strong>调整权重</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">override://10.20.153.10/com.foo.BarService?category=configurators&amp;dynamic=false&amp;weight=200</span><br></pre></td></tr></table></figure>
+
+<p><strong>调整负载均衡策略</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">override://10.20.153.10/com.foo.BarService?category=configurators&amp;dynamic=false&amp;loadbalance=leastactive</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="5-总结"><a href="#5-总结" class="headerlink" title="5 总结"></a>5 总结</h1><h2 id="5-1-知识总结"><a href="#5-1-知识总结" class="headerlink" title="5.1 知识总结"></a>5.1 知识总结</h2><p><strong>Dubbo并发控制</strong></p>
+<p>​	Dubbo的线程模型、5种派遣方式、4种线程池、并发连接控制、负载均衡设置、粘滞延迟连接 </p>
+<p><strong>Dubbo多协议</strong></p>
+<p>​	支持9种协议，Dubbo协议的特点及详解、RMI、Thrift、Http协议示例</p>
+<p><strong>Dubbo序列化方式</strong></p>
+<p>​	了解Dubbo所支持的序列化方式及各自的特点效率</p>
+<p><strong>服务治理</strong></p>
+<p>​	掌握Dubbo服务治理的基本操作</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/02/13/06-Dubbo/05-Dubbo%E7%89%B9%E6%80%A7/" data-id="clmcxecys009eu8wadp536tov" data-title="Dubbo特性" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/03/31/06-Dubbo/06-Dubbo%E6%BA%90%E7%A0%81%E5%AF%BC%E8%AF%BB/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Dubbo源码导读
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/02/12/06-Dubbo/04-Dubbo%E9%85%8D%E7%BD%AE%E5%8F%8A%E7%89%B9%E6%80%A7/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Dubbo配置及特性</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

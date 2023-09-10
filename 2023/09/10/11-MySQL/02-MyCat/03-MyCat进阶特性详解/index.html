@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="核心概念理解和工作原理Mycat版本说明 Mycat-mini-monitor项目开源了,又一款Mycat监控! - Mycat-mini-monitor-1.0.0 版本发布 Mycat-server-1.6.6-release 版本发布 Mycat-server-1.6.6-test 版本发布 Mycat-server-1.6-release 版本发布 Mycat-server-1.5-rel">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/11-MySQL/02-MyCat/03-MyCat%E8%BF%9B%E9%98%B6%E7%89%B9%E6%80%A7%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="核心概念理解和工作原理Mycat版本说明 Mycat-mini-monitor项目开源了,又一款Mycat监控! - Mycat-mini-monitor-1.0.0 版本发布 Mycat-server-1.6.6-release 版本发布 Mycat-server-1.6.6-test 版本发布 Mycat-server-1.6-release 版本发布 Mycat-server-1.5-rel">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224180206.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224180351.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224180453.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224192007.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224192054.png">
+<meta property="og:image" content="http://example.com/04-MyCat%E8%BF%9B%E9%98%B6%E7%89%B9%E6%80%A7%E8%AF%A6%E8%A7%A3.assets/20221224192252.png">
+<meta property="article:published_time" content="2023-09-10T03:59:08.880Z">
+<meta property="article:modified_time" content="2022-12-24T11:23:35.346Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224180206.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-11-MySQL/02-MyCat/03-MyCat进阶特性详解" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/11-MySQL/02-MyCat/03-MyCat%E8%BF%9B%E9%98%B6%E7%89%B9%E6%80%A7%E8%AF%A6%E8%A7%A3/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.880Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="核心概念理解和工作原理"><a href="#核心概念理解和工作原理" class="headerlink" title="核心概念理解和工作原理"></a>核心概念理解和工作原理</h1><h2 id="Mycat版本说明"><a href="#Mycat版本说明" class="headerlink" title="Mycat版本说明"></a>Mycat版本说明</h2><ul>
+<li>Mycat-mini-monitor项目开源了,又一款Mycat监控! - Mycat-mini-monitor-1.0.0 版本发布</li>
+<li>Mycat-server-1.6.6-release 版本发布</li>
+<li>Mycat-server-1.6.6-test 版本发布</li>
+<li>Mycat-server-1.6-release 版本发布</li>
+<li>Mycat-server-1.5-release 版本发布</li>
+<li>Mycat-server-1.4-release 版本发布</li>
+<li>Mycat-server-1.3-release 版本发布</li>
+<li>Mycat-web(eye) 版本发布</li>
+</ul>
+<h2 id="Mycat工作原理"><a href="#Mycat工作原理" class="headerlink" title="Mycat工作原理"></a>Mycat工作原理</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224180206.png"></p>
+<p><strong>Mycat 的原理</strong>： ‚拦截‛，它拦截了用户发送过来的SQL 语句，首先解析SQL 语句，做一些特定的分析：如分片分析、路由分析、读写分离分析、缓存分析等，然后将此SQL 发往后端的真实数据库，并将返回的结果做适当的处理，最终再返回给用户；</p>
+<h2 id="Mycat架构"><a href="#Mycat架构" class="headerlink" title="Mycat架构"></a>Mycat架构</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224180351.png"></p>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><p><strong>数据库中间件</strong>：对应用，mycat就是数据库服务，mycat是后端数据库集群的代理</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224180453.png"></p>
+<p><strong>逻辑概念:</strong></p>
+<ul>
+<li>逻辑库：mycat数据库服务中定义、管理的数据库</li>
+<li>逻辑表：逻辑库中包含的需分库分表存储的表</li>
+<li>dataNode：数据节点（分片节点），逻辑表分片的存放节点。</li>
+<li>dataHost: 数据主机（节点主机），数据节点所在的主机。</li>
+</ul>
+<p><strong>schema.xml</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mycat:schema</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">schema</span> <span class="attr">name</span>=<span class="string">&quot;testdb&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;orders&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;ID&quot;</span> </span></span><br><span class="line"><span class="tag">               <span class="attr">type</span>=<span class="string">&quot;global&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1,dn2&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">schema</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dataNode</span> <span class="attr">name</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">dataHost</span>=<span class="string">&quot;dhost1&quot;</span> <span class="attr">database</span>=<span class="string">&quot;db1&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dataHost</span> <span class="attr">name</span>=<span class="string">&quot;dhost1&quot;</span> <span class="attr">...</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">heartbeat</span>&gt;</span>select user()<span class="tag">&lt;/<span class="name">heartbeat</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">writeHost</span> <span class="attr">host</span>=<span class="string">&quot;hostM1&quot;</span> <span class="attr">url</span>=<span class="string">&quot;localhost:3306&quot;</span><span class="attr">...</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">readHost</span> <span class="attr">host</span>=<span class="string">&quot;hostS2&quot;</span> <span class="attr">url</span>=<span class="string">&quot;192.168.1.2:3306&quot;</span><span class="attr">...</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">writeHost</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dataHost</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mycat:schema</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>物理概念</strong></p>
+<ul>
+<li>writeHost：写主机，真实的数据库服务主机描述</li>
+<li>readHost：读主机，真实的数据库服务主机描述</li>
+</ul>
+<p><strong>schema.xml</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mycat:schema</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">schema</span> <span class="attr">name</span>=<span class="string">&quot;testdb&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;orders&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;ID&quot;</span> </span></span><br><span class="line"><span class="tag">               <span class="attr">type</span>=<span class="string">&quot;global&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1,dn2&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">schema</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dataNode</span> <span class="attr">name</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">dataHost</span>=<span class="string">&quot;dhost1&quot;</span> <span class="attr">database</span>=<span class="string">&quot;db1&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dataHost</span> <span class="attr">name</span>=<span class="string">&quot;dhost1&quot;</span> <span class="attr">...</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">heartbeat</span>&gt;</span>select user()<span class="tag">&lt;/<span class="name">heartbeat</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">writeHost</span> <span class="attr">host</span>=<span class="string">&quot;hostM1&quot;</span> <span class="attr">url</span>=<span class="string">&quot;localhost:3306&quot;</span><span class="attr">...</span>&gt;</span> <span class="tag">&lt;<span class="name">readHost</span> <span class="attr">host</span>=<span class="string">&quot;hostS2&quot;</span> <span class="attr">url</span>=<span class="string">&quot;192.168.1.2:3306&quot;</span><span class="attr">...</span>/&gt;</span> </span><br><span class="line">        <span class="tag">&lt;/<span class="name">writeHost</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;/<span class="name">dataHost</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mycat:schema</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="schema配置-schema"><a href="#schema配置-schema" class="headerlink" title="schema配置-schema"></a>schema配置-schema</h2><p><strong>逻辑库 schema</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">mycat</span>:schema <span class="keyword">SYSTEM</span> <span class="string">&quot;schema.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mycat:schema</span> <span class="attr">xmlns:mycat</span>=<span class="string">&quot;http://io.mycat/&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">schema</span> <span class="attr">name</span>=<span class="string">&quot;TESTDB&quot;</span> <span class="attr">checkSQLschema</span>=<span class="string">&quot;false&quot;</span> <span class="attr">sqlMaxLimit</span>=<span class="string">&quot;100&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">schema</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mycat:schema</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>MyCat 可以有多个逻辑库，每个逻辑库都有自己的相关配置。</p>
+<p>如果不配置schema 标签，所有的表配置，会属于同一个默认的逻辑库。</p>
+<h2 id="schema配置-schema元素属性说明"><a href="#schema配置-schema元素属性说明" class="headerlink" title="schema配置-schema元素属性说明"></a>schema配置-schema元素属性说明</h2><table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>值</th>
+<th>数量限制</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>name</td>
+<td>String</td>
+<td>(1)</td>
+<td>逻辑数据库名</td>
+</tr>
+<tr>
+<td>dataNode</td>
+<td>String</td>
+<td>(0..1)</td>
+<td>该库中未指定dataNode的表的默认存储节点</td>
+</tr>
+<tr>
+<td>checkSQLschema</td>
+<td>boolean</td>
+<td>(1)</td>
+<td>是否检查SQL语句中库名(select * from TESTDB.orders;)，如果设置为true，会检查；当库名与逻辑库名相同时，会去掉语句中的库名前缀。<br />这么做的目的避免发送到后端数据库执行时报（ERROR1146 (42S02): Table ‘testdb.travelrecord’ doesn’t exist）。</td>
+</tr>
+<tr>
+<td>sqlMaxLimit</td>
+<td>int</td>
+<td>(1)</td>
+<td>对于拆分库的schema，当该值设置为某个数值时，每条执行的SQL 语句，如果没有加上limit 子句，MyCat 会自动加上。<br />例如：设置值为100，执行select * from TESTDB.travelrecord;的效果为select * from TESTDB.travelrecord limit 100;</td>
+</tr>
+</tbody></table>
+<h2 id="schema配置-table"><a href="#schema配置-table" class="headerlink" title="schema配置-table"></a>schema配置-table</h2><p><strong>逻辑表 table</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">schema</span> <span class="attr">name</span>=<span class="string">&quot;TESTDB&quot;</span> <span class="attr">checkSQLschema</span>=<span class="string">&quot;false&quot;</span> <span class="attr">sqlMaxLimit</span>=<span class="string">&quot;100&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;travelrecord&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1,dn2,dn3&quot;</span> <span class="attr">rule</span>=<span class="string">&quot;auto-sharding-long&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;goods&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;ID&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1,dn2&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;customer&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;ID&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1,dn2&quot;</span> <span class="attr">rule</span>=<span class="string">&quot;sharding-by-intfile&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">childTable</span> <span class="attr">name</span>=<span class="string">&quot;orders&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;ID&quot;</span> <span class="attr">joinKey</span>=<span class="string">&quot;customer_id&quot;</span> <span class="attr">parentKey</span>=<span class="string">&quot;id&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">childTable</span> <span class="attr">name</span>=<span class="string">&quot;order_items&quot;</span> <span class="attr">joinKey</span>=<span class="string">&quot;order_id&quot;</span> <span class="attr">parentKey</span>=<span class="string">&quot;id&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">childTable</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">table</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">schema</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Table标签定义了MyCat中的逻辑表，所有需要拆分的表都需要通过这个标签定义。</p>
+<h2 id="schema配置-table元素属性说明"><a href="#schema配置-table元素属性说明" class="headerlink" title="schema配置-table元素属性说明"></a>schema配置-table元素属性说明</h2><table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>值</th>
+<th>数量限制</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>name</td>
+<td>String</td>
+<td>(1)</td>
+<td>表名，同个schema 标签中定义的名字必须唯一。</td>
+</tr>
+<tr>
+<td>dataNode</td>
+<td>String</td>
+<td>(1..*)</td>
+<td>存放表数据的数据节点名。<br />很多难以罗列时，可以这样配置：dataNode&#x3D;‚multipleDn$0-99,multipleDn2$100-199‛，$0-99表示0-99<br />&lt;dataNode name&#x3D;”multipleDn$0-99” dataHost&#x3D;”localhost1” database&#x3D;”db$0-99” &gt;&lt; &#x2F;dataNode&gt;</td>
+</tr>
+<tr>
+<td>rule</td>
+<td>String</td>
+<td>(0..1)</td>
+<td>指定逻辑表要使用的分片规则名字，规则名字在rule.xml 中定义，必须与tableRule标签中name 属性属性值一一对应。</td>
+</tr>
+<tr>
+<td>ruleRequired</td>
+<td>boolean</td>
+<td>(0..1)</td>
+<td>该属性用于指定表是否绑定分片规则，如果配置为true，但没有配置具体rule 的话，程序会报错。</td>
+</tr>
+<tr>
+<td>primaryKey</td>
+<td>String</td>
+<td>(1)</td>
+<td>该逻辑表对应真实表的主键，当分片的规则是使用非主键进行分片的，那么在使用主键查询的时候，就会发送查询语句到所有配置的DN 上，如果使用该属性配置了主键，那么MyCat 会缓存主键与具体DN 的信息，那么再次使用非主键进行查询的时候就不会进行广播式的查询，会直接发送语句给具体的DN。<br/>注意：尽管配置该属性，如果缓存并没有命中的话，还是会发送语句给具体的DN，来获得数据。</td>
+</tr>
+<tr>
+<td>type</td>
+<td>String</td>
+<td>(0..1)</td>
+<td>定义逻辑表的类型，目前只有‚全局表‛和‛普通表‛两种。<br/>对应的配置：<br/>全局表：global<br/>普通表：不指定该值为globla 的所有表</td>
+</tr>
+<tr>
+<td>autoIncrement</td>
+<td>boolean</td>
+<td>(0..1)</td>
+<td>是否使用主键自增长</td>
+</tr>
+<tr>
+<td>subTables</td>
+<td>String</td>
+<td>(1)</td>
+<td>分表，subTables&#x3D;”t_order$1-2,t_order3”。<br/>目前分表1.6以后开始支持，并且 dataNode 在分表条件下只能配置一个，分表条件下<br/>不支持各种条件的 join 语句。</td>
+</tr>
+<tr>
+<td>needAddLimit</td>
+<td>boolean</td>
+<td>(0..1)</td>
+<td>指定表是否需要自动的在每个语句后面加上 limit 限制。由于使用了分库分表，数据量有时会特别巨大。这时候执行查询语句，若恰巧忘记了加上数量限制，那么想要查询所有的数据，则需要等待一段时间。<br/>所以，mycat 就自动的为我们加上LIMIT 100。当然，如果语句中有limit，就不会再次添加了。这个属性默认为true，你也可以设置成 false 禁用掉默认行为。</td>
+</tr>
+</tbody></table>
+<h2 id="schema配置-childTable标签"><a href="#schema配置-childTable标签" class="headerlink" title="schema配置-childTable标签"></a>schema配置-childTable标签</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;customer&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;ID&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1,dn2&quot;</span> <span class="attr">rule</span>=<span class="string">&quot;sharding-by-intfile&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">childTable</span> <span class="attr">name</span>=<span class="string">&quot;orders&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;ID&quot;</span> <span class="attr">joinKey</span>=<span class="string">&quot;customer_id&quot;</span> <span class="attr">parentKey</span>=<span class="string">&quot;id&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">childTable</span> <span class="attr">name</span>=<span class="string">&quot;order_items&quot;</span> <span class="attr">joinKey</span>=<span class="string">&quot;order_id&quot;</span> <span class="attr">parentKey</span>=<span class="string">&quot;id&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">childTable</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">table</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>childTable 标签用于定义E-R 分片的子表，通过标签上的属性与父表进行关联。</p>
+<table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>值</th>
+<th>数量限制</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>name</td>
+<td>String</td>
+<td>(1)</td>
+<td>子表名</td>
+</tr>
+<tr>
+<td>primaryKey</td>
+<td>String</td>
+<td>(0..1)</td>
+<td>字表的主键列名</td>
+</tr>
+<tr>
+<td>joinKey</td>
+<td>String</td>
+<td>(1)</td>
+<td>字表中与父表关联的列</td>
+</tr>
+<tr>
+<td>parentKey</td>
+<td>String</td>
+<td>(1)</td>
+<td>父表中关联的列</td>
+</tr>
+</tbody></table>
+<h2 id="schema配置-dataHost"><a href="#schema配置-dataHost" class="headerlink" title="schema配置-dataHost"></a>schema配置-dataHost</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dataHost</span> <span class="attr">name</span>=<span class="string">&quot;localhost1&quot;</span> <span class="attr">maxCon</span>=<span class="string">&quot;1000&quot;</span> <span class="attr">minCon</span>=<span class="string">&quot;10&quot;</span> <span class="attr">balance</span>=<span class="string">&quot;0&quot;</span></span></span><br><span class="line"><span class="tag">          <span class="attr">writeType</span>=<span class="string">&quot;0&quot;</span> <span class="attr">dbType</span>=<span class="string">&quot;mysql&quot;</span> <span class="attr">dbDriver</span>=<span class="string">&quot;native&quot;</span> <span class="attr">switchType</span>=<span class="string">&quot;1&quot;</span> <span class="attr">slaveThreshold</span>=<span class="string">&quot;100&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">heartbeat</span>&gt;</span>select user()<span class="tag">&lt;/<span class="name">heartbeat</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- can have multi write hosts --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">writeHost</span> <span class="attr">host</span>=<span class="string">&quot;hostM1&quot;</span> <span class="attr">url</span>=<span class="string">&quot;localhost:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;123456&quot;</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- can have multi read hosts --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">readHost</span> <span class="attr">host</span>=<span class="string">&quot;hostS2&quot;</span> <span class="attr">url</span>=<span class="string">&quot;192.168.1.200:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;xxx&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">writeHost</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dataHost</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>dataHost定义Mycat中的数据主机，数据主机定义中定义了具体的数据库服务、读写分离配置和心跳语句。这是与物理数据库服务关联的地方。</p>
+<h2 id="schema配置-dataHost元素属性说明"><a href="#schema配置-dataHost元素属性说明" class="headerlink" title="schema配置-dataHost元素属性说明"></a>schema配置-dataHost元素属性说明</h2><table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>值</th>
+<th>数量限制</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>name</td>
+<td>String</td>
+<td>(1)</td>
+<td>数据主机名，唯一</td>
+</tr>
+<tr>
+<td>maxCon</td>
+<td>int</td>
+<td>(1)</td>
+<td>指定每个读写实例连接池的最大连接。也就是说，标签内嵌套的writeHost、readHost标签都会使用这个属性的值来实例化出连接池的最大连接数。</td>
+</tr>
+<tr>
+<td>minCon</td>
+<td>int</td>
+<td>(1)</td>
+<td>指定每个读写实例连接池的最小连接，初始化连接池的大小。</td>
+</tr>
+<tr>
+<td>balance</td>
+<td>int</td>
+<td>(1)</td>
+<td>负载均衡类型，目前的取值有4 种：<br/>1、balance&#x3D;”0”，不开启读写分离机制，所有读操作都发送到当前可用的writeHost 上。<br/>2、balance&#x3D;”1”，全部的readHost 与stand by writeHost 参与select 语句的负载均衡，简单的说，当双主双从模式(M1-&gt;S1，M2-&gt;S2，并且M1 与M2 互为主备)，正常情况下，M2,S1,S2 都参与select 语句的负载均衡。 <br/>3、balance&#x3D;”2”，所有读操作都随机的在writeHost、readhost 上分发。 <br/>4、balance&#x3D;”3” ， 所有读请求随机的分发到 writeHost 对应的 readhost 执 行 ，writeHost 不负担读压力，注意balance&#x3D;3 只在1.4 及其以后版本有，1.3 没有。</td>
+</tr>
+<tr>
+<td>writeType</td>
+<td>int</td>
+<td>(1)</td>
+<td>1、writeType&#x3D;”0”，所有写操作发送到配置的第一个writeHost，第一个挂了切到还生存的第二个writeHost，重新启动后已切换后的为准，切换记录在配置文件中：dnindex.properties 。<br/>2、writeType&#x3D;”1”，所有写操作都随机的发送到配置的writeHost（1.5 以后废弃不推荐）</td>
+</tr>
+<tr>
+<td>switchType</td>
+<td>int</td>
+<td>(1)</td>
+<td>-1 表示不自动切换。 1 默认值，自动切换。2 基于MySQL 主从同步的状态决定是否切换。</td>
+</tr>
+<tr>
+<td>dbType</td>
+<td>String</td>
+<td>(1)</td>
+<td>指定后端连接的数据库类型，目前支持二进制的mysql 协议，还有其他使用JDBC 连接的数据库。例如：mongodb、oracle、spark 等。</td>
+</tr>
+<tr>
+<td>dbDriver</td>
+<td>String</td>
+<td>(1)</td>
+<td>指定连接后端数据库使用的Driver，目前可选的值有native 和JDBC。 <br/>1、使用native 的话，因为这个值执行的是二进制的mysql 协议，所以可以使用mysql 和mariadb。从1.6 版本开始支持postgresql 的native 原始协议。 <br/>2、使用JDBC 的话需要将符合JDBC 4 标准的驱动JAR 包放到MYCAT\lib 目录下，并检查驱动JAR 包中包括如下目录结构的文件：META-INF\services\java.sql.Driver。在这个文件内写上具体的Driver 类名，例如：com.mysql.jdbc.Driver。</td>
+</tr>
+</tbody></table>
+<h2 id="schema配置-heartbeat"><a href="#schema配置-heartbeat" class="headerlink" title="schema配置-heartbeat"></a>schema配置-heartbeat</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dataHost</span> <span class="attr">name</span>=<span class="string">&quot;localhost1&quot;</span> <span class="attr">maxCon</span>=<span class="string">&quot;1000&quot;</span> <span class="attr">minCon</span>=<span class="string">&quot;10&quot;</span> <span class="attr">balance</span>=<span class="string">&quot;0&quot;</span></span></span><br><span class="line"><span class="tag">          <span class="attr">writeType</span>=<span class="string">&quot;0&quot;</span> <span class="attr">dbType</span>=<span class="string">&quot;mysql&quot;</span> <span class="attr">dbDriver</span>=<span class="string">&quot;native&quot;</span> <span class="attr">switchType</span>=<span class="string">&quot;1&quot;</span> </span></span><br><span class="line"><span class="tag">          <span class="attr">slaveThreshold</span>=<span class="string">&quot;100&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">heartbeat</span>&gt;</span>select user()<span class="tag">&lt;/<span class="name">heartbeat</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- can have multi write hosts --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">writeHost</span> <span class="attr">host</span>=<span class="string">&quot;hostM1&quot;</span> <span class="attr">url</span>=<span class="string">&quot;localhost:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;123456&quot;</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- can have multi read hosts --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">readHost</span> <span class="attr">host</span>=<span class="string">&quot;hostS2&quot;</span> <span class="attr">url</span>=<span class="string">&quot;192.168.1.200:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;xxx&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">writeHost</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dataHost</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>这个标签内指明用于和后端数据库进行心跳检查的语句如：MYSQL 可以使用select user()，Oracle 可以使用select 1 from dual 等。</li>
+<li>这个标签还有一个connectionInitSql 属性，主要是当使用Oracle数据库时，需要执行的初始化SQL语句就放到这里。 如：alter session set nls_date_format&#x3D;’yyyy-mm-dd hh24:mi:ss’<br>1.4 主从切换的语句必须是：show slave status</li>
+</ol>
+<h2 id="schema配置-writeHost-readHost"><a href="#schema配置-writeHost-readHost" class="headerlink" title="schema配置-writeHost readHost"></a>schema配置-writeHost readHost</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dataHost</span> <span class="attr">name</span>=<span class="string">&quot;localhost1&quot;</span> <span class="attr">maxCon</span>=<span class="string">&quot;1000&quot;</span> <span class="attr">minCon</span>=<span class="string">&quot;10&quot;</span> <span class="attr">balance</span>=<span class="string">&quot;0&quot;</span></span></span><br><span class="line"><span class="tag">          <span class="attr">writeType</span>=<span class="string">&quot;0&quot;</span> <span class="attr">dbType</span>=<span class="string">&quot;mysql&quot;</span> <span class="attr">dbDriver</span>=<span class="string">&quot;native&quot;</span> <span class="attr">switchType</span>=<span class="string">&quot;1&quot;</span> </span></span><br><span class="line"><span class="tag">          <span class="attr">slaveThreshold</span>=<span class="string">&quot;100&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">heartbeat</span>&gt;</span>select user()<span class="tag">&lt;/<span class="name">heartbeat</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- can have multi write hosts --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">writeHost</span> <span class="attr">host</span>=<span class="string">&quot;hostM1&quot;</span> <span class="attr">url</span>=<span class="string">&quot;localhost:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;123456&quot;</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- can have multi read hosts --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">readHost</span> <span class="attr">host</span>=<span class="string">&quot;hostS2&quot;</span> <span class="attr">url</span>=<span class="string">&quot;192.168.1.200:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;xxx&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">writeHost</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dataHost</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这两个标签都指定后端数据库的相关配置给mycat，用于实例化后端连接池。writeHost 指定写实例、readHost 指定读实例。</p>
+<p>在一个dataHost 内可以定义多个writeHost 和readHost。但是，如果writeHost 指定的后端数据库宕机，那么这个writeHost 绑定的所有readHost 都将不可用。另一方面，由于这个writeHost 宕机系统会自动的检测到，并切换到备用的writeHost 上去。</p>
+<h2 id="schema配置-writeHost-readHost属性说明"><a href="#schema配置-writeHost-readHost属性说明" class="headerlink" title="schema配置-writeHost readHost属性说明"></a>schema配置-writeHost readHost属性说明</h2><table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>值</th>
+<th>数量限制</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>host</td>
+<td>String</td>
+<td>(1)</td>
+<td>用于标识不同实例，一般writeHost 我们使用* M1，readHost 我们用* S1。</td>
+</tr>
+<tr>
+<td>url</td>
+<td>String</td>
+<td>(1)</td>
+<td>后端实例连接地址<br/>若是用native 的dbDriver，则一般为address:port 这种形式。<br/>若是用JDBC 或其他的dbDriver，则需要特殊指定。（当使用JDBC 时则可以这么写：jdbc:mysql:&#x2F;&#x2F;localhost:3306&#x2F;）</td>
+</tr>
+<tr>
+<td>user</td>
+<td>String</td>
+<td>(1)</td>
+<td>连接后端存储实例的用户名</td>
+</tr>
+<tr>
+<td>password</td>
+<td>String</td>
+<td>(1)</td>
+<td>密码</td>
+</tr>
+</tbody></table>
+<p>加密密码，执行mycat jar 程序（1.4.1 以后）</p>
+<p>java -cp Mycat-server-1.4.1-dev.jar io.mycat.util.DecryptUtil 1:host:user:password Mycat-server-1.4.1-dev.jar 为mycat download 下载目录的jar<br>1:host:user:password 中1 为db 端加密标志，host 为dataHost 的host 名称</p>
+<h1 id="Mycat如何解决分库分表带来的挑战"><a href="#Mycat如何解决分库分表带来的挑战" class="headerlink" title="Mycat如何解决分库分表带来的挑战"></a>Mycat如何解决分库分表带来的挑战</h1><h2 id="挑战的解决思路"><a href="#挑战的解决思路" class="headerlink" title="挑战的解决思路"></a>挑战的解决思路</h2><p>第一原则：能不切分尽量不要切分<br>第二原则：如果要切分一定要选择合适的切分规则，提前规划好。<br>第三原则：数据切分尽量通过数据冗余或表分组（Table Group）来降低跨库Join 的可能。<br>第四原则：由于数据库中间件对数据Join实现的优劣难以把握，而且实现高性能难度极大，业务读取尽量少使用多表Join。</p>
+<h1 id="Mycat解决分库分表的难点实战"><a href="#Mycat解决分库分表的难点实战" class="headerlink" title="Mycat解决分库分表的难点实战"></a>Mycat解决分库分表的难点实战</h1><h2 id="Mycat中表分类"><a href="#Mycat中表分类" class="headerlink" title="Mycat中表分类"></a>Mycat中表分类</h2><p><strong>分片表</strong></p>
+<p>分片表，是指那些有很大数据，需要切分到多个数据库的表，这样每个分片都有一部分数据，所有分片构成了完整的数据。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;t_goods&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;vid&quot;</span> <span class="attr">autoIncrement</span>=<span class="string">&quot;true&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1,dn2&quot;</span> <span class="attr">rule</span>=<span class="string">&quot;rule1&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>非分片表</strong></p>
+<p>一个数据库中并不是所有的表都很大，某些表是可以不用进行切分的，非分片是相对分片表来说的，就是那些不需要进行数据切分的表。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;t_node&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;vid&quot;</span> <span class="attr">autoIncrement</span>=<span class="string">&quot;true&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Mycat中表分类-1"><a href="#Mycat中表分类-1" class="headerlink" title="Mycat中表分类"></a>Mycat中表分类</h2><p><strong>ER表</strong></p>
+<p>Mycat 中的ER 表是基于E-R 关系的数据分片策略，子表的记录与所关联的父表记录存放在同一个数据分片上，保证数据Join 不会跨库操作。<br>ER分片是解决跨分片数据join 的一种很好的思路，也是数据切分规划的一条重要规则。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;customer&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;ID&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1,dn2&quot;</span> <span class="attr">rule</span>=<span class="string">&quot;sharding-by-intfile&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">childTable</span> <span class="attr">name</span>=<span class="string">&quot;orders&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;ID&quot;</span> <span class="attr">joinKey</span>=<span class="string">&quot;customer_id&quot;</span> <span class="attr">parentKey</span>=<span class="string">&quot;id&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">childTable</span> <span class="attr">name</span>=<span class="string">&quot;order_items&quot;</span> <span class="attr">joinKey</span>=<span class="string">&quot;order_id&quot;</span> <span class="attr">parentKey</span>=<span class="string">&quot;id&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">childTable</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">table</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>全局表</strong></p>
+<p>一个真实的业务系统中，往往存在大量的类似字典表的表，数据量不大，这些表基本上很少变动。</p>
+<p><strong>问题：</strong>业务表往往需要和字典表Join查询，当业务表因为规模而进行分片以后，业务表与字典表之间的关联跨库了。</p>
+<p><strong>解决：</strong>Mycat中通过表冗余来解决这类表的join，即它的定义中指定的dataNode上都有一份该表的拷贝。（将字典表或者符合字典表特性的表定义为全局表。 ）</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;company&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;ID&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1,dn2,dn3&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="分片规则"><a href="#分片规则" class="headerlink" title="分片规则"></a>分片规则</h2><p>在conf&#x2F;rule.xml中定义分片规则</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mycat:rule</span> <span class="attr">xmlns:mycat</span>=<span class="string">&quot;http://io.mycat/&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tableRule</span> <span class="attr">name</span>=<span class="string">&quot;rule1&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">rule</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">columns</span>&gt;</span>id<span class="tag">&lt;/<span class="name">columns</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">algorithm</span>&gt;</span>func1<span class="tag">&lt;/<span class="name">algorithm</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">tableRule</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">function</span> <span class="attr">name</span>=<span class="string">&quot;func1&quot;</span> <span class="attr">class</span>=<span class="string">&quot;io.mycat.route.function.PartitionByLong&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;partitionCount&quot;</span>&gt;</span>8<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;partitionLength&quot;</span>&gt;</span>128<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">function</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mycat:rule</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Mycat架构实践方案"><a href="#Mycat架构实践方案" class="headerlink" title="Mycat架构实践方案"></a>Mycat架构实践方案</h2><p><strong>Haproxy + Mycat集群 + 读写分离</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224192007.png"></p>
+<h2 id="Mycat高可用方案"><a href="#Mycat高可用方案" class="headerlink" title="Mycat高可用方案"></a>Mycat高可用方案</h2><p><strong>Haproxy + Mycat集群 + 分库分表</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224192054.png"></p>
+<h2 id="Mycat监控介绍"><a href="#Mycat监控介绍" class="headerlink" title="Mycat监控介绍"></a>Mycat监控介绍</h2><p><img src="/04-MyCat%E8%BF%9B%E9%98%B6%E7%89%B9%E6%80%A7%E8%AF%A6%E8%A7%A3.assets/20221224192252.png"></p>
+<p><strong>Mycat-web(eye)</strong><br>支持对Mycat、Mysql性能监控<br>支持对Mycat的JVM内存提供监控服务<br>支持对线程的监控<br>支持对操作系统的CPU、内存、磁盘、网络的监控</p>
+<p><strong>现在还有 Mycat-mini-monitor</strong> </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/11-MySQL/02-MyCat/03-MyCat%E8%BF%9B%E9%98%B6%E7%89%B9%E6%80%A7%E8%AF%A6%E8%A7%A3/" data-id="clmcxed5v00cku8wa3c6p759k" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/11-MySQL/02-MyCat/04-MyCat%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/11-MySQL/02-MyCat/02-MyCat%E5%AE%89%E8%A3%85/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

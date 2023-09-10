@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Netty实战 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Netty引导BootStrapBootStrap是Netty中负责引导服务器和客户端启动，它将ChannelPipeline、ChannelHandler和EventLoop组织起来，成为一个可实际运行的引用程序。简单来说，引导一个应用程序是指对它进行配置，并运行起来的过程。 Bootstrap：引导客户端运行 ServerBootstrap：引导服务端运行 ServerBootstrap AP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty实战">
+<meta property="og:url" content="http://example.com/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/05-Netty%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Netty引导BootStrapBootStrap是Netty中负责引导服务器和客户端启动，它将ChannelPipeline、ChannelHandler和EventLoop组织起来，成为一个可实际运行的引用程序。简单来说，引导一个应用程序是指对它进行配置，并运行起来的过程。 Bootstrap：引导客户端运行 ServerBootstrap：引导服务端运行 ServerBootstrap AP">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/Netty-Bind%E7%BB%91%E5%AE%9A%E7%AB%AF%E5%8F%A3%E8%BF%87%E7%A8%8B.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/TCP%E7%B2%98%E5%8C%85%E6%8B%86%E5%8C%85.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/Iot%E6%8E%A8%E9%80%81%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E5%9B%BE.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/Netty%E7%99%BE%E4%B8%87%E8%BF%9E%E6%8E%A5%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:45:01.870Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Netty">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/Netty-Bind%E7%BB%91%E5%AE%9A%E7%AB%AF%E5%8F%A3%E8%BF%87%E7%A8%8B.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-09-网络编程/05-Netty实战" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/05-Netty%E5%AE%9E%E6%88%98/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Netty实战
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Netty引导"><a href="#Netty引导" class="headerlink" title="Netty引导"></a>Netty引导</h1><h2 id="BootStrap"><a href="#BootStrap" class="headerlink" title="BootStrap"></a>BootStrap</h2><p>BootStrap是Netty中负责引导服务器和客户端启动，它将ChannelPipeline、ChannelHandler和EventLoop组织起来，成为一个可实际运行的引用程序。简单来说，引导一个应用程序是指对它进行配置，并运行起来的过程。</p>
+<p>Bootstrap：引导客户端运行</p>
+<p>ServerBootstrap：引导服务端运行</p>
+<h2 id="ServerBootstrap-API"><a href="#ServerBootstrap-API" class="headerlink" title="ServerBootstrap API"></a>ServerBootstrap API</h2><table>
+<thead>
+<tr>
+<th><strong>名称</strong></th>
+<th><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>group</td>
+<td>设置ServerBootstrap要用的EventLoopGroup。这个EventLoopGroup将用于ServerChannel和被接受的子Channel的I&#x2F;O处理</td>
+</tr>
+<tr>
+<td>channel</td>
+<td>设置将要被实例化的ServerChannel类</td>
+</tr>
+<tr>
+<td>channelFactory</td>
+<td>如果不能通过默认的构造函数创建Channel，那么可以提供一个ChannelFactory</td>
+</tr>
+<tr>
+<td>localAddress</td>
+<td>指定ServerChannel应该绑定到本地地址。如果没有指定，则将有操作系统使用一个随机地址。或者，可以通过bing方法来指定该localAddress</td>
+</tr>
+<tr>
+<td>option</td>
+<td>指定要应用到创建的ServerChannel的配置项，只能在调用bind方法前设置。具体支持的配置项取决于所使用的Channel类型。参见ChannelConfig的API文档</td>
+</tr>
+<tr>
+<td>childOption</td>
+<td>指定客户端的Channel被接受时，应用到客户端Channel的配置项</td>
+</tr>
+<tr>
+<td>attr</td>
+<td>指定ServerChannel上的属性，只能在调用bind方法前设置</td>
+</tr>
+<tr>
+<td>childAttr</td>
+<td>指定接收的客户端Channel上的属性</td>
+</tr>
+<tr>
+<td>handler</td>
+<td>设置ServerChannel的事件处理器</td>
+</tr>
+<tr>
+<td>childHandler</td>
+<td>设置客户端Channel上的事件处理器</td>
+</tr>
+<tr>
+<td>clone</td>
+<td>克隆一个设置和原始ServerBootstrap相同的ServerBootstrap</td>
+</tr>
+<tr>
+<td>bind</td>
+<td>绑定ServerChannel并返回一个ChannelFuture</td>
+</tr>
+</tbody></table>
+<h2 id="Bind绑定端口过程"><a href="#Bind绑定端口过程" class="headerlink" title="Bind绑定端口过程"></a>Bind绑定端口过程</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/Netty-Bind%E7%BB%91%E5%AE%9A%E7%AB%AF%E5%8F%A3%E8%BF%87%E7%A8%8B.png" alt="Netty-Bind绑定端口过程"></p>
+<h2 id="Bootstrap-API"><a href="#Bootstrap-API" class="headerlink" title="Bootstrap API"></a>Bootstrap API</h2><table>
+<thead>
+<tr>
+<th><strong>名称</strong></th>
+<th><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>group</td>
+<td>设置用于处理Channel所有事件的EventLoopgroup</td>
+</tr>
+<tr>
+<td>channel</td>
+<td>设置将要被实例化的Channel类</td>
+</tr>
+<tr>
+<td>channelFactory</td>
+<td>如果不能通过默认的构造函数创建Channel，那么可以提供一个ChannelFactory</td>
+</tr>
+<tr>
+<td>localAddress</td>
+<td>指定Channel应该绑定到本地地址。如果没有指定，则将有操作系统使用一个随机地址。或者，可以通过bing方法来指定该localAddress</td>
+</tr>
+<tr>
+<td>option</td>
+<td>指定要应用到创建的Channel的配置项，只能在调用bind方法前设置。具体支持的配置项取决于所使用的Channel类型。参见ChannelConfig的API文档</td>
+</tr>
+<tr>
+<td>attr</td>
+<td>指定Channel上的属性，只能在调用bind方法前设置</td>
+</tr>
+<tr>
+<td>handler</td>
+<td>设置Channel的事件处理器</td>
+</tr>
+<tr>
+<td>clone</td>
+<td>克隆一个设置和原始Bootstrap相同的Bootstrap</td>
+</tr>
+<tr>
+<td>remoteAddress</td>
+<td>设置远程地址。或者， 也可以通过connect方法来指定它</td>
+</tr>
+<tr>
+<td>connect</td>
+<td>连接到远程节点并返回一个ChannelFuture</td>
+</tr>
+<tr>
+<td>bind</td>
+<td>绑定Channel并返回一个ChannelFuture</td>
+</tr>
+</tbody></table>
+<h1 id="TCP粘包-拆包"><a href="#TCP粘包-拆包" class="headerlink" title="TCP粘包&#x2F;拆包"></a>TCP粘包&#x2F;拆包</h1><p>TCP底层并不了解上层业务数据的具体含义，它会根据TCP缓冲区的实际情况进行包的划分，所以在业务上认为，一个完整的包可能会被TCP拆分成多个包进行发送，也有可能把多个小的包封装成一个大的数据包发送，这就是所谓的TCP粘包和拆包问题。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/TCP%E7%B2%98%E5%8C%85%E6%8B%86%E5%8C%85.png" alt="TCP粘包/拆包"></p>
+<h1 id="Netty编解码"><a href="#Netty编解码" class="headerlink" title="Netty编解码"></a>Netty编解码</h1><h2 id="Netty编解码框架"><a href="#Netty编解码框架" class="headerlink" title="Netty编解码框架"></a>Netty编解码框架</h2><p>TCP的粘包、拆包问题，可以通过自定义通信协议的方式来解决。通信协议就是通信双方约定好的数据格式，发送方按照这个数据格式来发送，接受方按照这个格式来解析。</p>
+<p>典型的协议包括：定长协议、特殊字符分隔符协议、报文头指定Length等。在确定了使用什么通信协议的情况下，发送方和接收方要完成的工作不同。</p>
+<p><strong>编码：</strong>发送方要将发送的二进制数据转换成协议规定的格式的二进制数据流，称之为编码(encode)，编码功能由编码器(encoder)完成。</p>
+<p><strong>解码：</strong>接收方需要根据协议的格式，对二进制数据进行解析，称之为解码(decode)，解码功能由解码器(decoder)完成。</p>
+<p><strong>编解码：</strong>既能编码，又能解码，则称之为编码解码器(codec)。这种组件在发送方和接收方都可以使用。</p>
+<h2 id="Netty解码器"><a href="#Netty解码器" class="headerlink" title="Netty解码器"></a>Netty解码器</h2><p>Netty中主要提供了抽象基类ByteToMessageDecoder和MessageToMessageDecoder。实现了ChannelInboundHandler接口。</p>
+<p><strong>ByteToMessageDecoder：</strong>用于将接收到的二进制数据(byte)解码，得到完整的请求报文(Message)。</p>
+<p><strong>MessageToMessageDecoder：</strong>将一个本身就包含完整报文信息的对象转换成另一个Java对象。</p>
+<p>ByteToMessageDecoder提供的一些常见的实现类</p>
+<ul>
+<li><strong>FixedLengthFrameDecoder：</strong>定长协议解码器，可以指定固定的字节数算一个完整的报文</li>
+<li><strong>LineBasedFrameDecoder：</strong>行分隔符解码器，遇到\n或者\r\n，则认为是一个完整的报文</li>
+<li><strong>DelimiterBasedFrameDecoder：</strong>分隔符解码器，与LineBasedFrameDecoder类似，只不过分隔符可以自己指定</li>
+<li><strong>LengthFieldBasedFrameDecoder：</strong>长度编码解码器，将报文划分为报文头&#x2F;报文体，根据报文头中的Length字段确定报文体的长度，因此报文提的长度是可变的</li>
+<li><strong>JsonObjectDecoder：</strong>json格式解码器，当检测到匹配数量的”{“ 、”}”或”[””]”时，则认为是一个完整的json对象或者json数组。</li>
+</ul>
+<p>Netty提供的MessageToMessageDecoder实现类较少，主要是：</p>
+<ul>
+<li><strong>StringDecoder：</strong>用于将包含完整的报文信息的ByteBuf转换成字符串。</li>
+<li><strong>Base64Decoder：</strong>用于Base64编码。</li>
+</ul>
+<h2 id="Netty编码器"><a href="#Netty编码器" class="headerlink" title="Netty编码器"></a>Netty编码器</h2><p>与ByteToMessageDecoder和MessageToMessageDecoder相对应，Netty提供了对应的编码器实现MessageToByteEncoder和MessageToMessageEncoder，二者都实现ChannelOutboundHandler接口。</p>
+<p>相对来说，编码器比解码器的实现要更加简单，原因在于解码器除了要按照协议解析数据，还要处理粘包、拆包问题；而编码器只要将数据转换成协议规定的二进制格式发送即可。</p>
+<p><strong>MessageToByteEncoder：</strong>是一个泛型类，泛型参数I表示将需要编码的对象的类型，编码的结果是将信息转换成二进制流放入ByteBuf中。子类通过覆写其抽象方法encode，来实现编码。</p>
+<p><strong>MessageToMessageEncoder：</strong>同样是一个泛型类，泛型参数I表示将需要编码的对象的类型，编码的结果是将信息放到一个List中。子类通过覆写其抽象方法encode，来实现编码。</p>
+<p>MessageToMessageEncoder提供的常见子类包括：</p>
+<p>LineEncoder：按行编码，给定一个CharSequence(如String)，在其之后添加换行符\n或者\r\n，并封装到ByteBuf进行输出，与LineBasedFrameDecoder相对应。</p>
+<p>Base64Encoder：给定一个ByteBuf，得到对其包含的二进制数据进行Base64编码后的新的ByteBuf进行输出，与Base64Decoder相对应。</p>
+<p>LengthFieldPrepender：给定一个ByteBuf，为其添加报文头Length字段，得到一个新的ByteBuf进行输出。Length字段表示报文长度，与LengthFieldBasedFrameDecoder相对应。</p>
+<p>StringEncoder：给定一个CharSequence(如：StringBuilder、StringBuffer、String等)，将其转换成ByteBuf进行输出，与StringDecoder对应。</p>
+<h2 id="Netty编码解码器Codec"><a href="#Netty编码解码器Codec" class="headerlink" title="Netty编码解码器Codec"></a>Netty编码解码器Codec</h2><p>编码解码器同时具有编码与解码功能，特点同时实现了ChannelInboundHandler和ChannelOutboundHandler接口，因此在数据输入和输出时都能进行处理。Netty提供提供了一个ChannelDuplexHandler适配器类，编码解码器的抽象基类 ByteToMessageCodec 、MessageToMessageCodec都继承与此类</p>
+<h1 id="Iot推送系统"><a href="#Iot推送系统" class="headerlink" title="Iot推送系统"></a>Iot推送系统</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/Iot%E6%8E%A8%E9%80%81%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E5%9B%BE.png" alt="Iot推送系统架构图"></p>
+<h1 id="测试环境搭建"><a href="#测试环境搭建" class="headerlink" title="测试环境搭建"></a>测试环境搭建</h1><p><strong>网络小知识</strong></p>
+<p>计算机区分不同连接的方式：TCP<em>连接四元组</em> 服务器IP+服务器PORT+客户端IP+客户端PORT</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/Netty%E7%99%BE%E4%B8%87%E8%BF%9E%E6%8E%A5%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA.png" alt="Netty百万连接测试环境搭建"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/05-Netty%E5%AE%9E%E6%88%98/" data-id="clmcxed3l00btu8wae4tx7qj2" data-title="Netty实战" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/04-Netty%E9%AB%98%E6%80%A7%E8%83%BDByteBuf/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Netty高性能ByteBuf
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/06-%E7%99%BE%E4%B8%87%E8%BF%9E%E6%8E%A5%E4%BC%98%E5%8C%96%E9%85%8D%E7%BD%AE%E5%8F%8A%E8%AF%B4%E6%98%8E/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">百万连接优化配置及说明</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

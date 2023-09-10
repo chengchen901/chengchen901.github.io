@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>日志监控 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Docker 日志日志处理机制我们先来简单了解下 docker 日志处理的机制。当启动一个容器的时候，它其实是 docker daemon 的一个子进程， docker daemon 可以拿到你容器里面进程的标准输出，拿到标准输出后，它会通过自身的一个 LogDriver 模块来处理，LogDriver支持的方式很多，可以写到本地的文件（默认方式），可以发送到syslog等。  Docker 会默">
+<meta property="og:type" content="article">
+<meta property="og:title" content="日志监控">
+<meta property="og:url" content="http://example.com/2020/08/15/14-Docker/10-%E6%97%A5%E5%BF%97%E7%9B%91%E6%8E%A7/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Docker 日志日志处理机制我们先来简单了解下 docker 日志处理的机制。当启动一个容器的时候，它其实是 docker daemon 的一个子进程， docker daemon 可以拿到你容器里面进程的标准输出，拿到标准输出后，它会通过自身的一个 LogDriver 模块来处理，LogDriver支持的方式很多，可以写到本地的文件（默认方式），可以发送到syslog等。  Docker 会默">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010135439.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010135629.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010140331.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010140344.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010140416.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2021-12-12T11:01:50.485Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Docker">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010135439.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-14-Docker/10-日志监控" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/14-Docker/10-%E6%97%A5%E5%BF%97%E7%9B%91%E6%8E%A7/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Docker/">Docker</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      日志监控
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Docker-日志"><a href="#Docker-日志" class="headerlink" title="Docker 日志"></a>Docker 日志</h1><h2 id="日志处理机制"><a href="#日志处理机制" class="headerlink" title="日志处理机制"></a>日志处理机制</h2><p>我们先来简单了解下 docker 日志处理的机制。当启动一个容器的时候，它其实是 docker daemon 的一个子进程， docker daemon 可以拿到你容器里面进程的标准输出，拿到标准输出后，它会通过自身的一个 LogDriver 模块来处理，LogDriver支持的方式很多，可以写到本地的文件（默认方式），可以发送到syslog等。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010135439.png"></p>
+<p>Docker 会默认收集应用程序的标准输出存储到一个 json.log 文件中，文件的格式类似下面这种：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;log&quot;</span><span class="punctuation">:</span><span class="string">&quot;root@c835298de6dd:/# ls\r\n&quot;</span><span class="punctuation">,</span><span class="attr">&quot;stream&quot;</span><span class="punctuation">:</span><span class="string">&quot;stdout&quot;</span><span class="punctuation">,</span><span class="attr">&quot;time&quot;</span><span class="punctuation">:</span><span class="string">&quot;xxoo.155863426Z&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;log&quot;</span><span class="punctuation">:</span><span class="string">&quot;bin  boot  dev\u0009etc  home  lib\u0009lib64  media  mnt  opt\u0009proc  root  run  sbin  selinux\u0009srv  sys  tmp  usr  var\r\n&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>以一行一个作为一条 JSON 数据存储。 Docker 的这种日志存储方式是可以配置的，具体参数可以在执行 run 启动容器的时候通过 log-driver 进行配置，具体配置请参考 log-driver 。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.docker.com/config/containers/logging/configure/#supported-logging-drivers">https://docs.docker.com/config/containers/logging/configure/#supported-logging-drivers</a></p>
+<h1 id="Docker-Logging-Driver"><a href="#Docker-Logging-Driver" class="headerlink" title="Docker Logging Driver"></a>Docker Logging Driver</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010135629.png"></p>
+<p>目前官方支持的log driver类型</p>
+<p>gelf：将日志消息写入graylog扩展日志格式（gelf）端点，如graylog或logstash。</p>
+<p>Docker 默认使用了 json-file driver 作为 log driver，而 gelf 则是我们需要使用的 log driver。</p>
+<p>当容器多了，或者是采用类似 swarm 集群部署 Docker 的时候，各种日志分散存在各个 json.log 文件中，当查找问题或者进行相关统计的时候，分散的日志对我们来说是非常不友好的。我们需要一个能够集中管理 Docker 日志的工具，这也是本章节学习的重点。</p>
+<h1 id="Graylog"><a href="#Graylog" class="headerlink" title="Graylog"></a>Graylog</h1><p>相信大部分的人都用过或者听说过ELK这个强大的日志栈架构，我们要用的 graylog 和 ELK 非常的相似，算是后起之秀。</p>
+<p><strong>为什么要选择 graylog 来作为 Docker 的日志收集平台呢？</strong></p>
+<ul>
+<li>Docker 原生支持 graylog 协议，直接将日志发送到 graylog（通过gelf协议）</li>
+<li>graylog官方提供了将本身部署在Docker的支持</li>
+</ul>
+<p>管理节点用于 Swarm 集群的管理， docker swarm 命令基本只能在管理节点执行。一个 Swarm 集群可以有多个管理节点，但只有一个管理节点可以成为 leader ， leader 通过 raft 协议实现。</p>
+<p>工作节点是任务执行节点，管理节点将服务 ( service ) 下发至工作节点执行。管理节点默认也作为工作节点。你也可以通过配置让服务只运行在管理节点。</p>
+<h1 id="Graylog-部署"><a href="#Graylog-部署" class="headerlink" title="Graylog 部署"></a>Graylog 部署</h1><p>graylog 官方提供了 Dockerfile 供我们快速的在 Docker 上部署日志系统，在这个 Docker Hub 的地址中，也提供了 docker-compose.yml 来快速部署整个 graylog 栈，包含了 mongodb、ElasticSearch ，而不需要分别单独进行部署。</p>
+<p>官方地址：<a target="_blank" rel="noopener" href="https://hub.docker.com/r/graylog/graylog/">https://hub.docker.com/r/graylog/graylog/</a></p>
+<p>下面我们就来学习完整的部署过程。</p>
+<ol>
+<li><p>创建一个目录用来部署graylog，本文假设目录为&#x2F;root&#x2F;graylog，以下所有操作都是在&#x2F;root&#x2F;graylog中进行的。</p>
+</li>
+<li><p>初始化目录和配置文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">创建数据目录</span></span><br><span class="line">mkdir -p ./data</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">创建配置文件目录</span></span><br><span class="line">mkdir -p ./config</span><br><span class="line">cd ./config</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">直接下载官方推荐配置文件</span></span><br><span class="line">wget https://raw.githubusercontent.com/Graylog2/graylog-docker/2.5/config/graylog.conf </span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">日志配置文件</span></span><br><span class="line">wget https://raw.githubusercontent.com/Graylog2/graylog-docker/2.5/config/log4j2.xml </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改下载完的graylog.conf中的root_timezone为GMT+0800中国时区</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">root_timezone</span> = <span class="string">Etc/GMT-8</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>新建docker-compose.yml来供docker-compose快速启动完整服务</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;2&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="comment"># MongoDB: https://hub.docker.com/_/mongo/</span></span><br><span class="line">  <span class="attr">mongodb:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mongo:3</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mongo_data:/data/db</span></span><br><span class="line">  <span class="comment"># Elasticsearch: https://www.elastic.co/guide/en/elasticsearch/reference/6.x/docker.html</span></span><br><span class="line">  <span class="attr">elasticsearch:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">docker.elastic.co/elasticsearch/elasticsearch:6.5.1</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">es_data:/usr/share/elasticsearch/data</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">http.host=0.0.0.0</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">transport.host=localhost</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">network.host=0.0.0.0</span></span><br><span class="line">      <span class="comment"># Disable X-Pack security: https://www.elastic.co/guide/en/elasticsearch/reference/6.x/security-settings.html#general-security-settings</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.security.enabled=false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.watcher.enabled=false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.monitoring.enabled=false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.security.audit.enabled=false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.ml.enabled=false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.graph.enabled=false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;ES_JAVA_OPTS=-Xms256m -Xmx256m&quot;</span></span><br><span class="line">    <span class="attr">ulimits:</span></span><br><span class="line">      <span class="attr">memlock:</span></span><br><span class="line">        <span class="attr">soft:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">hard:</span> <span class="number">-1</span></span><br><span class="line">    <span class="attr">mem_limit:</span> <span class="string">256M</span></span><br><span class="line">  <span class="comment"># Graylog: https://hub.docker.com/r/graylog/graylog/</span></span><br><span class="line">  <span class="attr">graylog:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">graylog/graylog:2.5</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">graylog_journal:/usr/share/graylog/data/journal</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./config:/usr/share/graylog/data/config</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="comment"># CHANGE ME!</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_PASSWORD_SECRET=somepasswordpepper</span></span><br><span class="line">      <span class="comment"># Password: admin</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918</span></span><br><span class="line">      <span class="comment"># 这个地址需要配置成你要访问的地址，比如你的容器部署在192.168.1.2，你需要配置成http://192.168.1.2:9000/api，否则访问会报错</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_WEB_ENDPOINT_URI=http://192.168.100.249:9000/api</span></span><br><span class="line">    <span class="attr">links:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mongodb:mongo</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">elasticsearch</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mongodb</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">elasticsearch</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="comment"># Graylog web interface and REST API</span></span><br><span class="line">      <span class="comment"># web界面端口</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">9000</span><span class="string">:9000</span></span><br><span class="line">      <span class="comment"># gelf收集日志的端口，如果需要添加graylog收集器，可以新增暴露出来的端口</span></span><br><span class="line">      <span class="comment"># Syslog TCP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">514</span><span class="string">:514</span></span><br><span class="line">      <span class="comment"># Syslog UDP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">514</span><span class="string">:514/udp</span></span><br><span class="line">      <span class="comment"># GELF TCP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">12201</span><span class="string">:12201</span></span><br><span class="line">      <span class="comment"># GELF UDP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">12201</span><span class="string">:12201/udp</span></span><br><span class="line"><span class="comment"># Volumes for persisting data, see https://docs.docker.com/engine/admin/volumes/volumes/</span></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line">  <span class="attr">mongo_data:</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">local</span></span><br><span class="line">  <span class="attr">es_data:</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">local</span></span><br><span class="line">  <span class="attr">graylog_journal:</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">local</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动整个服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up</span><br></pre></td></tr></table></figure>
+
+<p>如果没有问题的话，会看到graylog webserver started的终端输出消息。</p>
+<p>访问 http:&#x2F;&#x2F;{server}:9000&#x2F;</p>
+<p>会看到graylog的web界面，使用用户名admin，密码：admin 来登录后台，至此部署完成。</p>
+</li>
+</ol>
+<h1 id="Graylog-系统配置"><a href="#Graylog-系统配置" class="headerlink" title="Graylog 系统配置"></a>Graylog 系统配置</h1><h2 id="input-配置"><a href="#input-配置" class="headerlink" title="input 配置"></a>input 配置</h2><p>graylog的日志收集通过定义input对象来完成，在graylogweb管理界面按照如下图片进入input对象配置，选择GELF UDP协议来新建一个输入器（input）：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010140331.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010140344.png"></p>
+<p>填好相关属性，新建：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010140416.png"></p>
+<p>保存后，就可以开始收集日志了</p>
+<h2 id="docker-配置"><a href="#docker-配置" class="headerlink" title="docker 配置"></a>docker 配置</h2><p>如果docker通过命令行启动，可以在run命令中加上如下参数：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --log-driver=gelf --log-opt gelf-address=udp://&#123;graylog服务器地址&#125;:12201  --log-opt tag=&lt;当前容器服务标签，用来供graylog查询的时候进行分类&gt;  &lt;IMAGE&gt; &lt;运行命令&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">           --log-driver=gelf \</span><br><span class="line">           --log-opt gelf-address=udp://localhost:12201 \</span><br><span class="line">           --log-opt tag=&quot;&#123;&#123;.ImageName&#125;&#125;/&#123;&#123;.Name&#125;&#125;/&#123;&#123;.ID&#125;&#125;&quot; \</span><br><span class="line">           busybox sh -c &#x27;while true; do echo &quot;Hello, this is A&quot;; sleep 10; done;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>如果通过docker-compose命令，则可以在docker-compose.yml中加入相关配置，以下用nginx容器举例：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;2&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">nginx:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx:latest</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;80:80&quot;</span></span><br><span class="line">    <span class="attr">logging:</span></span><br><span class="line">      <span class="attr">driver:</span> <span class="string">&quot;gelf&quot;</span></span><br><span class="line">      <span class="attr">options:</span></span><br><span class="line">        <span class="attr">gelf-address:</span> <span class="string">&quot;udp://192.168.100.249:12201&quot;</span></span><br><span class="line">        <span class="attr">tag:</span> <span class="string">front-nginx</span></span><br></pre></td></tr></table></figure>
+
+<p>docker-compose.yml</p>
+<p>容器启动的时候可能会有下面这个提示：</p>
+<p>nginx_1_4bd0934b4b62 | WARNING: no logs are available with the ‘gelf’ log driver</p>
+<p>可以无视这个警告，日志还是会继续发送过去的。</p>
+<p>到这里为止我们可以在 graylog 的 web 后台中看到 nginx 所产生的日志了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/14-Docker/10-%E6%97%A5%E5%BF%97%E7%9B%91%E6%8E%A7/" data-id="clmcxeca40022u8wa8tyr2yxd" data-title="日志监控" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/14-Docker/09-%E5%AE%B9%E5%99%A8%E7%9B%91%E6%8E%A7/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          容器监控
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/14-Docker/11-DockerSwarm%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">DockerSwarm资源管理</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

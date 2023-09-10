@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/page/17/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:locale" content="en_US">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-14-Docker/06-搭建Docker私有仓库" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/14-Docker/06-%E6%90%AD%E5%BB%BADocker%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Docker/">Docker</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/08/15/14-Docker/06-%E6%90%AD%E5%BB%BADocker%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">搭建Docker私有仓库</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Docker-Hub"><a href="#Docker-Hub" class="headerlink" title="Docker Hub"></a>Docker Hub</h1><p>目前 Docker 官方维护了一个公共仓库 Docker Hub，其中已经包括了数量超过 15,000 的镜像。大部分需求都可以通过在 Docker Hub 中直接下载镜像来实现。</p>
+<h2 id="注册登录"><a href="#注册登录" class="headerlink" title="注册登录"></a>注册登录</h2><p>可以在 <a target="_blank" rel="noopener" href="https://hub.docker.com/">https://hub.docker.com</a> 免费注册一个 Docker 账号。</p>
+<p>在命令行界执行 docker login 输入用户名及密码来完成在命令行界面登录 Docker Hub。</p>
+<p>你可以通过 docker logout 退出登录。</p>
+<h2 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h2><p>可以通过 docker search 命令来查找官方仓库中的镜像，并利用 docker pull 命令来将它下载到本地。</p>
+<h2 id="推送镜像"><a href="#推送镜像" class="headerlink" title="推送镜像"></a>推送镜像</h2><p>用户也可以在登录后通过 docker push 命令来将自己的镜像推送到 Docker Hub。</p>
+<h1 id="私有仓库"><a href="#私有仓库" class="headerlink" title="私有仓库"></a>私有仓库</h1><p>有时候使用 Docker Hub 这样的公共仓库可能不方便，用户可以创建一个本地仓库供私人使用。比如，基于公司内部项目构建的镜像。</p>
+<p>docker-registry 是官方提供的工具，可以用于构建私有的镜像仓库。</p>
+<ul>
+<li><p>安装运行docker-registry</p>
+<p>可以通过获取官方 registry 镜像来运行。默认情况下，仓库会被创建在容器的&#x2F;var&#x2F;lib&#x2F;registry 目录下。可以通过 –v 参数来将镜像文件存放在本地的指定路径。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run --name registry -d \</span><br><span class="line">-p 5000:5000 --restart=always \</span><br><span class="line">-v /opt/data/registry:/var/lib/registry \</span><br><span class="line">registry</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在私有仓库上传、搜索、下载镜像</p>
+<p>创建好私有仓库之后，就可以使用 docker tag 来标记一个镜像，然后推送它到仓库。</p>
+<p>先在本机查看已有的镜像。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image ls</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 docker tag 将 session-web:latest 这个镜像标记为 127.0.0.1:5000&#x2F;session-web:latest</p>
+<p>格式为 docker tag IMAGE[:TAG] [REGISTRY_HOST[:REGISTRY_PORT]&#x2F;]REPOSITORY[:TAG] </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker tag session-web:latest 127.0.0.1:5000/session-web:latest</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 docker push 上传标记的镜像</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push 127.0.0.1:5000/session-web:latest</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用 curl 查看仓库中的镜像</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl 127.0.0.1:5000/v2/_catalog</span><br></pre></td></tr></table></figure>
+
+<p>如果可以看到 {“repositories”:[“session-web”]}，表明镜像已经被成功上传了。</p>
+</li>
+<li><p>先删除已有镜像，再尝试从私有仓库中下载这个镜像。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker image rm 127.0.0.1:5000/session-web:latest</span><br><span class="line">docker pull 127.0.0.1:5000/session-web:latest</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><p>如果你不想使用 127.0.0.1:5000 作为仓库地址，比如想让本网段的其他主机也能把镜像推送到私有仓库。你就得把例如 192.168.100.100:5000 这样的内网地址作为私有仓库地址，这时你会发现无法成功推送镜像。</p>
+<p>这是因为 Docker 默认不允许非 HTTPS 方式推送镜像。我们可以通过 Docker 的配置选项来取消这个限制。</p>
+<h2 id="Ubuntu-16-04-Debian-8-centos-7"><a href="#Ubuntu-16-04-Debian-8-centos-7" class="headerlink" title="Ubuntu 16.04+, Debian 8+, centos 7"></a>Ubuntu 16.04+, Debian 8+, centos 7</h2><p>对于使用 systemd 的系统，请在 &#x2F;etc&#x2F;docker&#x2F;daemon.json 中写入如下内容（如果文件不存在请新建该文件）</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;registry-mirror&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                  <span class="string">&quot;https://registry.docker-cn.com&quot;</span></span><br><span class="line">      <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;insecure-registries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                  <span class="string">&quot;192.168.100.100:5000&quot;</span></span><br><span class="line">       <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Window、Mac"><a href="#Window、Mac" class="headerlink" title="Window、Mac"></a>Window、Mac</h2><p>对于 Docker for Windows 、 Docker for Mac 在设置中编辑 daemon.json 增加和上边一样的</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;registry-mirror&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                  <span class="string">&quot;https://registry.docker-cn.com&quot;</span></span><br><span class="line">      <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;insecure-registries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                  <span class="string">&quot;192.168.100.100:5000&quot;</span></span><br><span class="line">       <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/14-Docker/06-%E6%90%AD%E5%BB%BADocker%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/" data-id="clmcxec92001qu8wa7uzw520z" data-title="搭建Docker私有仓库" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-14-Docker/07-数据挂载" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/14-Docker/07-%E6%95%B0%E6%8D%AE%E6%8C%82%E8%BD%BD/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Docker/">Docker</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/08/15/14-Docker/07-%E6%95%B0%E6%8D%AE%E6%8C%82%E8%BD%BD/">数据挂载</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Docker-数据管理"><a href="#Docker-数据管理" class="headerlink" title="Docker 数据管理"></a>Docker 数据管理</h1><p>在容器中管理数据主要有两种方式：</p>
+<ul>
+<li>数据卷（Volumes）</li>
+<li>挂载主机目录 (Bind mounts)</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010115011.png"></p>
+<h1 id="数据卷"><a href="#数据卷" class="headerlink" title="数据卷"></a>数据卷</h1><p>数据卷是一个可供一个或多个容器使用的特殊目录，它绕过 UFS，可以提供很多有用的特性：</p>
+<ul>
+<li>数据卷可以在容器之间共享和重用</li>
+<li>对数据卷的修改会立马生效</li>
+<li>对数据卷的更新，不会影响镜像</li>
+<li>数据卷默认会一直存在，即使容器被删除</li>
+</ul>
+<p>注意： 数据卷的使用，类似于Linux下对目录或文件进行mount，镜像中的被指定为挂载点的目录中的文件会隐藏掉，能显示看的是挂载的数据卷 。</p>
+<p><strong>Docker中提供了两种挂载方式，-v 和 –mount，这两种方式该如何选择呢？</strong></p>
+<p><strong>Docker 新用户</strong>应该选择 –mount 参数</p>
+<p><strong>经验丰富的Docker</strong>使用者对 -v 或者 –volume已经很熟悉了，但是推荐使用 –mount 参数。</p>
+<ul>
+<li><p>创建一个数据卷</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker volume create my-volume</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看所有的数据卷</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker volume ls</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看指定数据卷的信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker volume inspect my-volume</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动一个挂载数据卷的容器：</p>
+<p>在用 docker run 命令的时候，使用 –mount 标记来将 数据卷 挂载到容器里。在一次 docker run 中可以挂载多个 数据卷 。</p>
+</li>
+<li><p>创建一个名为 session-web 的容器，并加载一个 数据卷 到容器的 &#x2F;webapp 目录。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run --name session-web -d -p 8888:8080 \</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">-v my-volume:/wepapp \</span></span><br><span class="line"><span class="language-bash">--mount <span class="built_in">source</span>=my-volume, target=/webapp\</span></span><br><span class="line"><span class="language-bash">session-web:latest</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除数据卷</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker volume rm my-volume</span><br></pre></td></tr></table></figure>
+
+<p>数据卷是被设计用来持久化数据的，它的生命周期独立于容器，Docker不会在容器被删除后自动删除数据卷 ，并且也不存在垃圾回收这样的机制来处理没有任何容器引用的数据卷。</p>
+<p>如果需要在删除容器的同时移除数据卷。可以在删除容器的时候使用docker rm –v 这个命令</p>
+</li>
+<li><p>无主的数据卷可能会占据很多空间，要清理请使用以下命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker volume prune</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="挂载主机目录"><a href="#挂载主机目录" class="headerlink" title="挂载主机目录"></a>挂载主机目录</h1><ul>
+<li><p>使用 –mount 标记可以指定挂载一个本地主机的目录到容器中去</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run --name session-web -d -p 8888:8080 \</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">-v my-volume:/wepapp \</span></span><br><span class="line"><span class="language-bash">--mount <span class="built_in">type</span>=<span class="built_in">bind</span>,<span class="built_in">source</span>=/src/webapp,target=/opt/webapp</span></span><br><span class="line">session-web:latest</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>上面的命令加载主机的 &#x2F;src&#x2F;webapp 目录到容器的 &#x2F;opt&#x2F;webapp 目录。这个功能在进行测试的时候十分方便，比如用户可以放置一些程序到本地目录中，来查看容器是否正常工作。</p>
+<p>本地目录的路径必须是绝对路径<br>以前——使用 -v 参数时如果本地目录不存在 Docker 会自动为你创建一个文件夹<br>现在——使用 –mount 参数时如果本地目录不存在，Docker 会报错<br>Docker 挂载主机目录的默认权限是读写 ，用户也可以通过增加 readonly 指定为只读 。</p>
+<h1 id="挂载一个本地主机文件作为数据卷"><a href="#挂载一个本地主机文件作为数据卷" class="headerlink" title="挂载一个本地主机文件作为数据卷"></a>挂载一个本地主机文件作为数据卷</h1><ul>
+<li><p>–mount 标记也可以从主机挂载单个文件到容器中</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run --rm -it \</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">-v <span class="variable">$HOME</span>/.bash_history:/root/.bash_history \</span></span><br><span class="line"><span class="language-bash">--mount <span class="built_in">type</span>=<span class="built_in">bind</span>,<span class="built_in">source</span>=<span class="variable">$HOME</span>/.bash_history,target=/root/.bash_history \</span></span><br><span class="line"><span class="language-bash">ubuntu:17.10 \</span></span><br><span class="line"><span class="language-bash">bash</span></span><br></pre></td></tr></table></figure>
+
+<p>这样就可以记录在容器输入过的命令了</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/14-Docker/07-%E6%95%B0%E6%8D%AE%E6%8C%82%E8%BD%BD/" data-id="clmcxec9i001tu8wa45dtct2q" data-title="数据挂载" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-14-Docker/08-Compose集成式应用组合" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/14-Docker/08-Compose%E9%9B%86%E6%88%90%E5%BC%8F%E5%BA%94%E7%94%A8%E7%BB%84%E5%90%88/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Docker/">Docker</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/08/15/14-Docker/08-Compose%E9%9B%86%E6%88%90%E5%BC%8F%E5%BA%94%E7%94%A8%E7%BB%84%E5%90%88/">Compose集成式应用组合</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Compose-简介"><a href="#Compose-简介" class="headerlink" title="Compose 简介"></a>Compose 简介</h1><p>Compose 项目是 Docker 官方的开源项目，负责实现对 Docker 容器集群的快速编排。其代码目前在 <a target="_blank" rel="noopener" href="https://github.com/docker/compose">https://github.com/docker/compose</a> 上开源。</p>
+<p>Compose 定位是 「定义和运行多个 Docker 容器的应用」，其前身是开源项目 Fig。</p>
+<p>通过前面章节的介绍，我们知道使用一个 Dockerfile 模板文件，可以让用户很方便的定义一个单独的应用容器。然而，在日常工作中，经常会碰到需要多个容器相互配合来完成某项任务的情况。例如要实现一个 Web 项目，除了 Web 服务容器本身，往往还需要再加上后端的数据库服务容器，甚至还包括负载均衡容器等。</p>
+<p>Compose 恰好满足了这样的需求。它允许用户通过一个单独的 docker-compose.yml 模板文件来定义一组相关联的应用容器为一个项目（project）。</p>
+<p>Compose 中有两个重要的概念：</p>
+<ul>
+<li><strong>服务 ( service )：</strong>一个应用的容器，实际上可以包括若干运行相同镜像的容器实例。</li>
+<li><strong>项目 ( project )：</strong>由一组关联的应用容器组成的一个完整业务单元。</li>
+</ul>
+<p>Compose 的默认管理对象是项目，通过子命令对项目中的一组容器进行便捷地生命周期管理。</p>
+<p>Compose 项目由 Python 编写，实现上调用了 Docker 服务提供的 API 来对容器进行管理。</p>
+<h1 id="安装和卸载"><a href="#安装和卸载" class="headerlink" title="安装和卸载"></a>安装和卸载</h1><p><strong>Compose 支持 Linux、macOS、Windows 10 三大平台。</strong></p>
+<p>Compose 可以通过 Python 的包管理工具 pip 进行安装，也可以直接下载编译好的二进制文件使用，甚至能够直接在 Docker 容器中运行。</p>
+<p>Docker for Mac 、 Docker for Windows 自带 docker-compose 二进制文件，安装 Docker 之后可以直接使用。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose --version</span><br></pre></td></tr></table></figure>
+
+<p>Linux 系统需要单独使用二进制或者 pip 方式进行安装。</p>
+<h1 id="Linux-安装docker-compse"><a href="#Linux-安装docker-compse" class="headerlink" title="Linux 安装docker-compse"></a>Linux 安装docker-compse</h1><ul>
+<li><p>二进制包</p>
+<p>在 Linux 上的安装十分简单, 从官方 GitHub Release 处直接下载编译好的二进制文件即可。例如，在 Linux 64 位系统上直接下载对应的二进制包。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo curl -L https://github.com/docker/compose/releases/download/1.17.1/docker-compose-`uname -s`-`uname -m` &gt; /usr/local/bin/docker-compose</span><br><span class="line">sudo chmod +x /usr/local/bin/docker-compose	#赋予可执行权限</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">国内镜像下载，官网：http://get.daocloud.io/<span class="comment">#install-compose</span></span></span><br><span class="line">curl -L https://get.daocloud.io/docker/compose/releases/download/v2.0.1/docker-compose-`uname -s`-`uname -m` &gt; /usr/local/bin/docker-compose</span><br><span class="line">chmod +x /usr/local/bin/docker-compose</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>PIP 安装</p>
+<p>如果您计算机的架构是 ARM (例如，树莓派)，建议使用 pip 安装。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install -U docker-compose</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><p>首先介绍几个术语</p>
+<ul>
+<li><strong>服务 ( service )：</strong>一个应用容器，实际上可以运行多个相同镜像的实例。</li>
+<li><strong>项目 ( project )：</strong>由一组关联的应用容器组成的一个完整业务单元。</li>
+</ul>
+<p>小结：一个项目可以由多个服务（容器）关联而成， Compose 面向项目进行管理。</p>
+<p>场景：最常见的项目是web网站，一般的web网站都会依赖第三方提供的服务（比如：DB和 cache），我们拿 dubbo-admin 进行讲解（ dubbo-admin 依赖 zookeeper）。</p>
+<h1 id="Compose-构建-dubbo-admin服务"><a href="#Compose-构建-dubbo-admin服务" class="headerlink" title="Compose 构建 dubbo-admin服务"></a>Compose 构建 dubbo-admin服务</h1><h2 id="获取源码"><a href="#获取源码" class="headerlink" title="获取源码"></a>获取源码</h2><ul>
+<li><p>从 github 上获取 dubbo-admin 的master分支源码</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone -b master https://github.com/apache/incubator-dubbo-ops.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改 admin 中的 application 配置， 把 zookeeper 地址改为zookeeper:&#x2F;&#x2F;zookeeper:2181</p>
+</li>
+<li><p>使用 maven 进行编译打包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn clean package -Dmaven.test.skip=true</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h2><ul>
+<li><p>在 dubbo-admin 目录下编写 Dockerfile 文件，内容为： </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">FROM ，表示使用 Jdk8 环境 为基础镜像，如果镜像不是本地的会从 DockerHub 进行下载</span></span><br><span class="line">FROM openjdk:8-jdk-alpine</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">作者</span></span><br><span class="line">MAINTAINER study.163.com&lt;hash@163.com&gt;</span><br><span class="line">VOLUME /tmp</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">ADD ，拷贝文件并且重命名</span></span><br><span class="line">ADD ./target/dubbo-admin-0.0.1-SNAPSHOT.jar app.jar</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">ENTRYPOINT ，为了缩短 Tomcat 的启动时间，添加java.security.egd的系统属性指向/dev/urandom作为 ENTRYPOINT</span></span><br><span class="line">ENTRYPOINT [&quot;java&quot;, &quot;-Djava.security.egd=file:/dev/./urandom&quot;, &quot;-jar&quot;, &quot;/app.jar&quot; ]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <strong>docker build -t dubbo-admin:1.0 .</strong> 命令进行构建。</p>
+</li>
+</ul>
+<h2 id="docker-compose-yml"><a href="#docker-compose-yml" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h2><p>在项目根目录下编写 docker-compose.yml 文件，这个是 Compose 使用的主模板文件。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3.4&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">zk_server:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">zookeeper:3.4</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">2181</span><span class="string">:2181</span></span><br><span class="line">  <span class="attr">dubbo-admin:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">dubbo-admin:1.0</span></span><br><span class="line">    <span class="attr">links:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">zk_server:zookeeper</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">7001</span><span class="string">:7001</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="运行-compose-项目"><a href="#运行-compose-项目" class="headerlink" title="运行 compose 项目"></a>运行 compose 项目</h2><ul>
+<li><p>在 docker-compose.yml 文件所在目录执行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在浏览器中访问 http:&#x2F;&#x2F;服务器ip:7001 进行验证，用户名密码为：root&#x2F;root  guest&#x2F;guest</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010121630.png"></p>
+</li>
+</ul>
+<h1 id="Compose-命令说明"><a href="#Compose-命令说明" class="headerlink" title="Compose 命令说明"></a>Compose 命令说明</h1><p><strong>命令对象与格式</strong></p>
+<p>执行 docker-compose [COMMAND] –help 或者 docker-compose help [COMMAND] 可以查看具体某个命令的使用格式。</p>
+<p><strong>docker-compose 命令的基本的使用格式是：</strong><br>docker-compose [-f&#x3D;&lt; arg&gt;…] [options] [COMMAND] [ARGS…]</p>
+<p><strong>命令选项</strong></p>
+<ul>
+<li>-f, –file FILE 指定模板文件，默认为 docker-compose.yml ，可以多次指定。</li>
+<li>-p, –project-name NAME 指定项目名称，默认将使用所在目录名称作为项目名。</li>
+<li>–x-networking 使用 Docker 的可拔插网络后端特性</li>
+<li>–x-network-driver DRIVER 指定网络后端的驱动，默认为 bridge</li>
+<li>–verbose 输出更多调试信息。</li>
+<li>-v, –version 打印版本并退出。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>build</td>
+<td>格式为  docker-compose build [options]  [SERVICE…] 。  构建（重新构建）项目中的服务容器。  可以随时在项目目录下运行  docker-compose build 来重新构建服务。  选项包括：  <br/>–force-rm 删除构建过程中的临时容器。  <br/>–no-cache 构建镜像过程中不使用 cache（这将加长构建过程）。  <br/>–pull 始终尝试通过 pull 来获取更新版本的镜像。</td>
+</tr>
+<tr>
+<td>version</td>
+<td>格式为  docker-compose version  打印版本信息。</td>
+</tr>
+<tr>
+<td>config</td>
+<td>验证 Compose 格式是否正确，若正确则显示配置，若格式错误显示错误原因。</td>
+</tr>
+<tr>
+<td>exec</td>
+<td>进入指定的容器</td>
+</tr>
+<tr>
+<td>images</td>
+<td>列出 Compose 文件中包含的镜像</td>
+</tr>
+<tr>
+<td>logs</td>
+<td>格式为  docker-compose logs [options]  [SERVICE…] 。  查看服务容器的输出。默认情况下，docker-compose 将对不同的服务输出使用不同的颜色来区分。可以通过 –no-color 来关闭颜色。</td>
+</tr>
+<tr>
+<td>down</td>
+<td>停止 up 命令所启动的容器，并移除网络。</td>
+</tr>
+<tr>
+<td>help</td>
+<td>获得一个命令的帮助</td>
+</tr>
+<tr>
+<td>kill</td>
+<td>通过发送 SIGKILL 信号来强制停止服务容器</td>
+</tr>
+<tr>
+<td>pause</td>
+<td>格式为 docker-compose pause [SERVICE…]   暂停一个服务容器。</td>
+</tr>
+<tr>
+<td>port</td>
+<td>格式为 docker-compose port [options] SERVICE  PRIVATE_PORT  打印某个容器端口所映射的公共端口。  选项：  <br/>–protocol&#x3D;proto 指定端口协议，tcp（默认值）或者 udp。  <br/>–index&#x3D;index 如果同一服务存在多个容器，指定命令对象容器的序号（默认为 1）。</td>
+</tr>
+<tr>
+<td>ps</td>
+<td>格式为 docker-compose ps [options] [SERVICE…]   列出项目中目前的所有容器。  选项：  <br/>-q 只打印容器的 ID 信息。</td>
+</tr>
+<tr>
+<td>push</td>
+<td>推送服务依赖的镜像到 Docker 镜像仓库</td>
+</tr>
+<tr>
+<td>pull</td>
+<td>格式为 docker-compose pull [options]  [SERVICE…] 。  拉取服务依赖的镜像。  选项：  <br/>–ignore-pull-failures 忽略拉取镜像过程中的错误。</td>
+</tr>
+<tr>
+<td>restart</td>
+<td>格式为 docker-compose restart [options]  [SERVICE…]  重启项目中的服务。  选项：  <br/>-t, –timeout TIMEOUT 指定重启前停止容器的超时（默认为 10 秒）。</td>
+</tr>
+<tr>
+<td>rm</td>
+<td>格式为 docker-compose rm [options]  [SERVICE…]  删除所有（停止状态的）服务容器。推荐先执行 docker-compose stop 命令来停止容器。  选项：  <br/>-f, –force 强制直接删除，包括非停止状态的容器。一般尽量不要使用该选项。  <br/>-v 删除容器所挂载的数据卷。</td>
+</tr>
+<tr>
+<td>run</td>
+<td>格式为  docker-compose  run [options] [-p PORT…] [-e KEY&#x3D;VAL…] SERVICE [COMMAND] [ARGS…]   在指定服务上执行一个命令。例如：  docker-compose run ubuntu ping docker.com</td>
+</tr>
+<tr>
+<td>scale</td>
+<td>格式为 docker-compose scale [options]  [SERVICE&#x3D;NUM…]  设置指定服务运行的容器个数。例如：  docker-compose scale web&#x3D;3 db&#x3D;2  将启动 3 个容器运行 web 服务，2 个容器运行 db 服务。</td>
+</tr>
+<tr>
+<td>start</td>
+<td>格式为 docker-compose start [SERVICE…]  启动已经存在的服务容器。</td>
+</tr>
+<tr>
+<td>stop</td>
+<td>停止已经存在的服务容器。</td>
+</tr>
+<tr>
+<td>top</td>
+<td>查看各个服务容器内运行的进程。</td>
+</tr>
+<tr>
+<td>unpause</td>
+<td>格式为 docker-compose unpause [SERVICE…]   恢复处于暂停状态中的服务。</td>
+</tr>
+<tr>
+<td>up</td>
+<td>该命令十分强大，它将尝试自动完成包括构建镜像，（重新）创建服务，启动服务，并关联服务相关容器的一系列操作。链接的服务都将会被自动启动，除非已经处于运行状态。  选项：  <br/>-d 在后台运行服务容器。  <br/>–no-color 不使用颜色来区分不同的服务的控制台输出。  <br/>–no-deps 不启动服务所链接的容器。  <br/>–force-recreate 强制重新创建容器，不能与 –no-recreate 同时使用。  <br/>–no-recreate 如果容器已经存在了，则不重新创建，不能与 –force-recreate 同时使用。  <br/>–no-build 不自动构建缺失的服务镜像。  <br/>-t, –timeout TIMEOUT 停止容器时候的超时（默认为 10 秒）。</td>
+</tr>
+</tbody></table>
+<h1 id="Compose-模板文件"><a href="#Compose-模板文件" class="headerlink" title="Compose 模板文件"></a>Compose 模板文件</h1><p><strong>模板文件是使用 Compose 的核心</strong>，涉及到的指令关键字也比较多。但大家不用担心，这里面</p>
+<p>大部分指令跟 docker run 相关参数的含义都是类似的。</p>
+<p><strong>默认的模板文件名称为 docker-compose.yml ，格式为 YAML 格式。</strong></p>
+<p>注意每个服务都必须通过 image 指令指定镜像或 build 指令（需要 Dockerfile）等来自动构建生成镜像。</p>
+<p>如果使用 build 指令，在 Dockerfile 中设置的选项(例如： CMD , EXPOSE , VOLUME , ENV等) 将会自动被获取，无需在 docker-compose.yml 中再次设置。下面介绍常用指令的用法。</p>
+<h1 id="Compose-命令说明-1"><a href="#Compose-命令说明-1" class="headerlink" title="Compose 命令说明"></a>Compose 命令说明</h1><h2 id="build"><a href="#build" class="headerlink" title="build"></a>build</h2><p>指定 Dockerfile 所在文件夹的路径（可以是绝对路径，或者相对 docker-compose.yml 文件的路径）。 Compose将会利用它自动构建这个镜像，然后使用这个镜像。</p>
+<p><strong>使用 context 指令</strong>指定 Dockerfile 所在文件夹的路径</p>
+<p><strong>使用 dockerfile 指令</strong>指定 Dockerfile 文件名</p>
+<p><strong>使用 arg 指令</strong>指定构建镜像时的变量</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">	<span class="attr">webapp:</span></span><br><span class="line">		<span class="attr">build:</span></span><br><span class="line">			<span class="attr">context:</span> <span class="string">./dir</span></span><br><span class="line">			<span class="attr">dockerfile:</span> <span class="string">Dockerfile-alternate</span></span><br><span class="line">			<span class="attr">args:</span></span><br><span class="line">				<span class="attr">buildno:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="command"><a href="#command" class="headerlink" title="command"></a>command</h2><p>覆盖容器启动后默认执行的命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">command: echo &quot;hello world&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Container-name"><a href="#Container-name" class="headerlink" title="Container_name"></a>Container_name</h2><p>指定容器名称。默认将会使用 项目名称 _ 服务名称 _ 序号 这样的格式。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">container_name:</span> <span class="string">docker-web-container</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="configs"><a href="#configs" class="headerlink" title="configs"></a>configs</h2><p>仅用于 Swarm mode ，详细内容后面 swarm mode 会讲到。</p>
+<h2 id="deploy"><a href="#deploy" class="headerlink" title="deploy"></a>deploy</h2><p>仅用于 Swarm mode ，详细内容后面 swarm mode 会讲到。</p>
+<h2 id="devices"><a href="#devices" class="headerlink" title="devices"></a>devices</h2><p>指定设备映射关系。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">devices:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">&quot;/dev/ttyUSB1:/dev/ttyUSB0&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="depends-on"><a href="#depends-on" class="headerlink" title="depends_on"></a>depends_on</h2><p>解决容器的依赖、启动先后的问题。</p>
+<h2 id="dns"><a href="#dns" class="headerlink" title="dns"></a>dns</h2><p>自定义 DNS 服务器。可以是一个值，也可以是一个列表。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">dns:</span> <span class="number">8.8</span><span class="number">.8</span><span class="number">.8</span></span><br><span class="line"><span class="attr">dns:</span></span><br><span class="line"><span class="bullet">-</span> <span class="number">8.8</span><span class="number">.8</span><span class="number">.8</span></span><br><span class="line"><span class="bullet">-</span> <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="environment"><a href="#environment" class="headerlink" title="environment"></a>environment</h2><p>设置环境变量。你可以使用数组或字典两种格式。</p>
+<p>只给定名称的变量会自动获取运行 Compose 主机上对应变量的值，可以用来防止泄露不必要的数据。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">environment:</span></span><br><span class="line">  <span class="attr">RACK_ENV:</span> <span class="string">development</span></span><br><span class="line">  <span class="attr">SESSION_SECRET:</span></span><br><span class="line"><span class="attr">environment:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">RACK_ENV=development</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">SESSION_SECRET</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="expose"><a href="#expose" class="headerlink" title="expose"></a>expose</h2><p>暴露端口，但不映射到宿主机，只被连接的服务访问。仅可以指定内部端口为参数</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">expose:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">&quot;3000&quot;</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">&quot;8000&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="extra-hosts"><a href="#extra-hosts" class="headerlink" title="extra_hosts"></a>extra_hosts</h2><p>类似 Docker 中的 –add-host 参数，指定额外的 host 名称映射信息。</p>
+<p>会在启动后的服务容器中 &#x2F;etc&#x2F;hosts 文件中添加一条条目。</p>
+<p>8.8.8.8 googledns</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">extra_hosts:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">&quot;googledns:8.8.8.8&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="healthcheck"><a href="#healthcheck" class="headerlink" title="healthcheck"></a>healthcheck</h2><p>通过命令检查容器是否健康运行。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">healthcheck:</span></span><br><span class="line">    <span class="attr">test:</span> [<span class="string">&quot;CMD&quot;</span>, <span class="string">&quot;curl&quot;</span>, <span class="string">&quot;-f&quot;</span>, <span class="string">&quot;http://localhost&quot;</span>]</span><br><span class="line">    <span class="attr">interval:</span> <span class="string">1m30s</span></span><br><span class="line">    <span class="attr">timeout:</span> <span class="string">10s</span></span><br><span class="line">    <span class="attr">retries:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="image"><a href="#image" class="headerlink" title="image"></a>image</h2><p>指定为镜像名称或镜像 ID。如果镜像在本地不存在， Compose 将会尝试拉去这个镜像</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">image:</span> <span class="string">session-web:latest</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="labels"><a href="#labels" class="headerlink" title="labels"></a>labels</h2><p>为容器添加 Docker 元数据（metadata）信息。例如可以为容器添加辅助说明信息。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">labels:</span></span><br><span class="line">	<span class="attr">com.study.department:</span> <span class="string">&quot;devops department&quot;</span></span><br><span class="line">	<span class="attr">com.study.release:</span> <span class="string">&quot;v1.0&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="links"><a href="#links" class="headerlink" title="links"></a>links</h2><p>连接到其他容器。注意：不推荐使用该指令。</p>
+<p>应该使用 docker network，建立网络，而 docker run –network 来连接特定网络。</p>
+<p>或者使用 version: ‘2’ 和更高版本的 docker-compose.yml 直接定义自定义网络并使用。</p>
+<h2 id="network-mode"><a href="#network-mode" class="headerlink" title="network_mode"></a>network_mode</h2><p>设置网络模式。使用和 docker run 的 –network 参数一样的值。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">network_mode:</span> <span class="string">&quot;bridge&quot;</span></span><br><span class="line"><span class="attr">network_mode:</span> <span class="string">&quot;host&quot;</span></span><br><span class="line"><span class="attr">network_mode:</span> <span class="string">&quot;none&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="networks"><a href="#networks" class="headerlink" title="networks"></a>networks</h2><p>配置容器连接的网络。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">some-service:</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">some-network</span></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">some-network:</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="ports"><a href="#ports" class="headerlink" title="ports"></a>ports</h2><p>暴露端口信息。使用宿主端口：容器端口 (HOST:CONTAINER) 格式，或者仅仅指定容器的端口（宿主将会随机选择端口）都可以。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ports:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">&quot;3000&quot;</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">&quot;8000:8000&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="volumes"><a href="#volumes" class="headerlink" title="volumes"></a>volumes</h2><p>数据卷所挂载路径设置，可以设置宿主机路径，同时支持相对路劲。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">/var/lib/mysql</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">cache/:/tmp/cache</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">~/configs:/etc/configs/:ro</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="ulimits"><a href="#ulimits" class="headerlink" title="ulimits"></a>ulimits</h2><p>指定容器的 ulimits 限制值。</p>
+<p>例如，指定最大进程数为 65535，指定文件句柄数为 20000（软限制，应用可以随时修改，不能超过硬限制） 和 40000（系统硬限制，只能 root 用户提高）。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ulimits:</span></span><br><span class="line">  <span class="attr">nproc:</span> <span class="number">65535</span></span><br><span class="line">  <span class="attr">nofile:</span></span><br><span class="line">    <span class="attr">soft:</span> <span class="number">20000</span></span><br><span class="line">    <span class="attr">hard:</span> <span class="number">40000</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="其他指令"><a href="#其他指令" class="headerlink" title="其他指令"></a>其他指令</h2><p>此外，还有包括 domainname, entrypoint, hostname, ipc, mac_address, privileged,read_only, </p>
+<p>shm_size, restart, stdin_open, tty, user, working_dir 等指令，基本跟 docker run 中对应参数的功能一致。</p>
+<ul>
+<li><p>指定服务容器启动后执行的入口文件</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">entrypoint:</span> <span class="string">/code/entrypoint.sh</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>指定容器中运行应用的用户名</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">user:</span> <span class="string">nginx</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>指定容器中工作目录</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">working_dir:</span> <span class="string">/code</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>指定容器中搜索域名、主机名、mac 地址等</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">domainname:</span> <span class="string">your_website.com</span></span><br><span class="line"><span class="attr">hostname:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">mac_address:</span> <span class="number">08</span><span class="number">-00</span><span class="number">-27</span><span class="number">-00</span><span class="string">-0C-0A</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>允许容器中运行一些特权命令</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">privileged:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>指定容器退出后的重启策略为始终重启。在生产环境中推荐配置为 always 或者 unless-stopped</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">restart:</span> <span class="string">always</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>以只读模式挂载容器的 root 文件系统，意味着不能对容器内容进行修改</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">read_only:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打开标准输入，可以接受外部输入</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">stdin_open:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>模拟一个伪终端</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">tty:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="读取变量"><a href="#读取变量" class="headerlink" title="读取变量"></a>读取变量</h2><p>Compose 模板文件支持动态读取主机的系统环境变量和当前目录下的 .env 文件中的变量。</p>
+<p>例如，下面的 Compose 文件将从运行它的环境中读取变量 ${MONGO_VERSION} 的值，并写入执行的指令中。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">db:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">&quot;mongo:$&#123;MONGO_VERSION&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果执行 MONGO_VERSION&#x3D;3.2 docker-compose up 则会启动一个 mongo:3.2 镜像的容器。</p>
+<p>若当前目录存在 .env 文件，执行 docker-compose 命令时将从该文件中读取变量。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/14-Docker/08-Compose%E9%9B%86%E6%88%90%E5%BC%8F%E5%BA%94%E7%94%A8%E7%BB%84%E5%90%88/" data-id="clmcxec9r001wu8wa2em1bfb1" data-title="Compose集成式应用组合" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-14-Docker/09-容器监控" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/14-Docker/09-%E5%AE%B9%E5%99%A8%E7%9B%91%E6%8E%A7/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Docker/">Docker</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/08/15/14-Docker/09-%E5%AE%B9%E5%99%A8%E7%9B%91%E6%8E%A7/">容器监控</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>前面章节我们讲过了使用 docker compose 组合应用并利用 scale 快速对容器进行扩容。</p>
+<p>由于 docker compose 启动的服务都在同一台宿主机上， 对于一个宿主机上运行多个容器应用时，容器的运行情况如：CPU使用率、内存使用率、网络状态、磁盘空间等一系列随时间变化的时序数据信息，都是需要去了解的，因此监控是必须的。</p>
+<h1 id="容器监控方案选择"><a href="#容器监控方案选择" class="headerlink" title="容器监控方案选择"></a>容器监控方案选择</h1><p>对于容器的监控方案可谓多种多样，本身自带命令 docker stats 命令，Scout，Data Dog，Sysdig Cloud, Sensu Monitoring Framework， CAdvisor 等。</p>
+<ul>
+<li>Scout  <a target="_blank" rel="noopener" href="https://scoutapp.com/">https://scoutapp.com/</a></li>
+<li>Sysdig Cloud  <a target="_blank" rel="noopener" href="https://app.sysdigcloud.com/">https://app.sysdigcloud.com/</a></li>
+<li>Data Dog  <a target="_blank" rel="noopener" href="https://www.datadoghq.com/">https://www.datadoghq.com/</a></li>
+<li>Sensu  <a target="_blank" rel="noopener" href="https://sensu.io/">https://sensu.io/</a></li>
+<li>CAdvisor  <a target="_blank" rel="noopener" href="https://github.com/google/cadvisor">https://github.com/google/cadvisor</a></li>
+</ul>
+<p>通过 docker stats 命令可以很方便的看到当前宿主机上所有容器的 CPU，内存以及网络流量等数据。但是 docker stats 命令的缺点就是统计的只是当前宿主机的所有容器，而获取的监控数据是实时的，没有地方存储，也没有报警功能。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stats</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010130041.png"></p>
+<p>而 Scout、Sysdig Cloud、Data Dog 虽然都提供了较完善的服务，但是它们都是托管的服务而且都收费，Sensu Monitoring Framework 集成度较高，也免费，但是部署过于复杂。综合考虑，我们选择了 CAdvisor 做容器监控工具。</p>
+<p>CAdvisor 谷歌出品，优点是开源产品，监控指标齐全，部署方便，而且有官方的 docker 镜像。缺点是集成度不高，默认只在本地保存2分钟数据。不过可以加上 InfluxDB 存储数据，对接Grafana 展示图表，比较便利地搭建好了容器监控系统，数据收集和图表展示效果良好，对系统性能也几乎没有什么影响。</p>
+<h1 id="CAdvisor"><a href="#CAdvisor" class="headerlink" title="CAdvisor"></a>CAdvisor</h1><p>CAdvisor 是一个容器资源监控工具，包括容器的内存，CPU，网络IO，磁盘 IO 等监控，同时提供了一个 WEB 页面用于查看容器的实时运行状态。CAdvisor 默认存储 2 分钟的数据，而且只是针对单物理机。不过，CAdvisor 提供了很多数据集成接口，支持 InfluxDB，Redis，Kafka，Elasticsearch 等集成，可以加上对应配置将监控数据发往这些数据库存储起来。</p>
+<p>CAdvisor 功能主要有两点：</p>
+<ul>
+<li>展示 Host 和容器两个层次的监控数据。</li>
+<li>展示历史变化数据。</li>
+</ul>
+<h1 id="InfluxDB"><a href="#InfluxDB" class="headerlink" title="InfluxDB"></a>InfluxDB</h1><ul>
+<li>InfluxDB 是用 Go 语言编写的一个开源分布式时序、事件和指标数据库，无需外部依赖。</li>
+<li>前面说到，CAdvisor 默认只在本机保存最近2分钟的数据，为了持久化存储数据和统一收集展示监控数据，需要将数据存储到 InfluxDB 中。InfluxDB 是一个时序数据库，专门用于存储时序相关数据，很适合存储 CAdvisor 的数据。而且，CAdvisor 本身已经提供了 InfluxDB 的集成方法，在启动容器时指定配置即可。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010130444.png"></p>
+<p><strong>InfluxDB</strong> <strong>主要功能</strong>：</p>
+<ul>
+<li>基于时间序列，支持与时间有关的相关函数（如最大，最小，求和等）；</li>
+<li>可度量性：你可以实时对大量数据进行计算；</li>
+<li>基于事件：它支持任意的事件数据；</li>
+</ul>
+<p><strong>InfluxDB</strong> <strong>主要特点</strong>：</p>
+<ul>
+<li>无结构（无模式）；</li>
+<li>可以是任意数量的列；</li>
+<li>可拓展的；</li>
+<li>支持 min, max, sum, count, mean, median 等一系列函数，方便统计；</li>
+<li>原生的 HTTP 支持，内置 HTTP API；</li>
+<li>强大的类 SQL 语法；</li>
+<li>自带管理界面，方便使用</li>
+</ul>
+<h1 id="Granfana"><a href="#Granfana" class="headerlink" title="Granfana"></a>Granfana</h1><p>Grafana 是一个开源的数据监控分析可视化平台，支持多种数据源配置（支持的数据源包括InfluxDB，MySQL，Elasticsearch，OpenTSDB，Graphite 等）和丰富的插件及模板功能，支持图表权限控制和报警。</p>
+<p>Grafana 主要特性：</p>
+<ul>
+<li>灵活丰富的图形化选项</li>
+<li>可以混合多种风格</li>
+<li>支持白天和夜间模式</li>
+<li>多个数据源</li>
+</ul>
+<p>通过CAdvisor搜集容器的监控数据，存储到InfluxDB中，接下来就剩数据可视化的问题了。毕竟，一个可视化的图表可以很方便快速的看到容器的一些问题。图表展示我选择的是Grafana。</p>
+<h1 id="CAdvisor-InfluxDB-Grafan"><a href="#CAdvisor-InfluxDB-Grafan" class="headerlink" title="CAdvisor + InfluxDB + Grafan"></a>CAdvisor + InfluxDB + Grafan</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010130732.png"></p>
+<p>CAdvisor：负责收集容器的随时间变化的数据</p>
+<p>InfluxDB：负责存储时序数据</p>
+<p>Grafana： 负责分析和展示时序数据</p>
+<h1 id="安装部署"><a href="#安装部署" class="headerlink" title="安装部署"></a>安装部署</h1><h2 id="部署-InfluxDB-服务"><a href="#部署-InfluxDB-服务" class="headerlink" title="部署 InfluxDB 服务"></a>部署 InfluxDB 服务</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name influxdb -p 8086:8086 \</span><br><span class="line">-v /data/influxdb:/var/lib/influxdb \</span><br><span class="line">--hostname=influxdb \</span><br><span class="line"> influxdb </span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<ul>
+<li>–name ：启运容器分配名字influxdb</li>
+<li>-p ：映射端口，8083端口为infuxdb管理端口，8086端口是infuxdb的数据端口</li>
+<li>-v：挂载数据 -d ：后台运行此容器</li>
+<li>influxdb：通过这个容器来运行的，默认会在docker官方仓库pull下来</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://hub.docker.com/_/influxdb">https://hub.docker.com/_/influxdb</a></p>
+<ul>
+<li><p>浏览器访问 influxdb的管理端，<a target="_blank" rel="noopener" href="http://ip:8083/">http://ip:8083</a></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010130913.png"></p>
+</li>
+<li><p>创建 test 的数据库与 root 用户，这个用于后期配 granfa</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it influxdb influx</span><br><span class="line"></span><br><span class="line">CREATE DATABASE &quot;test&quot; </span><br><span class="line">CREATE USER &quot;root&quot; WITH PASSWORD &#x27;root&#x27; WITH ALL PRIVILEGES </span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="部署-CAdvisor-服务"><a href="#部署-CAdvisor-服务" class="headerlink" title="部署 CAdvisor 服务"></a>部署 CAdvisor 服务</h2><p>谷歌的cadvisor可以用于收集Docker容器的时序信息，包括容器运行过程中的资源使用情况和性能数据。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">docker run \</span><br><span class="line">  --volume=/:/rootfs:ro \</span><br><span class="line">  --volume=/var/run:/var/run:ro \</span><br><span class="line">  --volume=/sys:/sys:ro \</span><br><span class="line">  --volume=/var/lib/docker/:/var/lib/docker:ro \</span><br><span class="line">  --volume=/dev/disk/:/dev/disk:ro \</span><br><span class="line">  --volume=/cgroup:/cgroup:ro \</span><br><span class="line">  --publish=8080:8080 \</span><br><span class="line">  --detach=true \</span><br><span class="line">  --privileged=true \</span><br><span class="line">  --name=cadvisor \</span><br><span class="line">  google/cadvisor:latest \</span><br><span class="line">  -storage_driver=influxdb \</span><br><span class="line">  -storage_driver_host=influxdb:8086 \</span><br><span class="line">  -storage_driver_db=test \</span><br><span class="line">  -storage_driver_user=root \</span><br><span class="line">  -storage_driver_password=12345678</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://github.com/google/cadvisor">https://github.com/google/cadvisor</a><br><a target="_blank" rel="noopener" href="https://github.com/google/cadvisor/blob/master/docs/storage/influxdb.md">https://github.com/google/cadvisor/blob/master/docs/storage/influxdb.md</a></p>
+<p>说明：</p>
+<ul>
+<li>-d ：后台运行此容器</li>
+<li>–name ：启运容器分配名字 cadvisor</li>
+<li>-p ：映射端口 8080</li>
+<li>–mout：把宿主机的相文目录绑定到容器中，这些目录都是 cadvisor 需要采集的目录文件和监控内容</li>
+<li>-storage_driver：需要指定 cadvisor 的存储驱动、数据库主机、数据库名</li>
+</ul>
+<p>通过 ip+8080 端口访问测试一下，第一次访问这个页面有点慢：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010131338.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20211010131410495.png"></p>
+<h2 id="部署-Granfana-服务"><a href="#部署-Granfana-服务" class="headerlink" title="部署 Granfana 服务"></a>部署 Granfana 服务</h2><p>grafana 一款开源的时序数据分析工具，而且界面专业易用，等部署好了，大家就能感受到。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 3000:3000 \</span><br><span class="line">-v /data/grafana:/var/lib/grafana \</span><br><span class="line">--link=influxdb:influxdb \</span><br><span class="line">--name grafana \</span><br><span class="line">grafana/grafana </span><br></pre></td></tr></table></figure>
+
+<p>注意：如果使用 -v 把数据挂载出来会出现容器启动失败，错误为 mkdir: cannot create directory ‘&#x2F;var&#x2F;lib&#x2F;grafana&#x2F;plugins’: Permission denied，此时可以使用 docker run –entrypoint “id” grafana&#x2F;grafana 得到uid，gid，gruops（默认是472）；</p>
+<p>接着使用 chown -R 472:472 &#x2F;data&#x2F;grafana&#x2F; 修改目录权限就可以启动成功了。</p>
+<p><a target="_blank" rel="noopener" href="http://docs.grafana.org/installation/docker/">http://docs.grafana.org/installation/docker/</a></p>
+<p>通过 ip+3000 端口来访问 grafana 的 web 服务，第一次访问需要修改 admin 用户密码，默认用户名&#x2F;密码为 admin&#x2F;admin.</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010131535.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010131555.png"></p>
+<h2 id="docker-compose-快速部署"><a href="#docker-compose-快速部署" class="headerlink" title="docker-compose 快速部署"></a>docker-compose 快速部署</h2><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3.1&#x27;</span></span><br><span class="line"><span class="comment"># 如果不想挂载数据道本地就直接使用volume</span></span><br><span class="line"><span class="comment"># 如果是挂载到本地需要对data/grafana文件夹赋权并改变用户组</span></span><br><span class="line"><span class="comment"># 1、chmod +x data/grafana &amp;&amp; chown -R 472:472 data/grafana</span></span><br><span class="line"><span class="comment"># 或者直接给777权限：chmod +777 data/grafana</span></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line">  <span class="attr">grafana_data:</span> &#123;&#125;</span><br><span class="line">  <span class="attr">influxdb_data:</span> &#123;&#125;</span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"> <span class="attr">influxdb:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">tutum/influxdb:0.9</span></span><br><span class="line">  <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">  <span class="attr">environment:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">PRE_CREATE_DB=cadvisor</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">   <span class="bullet">-</span> <span class="string">&quot;8083:8083&quot;</span></span><br><span class="line">   <span class="bullet">-</span> <span class="string">&quot;8086:8086&quot;</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">./data/influxdb:/data</span></span><br><span class="line"> <span class="attr">cadvisor:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">google/cadvisor</span></span><br><span class="line">  <span class="attr">links:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">influxdb:influxsrv</span></span><br><span class="line">  <span class="attr">command:</span> <span class="string">-storage_driver=influxdb</span> <span class="string">-storage_driver_db=cadvisor</span> <span class="string">-storage_driver_host=influxsrv:8086</span></span><br><span class="line">  <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;8080:8080&quot;</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/:/rootfs:ro</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/var/run:/var/run:rw</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/sys:/sys:ro</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/var/lib/docker/:/var/lib/docker:ro</span></span><br><span class="line"> <span class="attr">grafana:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">grafana/grafana</span></span><br><span class="line">  <span class="attr">user:</span> <span class="string">&quot;472&quot;</span></span><br><span class="line">  <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">  <span class="attr">links:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">influxdb:influxsrv</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&quot;3000:3000&quot;</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">./data/grafana:/var/lib/grafana</span></span><br><span class="line">  <span class="attr">environment:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">HTTP_USER=admin</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">HTTP_PASS=admin</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">INFLUXDB_HOST=influxsrv</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">INFLUXDB_PORT=8086</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">INFLUXDB_NAME=cadvisor</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">INFLUXDB_USER=root</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">INFLUXDB_PASS=root</span></span><br></pre></td></tr></table></figure>
+
+<p>至此3个容器都已经启动了：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010131722.png"></p>
+<p>测试的话建议使用 docker-compose 方式，方便快速启动和停止。</p>
+<p>接下来开始具体监控操作。</p>
+<h1 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h1><h2 id="配置-Granfana-监控"><a href="#配置-Granfana-监控" class="headerlink" title="配置 Granfana 监控"></a>配置 Granfana 监控</h2><p>打开 grafana 的 web 服务，登录系统。</p>
+<p>在Grafana上有好几个步骤需要做，这里 Install Grafana 已经完成了，接下来我们需要：</p>
+<ul>
+<li>Add data source</li>
+<li>Create dashboard</li>
+<li>Add Query Editor</li>
+</ul>
+<h3 id="Add-data-source"><a href="#Add-data-source" class="headerlink" title="Add data source"></a>Add data source</h3><p>点击Add data source进入</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010131838.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010131853.png"></p>
+<p>Data source添加成功会予以提示</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010131943.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010131953.png"></p>
+<h3 id="Add-Dashboard"><a href="#Add-Dashboard" class="headerlink" title="Add Dashboard"></a>Add Dashboard</h3><p>点击Add dashboard进入</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010132032.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010132049.png"></p>
+<p>进入之后，点击Panel Title下拉列表，再选择Edit进行编辑即可。</p>
+<p>在Edit里面主要的就是需要添加查询的条件</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010132120.png"></p>
+<h3 id="Add-Query-Editor"><a href="#Add-Query-Editor" class="headerlink" title="Add Query Editor"></a>Add Query Editor</h3><p>查询条件中我们可以选择要监控的指标，这里选一个 memory usage 好了，然后要监控的容器选择 cadvisor 自身好了。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010132204.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010132214.png"></p>
+<p>到此完成了对容器 cadvisor 的内存使用情况监控，其他的容器监控也是一样的。 </p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>使用 CAdvisor+InfluxDB+Grafana 构建容器资源监控系统，是可行而且是较为简便的方式。这三个组件全部以容器的方式运行，也符合我们线上服务皆为容器的理念。目前很多公司已经全面上线该监控系统。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/14-Docker/09-%E5%AE%B9%E5%99%A8%E7%9B%91%E6%8E%A7/" data-id="clmcxec9y001zu8wa5ur57nu4" data-title="容器监控" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-14-Docker/10-日志监控" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/14-Docker/10-%E6%97%A5%E5%BF%97%E7%9B%91%E6%8E%A7/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Docker/">Docker</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/08/15/14-Docker/10-%E6%97%A5%E5%BF%97%E7%9B%91%E6%8E%A7/">日志监控</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Docker-日志"><a href="#Docker-日志" class="headerlink" title="Docker 日志"></a>Docker 日志</h1><h2 id="日志处理机制"><a href="#日志处理机制" class="headerlink" title="日志处理机制"></a>日志处理机制</h2><p>我们先来简单了解下 docker 日志处理的机制。当启动一个容器的时候，它其实是 docker daemon 的一个子进程， docker daemon 可以拿到你容器里面进程的标准输出，拿到标准输出后，它会通过自身的一个 LogDriver 模块来处理，LogDriver支持的方式很多，可以写到本地的文件（默认方式），可以发送到syslog等。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010135439.png"></p>
+<p>Docker 会默认收集应用程序的标准输出存储到一个 json.log 文件中，文件的格式类似下面这种：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;log&quot;</span><span class="punctuation">:</span><span class="string">&quot;root@c835298de6dd:/# ls\r\n&quot;</span><span class="punctuation">,</span><span class="attr">&quot;stream&quot;</span><span class="punctuation">:</span><span class="string">&quot;stdout&quot;</span><span class="punctuation">,</span><span class="attr">&quot;time&quot;</span><span class="punctuation">:</span><span class="string">&quot;xxoo.155863426Z&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;log&quot;</span><span class="punctuation">:</span><span class="string">&quot;bin  boot  dev\u0009etc  home  lib\u0009lib64  media  mnt  opt\u0009proc  root  run  sbin  selinux\u0009srv  sys  tmp  usr  var\r\n&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>以一行一个作为一条 JSON 数据存储。 Docker 的这种日志存储方式是可以配置的，具体参数可以在执行 run 启动容器的时候通过 log-driver 进行配置，具体配置请参考 log-driver 。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.docker.com/config/containers/logging/configure/#supported-logging-drivers">https://docs.docker.com/config/containers/logging/configure/#supported-logging-drivers</a></p>
+<h1 id="Docker-Logging-Driver"><a href="#Docker-Logging-Driver" class="headerlink" title="Docker Logging Driver"></a>Docker Logging Driver</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010135629.png"></p>
+<p>目前官方支持的log driver类型</p>
+<p>gelf：将日志消息写入graylog扩展日志格式（gelf）端点，如graylog或logstash。</p>
+<p>Docker 默认使用了 json-file driver 作为 log driver，而 gelf 则是我们需要使用的 log driver。</p>
+<p>当容器多了，或者是采用类似 swarm 集群部署 Docker 的时候，各种日志分散存在各个 json.log 文件中，当查找问题或者进行相关统计的时候，分散的日志对我们来说是非常不友好的。我们需要一个能够集中管理 Docker 日志的工具，这也是本章节学习的重点。</p>
+<h1 id="Graylog"><a href="#Graylog" class="headerlink" title="Graylog"></a>Graylog</h1><p>相信大部分的人都用过或者听说过ELK这个强大的日志栈架构，我们要用的 graylog 和 ELK 非常的相似，算是后起之秀。</p>
+<p><strong>为什么要选择 graylog 来作为 Docker 的日志收集平台呢？</strong></p>
+<ul>
+<li>Docker 原生支持 graylog 协议，直接将日志发送到 graylog（通过gelf协议）</li>
+<li>graylog官方提供了将本身部署在Docker的支持</li>
+</ul>
+<p>管理节点用于 Swarm 集群的管理， docker swarm 命令基本只能在管理节点执行。一个 Swarm 集群可以有多个管理节点，但只有一个管理节点可以成为 leader ， leader 通过 raft 协议实现。</p>
+<p>工作节点是任务执行节点，管理节点将服务 ( service ) 下发至工作节点执行。管理节点默认也作为工作节点。你也可以通过配置让服务只运行在管理节点。</p>
+<h1 id="Graylog-部署"><a href="#Graylog-部署" class="headerlink" title="Graylog 部署"></a>Graylog 部署</h1><p>graylog 官方提供了 Dockerfile 供我们快速的在 Docker 上部署日志系统，在这个 Docker Hub 的地址中，也提供了 docker-compose.yml 来快速部署整个 graylog 栈，包含了 mongodb、ElasticSearch ，而不需要分别单独进行部署。</p>
+<p>官方地址：<a target="_blank" rel="noopener" href="https://hub.docker.com/r/graylog/graylog/">https://hub.docker.com/r/graylog/graylog/</a></p>
+<p>下面我们就来学习完整的部署过程。</p>
+<ol>
+<li><p>创建一个目录用来部署graylog，本文假设目录为&#x2F;root&#x2F;graylog，以下所有操作都是在&#x2F;root&#x2F;graylog中进行的。</p>
+</li>
+<li><p>初始化目录和配置文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">创建数据目录</span></span><br><span class="line">mkdir -p ./data</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">创建配置文件目录</span></span><br><span class="line">mkdir -p ./config</span><br><span class="line">cd ./config</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">直接下载官方推荐配置文件</span></span><br><span class="line">wget https://raw.githubusercontent.com/Graylog2/graylog-docker/2.5/config/graylog.conf </span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">日志配置文件</span></span><br><span class="line">wget https://raw.githubusercontent.com/Graylog2/graylog-docker/2.5/config/log4j2.xml </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改下载完的graylog.conf中的root_timezone为GMT+0800中国时区</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">root_timezone</span> = <span class="string">Etc/GMT-8</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>新建docker-compose.yml来供docker-compose快速启动完整服务</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;2&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="comment"># MongoDB: https://hub.docker.com/_/mongo/</span></span><br><span class="line">  <span class="attr">mongodb:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mongo:3</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mongo_data:/data/db</span></span><br><span class="line">  <span class="comment"># Elasticsearch: https://www.elastic.co/guide/en/elasticsearch/reference/6.x/docker.html</span></span><br><span class="line">  <span class="attr">elasticsearch:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">docker.elastic.co/elasticsearch/elasticsearch:6.5.1</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">es_data:/usr/share/elasticsearch/data</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">http.host=0.0.0.0</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">transport.host=localhost</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">network.host=0.0.0.0</span></span><br><span class="line">      <span class="comment"># Disable X-Pack security: https://www.elastic.co/guide/en/elasticsearch/reference/6.x/security-settings.html#general-security-settings</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.security.enabled=false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.watcher.enabled=false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.monitoring.enabled=false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.security.audit.enabled=false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.ml.enabled=false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">xpack.graph.enabled=false</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;ES_JAVA_OPTS=-Xms256m -Xmx256m&quot;</span></span><br><span class="line">    <span class="attr">ulimits:</span></span><br><span class="line">      <span class="attr">memlock:</span></span><br><span class="line">        <span class="attr">soft:</span> <span class="number">-1</span></span><br><span class="line">        <span class="attr">hard:</span> <span class="number">-1</span></span><br><span class="line">    <span class="attr">mem_limit:</span> <span class="string">256M</span></span><br><span class="line">  <span class="comment"># Graylog: https://hub.docker.com/r/graylog/graylog/</span></span><br><span class="line">  <span class="attr">graylog:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">graylog/graylog:2.5</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">graylog_journal:/usr/share/graylog/data/journal</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./config:/usr/share/graylog/data/config</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="comment"># CHANGE ME!</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_PASSWORD_SECRET=somepasswordpepper</span></span><br><span class="line">      <span class="comment"># Password: admin</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918</span></span><br><span class="line">      <span class="comment"># 这个地址需要配置成你要访问的地址，比如你的容器部署在192.168.1.2，你需要配置成http://192.168.1.2:9000/api，否则访问会报错</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">GRAYLOG_WEB_ENDPOINT_URI=http://192.168.100.249:9000/api</span></span><br><span class="line">    <span class="attr">links:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mongodb:mongo</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">elasticsearch</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mongodb</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">elasticsearch</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="comment"># Graylog web interface and REST API</span></span><br><span class="line">      <span class="comment"># web界面端口</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">9000</span><span class="string">:9000</span></span><br><span class="line">      <span class="comment"># gelf收集日志的端口，如果需要添加graylog收集器，可以新增暴露出来的端口</span></span><br><span class="line">      <span class="comment"># Syslog TCP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">514</span><span class="string">:514</span></span><br><span class="line">      <span class="comment"># Syslog UDP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">514</span><span class="string">:514/udp</span></span><br><span class="line">      <span class="comment"># GELF TCP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">12201</span><span class="string">:12201</span></span><br><span class="line">      <span class="comment"># GELF UDP</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">12201</span><span class="string">:12201/udp</span></span><br><span class="line"><span class="comment"># Volumes for persisting data, see https://docs.docker.com/engine/admin/volumes/volumes/</span></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line">  <span class="attr">mongo_data:</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">local</span></span><br><span class="line">  <span class="attr">es_data:</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">local</span></span><br><span class="line">  <span class="attr">graylog_journal:</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">local</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动整个服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up</span><br></pre></td></tr></table></figure>
+
+<p>如果没有问题的话，会看到graylog webserver started的终端输出消息。</p>
+<p>访问 http:&#x2F;&#x2F;{server}:9000&#x2F;</p>
+<p>会看到graylog的web界面，使用用户名admin，密码：admin 来登录后台，至此部署完成。</p>
+</li>
+</ol>
+<h1 id="Graylog-系统配置"><a href="#Graylog-系统配置" class="headerlink" title="Graylog 系统配置"></a>Graylog 系统配置</h1><h2 id="input-配置"><a href="#input-配置" class="headerlink" title="input 配置"></a>input 配置</h2><p>graylog的日志收集通过定义input对象来完成，在graylogweb管理界面按照如下图片进入input对象配置，选择GELF UDP协议来新建一个输入器（input）：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010140331.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010140344.png"></p>
+<p>填好相关属性，新建：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010140416.png"></p>
+<p>保存后，就可以开始收集日志了</p>
+<h2 id="docker-配置"><a href="#docker-配置" class="headerlink" title="docker 配置"></a>docker 配置</h2><p>如果docker通过命令行启动，可以在run命令中加上如下参数：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --log-driver=gelf --log-opt gelf-address=udp://&#123;graylog服务器地址&#125;:12201  --log-opt tag=&lt;当前容器服务标签，用来供graylog查询的时候进行分类&gt;  &lt;IMAGE&gt; &lt;运行命令&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">           --log-driver=gelf \</span><br><span class="line">           --log-opt gelf-address=udp://localhost:12201 \</span><br><span class="line">           --log-opt tag=&quot;&#123;&#123;.ImageName&#125;&#125;/&#123;&#123;.Name&#125;&#125;/&#123;&#123;.ID&#125;&#125;&quot; \</span><br><span class="line">           busybox sh -c &#x27;while true; do echo &quot;Hello, this is A&quot;; sleep 10; done;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>如果通过docker-compose命令，则可以在docker-compose.yml中加入相关配置，以下用nginx容器举例：</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;2&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">nginx:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx:latest</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">&quot;80:80&quot;</span></span><br><span class="line">    <span class="attr">logging:</span></span><br><span class="line">      <span class="attr">driver:</span> <span class="string">&quot;gelf&quot;</span></span><br><span class="line">      <span class="attr">options:</span></span><br><span class="line">        <span class="attr">gelf-address:</span> <span class="string">&quot;udp://192.168.100.249:12201&quot;</span></span><br><span class="line">        <span class="attr">tag:</span> <span class="string">front-nginx</span></span><br></pre></td></tr></table></figure>
+
+<p>docker-compose.yml</p>
+<p>容器启动的时候可能会有下面这个提示：</p>
+<p>nginx_1_4bd0934b4b62 | WARNING: no logs are available with the ‘gelf’ log driver</p>
+<p>可以无视这个警告，日志还是会继续发送过去的。</p>
+<p>到这里为止我们可以在 graylog 的 web 后台中看到 nginx 所产生的日志了</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/14-Docker/10-%E6%97%A5%E5%BF%97%E7%9B%91%E6%8E%A7/" data-id="clmcxeca40022u8wa8tyr2yxd" data-title="日志监控" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-14-Docker/11-DockerSwarm资源管理" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/14-Docker/11-DockerSwarm%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Docker/">Docker</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/08/15/14-Docker/11-DockerSwarm%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">DockerSwarm资源管理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Docker-Swarm"><a href="#Docker-Swarm" class="headerlink" title="Docker Swarm"></a>Docker Swarm</h1><p>Docker Swarm 是 Docker 官方三剑客项目之一，提供 Docker 容器集群服务，是 Docker 官方对容器云生态进行支持的核心方案。</p>
+<p>使用它，用户可以将多个 Docker 主机封装为单个大型的虚拟 Docker 主机，快速打造一套容器云平台。</p>
+<p>注意：Docker 1.12.0+ Swarm mode 已经内嵌入 Docker 引擎，成为了 docker 子命令 docker swarm ，绝大多数用户已经开始使用 Swarm mode ，Docker 引擎 API 已经删除 Docker Swarm。</p>
+<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p>Swarm 是使用 SwarmKit 构建的 Docker 引擎内置（原生）的集群管理和编排工具。</p>
+<p>使用 Swarm 集群之前需要了解以下几个概念。</p>
+<h2 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h2><p>运行 Docker 的主机可以主动初始化一个 Swarm 集群或者加入一个已存在的 Swarm 集群，这样这个运行 Docker 的主机就成为一个 Swarm 集群的节点 ( node ) 。</p>
+<p>节点分为管理 ( manager ) 节点和工作 ( worker ) 节点。<br><strong>管理节点</strong>用于 Swarm 集群的管理， docker swarm 命令基本只能在管理节点执行。<br><strong>工作节点</strong>是任务执行节点，管理节点将服务 ( service ) 下发至工作节点执行。</p>
+<p>管理节点用于 Swarm 集群的管理， docker swarm 命令基本只能在管理节点执行。一个 Swarm 集群可以有多个管理节点，但只有一个管理节点可以成为 leader ， leader 通过 raft 协议实现。</p>
+<p>工作节点是任务执行节点，管理节点将服务 ( service ) 下发至工作节点执行。管理节点默认也作为工作节点。你也可以通过配置让服务只运行在管理节点。</p>
+<h2 id="集群中管理节点与工作节点的关系"><a href="#集群中管理节点与工作节点的关系" class="headerlink" title="集群中管理节点与工作节点的关系"></a>集群中管理节点与工作节点的关系</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010141007.png"></p>
+<h2 id="服务和任务"><a href="#服务和任务" class="headerlink" title="服务和任务"></a>服务和任务</h2><p>任务 （ Task ）是 Swarm 中的最小的调度单位，目前来说就是一个单一的容器。</p>
+<p>服务 （ Services ） 是指一组任务的集合，服务定义了任务的属性。</p>
+<p><strong>服务有两种模式：</strong></p>
+<ul>
+<li>replicated services 按照一定规则在各个工作节点上运行指定个数的任务。</li>
+<li>global services 每个工作节点上运行一个任务</li>
+</ul>
+<p>两种模式通过 docker service create 的 –mode 参数指定。</p>
+<h2 id="容器、任务、服务的关系"><a href="#容器、任务、服务的关系" class="headerlink" title="容器、任务、服务的关系"></a>容器、任务、服务的关系</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010141121.png"></p>
+<h1 id="创建Swarm集群"><a href="#创建Swarm集群" class="headerlink" title="创建Swarm集群"></a>创建Swarm集群</h1><p>了解 Swarm 集群由管理节点和工作节点组成后，我们来创建一个包含一个管理节点和两个工作节点的最小 Swarm 集群。</p>
+<h2 id="初始化集群"><a href="#初始化集群" class="headerlink" title="初始化集群"></a>初始化集群</h2><p>使用 docker swarm init 在本机初始化一个 Swarm 集群。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker swarm init --advertise-addr 192.168.100.249</span><br></pre></td></tr></table></figure>
+
+<p>如果你的 Docker 主机有多个网卡，拥有多个 IP，必须使用 –advertise-addr 指定 IP。</p>
+<p>执行 docker swarm init 命令的节点自动成为管理节点。</p>
+<h2 id="增加工作节点"><a href="#增加工作节点" class="headerlink" title="增加工作节点"></a>增加工作节点</h2><p>在另外两台服务器上执行上一步创建管理节点时候的输出的加入 swarm 集群的命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker swarm join \</span><br><span class="line">--token SWMTKN-1-49nj1cmql0jkz5s954yi3oex3nedyz0fb0xx14ie39trti4wxv-8vxv8rssmk743ojnwacrr2e7c \</span><br><span class="line">192.168.100.249:2377</span><br></pre></td></tr></table></figure>
+
+<h2 id="查看集群"><a href="#查看集群" class="headerlink" title="查看集群"></a>查看集群</h2><p>在管理节点使用 docker node ls 查看集群。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker node ls</span><br></pre></td></tr></table></figure>
+
+<p>使用 docker service 命令来管理 Swarm 集群中的服务，该命令只能在管理节点运行。</p>
+<h2 id="新建服务"><a href="#新建服务" class="headerlink" title="新建服务"></a>新建服务</h2><p>在创建好的 Swarm 集群中运行一个名为 nginx 服务。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker service create --replicas 3 -p 80:80 --name nginx nginx:latest</span><br></pre></td></tr></table></figure>
+
+<p>现在我们使用浏览器，输入任意节点 IP ,即可看到 nginx 默认页面。</p>
+<h2 id="查看服务"><a href="#查看服务" class="headerlink" title="查看服务"></a>查看服务</h2><p>使用 docker service ls 来查看当前 Swarm 集群运行的服务。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker service ls</span><br></pre></td></tr></table></figure>
+
+<p>使用 docker service ps 来查看某个服务的详情。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker service ps nginx</span><br></pre></td></tr></table></figure>
+
+<p>使用 docker service logs 来查看某个服务的日志。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker service logs nginx</span><br></pre></td></tr></table></figure>
+
+<h2 id="删除服务"><a href="#删除服务" class="headerlink" title="删除服务"></a>删除服务</h2><p>使用 docker service rm 来从 Swarm 集群移除某个服务。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker service rm nginx</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="资源管理"><a href="#资源管理" class="headerlink" title="资源管理"></a>资源管理</h1><p>前面我们学过了利用 Docker Swarm 快速搭建一个最小集群，也可以在集群上部署服务，但是会发现 swarm 中并没有提供统一入口查看节点的资源使用情况。这个时候我们急切的希望有一个图形化管理工具来帮我们管理 swarm 集群，portainer 就是这样的一个工具。</p>
+<p>Portainer 是 Docker 的图形化管理工具，提供状态显示面板、应用模板快速部署、容器镜像网络数据卷的基本操作（包括上传下载镜像，创建容器等操作）、事件日志显示、容器控制台操作、Swarm 集群和服务等集中管理和操作、登录用户管理和控制等功能。功能十分全面，基本能满足中小型单位对容器管理的全部需求。</p>
+<h2 id="portainer-集群运行"><a href="#portainer-集群运行" class="headerlink" title="portainer 集群运行"></a>portainer 集群运行</h2><p>下载 portainer 镜像</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查询当前有哪些Portainer镜像</span></span><br><span class="line">docker search portainer</span><br><span class="line">docker pull portainer/portainer</span><br></pre></td></tr></table></figure>
+
+<p>安装 portainer</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 9000:9000 \</span><br><span class="line">--name portainer --restart=always \</span><br><span class="line">-v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">portainer/portainer </span><br></pre></td></tr></table></figure>
+
+<h2 id="portainer-配置"><a href="#portainer-配置" class="headerlink" title="portainer 配置"></a>portainer 配置</h2><p>设置管理员账号密码</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010142049.png"></p>
+<p>swarm 集群资源使用情况</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010142110.png"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/14-Docker/11-DockerSwarm%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" data-id="clmcxecai0025u8waa34jej4c" data-title="DockerSwarm资源管理" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-14-Docker/12-快速扩容" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/14-Docker/12-%E5%BF%AB%E9%80%9F%E6%89%A9%E5%AE%B9/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Docker/">Docker</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/08/15/14-Docker/12-%E5%BF%AB%E9%80%9F%E6%89%A9%E5%AE%B9/">快速扩容</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="命令方式"><a href="#命令方式" class="headerlink" title="命令方式"></a>命令方式</h1><ul>
+<li><p>在创建好的 Swarm 集群中运行一个名为 nginx 服务，并使用 –replicas 参数指定启动的副本数。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker service create --replicas 3 -p 80:80 --name nginx nginx:latest</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>或者</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker service create -p 80:80 --name nginx nginx:latest</span><br><span class="line">docker service scale nginx=3</span><br><span class="line">docker service ls	#查看副本情况</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="portainer-方式"><a href="#portainer-方式" class="headerlink" title="portainer 方式"></a>portainer 方式</h1><ul>
+<li><p>可以使用 portainer 的方式在web界面上创建服务并指定副本数，同时可以随时动态增减副本数。</p>
+<p><strong>服务列表</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010142226.png"></p>
+<p><strong>添加服务</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010142451.png"></p>
+<p><strong>动态扩容</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211010142517.png"></p>
+</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>我们学习了使用命令和 portainer 管理页面两种方式来对服务进行动态扩容。由于 swarm 兴起不久，现在普及率还没有 k8s 高，加上 swarm 使用上比较容易这里我们不做太详细的讲解。感兴趣的同学可以结合官方文档进一步学习。容器编排侧重企业使用较多的 k8s ，所以接下我们要进入 k8s 的世界去看下k8s 能带给我们什么样的惊喜。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/14-Docker/12-%E5%BF%AB%E9%80%9F%E6%89%A9%E5%AE%B9/" data-id="clmcxecal0028u8wa5s4raug0" data-title="快速扩容" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-15-K8s/01-K8S核心概念及常用组件" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/15-K8s/01-K8S%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%B8%B8%E7%94%A8%E7%BB%84%E4%BB%B6/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/K8s/">K8s</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/08/15/15-K8s/01-K8S%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%B8%B8%E7%94%A8%E7%BB%84%E4%BB%B6/">K8s核心概念及常用组件</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="K8S架构图"><a href="#K8S架构图" class="headerlink" title="K8S架构图"></a>K8S架构图</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/k8s%E6%9E%B6%E6%9E%84%E5%9B%BE.png"></p>
+<h1 id="pod"><a href="#pod" class="headerlink" title="pod"></a>pod</h1><p>pod</p>
+<p>&#x2F;pause<br>    &#x2F;a<br>    &#x2F;b</p>
+<p>pause：共享ip、volume，解决容器之间访问和数据共享问题</p>
+<p>pause镜像启动的容器：占用资源少、极其稳定</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/15-K8s/01-K8S%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%B8%B8%E7%94%A8%E7%BB%84%E4%BB%B6/" data-id="clmcxecaq002bu8waflaa1weo" data-title="K8s核心概念及常用组件" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-99-面试题/01-SpringBoot,Mybatis,Tomcat面试汇总" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/99-%E9%9D%A2%E8%AF%95%E9%A2%98/01-SpringBoot,Mybatis,Tomcat%E9%9D%A2%E8%AF%95%E6%B1%87%E6%80%BB/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/08/15/99-%E9%9D%A2%E8%AF%95%E9%A2%98/01-SpringBoot,Mybatis,Tomcat%E9%9D%A2%E8%AF%95%E6%B1%87%E6%80%BB/">SpringBoot,Mybatis,Tomcat面试汇总</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="SpringBoot面试"><a href="#SpringBoot面试" class="headerlink" title="SpringBoot面试"></a>SpringBoot面试</h1><h2 id="Spring已经很完善了，为什么还要有SpringBoot？"><a href="#Spring已经很完善了，为什么还要有SpringBoot？" class="headerlink" title="Spring已经很完善了，为什么还要有SpringBoot？"></a>Spring已经很完善了，为什么还要有SpringBoot？</h2><p>Spring Framework旨在简化J2EE企业应用程序开发。Spring Boot Framework旨在更进一步简化Spring开发，5分钟就能快速搭建完成一个SSM Web框架，通过CLI Groovy能在一分钟就能写出一个Web应用。大量减少模板代码、XML配置，主要目标在于提高开发效率。</p>
+<h2 id="SpringBoot的主要优点有哪些？"><a href="#SpringBoot的主要优点有哪些？" class="headerlink" title="SpringBoot的主要优点有哪些？"></a>SpringBoot的主要优点有哪些？</h2><ol>
+<li>开发基于 Spring 的应用程序很容易。</li>
+<li>Spring Boot 项目所需的开发或工程时间明显减少，通常会提高整体生产力。</li>
+<li>Spring Boot不需要编写大量样板代码、XML配置和注释。</li>
+<li>Spring引导应用程序可以很容易地与Spring生态系统集成，如Spring JDBC、Spring ORM、SpringData、SprSecurity等。</li>
+<li>Spring Boot遵循“固执己见的默认配置”，以减少开发工作（默认配置可以修改）。</li>
+<li>Spring Boot 应用程序提供嵌入式HTTP服务器，如Tomcat和Jetty，可以轻松地开发和测试web应用程序。（这点很赞行Java程序的方式就能运行基于Spring Boot web 项目，省事很多）</li>
+<li>Spring Boot提供命令行接口(CLI)工具，用于开发和测试Spring Boot应用程序，如Java或Groovy。 </li>
+<li>Spring Boot提供了多种插件，可以使用内置工具(如Maven和Gradle)开发和测试Spring Boot应用程序。</li>
+</ol>
+<h2 id="SpringBoot中的是如何做到自动化配置的？"><a href="#SpringBoot中的是如何做到自动化配置的？" class="headerlink" title="SpringBoot中的是如何做到自动化配置的？"></a>SpringBoot中的是如何做到自动化配置的？</h2><ol>
+<li>@SpringBootApplication注解是@Configuration、@Configuration、@ComponentScan注解的集合。<br>@EnableAutoConfiguration，启用 SpringBoot 的自动配置机制<br>@Configuration，允许在上下文中注册额外的bean或导入其他配置类</li>
+<li>SpringBoot中，每个集成到SpringBoot中的组件都有一个对应的starter，starter解决了两个问题，自动根据组件需要的配置文件生成对应的bean对象、通过Maven来管理所需jar包的依赖和版本冲突。<br>自动化配置，涉及到的注解有：@Configuration、@Bean、@ConditionalOnxxx、<br>@EnableConfigurationProperties注解。这些注解实质上是通过检查ClassPath下的Jar包中是否存在对应的Class、项目配置文件是否有配置对应的属性、当前容器中是否存在相应的Bean，基于Java的Bean配置来自动实现配置对象的生成。</li>
+</ol>
+<h2 id="SpringBoot中的内嵌Tomcat是如何启动的？"><a href="#SpringBoot中的内嵌Tomcat是如何启动的？" class="headerlink" title="SpringBoot中的内嵌Tomcat是如何启动的？"></a>SpringBoot中的内嵌Tomcat是如何启动的？</h2><ol>
+<li>从创建ApplicationContext处开始，在ServletWebServerApplicationContext的onRefresh方法中完成初始化的，但是处于暂停状态，不接受请求。</li>
+<li>在WebServerStartStopLifecycle.start中启动Tomcat，开始接受请求。</li>
+<li>WebServerStartStopLifecycle.stop中关闭Tomcat。</li>
+</ol>
+<h2 id="SpringMVC中为什么要用父子容器？"><a href="#SpringMVC中为什么要用父子容器？" class="headerlink" title="SpringMVC中为什么要用父子容器？"></a>SpringMVC中为什么要用父子容器？</h2><p>父子容器的特点：</p>
+<ol>
+<li>父容器和子容器是相互隔离的，他们内部可以存在名称相同的bean</li>
+<li>子容器可以访问父容器中的bean，而父容器不能访问子容器中的bean</li>
+<li>调用子容器的getBean方法获取bean的时候，会沿着当前容器开始向上面的容器进行查找，直到找到对应的bean为止</li>
+<li>子容器中可以通过任何注入方式注入父容器中的bean，而父容器中是无法注入子容器中的bean</li>
+</ol>
+<p>使用springmvc的时候，采用3层结构，controller层，service层，dao层；父容器中会包含dao层和service层，而子容器中包含的只有controller层；这2个容器组成了父子容器的关系，controller层通常会注入service层的bean。</p>
+<p>采用父子容器可以避免有些人在service层去注入controller层的bean，导致整个依赖层次是比较混乱的。父容器和子容器的需求也是不一样的，比如父容器中需要有事务的支持，会注入一些支持事务的扩展组件，而子容器中controller完全用不到这些，对这些并不关心，子容器中需要注入一下springmvc相关的bean，而这些bean父容器中同样是不会用到的，也是不关心一些东西，将这些相互不关心的东西隔开，可以有效的避免一些不必要的错误，而父子容器加载的速度也会快一些。</p>
+<h1 id="Mybatis面试"><a href="#Mybatis面试" class="headerlink" title="Mybatis面试"></a>Mybatis面试</h1><h2 id="Mybatis是什么？与Hibernate有什么区别？"><a href="#Mybatis是什么？与Hibernate有什么区别？" class="headerlink" title="Mybatis是什么？与Hibernate有什么区别？"></a>Mybatis是什么？与Hibernate有什么区别？</h2><p>一个半自动化的ORM框架（Object Relation Mapping)。与其他ORM框架对比，它对SQL的控制更加灵活，可以写复杂的SQL语句。Hibernate、JPA无法灵活方便的做到SQL灵活控制，特别是动态SQL语句。</p>
+<h2 id="为什么说-MyBatis-是半自动-ORM-映射框架？"><a href="#为什么说-MyBatis-是半自动-ORM-映射框架？" class="headerlink" title="为什么说 MyBatis 是半自动 ORM 映射框架？"></a>为什么说 MyBatis 是半自动 ORM 映射框架？</h2><p>需要自己写SQL语句，某些情况下还需要自己实现关系结果的映射。Hibernate 属于全自动 ORM 映射工具，使用 Hibernate 查询关联对象或者关联集合对象时，可以根据对象关系模型直接获取，所以它是全自动的。而 MyBatis 在查询关联对象或关联集合对象时，需要手动编写 sql 来完成，所以，称之为半自动 ORM 映射工具。</p>
+<h2 id="Mybatis的执行流程是怎么样的？"><a href="#Mybatis的执行流程是怎么样的？" class="headerlink" title="Mybatis的执行流程是怎么样的？"></a>Mybatis的执行流程是怎么样的？</h2><p>核心组件以及它们间的协作</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211001223401.png"></p>
+<h2 id="Mybatis中-和-的区别是什么？"><a href="#Mybatis中-和-的区别是什么？" class="headerlink" title="Mybatis中#{}和${}的区别是什么？"></a>Mybatis中#{}和${}的区别是什么？</h2><p>${} 是 Properties 文件中的变量占位符，它可以用于标签属性值和 sql 内部，属于静态文本替换，比如${driver}会被静态替换为 com.mysql.jdbc.Driver 。 </p>
+<p>#{} 是 sql 的参数占位符，MyBatis 会将 sql 中的 #{} 替换为?号，在 sql 执行前会使用PreparedStatement 的参数设置方法，按序给 sql 的?号占位符设置参数值，比如 ps.setInt(0,parameterValue)， #{item.name} 的取值方式为使用反射从参数对象中获取 item 对象的 name 属性值，相当于 param.getItem().getName() 。</p>
+<h2 id="MyBatis-是如何进行分页的？有什么问题？怎么解决？"><a href="#MyBatis-是如何进行分页的？有什么问题？怎么解决？" class="headerlink" title="MyBatis 是如何进行分页的？有什么问题？怎么解决？"></a>MyBatis 是如何进行分页的？有什么问题？怎么解决？</h2><p>MyBatis 使用 RowBounds 对象进行分页，它是针对 ResultSet 结果集执行的内存分页，而非物理分页。</p>
+<p>内存分页占用大量内存，可以在 sql 内直接书写带有物理分页的参数来完成物理分页功能，也可以使用分页插件来完成物理分页。</p>
+<p>分页插件的基本原理是使用 MyBatis 提供的插件接口，实现自定义插件，在插件的拦截方法内拦截待执行的 sql，然后重写 sql，根据 dialect 方言，添加对应的物理分页语句和物理分页参数。</p>
+<h2 id="简述一下Mybatis的动态-sql-的执行原理？"><a href="#简述一下Mybatis的动态-sql-的执行原理？" class="headerlink" title="简述一下Mybatis的动态 sql 的执行原理？"></a>简述一下Mybatis的动态 sql 的执行原理？</h2><p>MyBatis 动态 sql 可以让我们在 Xml 映射文件内，以标签的形式编写动态 sql，完成逻辑判断和动态拼接 sql 的功能，MyBatis 提供了 9 种动态 sql 标签trim|where|set|foreach|if|choose|when|otherwise|bind 。</p>
+<p>其执行原理为，使用 OGNL 从 sql 参数对象中计算表达式的值，根据表达式的值动态拼接 sql，以此来完成动态 sql 的功能。</p>
+<h1 id="Tomcat面试"><a href="#Tomcat面试" class="headerlink" title="Tomcat面试"></a>Tomcat面试</h1><h2 id="Tomcat是什么？"><a href="#Tomcat是什么？" class="headerlink" title="Tomcat是什么？"></a>Tomcat是什么？</h2><p>Tomcat是一个Servlet容器的实现。</p>
+<p>全面回答：Tomcat是一个Java中的Servlet、JSP、EL、WebSocket技术的开源实现。</p>
+<h2 id="说说Servlet、Tomcat、SpringMVC各自是什么，以及它们之间的关系？"><a href="#说说Servlet、Tomcat、SpringMVC各自是什么，以及它们之间的关系？" class="headerlink" title="说说Servlet、Tomcat、SpringMVC各自是什么，以及它们之间的关系？"></a>说说Servlet、Tomcat、SpringMVC各自是什么，以及它们之间的关系？</h2><p>广义的Servlet，狭义的Servlet。</p>
+<p>Tomcat中实现了Servlet的事情</p>
+<p>SpringMVC的DispatcherServlet，本质就是一个狭义的Servlet实现，用来处理Http请求。</p>
+<h2 id="Tomcat有哪些核心组件？具有一个什么样的结构？"><a href="#Tomcat有哪些核心组件？具有一个什么样的结构？" class="headerlink" title="Tomcat有哪些核心组件？具有一个什么样的结构？"></a>Tomcat有哪些核心组件？具有一个什么样的结构？</h2><p><strong>Server</strong><br>在Tomcat中，Server代表整个容器。</p>
+<p><strong>Service</strong><br>服务是一个中间组件，它在服务器内部，将一个或多个连接器连接到一个引擎。</p>
+<p><strong>Engine</strong><br>Engine也就是以前版本中的Container。引擎表示特定服务的请求处理管道。 服务可能有多个连接器，引擎接收并处理来自这些连接器的所有请求，将响应返回到适当的连接器以传输到客户端。 引擎接口可以实现，以提供自定义引擎，尽管这是不常见的。引擎可以通过jvm路由参数用于Tomcat服务器集群。Engine包含：Host、Context、Wrapper这几个容器，他们都是Container子类型。</p>
+<p><strong>Connerctor</strong><br>Connector负责把接收到的请求解析出来然后封装成request和response对象然后交给Container处理。目前Connector支持http和ajp协议。<br>连接器处理与客户端的通信。 Tomcat有多个可用的连接器。 其中包括HTTP连接器、AJP连接器。当将Tomcat作为独立服务器运行时使用HTTP协议的HTTP连接器；当将Tomcat连接到Apache HTTPD服务器等Web服务器时使用的AJP协议的AJP连接器。 还可以创建自定义连接器。</p>
+<p><strong>Host</strong></p>
+<p>主机是网络名称的关联。 例如：<a target="_blank" rel="noopener" href="http://www.yourcompany.com能访问到tomcat服务器.引擎可能包含多个主机,主机元素还支持网络别名,如yourcompany.com和abc.yourcompany.com./">www.yourcompany.com能访问到Tomcat服务器。引擎可能包含多个主机，主机元素还支持网络别名，如yourcompany.com和abc.yourcompany.com。</a> 用户很少创建自定义主机，因为标准主机实现提供了重要的附加功能。</p>
+<p>Host说白了就是我们所理解的虚拟主机。</p>
+<p><strong>Context</strong><br>上下文表示Web应用程序。 主机可能包含多个上下文，每个上下文具有唯一的路径。 上下文接口可以实现创建自定义上下文，但这种情况很少，因为标准上下文提供了重要的附加功能。Context就是我们所部属的具体Web应用的上下文，每个请求都在是相应的上下文里处理的。</p>
+<p><strong>Wrapper</strong><br>Wrapper是针对每个Servlet的Container，每个Servlet都有相应的Wrapper来管理。</p>
+<h2 id="Tomcat是如何处理一次请求的？"><a href="#Tomcat是如何处理一次请求的？" class="headerlink" title="Tomcat是如何处理一次请求的？"></a>Tomcat是如何处理一次请求的？</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211001224018.png"></p>
+<h2 id="Tomcat中都有哪些类加载器？遵循JVM双亲委派机制吗？为什么？"><a href="#Tomcat中都有哪些类加载器？遵循JVM双亲委派机制吗？为什么？" class="headerlink" title="Tomcat中都有哪些类加载器？遵循JVM双亲委派机制吗？为什么？"></a>Tomcat中都有哪些类加载器？遵循JVM双亲委派机制吗？为什么？</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211001224040.png"></p>
+<h2 id="Tomcat-有哪几种Connector-运行模式？"><a href="#Tomcat-有哪几种Connector-运行模式？" class="headerlink" title="Tomcat 有哪几种Connector 运行模式？"></a>Tomcat 有哪几种Connector 运行模式？</h2><ol>
+<li>BIO：传统的Java I&#x2F;O操作，同步且阻塞IO，Tomcat 8以前的版本采用BIO模式。</li>
+<li>NIO：JDK1.4开始支持，同步阻塞或同步非阻塞IO。Tomcat 8以后摒弃了BIO。 </li>
+<li>APR：Tomcat将以JNI的形式调用Apache HTTP服务器的核心动态链接库来处理文件读取或网络传输操作，从而大大地 提高Tomcat对静态文件的处理性能。</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- protocol 启用 nio模式，(tomcat8默认使用的是nio)(apr模式利用系统级异步io) - -&gt; &lt;!-- minProcessors最小空闲连接线程数--&gt;</span> <span class="comment">&lt;!-- maxProcessors最大连接线程数--&gt;</span> <span class="comment">&lt;!-- acceptCount允许的最大连接数，应大于等于maxProcessors--&gt;</span> <span class="comment">&lt;!-- enableLookups 如果为true,requst.getRemoteHost会执行DNS查找，反向解析ip对 应域名或主机名--&gt;</span> <span class="tag">&lt;<span class="name">Connector</span> <span class="attr">port</span>=<span class="string">&quot;8080&quot;</span> <span class="attr">protocol</span>=<span class="string">&quot;org.apache.coyote.http11.Http11NioProtocol&quot;</span></span></span><br><span class="line"><span class="tag"><span class="attr">connectionTimeout</span>=<span class="string">&quot;20000&quot;</span> <span class="attr">redirectPort</span>=<span class="string">&quot;8443 maxThreads=“500” minSpareThreads=“100” maxSpareThreads=“200” acceptCount=&quot;</span><span class="attr">200</span>&quot; <span class="attr">enableLookups</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Tomcat线程参数理解问题"><a href="#Tomcat线程参数理解问题" class="headerlink" title="Tomcat线程参数理解问题"></a>Tomcat线程参数理解问题</h2><p>Tomcat有如下的参数配置，有5000个并发请求，会有（300）个线程处理请求？（2000）个请求正在被处理？（2100）个请求在等待？（2900）个请求被拒绝？</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Connector</span> <span class="attr">connectionTimeout</span>=<span class="string">&quot;20000&quot;</span> <span class="attr">port</span>=<span class="string">&quot;8080&quot;</span> <span class="attr">acceptCount</span>=<span class="string">&quot;100&quot;</span> <span class="attr">maxThreads</span>=<span class="string">&quot;300&quot;</span> <span class="attr">minSpareThreads</span>=<span class="string">&quot;30&quot;</span> <span class="attr">maxConnections</span>=<span class="string">&quot;2000&quot;</span> <span class="attr">protocol</span>=<span class="string">&quot;HTTP/1.1&quot;</span> <span class="attr">redirectPort</span>=<span class="string">&quot;8443&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Tomcat容器是如何创建servlet类实例？用到了什么原理？"><a href="#Tomcat容器是如何创建servlet类实例？用到了什么原理？" class="headerlink" title="Tomcat容器是如何创建servlet类实例？用到了什么原理？"></a>Tomcat容器是如何创建servlet类实例？用到了什么原理？</h2><p>当容器启动时，会读取在webapps目录下所有的web应用中的web.xml文件，然后对xml文件进行解析，并读取servlet注册信息。然后，将每个应用中注册的servlet类都进行加载，并通过反射的方式实例化。（有时候也是在第一次请求时实例化）在servlet注册时加上如果为正数，则在一开始就实例化，如果不写或为负数，则第一次请求实例化。</p>
+<h2 id="Tomcat-如何优化？"><a href="#Tomcat-如何优化？" class="headerlink" title="Tomcat 如何优化？"></a>Tomcat 如何优化？</h2><ol>
+<li>优化思路：JVM调优、Tomcat自己本身</li>
+<li>JVM调优策略<br>合适的GC算法<br>根据业务对不同的区域分片不同的内存空间</li>
+<li>Tomcat Connector<br>maxThreads，设置合适的最大线程数<br>acceptCount，设置合适的等待队列大小<br>maxConnections，设置合适的最大连接数<br>compression，打开压缩功能<br>Executor，采用合适的线程池</li>
+<li>工具<br>压测工具，Jmeter、ab等，用来模拟压测用户并发<br>监控工具，JConsole、JProfile、arthas、psi-probe等，用来监控系统资源，观察各项参数是否到了合适的值。<br>linxu系统，top、jstack、jps等命令</li>
+</ol>
+<h2 id="Tomcat工作模式？"><a href="#Tomcat工作模式？" class="headerlink" title="Tomcat工作模式？"></a>Tomcat工作模式？</h2><p>独立的Servlet容器、进程内的（内嵌）Servlet容器、进程外的Servlet容器。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/99-%E9%9D%A2%E8%AF%95%E9%A2%98/01-SpringBoot,Mybatis,Tomcat%E9%9D%A2%E8%AF%95%E6%B1%87%E6%80%BB/" data-id="clmcxecgu003su8wa4stw17md" data-title="SpringBoot,Mybatis,Tomcat面试汇总" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-10-Mybatis/01-Mybatis进阶" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/10-Mybatis/01-Mybatis%E8%BF%9B%E9%98%B6/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mybatis/">Mybatis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2020/08/15/10-Mybatis/01-Mybatis%E8%BF%9B%E9%98%B6/">Mybatis简介</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Mybatis简介"><a href="#Mybatis简介" class="headerlink" title="Mybatis简介"></a>Mybatis简介</h1><p>官网：<a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/">https://mybatis.org/mybatis-3/</a></p>
+<p>中文网：<a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/index.html">https://mybatis.org/mybatis-3/zh/index.html</a></p>
+<p>github：<a target="_blank" rel="noopener" href="https://github.com/mybatis/">https://github.com/mybatis/</a></p>
+<p>一个半自动化的ORM框架（Object Relation Mapping)。与其他ORM框架对比，它对SQL的控制更加灵活，可以写复杂的SQL语句。Hibernate、JPA无法灵活方便的做到SQL灵活控制，特别是动态SQL语句。</p>
+<h2 id="Mybatis整体框架"><a href="#Mybatis整体框架" class="headerlink" title="Mybatis整体框架"></a>Mybatis整体框架</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210919123925.png"></p>
+<h2 id="项目示例"><a href="#项目示例" class="headerlink" title="项目示例"></a>项目示例</h2><ol>
+<li><p>通过SpringBoot创建Maven工程</p>
+</li>
+<li><p>准备数据库表、创建数据库表实体类</p>
+</li>
+<li><p>准备Mapper.xml</p>
+<p>增删改查语句、传参、结果映射、命名空间、缓存</p>
+<p>字符串替换：${}，ORDER BY ${columnName}</p>
+<p>参数传递：#{}，#{middleInitial,jdbcType&#x3D;VARCHAR}</p>
+<p>动态SQL、if&#x2F;choose&#x2F;when&#x2F;otherwise&#x2F;where&#x2F;foreach</p>
+<p>更多参考官网：<a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/dynamic-sql.html">https://mybatis.org/mybatis-3/zh/dynamic-sql.html</a></p>
+</li>
+<li><p>配置mybatis-config.xml</p>
+<ul>
+<li><p>数据源配置</p>
+<p>采用spring方式，数据源配置交给spring了</p>
+<p>原始方式则需要配置数据源</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> ?&gt;</span> <span class="meta">&lt;!DOCTYPE <span class="keyword">configuration</span> <span class="keyword">PUBLIC</span> <span class="string">&quot;-//mybatis.org//DTD Config 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta">        <span class="string">&quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">environments</span> <span class="attr">default</span>=<span class="string">&quot;development&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">environment</span> <span class="attr">id</span>=<span class="string">&quot;development&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">&quot;JDBC&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">&quot;POOLED&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driver&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;driver&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;url&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;username&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;password&#125;&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">environment</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">environments</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;org/mybatis/example/BlogMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mappers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>扫描包配置</p>
+</li>
+<li><p>插件配置</p>
+</li>
+<li><p>等待，参考官网介绍，<a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/configuration.html">https://mybatis.org/mybatis-3/zh/configuration.html</a></p>
+</li>
+</ul>
+</li>
+<li><p>注解方式配置</p>
+<p>CRUD注解</p>
+<p>动态SQL</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Update(&#123;&quot;&lt;script&gt;&quot;, </span></span><br><span class="line"><span class="meta">         &quot;update Author&quot;, </span></span><br><span class="line"><span class="meta">         &quot; &lt;set&gt;&quot;, </span></span><br><span class="line"><span class="meta">         	&quot; &lt;if test=&#x27;username != null&#x27;&gt;username=#&#123;username&#125;,&lt;/if&gt;&quot;, </span></span><br><span class="line"><span class="meta">         	&quot; &lt;if test=&#x27;password != null&#x27;&gt;password=#&#123;password&#125;,&lt;/if&gt;&quot;, </span></span><br><span class="line"><span class="meta">         	&quot; &lt;if test=&#x27;email != null&#x27;&gt;email=#&#123;email&#125;,&lt;/if&gt;&quot;, </span></span><br><span class="line"><span class="meta">         	&quot; &lt;if test=&#x27;bio != null&#x27;&gt;bio=#&#123;bio&#125;&lt;/if&gt;&quot;, </span></span><br><span class="line"><span class="meta">         &quot; &lt;/set&gt;&quot;, </span></span><br><span class="line"><span class="meta">         &quot;where id=#&#123;id&#125;&quot;, </span></span><br><span class="line"><span class="meta">         &quot;&lt;/script&gt;&quot;&#125;)</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">updateAuthorValues</span><span class="params">(Author author)</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试类</p>
+</li>
+<li><p>Springboot中集成使用</p>
+</li>
+</ol>
+<h1 id="Mybatis集成Redis缓存实战"><a href="#Mybatis集成Redis缓存实战" class="headerlink" title="Mybatis集成Redis缓存实战"></a>Mybatis集成Redis缓存实战</h1><p><a target="_blank" rel="noopener" href="https://mybatis.org/mybatis-3/zh/sqlmap-xml.html#cache">https://mybatis.org/mybatis-3/zh/sqlmap-xml.html#cache</a></p>
+<p><a target="_blank" rel="noopener" href="http://mybatis.org/redis-cache/">http://mybatis.org/redis-cache/</a></p>
+<p>实现步骤：</p>
+<ol>
+<li><p>集成Redis</p>
+</li>
+<li><p>实现mybatis Cache接口，将Redis作为二级缓存</p>
+<p>String getId()：mybatis缓存操作对象的标识符。一个mapper对应一个mybatis的缓存操作对象。</p>
+<p>void putObject(Object key, Object value)：将查询结果塞入缓存。</p>
+<p>Object getObject(Object key)：从缓存中获取被缓存的查询结果。</p>
+<p>Object removeObject(Object key)：从缓存中删除对应的key、value。只有在回滚时触发。一般我们也可以不用实现，具体使用方式请参考：org.apache.ibatis.cache.decorators.TransactionalCache。</p>
+<p>void clear()：发生更新时，清除缓存。</p>
+<p>int getSize()：可选实现。返回缓存的数量。</p>
+<p>ReadWriteLock getReadWriteLock()：可选实现。用于实现原子性的缓存操作。 接下来，我们新建RedisCache类，实现Cache接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.study.cache;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.study.util.SpringContextUtil;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.cache.Cache;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.Logger;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.core.RedisCallback;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.core.RedisTemplate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.core.ValueOperations;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.locks.ReadWriteLock;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.locks.ReentrantReadWriteLock;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RedisCache</span> <span class="keyword">implements</span> <span class="title class_">Cache</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LoggerFactory.getLogger(RedisCache.class);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">ReadWriteLock</span> <span class="variable">readWriteLock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantReadWriteLock</span>();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String id; <span class="comment">// cache instance id</span></span><br><span class="line">    <span class="keyword">private</span> RedisTemplate redisTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">EXPIRE_TIME_IN_MINUTES</span> <span class="operator">=</span> <span class="number">30</span>; <span class="comment">// redis过期时间</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RedisCache</span><span class="params">(String id)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (id == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Cache instances require an ID&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getId</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Put query result to redis</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> key</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> value</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">putObject</span><span class="params">(Object key, Object value)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">RedisTemplate</span> <span class="variable">redisTemplate</span> <span class="operator">=</span> getRedisTemplate();</span><br><span class="line">            <span class="type">ValueOperations</span> <span class="variable">opsForValue</span> <span class="operator">=</span> redisTemplate.opsForValue();</span><br><span class="line">            opsForValue.set(key, value, EXPIRE_TIME_IN_MINUTES, TimeUnit.MINUTES);</span><br><span class="line">            logger.debug(<span class="string">&quot;Put query result to redis&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">            logger.error(<span class="string">&quot;Redis put failed&quot;</span>, t);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Get cached query result from redis</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> key</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">getObject</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">RedisTemplate</span> <span class="variable">redisTemplate</span> <span class="operator">=</span> getRedisTemplate();</span><br><span class="line">            <span class="type">ValueOperations</span> <span class="variable">opsForValue</span> <span class="operator">=</span> redisTemplate.opsForValue();</span><br><span class="line">            logger.debug(<span class="string">&quot;Get cached query result from redis&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> opsForValue.get(key);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">            logger.error(<span class="string">&quot;Redis get failed, fail over to db&quot;</span>, t);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Remove cached query result from redis</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> key</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">removeObject</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">RedisTemplate</span> <span class="variable">redisTemplate</span> <span class="operator">=</span> getRedisTemplate();</span><br><span class="line">            redisTemplate.delete(key);</span><br><span class="line">            logger.debug(<span class="string">&quot;Remove cached query result from redis&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">            logger.error(<span class="string">&quot;Redis remove failed&quot;</span>, t);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Clears this cache instance</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">clear</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">RedisTemplate</span> <span class="variable">redisTemplate</span> <span class="operator">=</span> getRedisTemplate();</span><br><span class="line">        redisTemplate.execute((RedisCallback) connection -&gt; &#123;</span><br><span class="line">            connection.flushDb();</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;);</span><br><span class="line">        logger.debug(<span class="string">&quot;Clear all the cached query result from redis&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * This method is not used</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getSize</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> ReadWriteLock <span class="title function_">getReadWriteLock</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> readWriteLock;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> RedisTemplate <span class="title function_">getRedisTemplate</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (redisTemplate == <span class="literal">null</span>) &#123;</span><br><span class="line">            redisTemplate = (RedisTemplate) SpringContextUtil.getBean(<span class="string">&quot;redisTemplate&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> redisTemplate;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>自己实现的二级缓存，必须要有一个带id的构造函数，否则会报错。 我们使用Spring封装的redisTemplate来操作Redis。网上所有介绍redis做二级缓存的文章都是直接用jedis库，但是笔者认为这样不够Spring Style，而且，redisTemplate封装了底层的实现，未来如果我们不用jedis了，我们可以直接更换底层的库，而不用修改上层的代码。更方便的是，使用redisTemplate，我们不用关心redis连接的释放问题，否则新手很容易忘记释放连接而导致应用卡死。</p>
+<p>需要注意的是，这里不能通过autowire的方式引用redisTemplate，因为RedisCache并不是Spring容器里的bean。所以我们需要手动地去调用容器的getBean方法来拿到这个bean，具体的实现方式请参考Github中的代码。</p>
+<p>我们采用的redis序列化方式是默认的jdk序列化。所以数据库的查询对象（比如Product类）需要实现Serializable接口。</p>
+<p>这样，我们就实现了一个优雅的、科学的并且具有Spring Style的Redis缓存类。</p>
+</li>
+<li><p>开启二级缓存</p>
+</li>
+</ol>
+<p>   在Mapper.xml中开启二级缓存：</p>
+   <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">mapper</span> <span class="keyword">PUBLIC</span> <span class="string">&quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;</span> <span class="string">&quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.study.dao.UserMapper&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 开启基于redis的二级缓存 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">type</span>=<span class="string">&quot;com.study.cache.RedisCache&quot;</span>/&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;insert&quot;</span> <span class="attr">useGeneratedKeys</span>=<span class="string">&quot;true&quot;</span> <span class="attr">keyProperty</span>=<span class="string">&quot;u.id&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;com.study.model.User&quot;</span>&gt;</span></span><br><span class="line">        insert user(id,user_name) values(#&#123;u.id&#125;,#&#123;u.userName&#125;)</span><br><span class="line">    <span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;query&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.study.model.User&quot;</span>&gt;</span></span><br><span class="line">        select id ,user_name from user where 1=1</span><br><span class="line">        <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">&quot;userName != null&quot;</span>&gt;</span></span><br><span class="line">            and user_name like CONCAT(&#x27;%&#x27;,#&#123;userName&#125;,&#x27;%&#x27;)</span><br><span class="line">        <span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>   &lt; cache type&#x3D;”com.dongnaoedu.mybatis.cache.RedisCache”&#x2F;&gt;表示开启基于redis的二级缓存，并且在update语句中，我们设置flushCache为true，这样在更新product信息时，能够自动失效缓存（本质上调用的是clear方法）。</p>
+<ol start="4">
+<li>测试</li>
+</ol>
+<h1 id="多数据源"><a href="#多数据源" class="headerlink" title="多数据源"></a>多数据源</h1><p>和读写分离一起实现</p>
+<h1 id="Mybatis插件开发实战"><a href="#Mybatis插件开发实战" class="headerlink" title="Mybatis插件开发实战"></a>Mybatis插件开发实战</h1><h2 id="Mybatis插件实现原理"><a href="#Mybatis插件实现原理" class="headerlink" title="Mybatis插件实现原理"></a>Mybatis插件实现原理</h2><p>Mybatis的插件其实就是个拦截器功能。它利用JDK动态代理和责任链设计模式的综合运用。采用责任链模式，通过动态代理组织多个拦截器,通过这些拦截器你可以做一些你想做的事。</p>
+<p>自定义拦截器步骤</p>
+<ol>
+<li>了解Mybatis Interceptor接口</li>
+<li>自定义拦截器</li>
+<li>全局xml配置</li>
+</ol>
+<p>示例：打印SQL语句插件</p>
+<h2 id="读写分离插件"><a href="#读写分离插件" class="headerlink" title="读写分离插件"></a>读写分离插件</h2><ol>
+<li>配置数据源</li>
+<li>配置mybatis<br>MybatisConfiguration<br>DataSource<br>SqlSessionFactory<br>AbstractRoutingDataSource<br>annotationDrivenTransactionManager</li>
+<li>数据源路由标记<br>DataSourceContextHolder</li>
+<li>进行数据源路由<br>mybatis插件<br>spring aop方式，dao层AOP、service层AOP<br>spring注解拦截方式，注解实现</li>
+<li>测试<br>测试方法<br>实现：参考示例项目代码</li>
+</ol>
+<h2 id="分页插件"><a href="#分页插件" class="headerlink" title="分页插件"></a>分页插件</h2><p>PageHelpe文档：<a target="_blank" rel="noopener" href="https://github.com/pagehelper/Mybatis-PageHelper/blob/master/README_zh.md">https://github.com/pagehelper/Mybatis-PageHelper/blob/master/README_zh.md</a></p>
+<h1 id="MybatisPlus"><a href="#MybatisPlus" class="headerlink" title="MybatisPlus"></a>MybatisPlus</h1><p>官网：<a target="_blank" rel="noopener" href="https://baomidou.com/">https://baomidou.com/</a></p>
+<p>官方示例：<a target="_blank" rel="noopener" href="https://github.com/baomidou/mybatis-plus-samples">https://github.com/baomidou/mybatis-plus-samples</a></p>
+<p>一个国内人开发的基于Mybatis提供开发功能便利的组件</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/10-Mybatis/01-Mybatis%E8%BF%9B%E9%98%B6/" data-id="clmcxecya0091u8wabjfx498t" data-title="Mybatis简介" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/page/16/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/18/">Next &raquo;</a>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

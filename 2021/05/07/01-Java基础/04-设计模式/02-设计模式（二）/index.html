@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>设计模式（二） | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="设计模式命令模式 示例： 请为你的系统设计一个命令行界面，用户可输入命令来执行某项功能  系统的功能会不断添加，命令也会不断增加。 如何将一项一项的功能加入到这个命令行界面?     如何让我们的命令行程序写好后，不因功能的添加而修改，又可灵活加入命令、功能。请为此做设计。 命令模式-类图   命令模式 以命令的方式，解耦调用者与功能的具体实现者，降低系统耦合度，提供了灵活性。  适用场景：交互场">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式（二）">
+<meta property="og:url" content="http://example.com/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/04-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/02-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="设计模式命令模式 示例： 请为你的系统设计一个命令行界面，用户可输入命令来执行某项功能  系统的功能会不断添加，命令也会不断增加。 如何将一项一项的功能加入到这个命令行界面?     如何让我们的命令行程序写好后，不因功能的添加而修改，又可灵活加入命令、功能。请为此做设计。 命令模式-类图   命令模式 以命令的方式，解耦调用者与功能的具体实现者，降低系统耦合度，提供了灵活性。  适用场景：交互场">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724195339.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724195411.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724200918.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724200952.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724200918.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720215841.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724202535.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724203116.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724203858.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724203924.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724204708.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724204836.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724204859.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724204939.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724205038.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720215841.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724200918.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724204708.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724211541.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724211905.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724213204.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724215059.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724221315.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724221341.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724223422.png">
+<meta property="article:published_time" content="2021-05-07T14:36:30.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:07:24.306Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724195339.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-01-Java基础/04-设计模式/02-设计模式（二）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/04-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/02-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      设计模式（二）
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h1><h2 id="命令模式"><a href="#命令模式" class="headerlink" title="命令模式"></a>命令模式</h2><ul>
+<li><p><strong>示例：</strong></p>
+<p>请为你的系统设计一个命令行界面，用户可输入命令来执行某项功能 </p>
+<p>系统的功能会不断添加，命令也会不断增加。</p>
+<p>如何将一项一项的功能加入到这个命令行界面?</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724195339.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724195411.png"></p>
+<p>如何让我们的命令行程序写好后，不因功能的添加而修改，又可灵活加入命令、功能。请为此做设计。</p>
+<h2 id="命令模式-类图"><a href="#命令模式-类图" class="headerlink" title="命令模式-类图"></a>命令模式-类图</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724200918.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724200952.png"></p>
+<ul>
+<li><p><strong>命令模式</strong></p>
+<p>以命令的方式，解耦调用者与功能的具体实现者，降低系统耦合度，提供了灵活性。</p>
+</li>
+<li><p><strong>适用场景：交互场景</strong></p>
+<p>示例∶Servlet、Controller、线程池</p>
+</li>
+</ul>
+<h2 id="命令模式-策略模式的区别"><a href="#命令模式-策略模式的区别" class="headerlink" title="命令模式-策略模式的区别"></a>命令模式-策略模式的区别</h2><ul>
+<li><p>策略模式侧重的是<strong>一个行为</strong>的多个算法实现，可互换算法。 </p>
+</li>
+<li><p>命令模式侧重的是为<strong>多个行为</strong>提供灵活的执行方式。</p>
+</li>
+</ul>
+<p>  </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724200918.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720215841.png"></p>
+<h2 id="状态模式"><a href="#状态模式" class="headerlink" title="状态模式"></a>状态模式</h2><ul>
+<li><p><strong>示例：</strong>一个类对外提供了多个行为，同时该类对象有多种状态，不同状态下对外的行为的表现不同，我们该如何来设计该类让它对状态可以灵活扩展?</p>
+<p>如请为无人自动咖啡售卖机开发一个控制程序。  </p>
+</li>
+<li><p>用户可在咖啡机上进行支付、退款、购买、取咖啡操作</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724202535.png"></p>
+<p><strong>咖啡机状态转换图</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724203116.png"></p>
+<ul>
+<li><p>不同的状态下，这四种种操作将有不同的表现。</p>
+<p> 如在没有支付状态下，用户在咖啡机上点退款、购买、取咖啡，和在已支付的状态下做这三个操作。</p>
+</li>
+</ul>
+<p> </p>
+<h2 id="状态模式-代码示例"><a href="#状态模式-代码示例" class="headerlink" title="状态模式-代码示例"></a>状态模式-代码示例</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724203858.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724203924.png"></p>
+<p>![image-20210724204001823](C:\Users\chen cheng\AppData\Roaming\Typora\typora-user-images\image-20210724204001823.png)</p>
+<p>如何让状态可以灵活扩展（加状态）？</p>
+<p>如何做到开闭原则？</p>
+<h2 id="状态模式-类图"><a href="#状态模式-类图" class="headerlink" title="状态模式-类图"></a>状态模式-类图</h2><p>咖啡机的行为将委托给当前的状态实例</p>
+<p> 状态可以灵活扩展否?</p>
+<p>符合开闭原则否?</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724204708.png"></p>
+<h2 id="状态模式-新代码示例"><a href="#状态模式-新代码示例" class="headerlink" title="状态模式-新代码示例"></a>状态模式-新代码示例</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724204836.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724204859.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724204939.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724205038.png"></p>
+<h2 id="状态模式-命令模式-策略模式"><a href="#状态模式-命令模式-策略模式" class="headerlink" title="状态模式-命令模式-策略模式"></a>状态模式-命令模式-策略模式</h2><ul>
+<li>策略模式侧重的是一个行为的多个算法实现，可互换算法。 </li>
+<li>命令模式侧重的是为多个行为提供灵活的执行方式。</li>
+<li>状态模式，应用于状态机的情况。</li>
+</ul>
+<p>设计原则∶区分变与不变，隔离变化</p>
+<p>设计原则∶面向接口编程</p>
+<p>设计原则∶多用组合，少用继承  </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720215841.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724200918.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724204708.png"></p>
+<h2 id="桥接模式"><a href="#桥接模式" class="headerlink" title="桥接模式"></a>桥接模式</h2><ul>
+<li><p><strong>示例：</strong>请开发一个画图程序，可以画各种颜色不同形状的图形，请用面向对象的思  想设计图形。</p>
+</li>
+<li><p><strong>分析：</strong></p>
+<ol>
+<li>比如有红、黄、蓝三种颜色</li>
+<li>形状有方形、圆、三角形</li>
+<li>圆可以是红圆、黄圆、蓝圆</li>
+</ol>
+<p><strong>这样设击类可否？加颜色、加形状，会类爆炸！</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724211541.png"></p>
+</li>
+<li><p>变化∶会从两个维度发生变化∶形状、颜色</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724211905.png"></p>
+<p>任其在两个维度各自变化，为这两个维度搭个桥，让它们可以融合在一起∶桥接模式</p>
+<p>如何搭?</p>
+</li>
+<li><p>1、抽象∶分别对各个维度进行抽象，将共同部分抽取出来<br><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724213204.png"></p>
+</li>
+<li><p>2、组合：将抽象组合在一起（桥接）<br><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724215059.png"></p>
+</li>
+</ul>
+<p>桥接∶将多个维度的变化以抽象的方式组合在一起。使用者面向抽象。各维度间解耦，可自由变化。</p>
+<h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><ul>
+<li><p><strong>饥汉式【可用】</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="type">Singleton</span> <span class="variable">INSTANCE</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> Singleton INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        INSTANCE = <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>懒汉式</strong><br>懒汉式1【不可用】</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> Singleton INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (INSTANCE == <span class="literal">null</span>) &#123;</span><br><span class="line">            INSTANCE = <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>懒汉式2【线程安全，但不推荐】<br>缺点：实例化后就不应该再同步了，效率低</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> Singleton INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (INSTANCE == <span class="literal">null</span>) &#123;</span><br><span class="line">            INSTANCE = <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>懒汉式3【不可用】</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> Singleton INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (INSTANCE == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton.class) &#123;</span><br><span class="line">                INSTANCE = <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>懒汉式4 双重检查【推荐使用】<br>注意：volatile关键字修饰很关键<br>优点：线程安全；延迟加载；效率高。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> Singleton INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (INSTANCE == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton.class) &#123;</span><br><span class="line">                <span class="keyword">if</span> (INSTANCE == <span class="literal">null</span>) &#123;</span><br><span class="line">                    INSTANCE = <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>懒汉式5 静态内部类方式【推荐使用】<br>优点∶避免了线程不安全，延迟加载，效率高。<br> 原理∶静态内部类方式在Singleton类被装载时并不会立即实例化，而是在需要实例化时，调用getInstance方法，才会装载SingletonInstance类，从而完成Singleton的实例化。类的静态属性只会在第一次加载类的时候初始化，所以在这里，JVM帮助我们保证了线程的安全性，在类进行初始化时，别的线程是无法进入的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">SingletonInstance</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Singleton</span> <span class="variable">INSTANCE</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> SingletonInstance.INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>懒汉式6 用枚举【推荐使用】</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line">    INSTANCE;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">whateverMethod</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="模板方法模式"><a href="#模板方法模式" class="headerlink" title="模板方法模式"></a>模板方法模式</h2><ul>
+<li><p><strong>示例：</strong>当我们设计—个类时，我们能明确它对外提供的某个方法的内部执行步骤但一些步骤，不同的子类有不同的行为时，我们该如何来设计该类? </p>
+<p><strong>可以使用模板方法模式</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724221315.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724221341.png"></p>
+</li>
+<li><p><strong>优点：</strong><br>1、封装不变部分，扩展可变部分。<br>2、提取公共代码，便于维护。<br>3、行为由父类控制，子类实现。</p>
+</li>
+<li><p><strong>适用场景：</strong><br>1、有多个子类共有的方法，且逻辑相同。<br> 2、重要的、复杂的方法，可以考虑作为模板方法。</p>
+</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><h2 id="设计模式总结"><a href="#设计模式总结" class="headerlink" title="设计模式总结"></a>设计模式总结</h2><table>
+<thead>
+<tr>
+<th>序号</th>
+<th>模式&amp;描述</th>
+<th>包括</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><strong>创建形模式</strong><br />这些设计模式提供了一种在创建对象的同时隐藏创建逻辑的方式，而不是使用new运算符直接实例化对象。这使得程序在判断针对某个给定实例需要创建哪些对象时更加灵活。</td>
+<td>工厂模式（Factory Pattern）<br />抽象工厂模式（Abstract Factory Pattern）<br />单例模式（Singleton Pattern）<br />建造者模式（Builder Pattern）<br />原型模式（Prototype Pattern）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>结构型模式</strong><br />这些设计模式关注类和对象的组合。继承的概念被用来组合接口和定义组合对象获得新功能的方式。</td>
+<td>适配器模式（Adapter Pattern）<br />桥接模式（Bridge Patttern）<br />组合模式（Composite Patttern）<br />装饰器模式（Decorator Patttern）<br />外观模式（Facade Patttern）<br />享元模式（Flyweight Patttern）<br />代理模式（Proxy Patttern）</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>行为型模式</strong><br />这些设计模式特别关注对象之间的通信。</td>
+<td>责任链模式（Chain of Responsibility Pattern）<br />命令模式（Command Patttern）<br />解释器模式（Interpreter Patttern）<br />迭代器模式（Iterator Patttern）<br />中介者模式（Mediator Patttern）<br />备忘录模式（Memento Patttern）<br />观察者模式（Observer Patttern）<br />状态模式（State Patttern）<br />空对象模式（Null Object Patttern）<br />策略模式（Strategy Patttern）<br />模板模式（Template Patttern）<br />访问者模式（Visitor Patttern）</td>
+</tr>
+</tbody></table>
+<h2 id="设计原则总结"><a href="#设计原则总结" class="headerlink" title="设计原则总结"></a>设计原则总结</h2><ul>
+<li><p>找出变化，分开变化和不变的</p>
+<p>隔离，封装变化的部分，让其他部分不受它的影响。 </p>
+</li>
+<li><p>面向接口编程（隔离变化的方式）</p>
+<p>使用者使用接口，提供者实现接口。 “接口”可以是超类!</p>
+</li>
+<li><p>依赖倒置原则 （隔离变化的方式）</p>
+<p>依赖抽象，不要依赖具体类!</p>
+</li>
+<li><p>对修改闭合，对扩展开放（隔离变化的方式）</p>
+</li>
+<li><p>多用组合，少用继承（ 灵活变化的方式）</p>
+<p>“有一个”可能比”是一个”更好。</p>
+</li>
+<li><p>单一职责原则（方法设计的原则）</p>
+</li>
+<li><p><strong>最后，如果都忘记了，请一定要记住这三!!!</strong></p>
+</li>
+</ul>
+<p>  </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724223422.png"></p>
+<h1 id="代码地址"><a href="#代码地址" class="headerlink" title="代码地址"></a>代码地址</h1><p><a target="_blank" rel="noopener" href="https://github.com/chengchen901/design-mode-study.git">https://github.com/chengchen901/design-mode-study.git</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/04-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/02-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%EF%BC%89/" data-id="clmcxecrk006hu8wabbmt7lpx" data-title="设计模式（二）" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/03-%E6%B3%A8%E8%A7%A3/01-%E6%B3%A8%E8%A7%A3%E5%8E%9F%E7%90%86%E5%8F%8A%E4%BD%BF%E7%94%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          注解原理及使用
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/05/07/02-Spring/02-%E6%89%8B%E5%86%99SpringIOC%E5%AE%B9%E5%99%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">手写SpringIOC容器</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="代理服务故障处理被动健康检查ngx_http_upstream_module，可以做到基本的健康检查。 upstream指令块中的server子指令参数：max_fails、fail_timeout 1234upstream backend &amp;#123;	server 127.0.0.1:8080 weight&#x3D;1 max_fails&#x3D;2 fail_timeout&#x3D;10s;	server 127.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/16-Nginx/06-00-Nginx%E5%B8%B8%E7%94%A8%E6%8F%92%E4%BB%B6/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="代理服务故障处理被动健康检查ngx_http_upstream_module，可以做到基本的健康检查。 upstream指令块中的server子指令参数：max_fails、fail_timeout 1234upstream backend &amp;#123;	server 127.0.0.1:8080 weight&#x3D;1 max_fails&#x3D;2 fail_timeout&#x3D;10s;	server 127.">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-09-10T03:59:07.822Z">
+<meta property="article:modified_time" content="2022-11-26T14:53:20.155Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-16-Nginx/06-00-Nginx常用插件" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/16-Nginx/06-00-Nginx%E5%B8%B8%E7%94%A8%E6%8F%92%E4%BB%B6/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:07.822Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="代理服务故障处理"><a href="#代理服务故障处理" class="headerlink" title="代理服务故障处理"></a>代理服务故障处理</h1><h2 id="被动健康检查"><a href="#被动健康检查" class="headerlink" title="被动健康检查"></a>被动健康检查</h2><p>ngx_http_upstream_module，可以做到基本的健康检查。</p>
+<p>upstream指令块中的server子指令参数：max_fails、fail_timeout</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">upstream backend &#123;</span><br><span class="line">	server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">8080</span> weight=<span class="number">1</span> max_fails=<span class="number">2</span> fail_timeout=<span class="number">10</span>s;</span><br><span class="line">	server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">8081</span> weight=<span class="number">1</span> max_fails=<span class="number">2</span> fail_timeout=<span class="number">10</span>s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>max_fails&#x3D;2的意思是设定Nginx与服务器通信的尝试失败的次数。在fail_timeout参数定义的时间段内，如果失败的次数达到此值，Nginx就认为服务器不可用。在下一个fail_timeout时间段，服务器不会再被尝试。失败的尝试次数默认是1。设为0就会停止统计尝试次数，认为服务器是一直可用的。</p>
+<p>fail_timeout&#x3D;10s是设定服务器被认为不可用的时间段以及统计失败尝试次数的时间段。在这段时间中，服务器失败次数达到指定的尝试次数，服务器就被认为不可用。默认情况下，该超时时间是10秒。</p>
+<p>Nginx能不能主动感知服务不可用呢？</p>
+<h2 id="主动健康检查"><a href="#主动健康检查" class="headerlink" title="主动健康检查"></a>主动健康检查</h2><p>服务主动健康检查的Nginx插件，nginx_upstream_check_module</p>
+<p>nginx 需要添加nginx_upstream_check_module 模块，用于对后端服务器的健康情况检测，如果后端服务器不可用，则把这台服务器移除负载均衡轮循集群，所有的请求不往这台服务器上转发，待这台服务器恢复正常后，再把这台加入到负载均衡集群。</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">upstream cluster &#123;</span><br><span class="line">    <span class="comment"># simple round-robin</span></span><br><span class="line">    server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">8080</span>;</span><br><span class="line">    server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">8081</span>;</span><br><span class="line">    check interval=<span class="number">5000</span> rise=<span class="number">1</span> fall=<span class="number">3</span> timeout=<span class="number">4000</span>;</span><br><span class="line">    <span class="comment">#check_http_send &quot;HEAD / HTTP/1.0\r\n\r\n&quot;;</span></span><br><span class="line">    <span class="comment">#check_http_expect_alive http_2xx http_3xx;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>参考《Nginx实用插件》操作手册</p>
+<p>nginx_health_check.conf示例</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 简单指令以;结尾</span></span><br><span class="line">worker_processes  <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 大括号属于块指令</span></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># http属于主上下文</span></span><br><span class="line">http &#123;</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  text/html;</span><br><span class="line"></span><br><span class="line">    sendfile        on;</span><br><span class="line"></span><br><span class="line">    keepalive_timeout  <span class="number">65</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 设置与后端服务器建立连接的超时时间，一般不可能大于75秒</span></span><br><span class="line">    <span class="comment">#proxy_connect_timeout 60s;</span></span><br><span class="line">    <span class="comment">#proxy_read_timeout 1s;</span></span><br><span class="line">    <span class="comment">#proxy_send_timeout 5s;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 故障转移</span></span><br><span class="line">    <span class="comment">#proxy_next_upstream error timeout;</span></span><br><span class="line">    <span class="comment">#proxy_next_upstream_timeout 3s;</span></span><br><span class="line">    <span class="comment">#proxy_next_upstream_tries 1;</span></span><br><span class="line"></span><br><span class="line">    upstream backend &#123;</span><br><span class="line">        <span class="comment"># 被动健康检查</span></span><br><span class="line">        server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">8080</span> weight=<span class="number">1</span> max_fails=<span class="number">2</span> fail_timeout=<span class="number">10</span>s;</span><br><span class="line">        server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">8081</span> weight=<span class="number">1</span> max_fails=<span class="number">2</span> fail_timeout=<span class="number">10</span>s;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#check interval=5000 rise=1 fall=3 timeout=4000;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#check interval=3000 rise=2 fall=5 timeout=1000 type=ssl_hello;</span></span><br><span class="line"></span><br><span class="line">        check interval=<span class="number">3000</span> rise=<span class="number">2</span> fall=<span class="number">5</span> timeout=<span class="number">1000</span> type=http;</span><br><span class="line">        check_http_send <span class="string">&quot;HEAD / HTTP/1.0\r\n\r\n&quot;</span>;</span><br><span class="line">        check_http_expect_alive http_2xx http_3xx;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># server在http的上下文中 </span></span><br><span class="line">    server &#123;</span><br><span class="line">        <span class="keyword">listen</span> <span class="number">80</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># location在server上下文中</span></span><br><span class="line">        location / &#123;</span><br><span class="line">            proxy_pass http:<span class="regexp">//</span>backend;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        location /status &#123;</span><br><span class="line">            check_status;</span><br><span class="line">            access_log off;</span><br><span class="line">            allow all;</span><br><span class="line">            <span class="comment">#deny all;</span></span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="故障转移"><a href="#故障转移" class="headerlink" title="故障转移"></a>故障转移</h2><p><strong>ngx_http_proxy_module模块对故障转移的支持</strong></p>
+<p>proxy_next_upstream<br>在尚未向客户端发送任何内容的情况下才能将请求传递给下一个服务器。也就是说，如果在传输响应的过程中发生错误或超时，则无法进行故障转移。一个请求传递给下一个服务时，还可以通过限制重试次数、等待时间。</p>
+<p>proxy_next_upstream_timeout<br>限制请求可以传递到下一个服务器的时间。默认为0，表示关闭限制。</p>
+<p>proxy_next_upstream_tries<br>限制将请求传递到下一个服务器的可能尝试次数 。默认为0，表示关闭限制。</p>
+<p>nginx_next_upstream.conf示例</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 简单指令以;结尾</span></span><br><span class="line">worker_processes  <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 大括号属于块指令</span></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># http属于主上下文</span></span><br><span class="line">http &#123;</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  text/html;</span><br><span class="line"></span><br><span class="line">    sendfile        on;</span><br><span class="line"></span><br><span class="line">    keepalive_timeout  <span class="number">65</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 设置与后端服务器建立连接的超时时间，一般不可能大于75秒</span></span><br><span class="line">    <span class="comment">#proxy_connect_timeout 60s;</span></span><br><span class="line">    <span class="comment">#proxy_read_timeout 1s;</span></span><br><span class="line">    <span class="comment">#proxy_send_timeout 5s;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 故障转移</span></span><br><span class="line">    <span class="comment">#proxy_next_upstream error timeout;</span></span><br><span class="line">    <span class="comment">#proxy_next_upstream_timeout 3s;</span></span><br><span class="line">    <span class="comment">#proxy_next_upstream_tries 1;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    upstream backend &#123;</span><br><span class="line">        server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">8080</span>;</span><br><span class="line">        server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">8081</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># server在http的上下文中 </span></span><br><span class="line">    server &#123;</span><br><span class="line">        <span class="comment"># location在server上下文中</span></span><br><span class="line">        location / &#123;</span><br><span class="line">            proxy_pass http:<span class="regexp">//</span>backend;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="如何应对服务雪崩"><a href="#如何应对服务雪崩" class="headerlink" title="如何应对服务雪崩"></a>如何应对服务雪崩</h2><p>Nginx后面有2台上游服务，每台服务负载5000并发，假如第一台挂掉，Nginx将第一台的请求转发给第二台，将第二台打挂，整个服务都不可用了。如果是多台服务，就这样多米诺骨牌效应产生，将全部服务打挂？怎么处理？</p>
+<p>proxy_read_timeout<br>定义从代理服务器读取响应的超时。仅在两个连续的读操作之间设置超时，而不是为整个响应的传输。如果代理服务器在此时间内未传输任何内容，则关闭连接。默认60s。</p>
+<p>max_conns参数<br>设置upstream中server指令的max_conns参数来进行控制每台服务器能够处理的最大的连接数</p>
+<h2 id="动态更新上游服务"><a href="#动态更新上游服务" class="headerlink" title="动态更新上游服务"></a>动态更新上游服务</h2><p>后端服务发生变化，需要调整nginx的upstream列表，而且需要重启nginx，有一种插件可以无需重动nginx，动态更新后端服务地址列表。这个插件就是，ngx_http_dyups_module模块。</p>
+<p>安装演示操作，参考《Nginx实用插件》操作手册</p>
+<p>这个插件有个问题比较明显，因为数据存放在内存中，nginx 重启之后，配置内容就会清空。</p>
+<p>Nginx可以通过Consul+Consul-template来解决（需要Nginx reload）</p>
+<p>OpenResty可以通过balancer_by_lua+Consul来解决（无需Nginx reload）</p>
+<p>nginx_dyups_upstream.conf示例</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 简单指令以;结尾</span></span><br><span class="line">worker_processes  <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">worker_rlimit_nofile <span class="number">65535</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 大括号属于块指令</span></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">	include upstream.conf;</span><br><span class="line"></span><br><span class="line">	<span class="comment"># 默认主机</span></span><br><span class="line">	server &#123;</span><br><span class="line">		<span class="keyword">listen</span> <span class="number">80</span>;</span><br><span class="line">		location / &#123;</span><br><span class="line">			proxy_pass http:<span class="regexp">//s</span>erver8<span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment"># 动态配置 upstream 的接口站点</span></span><br><span class="line">	server &#123;</span><br><span class="line">		<span class="keyword">listen</span> <span class="number">81</span>;</span><br><span class="line">		location / &#123;</span><br><span class="line">			dyups_interface;	<span class="comment"># 这个指令表示这边是接口站点</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment"># upstream 后面的 realserver,2 台 801，,802</span></span><br><span class="line">	server &#123;</span><br><span class="line">		<span class="keyword">listen</span> <span class="number">801</span>;</span><br><span class="line">		location / &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">200</span> <span class="string">&quot;801&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	server &#123;</span><br><span class="line">		<span class="keyword">listen</span> <span class="number">802</span>;</span><br><span class="line">		location / &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">200</span> <span class="string">&quot;802&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="高并发限流"><a href="#高并发限流" class="headerlink" title="高并发限流"></a>高并发限流</h1><h2 id="限制请求"><a href="#限制请求" class="headerlink" title="限制请求"></a>限制请求</h2><p>Nginx中可以通过请求限制模块的指令来控制客户端的请求速率。使用“漏桶”算法，限制指定Key的请求处理速率，特别是从一个单一的IP地址的请求的处理速率。</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    limit_req_zone $binary_remote_addr zone=one:<span class="number">10</span>m rate=<span class="number">1</span>r/s;</span><br><span class="line">    limit_req_zone $server_name zone=preserver:<span class="number">10</span>m rate=<span class="number">10</span>r/s;</span><br><span class="line">    server &#123;</span><br><span class="line">        location /search/ &#123;</span><br><span class="line">            limit_req zone=one burst=<span class="number">5</span>;</span><br><span class="line">            limit_req zone=perserver burst=<span class="number">10</span>; </span><br><span class="line">        &#125;</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>示例，通过定义内存空间块：</p>
+<p>限制单个IP平均每秒允许不超过1个请求，突发不超过5个请求</p>
+<p>整个虚拟服务，平均每秒不允许超过10个，突发不超过10个请求</p>
+<h2 id="限制请求-相关指令"><a href="#限制请求-相关指令" class="headerlink" title="限制请求-相关指令"></a>限制请求-相关指令</h2><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>作用</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>limit_req</td>
+<td>设置共享内存区域和请求的最大突发大小。如果请求速率超过为区域配置的速率，则延迟其处理，以便以定义的速率处理请求。过多的请求被延迟，直到它们的数量超过最大突发大小，在这种情况下请求以错误终止 。</td>
+<td>-</td>
+</tr>
+<tr>
+<td>limit_req_dry_run</td>
+<td>启用空运行模式。这个模式下，请求处理速率不受限制，但是，在共享存储区中，过多请求的数量照常计算。</td>
+<td>on</td>
+</tr>
+<tr>
+<td>limit_req_log_level</td>
+<td>为服务器因速率超过或延迟请求处理而拒绝处理请求的情况设置所需的日志记录级别。延迟的记录水平比拒绝的记录水平低一个点;</td>
+<td>error</td>
+</tr>
+<tr>
+<td>limit_req_status</td>
+<td>设置要响应拒绝的请求而返回的状态代码</td>
+<td>503</td>
+</tr>
+<tr>
+<td>limit_req_zone</td>
+<td>设置共享内存区域的参数，该区域将保留各种键的状态。特别是，状态存储当前的过多请求数。该key可以包含文本，变量，他们的组合，空键值的请求不计算在内。</td>
+<td>-</td>
+</tr>
+</tbody></table>
+<h2 id="限制连接"><a href="#限制连接" class="headerlink" title="限制连接"></a>限制连接</h2><p>Nginx中通过ngx_http_limit_conn_module模块，来限制连接到nginx服务的数量。用于限制每个定义密钥的连接数，特别是来自单个IP地址的连接数。并非所有连接都被计算在内 只有当服务器正在处理请求并且已经读取了整个请求标头时，才会计算连接。</p>
+<p>示例，通过定义内存空间块：<br>限制单个IP建立不超过1个连接<br>整个虚拟服务，不允许超过10个连接</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    limit_conn_zone $binary_remote_addr zone=addr:<span class="number">10</span>m;</span><br><span class="line">    limit_conn_zone $server_name zone = perserver：<span class="number">10</span>m;</span><br><span class="line">        server &#123;</span><br><span class="line">            location /download/ &#123;</span><br><span class="line">                limit_conn addr <span class="number">1</span>;</span><br><span class="line">                limit_conn perserver <span class="number">100</span>;</span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="限制连接-相关指令"><a href="#限制连接-相关指令" class="headerlink" title="限制连接-相关指令"></a>限制连接-相关指令</h2><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>作用</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>limit_conn</td>
+<td>设置共享内存区域和给定键值的最大允许连接数。超过此限制时，服务器将返回 错误 以回复请求。</td>
+<td>-</td>
+</tr>
+<tr>
+<td>limit_conn_log_level</td>
+<td>为服务器限制连接数的情况设置所需的日志记录级别</td>
+<td>error</td>
+</tr>
+<tr>
+<td>limit_conn_status</td>
+<td>设置要响应拒绝的请求而返回的状态代码</td>
+<td>503</td>
+</tr>
+<tr>
+<td>limit_conn_zone</td>
+<td>设置共享内存区域的参数，该区域将保留各种键的状态。特别是，状态包括当前的连接数。该key可以包含文本，变量，他们的组合。具有空键值的请求不计算在内。</td>
+<td>-</td>
+</tr>
+</tbody></table>
+<h2 id="限制给客户端的响应速率"><a href="#限制给客户端的响应速率" class="headerlink" title="限制给客户端的响应速率"></a>限制给客户端的响应速率</h2><p>http核心模块中对响应速率限制提供了支持，视频网站，不可能将所有带宽都给一个请求，我们需要限制每个请求的速率</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    server &#123;</span><br><span class="line">        location /download/ &#123;</span><br><span class="line">            limit_rate_after <span class="number">500</span>k;</span><br><span class="line">            limit_rate <span class="number">50</span>k; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>示例，限制响应初始速率50k，后续响应速率限制在500k</p>
+<h2 id="针对爬虫限速"><a href="#针对爬虫限速" class="headerlink" title="针对爬虫限速"></a>针对爬虫限速</h2><p><strong>网络爬虫对网站的作用</strong><br>一方面可以给网站带来一定的流量，便于搜索引擎收录，利于用户搜素。<br>另一方面会给服务器带来一定的压力，在网络爬虫对网站内容进行收录时，会引起服务器负载高涨。<br>有没有什么方法既不阻止网络爬虫对网站内容进行收录，同时对其连接数和请求数进行一定的限制呢？</p>
+<p><strong>robots.txt 协议</strong></p>
+<p>robots.txt文件内容称为爬虫协议，搜索引擎会根据这个文件的内容，来确定它访问权限的范围。它不是命令要求，需要搜索引擎自觉遵守。<br>robots.txt 必须放置在一个站点的根目录下，而且文件名必须全部小写,一词不差。</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">robots.txt 写法：</span><br><span class="line">User-agent: * 这里的*代表的所有的搜索引擎种类，*是一个通配符</span><br><span class="line">Allow: <span class="regexp">/cgi-bin/</span> 这里定义是允许爬寻cgi-bin目录下面的目录</span><br><span class="line">Disallow: <span class="regexp">/admin/</span> 这里定义是禁止爬寻 admin 目录下面的内容</span><br><span class="line">Disallow: <span class="regexp">/require/</span> 这里定义是禁止爬寻 <span class="keyword">require</span> 目录下面的内容</span><br></pre></td></tr></table></figure>
+
+<h2 id="针对爬虫限速-Nginx配置"><a href="#针对爬虫限速-Nginx配置" class="headerlink" title="针对爬虫限速-Nginx配置"></a>针对爬虫限速-Nginx配置</h2><p>Map是nginx模块中用来映射变量的 根据每次请求$http_user_agent的内容进行子指令进行匹配，如果匹配成功，则将子指令右侧的值赋值给$agent变量。匹配不到则给默认值。示例中表示，根据客户端的操作系统浏览器工具等信息，匹配是否为curl、apachebench、spider、 bot、slurp也就是爬虫程序相关的名称，这里采用了原有内容作为$agent的值。</p>
+<p>Limit_conn_zone、limit_req_zone则采用$agent做为key来存储限制速率。</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">map</span> $http_user_agent $agent &#123;</span><br><span class="line">    default <span class="string">&quot;&quot;</span>;</span><br><span class="line">    ~curl $http_user_agent;</span><br><span class="line">    ~*apachebench $http_user_agent;</span><br><span class="line">    ~*spider $http_user_agent;</span><br><span class="line">    ~*bot $http_user_agent;</span><br><span class="line">    ~*slurp $http_user_agent;</span><br><span class="line">&#125;</span><br><span class="line">limit_conn_zone $agent zone=conn_ttlsa_com:<span class="number">10</span>m;</span><br><span class="line">limit_req_zone $agent zone=req_ttlsa_com:<span class="number">10</span>m rate=<span class="number">1</span>r/s;</span><br><span class="line">    location / &#123;</span><br><span class="line">        limit_req zone=conn_ttlsa_com burst=<span class="number">5</span>;</span><br><span class="line">        limit_conn req_ttlsa_com <span class="number">1</span>;</span><br><span class="line">        limit rate <span class="number">500</span>k;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>nginx_bot_limit.conf示例</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">	<span class="comment"># 根据每次请求的$http_user_agent，匹配map块中的左侧字符</span></span><br><span class="line">	<span class="comment"># 匹配到的字符串，则将右侧内容赋值给$agent变量</span></span><br><span class="line">	<span class="keyword">map</span> $http_user_agent $agent &#123;</span><br><span class="line">		default <span class="string">&quot;&quot;</span>;  <span class="comment"># 其他的都是爬虫程序身份，未匹配到的为&quot;&quot;</span></span><br><span class="line">		~curl $http_user_agent;</span><br><span class="line">		~*apachebench $http_user_agent;</span><br><span class="line">		~*spider $http_user_agent;</span><br><span class="line">		~*bot $http_user_agent;</span><br><span class="line">		~*slurp $http_user_agent;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment"># 根据每次匹配到的爬虫身份为key，定义它们的连接数、请求数</span></span><br><span class="line">	<span class="comment"># 不会为空值&quot;&quot;Key建立限制</span></span><br><span class="line">	limit_conn_zone $agent zone=conn_ttlsa_com:<span class="number">10</span>m;</span><br><span class="line">	limit_req_zone $agent zone=req_ttlsa_com:<span class="number">10</span>m rate=<span class="number">1</span>r/s;</span><br><span class="line"></span><br><span class="line">	server &#123;</span><br><span class="line">		<span class="keyword">listen</span> <span class="number">80</span>;</span><br><span class="line">		<span class="comment"># 目录下放置robots.txt文件</span></span><br><span class="line">		root /data/www/;</span><br><span class="line">		location / &#123;</span><br><span class="line">			<span class="comment"># 启用连接数、请求数的限制</span></span><br><span class="line">			limit_req zone=conn_ttlsa_com burst=<span class="number">5</span>;</span><br><span class="line">			limit_conn req_ttlsa_com <span class="number">1</span>;</span><br><span class="line">			limit_rate <span class="number">500</span>k;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="限流插件-限制客户端上传速率"><a href="#限流插件-限制客户端上传速率" class="headerlink" title="限流插件-限制客户端上传速率"></a>限流插件-限制客户端上传速率</h2><p>ngx_limit_upload_module是一个tengine模块，可以限制客户端发送请求主体时的上传速率。与标准的nginx limit_rate功能用法相同</p>
+<p>速率限制请求主体从客户端的传输。速率以每秒字节数指定。值0禁用速率限制。根据请求设置限制，因此如果客户端同时打开两个连接，则总速率将是指定限制的两倍。</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Syntax: limit_upload_rate rate;</span><br><span class="line">Default: limit_upload_rate <span class="number">0</span>;</span><br><span class="line">Context: http, server, location, <span class="keyword">if</span> in location</span><br></pre></td></tr></table></figure>
+
+<p>设置初始金额，在此之后，来自客户端的请求正文的进一步传输将受到速率限制。</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Syntax: limit_upload_rate_after size;</span><br><span class="line">Default: limit_upload_rate_after <span class="number">0</span>;</span><br><span class="line">Context: http, server, location, <span class="keyword">if</span> in location</span><br></pre></td></tr></table></figure>
+
+<p>nginx_limit.conf示例</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 简单指令以;结尾</span></span><br><span class="line">worker_processes  <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 大括号属于块指令</span></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line">http &#123;</span><br><span class="line">	<span class="comment"># 定义限流控制的使用空间及限制信息</span></span><br><span class="line">	<span class="comment"># 定义在http指令块中</span></span><br><span class="line">	<span class="comment"># 限制单个IP平均每秒允许不超过1个请求</span></span><br><span class="line">	limit_req_zone $binary_remote_addr zone=peraddr_req:<span class="number">10</span>m rate=<span class="number">1</span>r/s;</span><br><span class="line">	<span class="comment">#limit_req_zone $binary_remote_addr zone=peraddr_req:10m rate=10r/s;</span></span><br><span class="line">	<span class="comment"># 整个虚拟服务，平均每秒不允许超过10个</span></span><br><span class="line">	limit_req_zone $server_name zone=perserver_req:<span class="number">10</span>m rate=<span class="number">10</span>r/s;</span><br><span class="line">	<span class="comment">#limit_req_zone $server_name zone=perserver_req:10m rate=100r/s;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment"># 定义在http指令块中</span></span><br><span class="line">	<span class="comment"># 限制客户端连接数的空间申请</span></span><br><span class="line">	limit_conn_zone $binary_remote_addr zone=peraddr_conn:<span class="number">10</span>m;</span><br><span class="line">    limit_conn_zone $server_name zone=perserver_conn:<span class="number">10</span>m;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 限制给客户端的响应速率，初始50k，后续500k</span></span><br><span class="line">    <span class="comment"># 可以放在http, server, location, if in location指令块中</span></span><br><span class="line">    <span class="comment">#limit_rate       50k;</span></span><br><span class="line">    limit_rate       <span class="number">0</span>;</span><br><span class="line">    <span class="comment">#limit_rate_after 500k;</span></span><br><span class="line">    limit_rate_after <span class="number">500</span>k;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 由淘宝提供，需要limit_upload_rate的支持。</span></span><br><span class="line">    <span class="comment"># 限制客户端上传速率，跟limit_rate用法类似</span></span><br><span class="line">    <span class="comment"># 可以放在http, server, location, if in location指令块中</span></span><br><span class="line">    <span class="comment">#limit_upload_rate 5k;</span></span><br><span class="line">    limit_upload_rate <span class="number">50</span>k;</span><br><span class="line">    <span class="comment">#limit_upload_rate_after 50k;</span></span><br><span class="line">    limit_upload_rate_after <span class="number">500</span>k;</span><br><span class="line"></span><br><span class="line">    upstream tomcatServer &#123;</span><br><span class="line">		server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">8080</span>;</span><br><span class="line">		server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">8081</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	server &#123;</span><br><span class="line">		<span class="keyword">listen</span> <span class="number">80</span>;</span><br><span class="line">		root /data/www/;</span><br><span class="line">		server_name hash.com;</span><br><span class="line"></span><br><span class="line">		location / &#123;</span><br><span class="line">			<span class="comment"># 限制单个IP平均每秒允许不超过1个请求，突发不超过5个请求</span></span><br><span class="line">			limit_req zone=peraddr_req burst=<span class="number">5</span>;</span><br><span class="line">			<span class="comment">#limit_req zone=peraddr_req burst=50;</span></span><br><span class="line">			<span class="comment"># 整个虚拟服务，平均每秒不允许超过10个，突发不超过10个请求</span></span><br><span class="line">			limit_req zone=perserver_req burst=<span class="number">10</span>;</span><br><span class="line">			<span class="comment">#limit_req zone=perserver_req burst=100;</span></span><br><span class="line"></span><br><span class="line">			<span class="comment"># 限制单个IP建立不超过1个连接</span></span><br><span class="line">			<span class="comment"># 整个虚拟服务，不允许超过100个连接</span></span><br><span class="line">			limit_conn peraddr_conn <span class="number">1</span>;</span><br><span class="line">			<span class="comment">#limit_conn peraddr_conn 10;</span></span><br><span class="line">			limit_conn perserver_conn <span class="number">100</span>;</span><br><span class="line">			<span class="comment">#limit_conn perserver_conn 1000;</span></span><br><span class="line"></span><br><span class="line">			proxy_pass http:<span class="regexp">//</span>tomcatServer;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="黑白名单插件"><a href="#黑白名单插件" class="headerlink" title="黑白名单插件"></a>黑白名单插件</h1><h2 id="Nginx的访问模块"><a href="#Nginx的访问模块" class="headerlink" title="Nginx的访问模块"></a>Nginx的访问模块</h2><p>ngx_http_access_module模块，提供允许、拒绝指令来控制客户端能否访问服务。</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    deny <span class="number">192.168</span>.<span class="number">1.1</span>;</span><br><span class="line">    allow <span class="number">192.168</span>.<span class="number">1.0</span>/<span class="number">24</span>;</span><br><span class="line">    allow <span class="number">10.1</span>.<span class="number">1.0</span>/<span class="number">16</span>;</span><br><span class="line">    allow <span class="number">2001</span>:0db8::/<span class="number">32</span>;</span><br><span class="line">    deny all;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>allow，允许某个ip或者一个 ip 段访问<br>deny，禁止某个ip或者一个 ip 段访问</p>
+<h2 id="黑白名单插件-1"><a href="#黑白名单插件-1" class="headerlink" title="黑白名单插件"></a>黑白名单插件</h2><p>nginx_white_black_list可以根据定义的黑白名单配置文件来进行控制客户端能否访问服务。</p>
+<p>处在黑名单中的 ip 与网络，将无法访问 web 服务。</p>
+<p>处在白名单中的 ip，访问 web 服务时，将不受 nginx 所有安全模块的限制。</p>
+<p>支持动态黑名单（需要与 ngx_http_limit_req 配合）</p>
+<p>nginx_white_black_list.conf示例</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 简单指令以;结尾</span></span><br><span class="line">worker_processes  <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 大括号属于块指令</span></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">	<span class="comment"># 定义 黑名单或白名单文件 空间key</span></span><br><span class="line">	<span class="comment"># 只能在http指令块中</span></span><br><span class="line">	<span class="comment"># white_black_list_conf可以配置多个 只需 zone=value 其中的value不同就可</span></span><br><span class="line">	white_black_list_conf white.list zone=white:<span class="number">2</span>m;</span><br><span class="line">	white_black_list_conf black.list zone=black:<span class="number">4</span>m;</span><br><span class="line"></span><br><span class="line">	<span class="comment"># 启用黑白名单，on/off，启用/关闭。</span></span><br><span class="line">	<span class="comment"># 在http、server、location下使用, 功能默认是关闭</span></span><br><span class="line">	<span class="comment"># 配置在对应的指令块中，对应的指令块上下文生效</span></span><br><span class="line">	white_list white on; <span class="comment">#白名单  white 在整个http&#123;&#125;中都开启</span></span><br><span class="line">	black_list black on; <span class="comment">#黑名单  black 在整个http&#123;&#125;中都开启</span></span><br><span class="line"></span><br><span class="line">	server &#123;</span><br><span class="line">		<span class="keyword">listen</span> <span class="number">80</span>;</span><br><span class="line">		root /data/www/;</span><br><span class="line"></span><br><span class="line">		location / &#123;</span><br><span class="line">			root   /data/www/;</span><br><span class="line">            <span class="keyword">index</span>  welcome.html;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment"># 黑白名单配置调整接口，通过它可以调整配置内容</span></span><br><span class="line">		<span class="comment">#location /sec_config &#123;</span></span><br><span class="line">		<span class="comment">#	sec_config on;</span></span><br><span class="line">		<span class="comment">#&#125;</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="更多常用插件"><a href="#更多常用插件" class="headerlink" title="更多常用插件"></a>更多常用插件</h1><p>参考官网wiki：<a target="_blank" rel="noopener" href="https://www.nginx.com/resources/wiki/modules/">https://www.nginx.com/resources/wiki/modules/</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/16-Nginx/06-00-Nginx%E5%B8%B8%E7%94%A8%E6%8F%92%E4%BB%B6/" data-id="clmcxeccn002yu8wabspof2yk" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/16-Nginx/06-01-Nginx%E5%B8%B8%E7%94%A8%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/16-Nginx/05-Nginx%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="集群规划我们需要多大规模的集群？当前的数据量有多大？数据增长情况如何？ 你的机器配置如何？cpu、多大内存、多大硬盘容量？  推算的依据：ES JVM heap 最大 32G. 30G heap 大概能处理的数据量 10 T。如果内存很大如128G， 可在一台机器上运行多个(2~3个)ES节点实例。 集群中的节点角色如何分配？节点角色： 一个节点可以有多个角色，根据下面介绍的配置参数指定  Mas">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/17-%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/05-ES%E9%AB%98%E6%80%A7%E8%83%BD%E9%9B%86%E7%BE%A4/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="集群规划我们需要多大规模的集群？当前的数据量有多大？数据增长情况如何？ 你的机器配置如何？cpu、多大内存、多大硬盘容量？  推算的依据：ES JVM heap 最大 32G. 30G heap 大概能处理的数据量 10 T。如果内存很大如128G， 可在一台机器上运行多个(2~3个)ES节点实例。 集群中的节点角色如何分配？节点角色： 一个节点可以有多个角色，根据下面介绍的配置参数指定  Mas">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230118103757.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230118105526.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230118105619.png">
+<meta property="article:published_time" content="2023-09-10T03:59:07.902Z">
+<meta property="article:modified_time" content="2023-01-18T03:05:14.330Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230118103757.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-17-搜索引擎/05-ES高性能集群" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/17-%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/05-ES%E9%AB%98%E6%80%A7%E8%83%BD%E9%9B%86%E7%BE%A4/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:07.902Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="集群规划"><a href="#集群规划" class="headerlink" title="集群规划"></a>集群规划</h1><h2 id="我们需要多大规模的集群？"><a href="#我们需要多大规模的集群？" class="headerlink" title="我们需要多大规模的集群？"></a>我们需要多大规模的集群？</h2><p>当前的数据量有多大？数据增长情况如何？</p>
+<p>你的机器配置如何？cpu、多大内存、多大硬盘容量？ </p>
+<p><strong>推算的依据：</strong>ES JVM heap 最大 32G. 30G heap 大概能处理的数据量 10 T。如果内存很大如128G， 可在一台机器上运行多个(2~3个)ES节点实例。</p>
+<h2 id="集群中的节点角色如何分配？"><a href="#集群中的节点角色如何分配？" class="headerlink" title="集群中的节点角色如何分配？"></a>集群中的节点角色如何分配？</h2><p><strong>节点角色：</strong></p>
+<p>一个节点可以有多个角色，根据下面介绍的配置参数指定</p>
+<ul>
+<li>Master Node：设置node.master: true时，节点可作为主节点。负责存储集群元信息，例如每个节点ip、是否有资格成为master等</li>
+<li>DataNode Node：设置node.data: true时，可作为数据节点，默认值为true。负责存储具体的索引数据。</li>
+<li>Coordinate Node：将上两个配置设为false时，仅担任协调节点。负责接收请求，并将请求解析去多个DataNode查询数据，并将查询结果进行整理响应客户端。</li>
+</ul>
+<p><strong>如何分配：</strong></p>
+<ul>
+<li><strong>小规模集群</strong>：不需严格区分。 </li>
+<li><strong>中大规模集群（十个以上节点）</strong>：应考虑单独的角色充当。特别并发查询量大，查询的 合并量大，可以增加独立的协调节点。角色分开的好处是分工分开，不互影响。如不会 因协调角色负载过高而影响数据节点的能力。</li>
+</ul>
+<h2 id="如何避免脑裂问题？"><a href="#如何避免脑裂问题？" class="headerlink" title="如何避免脑裂问题？"></a>如何避免脑裂问题？</h2><p>为尽量避免脑裂， 可配置：discovery.zen.minimum_master_nodes: (有master资格节点数&#x2F;2) + 1，该配置含义为一个节点只有与n个有master资格节点通信正常才能成为master或者进行master选举。</p>
+<p>常用做法（中大规模集群）：</p>
+<ol>
+<li>Master 和 dataNode 角色分开，配置奇数个master，如3 </li>
+<li>配置选举发现数，及延长ping master的等待时长</li>
+</ol>
+<p>discovery.zen.ping_timeout: 30（默认值是3秒） </p>
+<h2 id="索引应该设置多少个分片？"><a href="#索引应该设置多少个分片？" class="headerlink" title="索引应该设置多少个分片？"></a>索引应该设置多少个分片？</h2><ol>
+<li><p>分片对应的存储实体是什么 ？ </p>
+<p>lucene索引</p>
+</li>
+<li><p>分片是不是越多越好，分片过多有什么影响 ？ </p>
+<p>不是，分片过多会<strong>占用文件句柄、内存、cpu、磁盘</strong></p>
+<p>每个请求都会调用到对应的分片机器上，如果机器很少，数据很小，分片很多，例如2个机器，12个分片，一个请求需要检索多个分片导致<strong>响应速度过慢</strong></p>
+<p>相关性得分根据词频统计得出，词频统计并不是根据全局词频计算，而是基于当前分片计算相关性得分，因为全局词频计算性能消耗会很大。如果分片过多，反映全局词频相<strong>关性得分就会偏差更大</strong>。</p>
+</li>
+</ol>
+<p>分片设置的可参考原则： </p>
+<ul>
+<li>ElasticSearch推荐的最大JVM堆空间是30~32G, 所以把你的分片最大容量限制为30GB, 然后再对分片数量做合理估算. 例如, 你认为你的数据能达到200GB, 推荐你最多分配 7到8个分片。</li>
+<li>在开始阶段, 一个好的方案是根据你的节点数量按照1.5~3倍的原则来创建分片. 例如, 如果你有3个节点, 则推荐你创建的分片数最多不超过9(3x3)个。当性能下降时，增加 节点，ES会平衡分片的放置。</li>
+<li>对于基于日期的索引需求, 并且对索引数据的搜索场景非常少. 也许这些索引量将达 到成百上千, 但每个索引的数据量只有1GB甚至更小. 对于这种类似场景, 建议只需要 为索引分配1个分片</li>
+</ul>
+<h2 id="分片应该设置几个副本？"><a href="#分片应该设置几个副本？" class="headerlink" title="分片应该设置几个副本？"></a>分片应该设置几个副本？</h2><ol>
+<li><p>副本的用途是什么？ </p>
+<p>提高数据可用性、查询性能 </p>
+</li>
+<li><p>集群规模没变的情况下副本过多会有什么影响？</p>
+<p>占用文件句柄、内存、cpu、磁盘、写性能下降</p>
+</li>
+</ol>
+<p>基本原则： </p>
+<ol>
+<li>为保证高可用，副本数设置为2即可。要求集群至少要有3个节点，来分开存放主分片、副本。 </li>
+<li>如发现并发量大时，查询性能会下降，可增加副本数，来提升并发查询能力。</li>
+</ol>
+<h1 id="ES集群架构"><a href="#ES集群架构" class="headerlink" title="ES集群架构"></a>ES集群架构</h1><h2 id="集群组成"><a href="#集群组成" class="headerlink" title="集群组成"></a>集群组成</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230118103757.png"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">默认端口为9200</span><br><span class="line">discovery.zen.ping.unicast.hosts: [“10.0.1.11<span class="string">&quot;,“10.0.1.12&quot;</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">discovery.zen.ping.unicast.hosts: [“10.0.1.11:9200<span class="string">&quot;,“10.0.1.12:9200&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="集群配置"><a href="#集群配置" class="headerlink" title="集群配置"></a>集群配置</h2><p>前提：已安装好单节点es，可以参考前面的《ES安装文档》文章</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">vi elasticsearch.yml</span><br><span class="line"><span class="comment"># 修改或添加如下配置，值为集群节点ip，端口默认为9200，可以不指定</span></span><br><span class="line">discovery.zen.ping.unicast.hosts: [<span class="string">&quot;192.168.90.131:9200&quot;</span>,<span class="string">&quot;192.168.90.132:9200&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 拷贝当前机器es文件到另一个节点</span></span><br><span class="line">scp -r elasticsearch-6.5.3 192.168.90.132:`<span class="built_in">pwd</span>`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 操作192.168.90.132节点</span></span><br><span class="line"><span class="comment"># 进入到data目录下，删除所有内容</span></span><br><span class="line"><span class="built_in">rm</span> -rf *</span><br><span class="line"><span class="comment"># 修改node.name，不能与其它节点重名，cluster.name一个集群内保持一致</span></span><br><span class="line">node.name: node-2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动所有 es 节点</span></span><br><span class="line">bin/elasticsearch</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证集群是否配置成功，访问下面地址，成功会返回集群内所有node.name信息</span></span><br><span class="line">http://192.168.90.131:9200/_cat/nodes</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="集群监控"><a href="#集群监控" class="headerlink" title="集群监控"></a>集群监控</h1><h2 id="监控API"><a href="#监控API" class="headerlink" title="监控API"></a>监控API</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看监控都有哪些api</span></span><br><span class="line">GET /_cat</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看索引的信息</span></span><br><span class="line">GET /_cat/indices</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看节点信息</span></span><br><span class="line">GET /_cat/nodes</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/_cat </span><br><span class="line">/_cat/health </span><br><span class="line">/_cat/nodes </span><br><span class="line">/_cat/master </span><br><span class="line">/_cat/indices </span><br><span class="line">/_cat/allocation</span><br><span class="line">/_cat/shards </span><br><span class="line">/_cat/shards/&#123;index&#125;</span><br><span class="line">/_cat/thread_pool </span><br><span class="line">/_cat/segments </span><br><span class="line">/_cat/segments/&#123;index&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="x-pack"><a href="#x-pack" class="headerlink" title="x-pack"></a>x-pack</h1><p>为集群提供安全防护、监控、告警、报告等功能的收费组件； </p>
+<p>6.3开始已开源，并入了elasticsearch核心中。</p>
+<p>注意：使用xpack进行本地验证时使用单节点es更方便</p>
+<h2 id="开始xpack"><a href="#开始xpack" class="headerlink" title="开始xpack"></a>开始xpack</h2><h3 id="开启试用"><a href="#开启试用" class="headerlink" title="开启试用"></a>开启试用</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 kibana 执行下面命令，让 kibana 知道 es 开启安全防护，kibana 在访问 es 时需要弹出登录的 ui</span></span><br><span class="line">POST /_xpack/license/start_trial?acknowledge=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="es开启security"><a href="#es开启security" class="headerlink" title="es开启security"></a>es开启security</h3><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">vi</span> <span class="string">elasticsearch.yml</span></span><br><span class="line"><span class="comment"># 添加如下配置</span></span><br><span class="line"><span class="attr">xpack.security.enabled</span>: <span class="string">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="设置内置用户密码"><a href="#设置内置用户密码" class="headerlink" title="设置内置用户密码"></a>设置内置用户密码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置内置用户密码</span></span><br><span class="line">bin/elasticsearch-setup-passwords interactive</span><br><span class="line"></span><br><span class="line">如下用户，密码方便记忆可以与用户名一致</span><br><span class="line">elastic</span><br><span class="line">apm_system</span><br><span class="line">kibana</span><br><span class="line">logstash_system</span><br><span class="line">beats_system</span><br><span class="line">remote_monitoring_user</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置kibana访问ES"><a href="#配置kibana访问ES" class="headerlink" title="配置kibana访问ES"></a>配置kibana访问ES</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改 kibana 配置文件，在文件末尾加上下面内容</span></span><br><span class="line">vi kibana.yml</span><br><span class="line"><span class="comment"># 指定kibana访问es使用的用户名和密码</span></span><br><span class="line">elasticsearch.username: <span class="string">&quot;elastic&quot;</span></span><br><span class="line">elasticsearch.password: <span class="string">&quot;elastic&quot;</span></span><br><span class="line">xpack.security.enabled: <span class="literal">true</span></span><br><span class="line">xpack.security.encryptionKey: <span class="string">&quot;4297f44b13955235245b2497399d7a93&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>重启kibana，重新登陆kibana后，你会看到如下登录界面</p>
+<h3 id="启用-禁用x-pack中的特性"><a href="#启用-禁用x-pack中的特性" class="headerlink" title="启用&#x2F;禁用x-pack中的特性"></a>启用&#x2F;禁用x-pack中的特性</h3><p>默认情况下xpack中的各种特性都是开启的. 你可以通过在elasticsearch.yml、kibana.yml、logstash.yml中配置来开启或关闭他们。</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>xpack.graph.enabled</td>
+<td>Set to false to disable X-Pack graph features.</td>
+</tr>
+<tr>
+<td>xpack.ml.enabled</td>
+<td>Set to false to disable X-Pack machine learning features.</td>
+</tr>
+<tr>
+<td>xpack.monitoring.enabled</td>
+<td>Set to false to disable X-Pack monitoring features.</td>
+</tr>
+<tr>
+<td>xpack.reporting.enabled</td>
+<td>Set to false to disable X-Pack reporting features.</td>
+</tr>
+<tr>
+<td>xpack.security.enabled</td>
+<td>Set to false to disable X-Pack security features.</td>
+</tr>
+<tr>
+<td>xpack.watcher.enabled</td>
+<td>Set to false to disable Watcher.</td>
+</tr>
+</tbody></table>
+<h2 id="Security"><a href="#Security" class="headerlink" title="Security"></a>Security</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>x-pack security 组件从下面三个方面为 ES stack 提供安全防护。</p>
+<ul>
+<li><a href="#preventing-unauthorized-access">Preventing unauthorized access</a> with password protection, role-based access control, and IP filtering. </li>
+<li><a href="#preserving-data-integrity">Preserving the integrity of your data</a> with message authentication and SSL&#x2F;TLS encryption. </li>
+<li><a href="#maintaining-audit-trail">Maintaining an audit trail</a> so you know who’s doing what to your cluster and the data it stores.</li>
+</ul>
+<h3 id="支持从多个安全数据源获取用户数据"><a href="#支持从多个安全数据源获取用户数据" class="headerlink" title="支持从多个安全数据源获取用户数据"></a>支持从多个安全数据源获取用户数据</h3><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>native</td>
+<td>An internal realm where users are stored in a dedicated Elasticsearch index. With this realm, users are authenticated by usernames and passwords. The users are managed via the <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/6.2/security-api-users.html">User Management API</a>.</td>
+</tr>
+<tr>
+<td>ldap</td>
+<td>A realm that uses an external LDAP server to authenticate the users. With this realm, users are authenticated by usernames and passwords.</td>
+</tr>
+<tr>
+<td>active_directory</td>
+<td>A realm that uses an external Active Directory Server to authenticate the users. With this realm, users are authenticated by usernames and passwords.</td>
+</tr>
+<tr>
+<td>pki</td>
+<td>A realm that authenticates users using Public Key Infrastructure (PKI). This realm works in conjunction with SSL&#x2F;TLS and identifies the users through the Distinguished Name (DN) of the client’s X.509 certificates.</td>
+</tr>
+<tr>
+<td>file</td>
+<td>An internal realm where users are defined in files stored on each node in the Elasticsearch cluster. With this realm, users are authenticated by usernames and passwords. The users are managed via dedicated tools that are provided by X-Pack on installation.</td>
+</tr>
+<tr>
+<td>saml</td>
+<td>A realm that uses SAML 2.0 Web SSO. This realm is designed to be used with Kibana.</td>
+</tr>
+</tbody></table>
+<h3 id="内建用户"><a href="#内建用户" class="headerlink" title="内建用户"></a>内建用户</h3><p>elastic<br>    A built-in <strong>superuser</strong>. See <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/x-pack/current/built-in-roles.html">Built-in Roles</a>. </p>
+<p>kibana<br>    The user Kibana uses to connect and communicate with Elasticsearch. </p>
+<p>logstash_system<br>    The user Logstash uses when storing monitoring information in Elasticsearch. </p>
+<h3 id="内建角色"><a href="#内建角色" class="headerlink" title="内建角色"></a>内建角色</h3><p><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/x-pack/6.2/built-in-roles.html">https://www.elastic.co/guide/en/x-pack/6.2/built-in-roles.html</a></p>
+<h3 id="多种方式进行用户管理"><a href="#多种方式进行用户管理" class="headerlink" title="多种方式进行用户管理"></a>多种方式进行用户管理</h3><h4 id="Rest-API"><a href="#Rest-API" class="headerlink" title="Rest API"></a>Rest API</h4><p><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/6.2/security-api-users.html">https://www.elastic.co/guide/en/elasticsearch/reference/6.2/security-api-users.html</a></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET /_xpack/security/user</span><br><span class="line">GET /_xpack/security/user/&lt;username&gt;</span><br><span class="line">DELETE /_xpack/security/user/&lt;username&gt;</span><br><span class="line">POST /_xpack/security/user/&lt;username&gt;</span><br><span class="line">PUT /_xpack/security/user/&lt;username&gt;</span><br><span class="line">PUT /_xpack/security/user/&lt;username&gt;/_disable</span><br><span class="line">PUT /_xpack/security/user/&lt;username&gt;/_enable</span><br><span class="line">PUT /_xpack/security/user/&lt;username&gt;/_password</span><br></pre></td></tr></table></figure>
+
+<h4 id="Kibana-Management"><a href="#Kibana-Management" class="headerlink" title="Kibana Management"></a>Kibana Management</h4><p>用有系统管理权限的用户（如 elastic）登录kibana，在 management菜单中进行用户、角色管理。</p>
+<h2 id="Monitor"><a href="#Monitor" class="headerlink" title="Monitor"></a>Monitor</h2><h3 id="Monitor简介"><a href="#Monitor简介" class="headerlink" title="Monitor简介"></a>Monitor简介</h3><p>监控从ES nodes、lostash nodes、kibana实例 收集数据，被监控的ES集群可以决定整个技术栈的监控日志存在什么地方，默认情况下，会存在被监控的ES集群中。但ES官方强烈建议，在生产环境试用Monitoring时，要将监控数据放到一个单独的ES集群。</p>
+<p>1、可以避免生产问题导致监控系统失效<br>2、也能防止监控系统影响生产程序的性能。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230118105526.png"></p>
+<h3 id="开启monitor"><a href="#开启monitor" class="headerlink" title="开启monitor"></a>开启monitor</h3><p>1、在es中配置  xpack.monitoring.collection.enabled: true</p>
+<p>2、打开监控界面</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230118105619.png"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/17-%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/05-ES%E9%AB%98%E6%80%A7%E8%83%BD%E9%9B%86%E7%BE%A4/" data-id="clmcxeceo003lu8wa1159fjn0" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/17-%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/06-00-ELK/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/17-%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/04-%E6%9F%A5%E8%AF%A2%E5%BB%BA%E8%AE%AE%E4%BB%A5%E5%8F%8A%E8%81%9A%E5%90%88%E5%88%86%E6%9E%90/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

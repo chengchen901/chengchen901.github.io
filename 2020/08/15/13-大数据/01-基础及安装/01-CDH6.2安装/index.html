@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>CDH6.2安装 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="CDH集群搭建[6.2.0版本]大数据集群搭建方式选择逐个安装大数据组件：  优点：灵活，深入各组件安装细节 缺点：繁琐，无统一监控、管理工具  使用CDH，Ambari管理工具安装：  优点：一站式安装大部分组件，提供监控、管理功能 缺点：需要更多的资源，安装过程有一定复杂性  建议：机器资源足够则使用CDH方式，否则使用逐个安装方式 什么是CDH？全称：Cloudera’s Distribut">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CDH6.2安装">
+<meta property="og:url" content="http://example.com/2020/08/15/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/01-CDH6.2%E5%AE%89%E8%A3%85/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="CDH集群搭建[6.2.0版本]大数据集群搭建方式选择逐个安装大数据组件：  优点：灵活，深入各组件安装细节 缺点：繁琐，无统一监控、管理工具  使用CDH，Ambari管理工具安装：  优点：一站式安装大部分组件，提供监控、管理功能 缺点：需要更多的资源，安装过程有一定复杂性  建议：机器资源足够则使用CDH方式，否则使用逐个安装方式 什么是CDH？全称：Cloudera’s Distribut">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107112003.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107112119.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107112751.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107171429.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107172933.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107172945.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107173104.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107173310.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107173420.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107173608.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107174313.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107174337.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2022-09-25T14:40:23.289Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="CDH">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107112003.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-13-大数据/01-基础及安装/01-CDH6.2安装" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/01-CDH6.2%E5%AE%89%E8%A3%85/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      CDH6.2安装
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="CDH集群搭建-6-2-0版本"><a href="#CDH集群搭建-6-2-0版本" class="headerlink" title="CDH集群搭建[6.2.0版本]"></a>CDH集群搭建[6.2.0版本]</h1><h2 id="大数据集群搭建方式选择"><a href="#大数据集群搭建方式选择" class="headerlink" title="大数据集群搭建方式选择"></a>大数据集群搭建方式选择</h2><p><strong>逐个安装大数据组件：</strong></p>
+<ul>
+<li>优点：灵活，深入各组件安装细节</li>
+<li>缺点：繁琐，无统一监控、管理工具</li>
+</ul>
+<p><strong>使用CDH，Ambari管理工具安装：</strong></p>
+<ul>
+<li>优点：一站式安装大部分组件，提供监控、管理功能</li>
+<li>缺点：需要更多的资源，安装过程有一定复杂性</li>
+</ul>
+<p><strong>建议：</strong>机器资源足够则使用CDH方式，否则使用逐个安装方式</p>
+<h2 id="什么是CDH？"><a href="#什么是CDH？" class="headerlink" title="什么是CDH？"></a>什么是CDH？</h2><p>全称：Cloudera’s Distribution Including Apache Hadoop，Cloudera 公司的Hadoop版本，包含大数据组件和监控管理工具（Cloudera Manager)两部分</p>
+<h2 id="Cloudera-Manger-架构"><a href="#Cloudera-Manger-架构" class="headerlink" title="Cloudera Manger 架构"></a>Cloudera Manger 架构</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107112003.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107112119.png"></p>
+<h2 id="CDH-6-2-0-组件版本"><a href="#CDH-6-2-0-组件版本" class="headerlink" title="CDH 6.2.0 组件版本"></a>CDH 6.2.0 组件版本</h2><table>
+<thead>
+<tr>
+<th>组件名</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Apache Hadoop</td>
+<td>3.0.0</td>
+</tr>
+<tr>
+<td>Apache HBase</td>
+<td>2.1.2</td>
+</tr>
+<tr>
+<td>Apache Hive</td>
+<td>2.1.1</td>
+</tr>
+<tr>
+<td>Hue</td>
+<td>4.3.0</td>
+</tr>
+<tr>
+<td>Apache Impala</td>
+<td>3.2.0</td>
+</tr>
+<tr>
+<td>Apache Kafka</td>
+<td>2.1.0</td>
+</tr>
+<tr>
+<td>Apache Spark</td>
+<td>2.4.0</td>
+</tr>
+<tr>
+<td>Apache Sqoop</td>
+<td>1.4.7</td>
+</tr>
+<tr>
+<td>Apache ZooKeeper</td>
+<td>3.4.5</td>
+</tr>
+</tbody></table>
+<p>完整参考：<a target="_blank" rel="noopener" href="https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_cdh_62_packaging.html#cdh_packaging_60x">https://docs.cloudera.com/documentation/enterprise/6/release-notes/topics/rg_cdh_62_packaging.html#cdh_packaging_60x</a></p>
+<h2 id="安装环境"><a href="#安装环境" class="headerlink" title="安装环境"></a>安装环境</h2><ul>
+<li>操作系统：centos 7 64位</li>
+<li>CDH：6.2.0</li>
+<li>JDK：1.8</li>
+</ul>
+<p><strong>机器资源</strong></p>
+<p>内存：主机在20G以上，可以搭建三台虚拟机，其中master内存在8G以上，slave内存在4G以上</p>
+<p>硬盘：每个虚机的硬盘空间100G+ </p>
+<p><strong>集群结构</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107112751.png"></p>
+<p><strong>需下载的安装包（均可从网盘下载）</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>安装包</strong></th>
+<th><strong>下载地址</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>virtualbox：虚拟机</td>
+<td><a target="_blank" rel="noopener" href="https://www.virtualbox.org/wiki/Downloads">https://www.virtualbox.org/wiki/Downloads</a></td>
+</tr>
+<tr>
+<td>centos镜像</td>
+<td><a target="_blank" rel="noopener" href="http://vault.centos.org/6.8/isos/x86_64/">http://vault.centos.org/6.8/isos/x86_64/</a></td>
+</tr>
+<tr>
+<td>parcel：所有大数据组件，以二进制方式打包在一个文件中</td>
+<td>网盘下载</td>
+</tr>
+<tr>
+<td>Clouder Manager相关文件</td>
+<td>网盘下载</td>
+</tr>
+</tbody></table>
+<p>链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1wcxyyydj632rsgEIlwT8hg">https://pan.baidu.com/s/1wcxyyydj632rsgEIlwT8hg</a><br>提取码：tzm3																																																											</p>
+<h1 id="虚拟机设置"><a href="#虚拟机设置" class="headerlink" title="虚拟机设置"></a>虚拟机设置</h1><p>以下步骤如未特别说明，均需在<strong>所有节点</strong>操作</p>
+<h2 id="Step1-安装虚拟机"><a href="#Step1-安装虚拟机" class="headerlink" title="Step1: 安装虚拟机"></a>Step1: 安装虚拟机</h2><p>建议：安装设置好一台后通过导入导出功能复制其他两台</p>
+<h2 id="Step2-设置网络"><a href="#Step2-设置网络" class="headerlink" title="Step2: 设置网络"></a>Step2: 设置网络</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107171429.png"></p>
+<p>设置参考：《 VirtualBox配置Centos7固定IP和外网访问.pdf 》</p>
+<h2 id="Step3-设置hosts-后续操作均以root用户执行"><a href="#Step3-设置hosts-后续操作均以root用户执行" class="headerlink" title="Step3:设置hosts(后续操作均以root用户执行)"></a>Step3:设置hosts(后续操作均以root用户执行)</h2><ol>
+<li><p>确定各节点hostname 正确设置：</p>
+<p>vi &#x2F;etc&#x2F;hostname</p>
+</li>
+<li><p>设置hosts：</p>
+<p>vi &#x2F;etc&#x2F;hosts<br>192.168.31.110 master<br>192.168.31.111 slave01<br>192.168.31.112 slave02</p>
+</li>
+</ol>
+<h2 id="Step4-关闭SELinux及防火墙"><a href="#Step4-关闭SELinux及防火墙" class="headerlink" title="Step4:关闭SELinux及防火墙"></a>Step4:关闭SELinux及防火墙</h2><ol>
+<li>关闭SELinux:<br>vi &#x2F;etc&#x2F;selinux&#x2F;config，修改如下：<br>SELINUX&#x3D;disabled</li>
+<li>关闭防火墙：<br>systemctl stop firewalld<br>systemctl disable firewalld</li>
+</ol>
+<h2 id="Step5-设置ssh免密登录"><a href="#Step5-设置ssh免密登录" class="headerlink" title="Step5: 设置ssh免密登录"></a>Step5: 设置ssh免密登录</h2><ol>
+<li>生成密钥：<br>ssh-keygen -t rsa（默认位于 ~&#x2F;.ssh&#x2F;）</li>
+<li>拷贝公钥到所有机器：<br>ssh-copy-id root@master<br>ssh-copy-id root@slave01<br>ssh-copy-id root@slave02</li>
+<li>测试免密登录：<br>ssh master<br>ssh slave01<br>ssh slave02</li>
+</ol>
+<h2 id="Step6-设置yum源为阿里云的源"><a href="#Step6-设置yum源为阿里云的源" class="headerlink" title="Step6: 设置yum源为阿里云的源"></a>Step6: 设置yum源为阿里云的源</h2><ol>
+<li>备份原有配置：<br>mkdir &#x2F;etc&#x2F;yum.repos.d&#x2F;repo-bak<br>mv &#x2F;etc&#x2F;yum.repos.d&#x2F;*.repo &#x2F;etc&#x2F;yum.repos.d&#x2F;repo-bak&#x2F;</li>
+<li>将安装包下面的<strong>CentOS-Base.repo</strong>文件拷贝至 &#x2F;etc&#x2F;yum.repos.d&#x2F; 目录</li>
+<li>更新缓存：<br>yum clean all<br>yum makecache</li>
+</ol>
+<h2 id="Step7-设置ntp时间同步服务"><a href="#Step7-设置ntp时间同步服务" class="headerlink" title="Step7: 设置ntp时间同步服务"></a>Step7: 设置ntp时间同步服务</h2><ol>
+<li>安装 ntp<br>yum install ntpdate ntp -y</li>
+<li>启动并设置NTP服务开机启动<br>systemctl start ntpd<br>systemctl enable ntpd</li>
+</ol>
+<h2 id="Step8-设置ntp时间同步服务"><a href="#Step8-设置ntp时间同步服务" class="headerlink" title="Step8: 设置ntp时间同步服务"></a>Step8: 设置ntp时间同步服务</h2><p>将master设置为主服务器（在master节点操作）：</p>
+<ol>
+<li><p>vi &#x2F;etc&#x2F;ntp.conf，内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">driftfile /var/lib/ntp/ntp.drift #草稿文件</span><br><span class="line">允许内网其他机器同步时间（192.168.137.0 修改为自己的ip掩码）</span><br><span class="line">restrict 192.168.137.0 mask 255.255.255.0 nomodify notrap</span><br><span class="line"> </span><br><span class="line"># Use public servers from the pool.ntp.org project.</span><br><span class="line"># 中国这边最活跃的时间服务器 : [http://www.pool.ntp.org/zone/cn](http://www.pool.ntp.org/zone/cn)</span><br><span class="line">server 210.72.145.44 perfer   # 中国国家受时中心</span><br><span class="line">server 202.112.10.36             # 1.cn.pool.ntp.org</span><br><span class="line">server 59.124.196.83             # 0.asia.pool.ntp.org</span><br><span class="line"> </span><br><span class="line"># allow update time by the upper server </span><br><span class="line"># 允许上层时间服务器主动修改本机时间</span><br><span class="line">restrict 210.72.145.44 nomodify notrap noquery</span><br><span class="line">restrict 202.112.10.36 nomodify notrap noquery</span><br><span class="line">restrict 59.124.196.83 nomodify notrap noquery</span><br><span class="line"> </span><br><span class="line"># 外部时间服务器不可用时，以本地时间作为时间服务</span><br><span class="line">server  127.127.1.0     # local clock</span><br><span class="line">fudge   127.127.1.0 stratum 10</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启服务： service ntpd restart</p>
+</li>
+<li><p>查看同步状态： netstat -tlunp | grep ntp</p>
+</li>
+</ol>
+<h2 id="Step9-设置ntp时间同步服务"><a href="#Step9-设置ntp时间同步服务" class="headerlink" title="Step9: 设置ntp时间同步服务"></a>Step9: 设置ntp时间同步服务</h2><p>设置slave到master 的同步（在slave节点操作）：</p>
+<ol>
+<li><p>vi &#x2F;etc&#x2F;ntp.conf，内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">driftfile /var/lib/ntp/ntp.drift # 草稿文件</span><br><span class="line"></span><br><span class="line">statsdir /var/log/ntpstats/</span><br><span class="line">statistics loopstats peerstats clockstats</span><br><span class="line">filegen loopstats file loopstats type day enable</span><br><span class="line">filegen peerstats file peerstats type day enable</span><br><span class="line">filegen clockstats file clockstats type day enable</span><br><span class="line"></span><br><span class="line"># 让NTP Server为内网的ntp服务器（ 192.168.31.110修改为master节点ip）</span><br><span class="line">server 192.168.31.110</span><br><span class="line">fudge 192.168.31.110 stratum 5</span><br><span class="line"></span><br><span class="line"># 不允许来自公网上ipv4和ipv6客户端的访问</span><br><span class="line">restrict -4 default kod notrap nomodify nopeer noquery </span><br><span class="line">restrict -6 default kod notrap nomodify nopeer noquery</span><br><span class="line"></span><br><span class="line"># Local users may interrogate the ntp server more closely.</span><br><span class="line">restrict 127.0.0.1</span><br><span class="line">restrict ::1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启服务： service ntpd restart</p>
+</li>
+<li><p>手动同步： ntpdate -u 192.168.31.110</p>
+</li>
+</ol>
+<h2 id="Step10-安装CM本地yum仓库-仅master节点"><a href="#Step10-安装CM本地yum仓库-仅master节点" class="headerlink" title="Step10: 安装CM本地yum仓库(仅master节点)"></a>Step10: 安装CM本地yum仓库(仅master节点)</h2><ol>
+<li><p>安装http服务：<br>yum –y install httpd</p>
+</li>
+<li><p>修改http服务配置(依次执行如下命令)：<br>cp &#x2F;etc&#x2F;httpd&#x2F;conf&#x2F;httpd.conf &#x2F;etc&#x2F;httpd&#x2F;conf&#x2F;httpd.conf.<code>date +%F</code><br>grep “.tgz” &#x2F;etc&#x2F;httpd&#x2F;conf&#x2F;httpd.conf | grep -v ‘    #’<br>sed -i s’#.tgz#.tgz .parcel#’ &#x2F;etc&#x2F;httpd&#x2F;conf&#x2F;httpd.conf<br>grep “.tgz” &#x2F;etc&#x2F;httpd&#x2F;conf&#x2F;httpd.conf | grep -v ‘    #’</p>
+</li>
+<li><p>启动http服务并验证状态是否正常：<br>systemctl start httpd<br>systemctl status httpd</p>
+</li>
+<li><p>安装工具包：<br>yum -y install yum-utils createrepo yum-plugin-priorities</p>
+</li>
+<li><p>将cm 的rpm安装包放到http服务目录下：</p>
+<ol>
+<li><p>执行：mkdir -p &#x2F;var&#x2F;www&#x2F;html&#x2F;cm6&#x2F;6.2.0</p>
+</li>
+<li><p>将网盘【安装包\jdk&amp;cm 】目录下的文件拷贝至上面目录中，确保目录中包含如下文件：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107172933.png"></p>
+</li>
+</ol>
+</li>
+<li><p>创建repo：</p>
+<ol>
+<li><p>执行：createrepo</p>
+</li>
+<li><p>查看目录下是否包含repodata目录</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107172945.png"></p>
+</li>
+</ol>
+</li>
+<li><p>修改安装包中cloudera-manager.repo文件，将下面地址改为master节点地址：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107173104.png"></p>
+</li>
+<li><p>将修改后的文件拷贝至  &#x2F;etc&#x2F;yum.repos.d&#x2F; 目录</p>
+</li>
+<li><p>验证yum仓库是否配置正确：</p>
+<p>yum repolist</p>
+</li>
+</ol>
+<h2 id="Step11-上传parcel文件-仅master节点"><a href="#Step11-上传parcel文件-仅master节点" class="headerlink" title="Step11: 上传parcel文件(仅master节点)"></a>Step11: 上传parcel文件(仅master节点)</h2><ol>
+<li><p>在master节点创建目录：mkdir -p &#x2F;var&#x2F;www&#x2F;html&#x2F;cdh6.2</p>
+</li>
+<li><p>将网盘中【安装包&#x2F;parcel】文件夹下面的内容拷贝至上面的目录中，上传后确保目录中包含如下文件：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107173310.png"></p>
+</li>
+</ol>
+<h2 id="Step12-本地仓库检查"><a href="#Step12-本地仓库检查" class="headerlink" title="Step12: 本地仓库检查"></a>Step12: 本地仓库检查</h2><ol>
+<li><p>在网页中打开 <a target="_blank" rel="noopener" href="http://master/cm6%EF%BC%8C%E7%A1%AE%E8%AE%A4%E6%98%BE%E7%A4%BA%E5%A6%82%E4%B8%8B%E5%86%85%E5%AE%B9%EF%BC%9A">http://master/cm6，确认显示如下内容：</a></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107173420.png"></p>
+</li>
+<li><p>在网页中打开<a target="_blank" rel="noopener" href="http://master/cdh6.2%EF%BC%8C%E7%A1%AE%E8%AE%A4%E6%98%BE%E7%A4%BA%E5%A6%82%E4%B8%8B%E5%86%85%E5%AE%B9%EF%BC%9A">http://master/cdh6.2，确认显示如下内容：</a></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107173608.png"></p>
+</li>
+</ol>
+<h1 id="CDH安装"><a href="#CDH安装" class="headerlink" title="CDH安装"></a>CDH安装</h1><h2 id="Step13-安装jdk-所有节点"><a href="#Step13-安装jdk-所有节点" class="headerlink" title="Step13: 安装jdk(所有节点)"></a>Step13: 安装jdk(所有节点)</h2><ol>
+<li><p>将网盘中【安装包\jdk&amp;cm】下的oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm文件拷贝至各节点</p>
+</li>
+<li><p>在目录下执行：<br>yum -y install oracle-j2sdk1.8-1.8.0+update181-1.x86_64.rpm</p>
+</li>
+<li><p>设置java路径：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/profile</span><br><span class="line">在该文件末尾添加以下行</span><br><span class="line">export JAVA_HOME=/usr/java/jdk1.8.0_181-cloudera/</span><br><span class="line">export PATH=$JAVA_HOME/bin:$PATH</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>检查安装：<br>java -version</p>
+</li>
+</ol>
+<h2 id="Step14-安装cm-server-master节点"><a href="#Step14-安装cm-server-master节点" class="headerlink" title="Step14: 安装cm server(master节点)"></a>Step14: 安装cm server(master节点)</h2><p>在master节点上执行：<br>yum -y install cloudera-manager-daemons cloudera-manager-server</p>
+<h2 id="Step15-安装mysql数据库-master节点"><a href="#Step15-安装mysql数据库-master节点" class="headerlink" title="Step15: 安装mysql数据库(master节点)"></a>Step15: 安装mysql数据库(master节点)</h2><p>需要用到数据库的组件：</p>
+<ul>
+<li>Cloudera Manager Server</li>
+<li>Cloudera Management Service roles:<ul>
+<li>Activity Monitor</li>
+<li>Reports Manager</li>
+</ul>
+</li>
+<li>Cloudera Navigator Audit Server</li>
+<li>Cloudera Navigator Metadata Server</li>
+<li>Hue</li>
+<li>Each Hive metastore</li>
+<li>Oozie</li>
+</ul>
+<p>参考：<a target="_blank" rel="noopener" href="https://docs.cloudera.com/documentation/enterprise/6/6.2/topics/cm_ig_mysql.html#cmig_topic_5_5">https://docs.cloudera.com/documentation/enterprise/6/6.2/topics/cm_ig_mysql.html#cmig_topic_5_5</a></p>
+<p>参考： mysql安装步骤.txt</p>
+<p>根据下表组件中的信息运行如下语句为组件创建用户(可以直接运行：mysql_init.sql )：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> DATABASE <span class="operator">&lt;</span>database<span class="operator">&gt;</span> <span class="keyword">DEFAULT</span> <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8 <span class="keyword">DEFAULT</span> <span class="keyword">COLLATE</span> utf8_general_ci;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">ALL</span> <span class="keyword">ON</span> <span class="operator">&lt;</span>database<span class="operator">&gt;</span>.<span class="operator">*</span> <span class="keyword">TO</span> <span class="string">&#x27;&lt;user&gt;&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED <span class="keyword">BY</span> <span class="string">&#x27;&lt;password&gt;’;</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th><strong>Service</strong></th>
+<th><strong>Database</strong></th>
+<th><strong>User</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Cloudera Manager Server</td>
+<td>scm</td>
+<td>scm</td>
+</tr>
+<tr>
+<td>Activity Monitor</td>
+<td>amon</td>
+<td>amon</td>
+</tr>
+<tr>
+<td>Reports Manager</td>
+<td>rman</td>
+<td>rman</td>
+</tr>
+<tr>
+<td>Hue</td>
+<td>hue</td>
+<td>hue</td>
+</tr>
+<tr>
+<td>Hive Metastore Server</td>
+<td>metastore</td>
+<td>hive</td>
+</tr>
+<tr>
+<td>Sentry Server</td>
+<td>sentry</td>
+<td>sentry</td>
+</tr>
+<tr>
+<td>Cloudera Navigator Audit Server</td>
+<td>nav</td>
+<td>nav</td>
+</tr>
+<tr>
+<td>Cloudera Navigator Metadata Server</td>
+<td>navms</td>
+<td>navms</td>
+</tr>
+<tr>
+<td>Oozie</td>
+<td>oozie</td>
+<td>oozie</td>
+</tr>
+</tbody></table>
+<p><strong>在master节点运行如下脚本配置scm server数据库：</strong><br>sudo &#x2F;opt&#x2F;cloudera&#x2F;cm&#x2F;schema&#x2F;scm_prepare_database.sh mysql scm scm</p>
+<h2 id="Step16-安装CDH-master节点"><a href="#Step16-安装CDH-master节点" class="headerlink" title="Step16: 安装CDH(master节点)"></a>Step16: 安装CDH(master节点)</h2><ol>
+<li>启动scm server：<br>sudo systemctl start cloudera-scm-server</li>
+<li>查看日志，检查是否启动完成：<br>sudo tail -f &#x2F;var&#x2F;log&#x2F;cloudera-scm-server&#x2F;cloudera-scm-server.log<br>–查看到【WebServerImpl:com.cloudera.server.cmf.WebServerImpl: Started Jetty server.】日志表示启动完成</li>
+<li>登录主页(账号&#x2F;密码：admin&#x2F;admin)：<br><a target="_blank" rel="noopener" href="http://master:7180/">http://master:7180</a></li>
+<li>初始化CDH，建立Cluster</li>
+</ol>
+<h2 id="Step17-创建集群-cm仓库设置"><a href="#Step17-创建集群-cm仓库设置" class="headerlink" title="Step17: 创建集群-cm仓库设置"></a>Step17: 创建集群-cm仓库设置</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107174313.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211107174337.png"></p>
+<h2 id="Step18-HDFS设置"><a href="#Step18-HDFS设置" class="headerlink" title="Step18: HDFS设置"></a>Step18: HDFS设置</h2><ul>
+<li>在CM console中将副本设为2：dfs.replication&#x3D;2</li>
+<li>在master服务器命令行中执行： hadoop fs -setrep -w 2 &#x2F;</li>
+</ul>
+<h2 id="CDH启动与关闭"><a href="#CDH启动与关闭" class="headerlink" title="CDH启动与关闭"></a>CDH启动与关闭</h2><p><strong>CM Portal 地址：</strong><br>    <a target="_blank" rel="noopener" href="http://master:7180/cmf/home">http://master:7180/cmf/home</a></p>
+<p><strong>关闭步骤：</strong></p>
+<ol>
+<li>在CM portal上关闭 cluster</li>
+<li>在所有节点关闭CM agent： sudo systemctl stop cloudera-scm-agent</li>
+<li>在master节点关闭CM server： sudo systemctl stop cloudera-scm-server</li>
+</ol>
+<p><strong>启动步骤：</strong></p>
+<ol>
+<li>在所有节点启动CM agent： sudo systemctl start cloudera-scm-agent</li>
+<li>在master节点启动CM server： sudo systemctl start cloudera-scm-server</li>
+<li>在CM portal上启动 cluster</li>
+</ol>
+<p><strong>查看启动日志：</strong></p>
+<p> &#x2F;var&#x2F;log&#x2F;cloudera-scm-server&#x2F;cloudera-scm-server.log<br> &#x2F;var&#x2F;log&#x2F;cloudera-scm-agent&#x2F;cloudera-scm-agent.log</p>
+<h1 id="安装总结"><a href="#安装总结" class="headerlink" title="安装总结"></a>安装总结</h1><ul>
+<li>仔细，认真，严格按照步骤</li>
+<li>常见问题：网络，防火墙等主机设置</li>
+<li>由于资源与网络问题，CDH安装和运行过程可能会不稳定，组件安装不成功或页面有些告警，可以先通过重试看是否能解决</li>
+<li>碰到问题：</li>
+</ul>
+<ol>
+<li>查看日志:<ol>
+<li>cloudera manager server</li>
+<li>cloudera manager agent</li>
+</ol>
+</li>
+<li>官网&amp;Google&amp;百度</li>
+<li>官方参考： <a target="_blank" rel="noopener" href="https://docs.cloudera.com/documentation/enterprise/6/6.2/topics/installation.html">https://docs.cloudera.com/documentation/enterprise/6/6.2/topics/installation.html</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/01-CDH6.2%E5%AE%89%E8%A3%85/" data-id="clmcxec62000eu8wafjsw9ltj" data-title="CDH6.2安装" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/12-Tomcat/04-%E6%89%8B%E5%86%99Tomcat/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          手写Tomcat
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/02-HDFS/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">HDFS</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

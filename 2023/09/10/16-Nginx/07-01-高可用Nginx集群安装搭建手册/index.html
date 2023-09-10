@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="高可用Nginx集群安装搭建手册LVS搭建Nginx集群环境准备共需要三台linux centos服务器，一台LVS，两台RealServer，端口号必须保持一致，设为80，所以需要3台服务器。 设定IP环境如下    服务名 IP 端口 作用    LVS-Director VIP 192.168.120.200RIP 192.168.120.58 80 运行LVS均衡调度，对外提供虚拟IP访问">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/16-Nginx/07-01-%E9%AB%98%E5%8F%AF%E7%94%A8Nginx%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="高可用Nginx集群安装搭建手册LVS搭建Nginx集群环境准备共需要三台linux centos服务器，一台LVS，两台RealServer，端口号必须保持一致，设为80，所以需要3台服务器。 设定IP环境如下    服务名 IP 端口 作用    LVS-Director VIP 192.168.120.200RIP 192.168.120.58 80 运行LVS均衡调度，对外提供虚拟IP访问">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-09-10T03:59:07.843Z">
+<meta property="article:modified_time" content="2022-12-23T08:15:27.356Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-16-Nginx/07-01-高可用Nginx集群安装搭建手册" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/16-Nginx/07-01-%E9%AB%98%E5%8F%AF%E7%94%A8Nginx%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:07.843Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="高可用Nginx集群安装搭建手册"><a href="#高可用Nginx集群安装搭建手册" class="headerlink" title="高可用Nginx集群安装搭建手册"></a>高可用Nginx集群安装搭建手册</h1><h2 id="LVS搭建Nginx集群"><a href="#LVS搭建Nginx集群" class="headerlink" title="LVS搭建Nginx集群"></a>LVS搭建Nginx集群</h2><h3 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h3><p>共需要三台linux centos服务器，一台LVS，两台RealServer，<strong>端口号必须保持一致，设为80</strong>，所以需要3台服务器。</p>
+<p><strong>设定IP环境如下</strong></p>
+<table>
+<thead>
+<tr>
+<th>服务名</th>
+<th>IP</th>
+<th>端口</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LVS-Director</td>
+<td>VIP 192.168.120.200<br>RIP 192.168.120.58</td>
+<td>80</td>
+<td>运行LVS均衡调度，对外提供虚拟IP访问</td>
+</tr>
+<tr>
+<td>RealServer-Nginx1</td>
+<td>192.168.120.83</td>
+<td>80</td>
+<td>运行nginx及tomcat服务，作为真实服务1</td>
+</tr>
+<tr>
+<td>RealServer-Nginx2</td>
+<td>192.168.120.58</td>
+<td>80</td>
+<td>运行nginx及tomcat服务，作为真实服务2</td>
+</tr>
+</tbody></table>
+<p>LVS-Director负责将80端口的请求，负载均衡到Nginx1、Nginx2两台真实服务器上去，接下来我们将进行配置LVS-Director的路由方式-DR，直接路由。</p>
+<p>准备IP地址信息打印程序balancer-1.0.0.jar，<a href="http://hostname:port/server/ip，打印服务器的IP端口号信息。">http://hostname:port/server/ip，打印服务器的IP端口号信息。</a></p>
+<h3 id="启动RealServer服务"><a href="#启动RealServer服务" class="headerlink" title="启动RealServer服务"></a>启动RealServer服务</h3><p>安装步骤，参考前面Nginx的手册来操作，将Nginx分别安装在前面准备的两台linux服务器上。</p>
+<p>启动Nginx，都为80端口，代理balancer-1.0.0.jar服务。</p>
+<p>balancer-1.0.0.jar的端口号，分别为8081</p>
+<p>操作192.168.120.83、192.168.120.58</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java -jar balancer-1.0.0.jar --server.port=8081</span><br><span class="line">cd /usr/local/nginx</span><br><span class="line">sudo ./nginx -c conf/nginx_lvs_upstream.conf</span><br></pre></td></tr></table></figure>
+
+<p>nginx_lvs_upstream.conf配置内容，提供在课件资料中</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">worker_processes  <span class="number">1</span>;</span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line">http &#123;</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  text/html;</span><br><span class="line">    sendfile        on;</span><br><span class="line">    keepalive_timeout  <span class="number">65</span>;</span><br><span class="line"></span><br><span class="line">    upstream backend &#123;</span><br><span class="line">        server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">8081</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        location / &#123;</span><br><span class="line">            proxy_pass http:<span class="regexp">//</span>backend;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试各个端口的服务是否可用，<a href="http://hostname:port/server/ip">http://hostname:port/server/ip</a></p>
+<h2 id="安装LVS"><a href="#安装LVS" class="headerlink" title="安装LVS"></a>安装LVS</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LVS全称为Linux Virtual Server，工作在ISO模型中的第四层，由于其工作在第四层，因此与iptables类似，必须工作在内核空间上。因此lvs与iptables一样，是直接工作在内核中的，叫ipvs，主流的linux发行版默认都已经集成了ipvs，因此用户只需安装一个管理工具ipvsadm即可。</span><br><span class="line">LVS现在已成为Linux内核的一部分，默认编译为ip_vs模块，必要时能够自动调用。以下操作可以手动加载ip_vs模块，并查看当前系统中ip_vs模块的版本信息。</span><br></pre></td></tr></table></figure>
+
+<h3 id="加载LVS"><a href="#加载LVS" class="headerlink" title="加载LVS"></a>加载LVS</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">通过下面命令来检查，如果没有显示，则说明没有加载</span></span><br><span class="line">lsmod |grep ip_vs</span><br><span class="line">ip_vs                 145497  0 </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">加载LVS，执行下面命令就可以把ip_vs模块加载到内核</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">或者如果是centos7，通过ipvsadm来加载，可以跳过这步</span></span><br><span class="line">sudo modprobe ip_vs</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看LVS版本号,说明安装成功</span></span><br><span class="line">cat /proc/net/ip_vs</span><br><span class="line">IP Virtual Server version 1.2.1 (size=4096)</span><br><span class="line">Prot LocalAddress:Port Scheduler Flags</span><br><span class="line"><span class="meta prompt_">  -&gt; </span><span class="language-bash">RemoteAddress:Port Forward Weight ActiveConn InActConn</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="IPVS管理工具ipvsadm"><a href="#IPVS管理工具ipvsadm" class="headerlink" title="IPVS管理工具ipvsadm"></a>IPVS管理工具ipvsadm</h3><p>ipvsadm是lvs的管理工具，我们在使用ipvs的时候需要使用到这个工具。</p>
+<h4 id="安装依赖"><a href="#安装依赖" class="headerlink" title="安装依赖"></a>安装依赖</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y gcc gcc-c++ makepcre pcre-devel kernel-devel openssl-devel libnl-devel popt*</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装ipvsadm"><a href="#安装ipvsadm" class="headerlink" title="安装ipvsadm"></a>安装ipvsadm</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">curl &quot;http://www.linuxvirtualserver.org/software/kernel-2.6/ipvsadm-1.26.tar.gz&quot; -o ipvsadm-1.26.tar.gz</span><br><span class="line">tar zxf ipvsadm-1.26.tar.gz  </span><br><span class="line">cd ipvsadm-1.26 </span><br><span class="line">rpm -qa | grep kernel-devel	# 确认是否安装了kernel-devel（默认已经安装）</span><br><span class="line">sudo make &amp;&amp; sudo make install</span><br><span class="line"></span><br><span class="line">curl &quot;http://www.linuxvirtualserver.org/software/kernel-2.6/ipvsadm-1.25-1.src.rpm&quot; -o ipvsadm-1.25-1.src.rpm</span><br><span class="line">sudo rpm -ivh ipvsadm-1.25-1.src.rpm</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">检查是否安装成功，显示下面的内容表示安装成功</span></span><br><span class="line">sudo ipvsadm</span><br><span class="line">IP Virtual Server version 1.2.1 (size=4096)</span><br><span class="line">Prot LocalAddress:Port Scheduler Flags</span><br><span class="line"><span class="meta prompt_">  -&gt; </span><span class="language-bash">RemoteAddress:Port           Forward Weight ActiveConn InActConn</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="LVS-DR模式"><a href="#LVS-DR模式" class="headerlink" title="LVS DR模式"></a>LVS DR模式</h2><p>DR模式是LVS三种实现负载均衡方式中性能最好的一个，下面就使用这个模式，配置Nginx负载均衡的实现。</p>
+<h3 id="DR配置"><a href="#DR配置" class="headerlink" title="DR配置"></a>DR配置</h3><h4 id="LVS配置"><a href="#LVS配置" class="headerlink" title="LVS配置"></a>LVS配置</h4><p>编辑lvs文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /usr/local/sbin/lvs_dr.sh</span><br></pre></td></tr></table></figure>
+
+<p>输入下面内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">! /bin/bash</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1，启用ip转发；0，禁止ip转发；默认0。</span></span><br><span class="line">echo 1 &gt; /proc/sys/net/ipv4/ip_forward</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">定义两个变量方便后面使用</span></span><br><span class="line">ipv=/sbin/ipvsadm</span><br><span class="line">vip=192.168.120.200</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">通过ifconfig，找到自己的网卡名，我这里是enp0s3</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下掉enp0s3:0的虚拟ip</span></span><br><span class="line">ifconfig enp0s3:0 down</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">通过ifconfig，找到自己的网卡名，在其下面绑定虚拟ip</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在enp0s3上绑定虚拟ip，虚拟ip地址的广播地址是它本身</span></span><br><span class="line">ifconfig enp0s3:0 $vip broadcast $vip netmask 255.255.255.255 up</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">添加路由规则</span></span><br><span class="line">route add -host $vip dev enp0s3:0</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">清除原有转发规则</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">ipv -C</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">新增虚拟服务端口，采用轮询策略，负载转发端口是80</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">ipv -A -t <span class="variable">$vip</span>:80 -s rr</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">定义实际服务ip</span></span><br><span class="line">rs1=192.168.120.103</span><br><span class="line">rs2=192.168.120.58</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">-a在虚拟IP中添加上游服务信息；-t表示tcp服务</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">-r表示真实服务信息；-g指定为LVS为直接路由模式</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">ipv -a -t <span class="variable">$vip</span>:80 -r <span class="variable">$rs1</span>:80 -g</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">ipv -a -t <span class="variable">$vip</span>:80 -r <span class="variable">$rs2</span>:80 -g</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">ipv --<span class="built_in">set</span> 1 2 1</span></span><br></pre></td></tr></table></figure>
+
+<p>使配置生效</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo sh /usr/local/sbin/lvs_dr.sh</span><br><span class="line">sudo ipvsadm</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看虚拟服务端口转发列表</span></span><br><span class="line">sudo ipvsadm -ln</span><br></pre></td></tr></table></figure>
+
+<h4 id="可能出现的错误"><a href="#可能出现的错误" class="headerlink" title="可能出现的错误"></a>可能出现的错误</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">0、SIOCSIFFLAGS: 无法指定被请求的地址</span><br><span class="line">没有对应的enp0s3:0网卡ip，本来就没有，可以忽略。运行脚本后enp0s3:0正常出现就没有问题。</span><br><span class="line"></span><br><span class="line">1、没有轮询效果</span><br><span class="line">一条tcp的连接经过lvs后,lvs会把这台记录保存15分钟</span><br><span class="line">sudo ipvsadm -L --timeout	# 查看timeout配置信息</span><br><span class="line">可以设置短一点，达到实验效果：</span><br><span class="line">sudo ipvsadm --set 1 2 1</span><br><span class="line"></span><br><span class="line">注： 保存添加的虚拟ip记录和ipvsadm的规则可以使用service ipvsadm save，还可以用-S或--save。清除所有记录和规则除了使用-C，还以使用--clear</span><br><span class="line"></span><br><span class="line">2、错误：Memory allocation problem</span><br><span class="line">查看一下vmlloc使用情况： </span><br><span class="line">cat /proc/meminfo | grep -i vmalloc</span><br><span class="line">在/etc/default/grub文件的末尾添加如下一行：</span><br><span class="line">GRUB_CMDLINE_LINUX=&quot;vmalloc=256MB&quot;</span><br><span class="line"></span><br><span class="line">完成上述操作之后，发现lvs状态仍然是SYN_RECV。</span><br><span class="line"></span><br><span class="line">3、lvs状态仍然是SYN_RECV</span><br><span class="line">抓包后的pcap文件中，没有syn ack。于是想到是不是在什么地方丢掉了。</span><br><span class="line">看到官方文档中有描述要设置re_ filter。</span><br><span class="line">查了一下这个参数的解释</span><br><span class="line">======================================</span><br><span class="line">rp_filter参数有三个值，0、1、2，具体含义：</span><br><span class="line">0：不开启源地址校验。</span><br><span class="line">1：开启严格的反向路径校验。对每个进来的数据包，校验其反向路径是否是最佳路径。如果反向路径不是最佳路径，则直接丢弃该数据包。</span><br><span class="line">2：开启松散的反向路径校验。对每个进来的数据包，校验其源地址是否可达，即反向路径是否能通（通过任意网口），如果反向路径不同，则直接丢弃该数据包。</span><br><span class="line">=======================================</span><br><span class="line">default的值是1，这里改为2</span><br><span class="line">echo 2 &gt; /proc/sys/net/ipv4/conf/ 网卡名/rp_filter</span><br><span class="line">echo 2 &gt; /proc/sys/net/ipv4/conf/ 网卡名/rp_filter</span><br><span class="line">systemctl restart network.service</span><br><span class="line"></span><br><span class="line">echo &quot;1&quot; &gt; /proc/sys/net/ipv4/conf/lo/arp_ignore</span><br><span class="line">echo &quot;2&quot;&gt; /proc/sys/net/ipv4/conf/lo/arp_announce</span><br><span class="line">echo &quot;1&quot;&gt; /proc/sys/net/ipv4/conf/all/arp_ignore</span><br><span class="line">echo &quot;2&quot; &gt; /proc/sys/net/ipv4/conf/all/arp_announce</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="ipvsadm操作说明"><a href="#ipvsadm操作说明" class="headerlink" title="ipvsadm操作说明"></a>ipvsadm操作说明</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">sudo ipvsadm -C 清除</span><br><span class="line">说明：</span><br><span class="line">-A  --add-service在服务器列表中新添加一条新的虚拟服务器记录</span><br><span class="line">-t 表示为tcp服务</span><br><span class="line">-u 表示为udp服务</span><br><span class="line">-s --scheduler 使用的调度算法， rr | wrr | lc | wlc | lblb | lblcr | dh | sh | sed | nq 默认调度算法是 wlc</span><br><span class="line">-a --add-server 在服务器表中添加一条新的真实主机记录</span><br><span class="line">-r --real-server  真实服务器地址</span><br><span class="line">-m --masquerading 指定LVS工作模式为NAT模式</span><br><span class="line">-w --weight 真实服务器的权值</span><br><span class="line">-g --gatewaying 指定LVS工作模式为直接路由器模式（也是LVS默认的模式）</span><br><span class="line">-i --ipip 指定LVS的工作模式为隧道模式</span><br><span class="line"></span><br><span class="line">sudo ipvsadm -help 可以查看更多的帮助信息</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="真实服务配置"><a href="#真实服务配置" class="headerlink" title="真实服务配置"></a>真实服务配置</h3><p>在lvs的DR和TUn模式下，用户的访问请求到达真实服务器后，响应数据是直接返回给用户的，而不再经过前端的Director Server，因此，就需要在每个Real server节点上增加虚拟的VIP地址，这样数据才能直接返回给用户。</p>
+<p><strong>2台服务都需要配置相同的内容</strong>，2台真实web服务器的配置信息，编辑lvs_dr_rs.sh文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /usr/local/sbin/lvs_dr_rs.sh</span><br></pre></td></tr></table></figure>
+
+<p>输入内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">! /bin/bash</span></span><br><span class="line">vip=192.168.120.200</span><br><span class="line">ifconfig enp0s3:0 $vip broadcast $vip netmask 255.255.255.255 up</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用回环网卡适配器</span></span><br><span class="line">route add -host $vip lo:0</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">关闭arp解析</span></span><br><span class="line">echo &quot;1&quot; &gt;/proc/sys/net/ipv4/conf/lo/arp_ignore</span><br><span class="line">echo &quot;2&quot; &gt;/proc/sys/net/ipv4/conf/lo/arp_announce</span><br><span class="line">echo &quot;1&quot; &gt;/proc/sys/net/ipv4/conf/all/arp_ignore</span><br><span class="line">echo &quot;2&quot; &gt;/proc/sys/net/ipv4/conf/all/arp_announce</span><br></pre></td></tr></table></figure>
+
+<p>关闭arp解析</p>
+<p>arp_ignore：当ARP请求发过来后发现自己正是请求的地址是否响应；       </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0 - 利用本地的任何地址，不管配置在哪个接口上去响应ARP请求；</span><br><span class="line">1 - 哪个接口上接受ARP请求，就从哪个端口上回应。</span><br></pre></td></tr></table></figure>
+
+<p>arp_announce ：定义不同级别，当ARP请求通过某个端口进来是否利用这个接口来回应。</p>
+<pre><code>0 - 利用本地的任何地址，不管配置在哪个接口上去响应ARP请求；
+1 - 避免使用另外一个接口上的mac地址去响应ARP请求；
+2 - 尽可能使用能够匹配到ARP请求的最佳地址。
+</code></pre>
+<p><strong>使配置生效</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo sh /usr/local/sbin/lvs_dr_rs.sh</span><br><span class="line">sudo sysctl -p</span><br></pre></td></tr></table></figure>
+
+<p><strong>检查是否生效</strong></p>
+<p>多出enp0s3:0:虚拟网卡</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">ifconfig</span><br><span class="line">enp0s3: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500</span><br><span class="line">        inet 192.168.120.127  netmask 255.255.255.0  broadcast 192.168.120.255</span><br><span class="line">        inet6 fe80::370a:a3ea:20d0:69e3  prefixlen 64  scopeid 0x20&lt;link&gt;</span><br><span class="line">        ether 08:00:27:f1:e3:c4  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 123143  bytes 129065693 (123.0 MiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 28035  bytes 2598163 (2.4 MiB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line">lo: flags=73&lt;UP,LOOPBACK,RUNNING&gt;  mtu 65536</span><br><span class="line">        inet 127.0.0.1  netmask 255.0.0.0</span><br><span class="line">        inet6 ::1  prefixlen 128  scopeid 0x10&lt;host&gt;</span><br><span class="line">        loop  txqueuelen 1000  (Local Loopback)</span><br><span class="line">        RX packets 88  bytes 9145 (8.9 KiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">lo:0: flags=73&lt;UP,LOOPBACK,RUNNING&gt;  mtu 65536</span><br><span class="line">        inet 192.168.100.200  netmask 255.255.255.255</span><br><span class="line">        loop  txqueuelen 1000  (Local Loopback)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="可能出现的错误-1"><a href="#可能出现的错误-1" class="headerlink" title="可能出现的错误"></a>可能出现的错误</h3><h4 id="不能telnet端口"><a href="#不能telnet端口" class="headerlink" title="不能telnet端口"></a>不能telnet端口</h4><p><strong>现象描述</strong>  VIP能ping桶，但是VIP对应的端口号telnet不通</p>
+<p><strong>解决方法</strong></p>
+<p>确认真实服务器VIP是否一致</p>
+<p>真实服务器与LVS-Director的端口号必须相同</p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>在浏览器输入访问</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.120.200:8080/server/ip</span><br></pre></td></tr></table></figure>
+
+<p>如果你发现IP地址在变化，恭喜你，成功了！</p>
+<h3 id="封装成shell脚本"><a href="#封装成shell脚本" class="headerlink" title="封装成shell脚本"></a>封装成shell脚本</h3><h4 id="LVS-Director脚本"><a href="#LVS-Director脚本" class="headerlink" title="LVS-Director脚本"></a>LVS-Director脚本</h4><p>见课件资料《lvs_dr.sh》shell脚本，在LVS-DR机器上我们只需要执行lvs_dr.sh脚本即可</p>
+<p>使用方法</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sudo sh lvs_dr.sh --help</span><br><span class="line">Usage: lvs_dr.sh &#123;start ¦ stop&#125;</span><br><span class="line">Usage: lvs_dr.sh start vip vip_port &quot;real_server_ips...&quot; virtual_net_card</span><br><span class="line">Usage: lvs_dr.sh stop virtual_net_card</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动，指定虚拟ip、真实服务ip、虚拟网卡</span></span><br><span class="line">sudo sh lvs_dr.sh start 192.168.120.200 80 &quot;192.168.120.83 192.168.120.58&quot; enp0s3:0</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">停止</span></span><br><span class="line">sudo sh lvs_rs.sh stop enp0s3:0</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="RealServer脚本"><a href="#RealServer脚本" class="headerlink" title="RealServer脚本"></a>RealServer脚本</h4><p>见课件资料《lvs_rs.sh》shell脚本，在RealServer机器上我们只需要执行lvs_rs.sh脚本即可</p>
+<p>使用方法</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sh lvs_rs.sh --help</span><br><span class="line">Usage: lvs_rs.sh &#123;start ¦ stop&#125;</span><br><span class="line">Usage: lvs_rs.sh start vip loopback</span><br><span class="line">Usage: lvs_rs.sh stop loopback</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动，指定虚拟ip、虚拟网卡</span></span><br><span class="line">sudo sh lvs_rs.sh start 192.168.120.200 lo:0</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">停止</span></span><br><span class="line">sudo sh lvs_rs.sh stop lo:0</span><br></pre></td></tr></table></figure>
+
+<p>window下编写的shell脚本，在linux下运行有<code>$&#39;\r&#39;: 未找到命令</code>的错误，是因为编码格式问题，通过dos2unix来解决。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y dos2unix</span><br><span class="line">sudo dos2unix lvs_rs.sh</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Keepalived保证应用高可用"><a href="#Keepalived保证应用高可用" class="headerlink" title="Keepalived保证应用高可用"></a>Keepalived保证应用高可用</h2><p>只有一台LVS服务，万一挂了怎么办？需要Keepalived来做高可用，准备两台linux服务器，用来安装两台keepalived，Keepalived安装过程如下。</p>
+<h3 id="环境准备-1"><a href="#环境准备-1" class="headerlink" title="环境准备"></a>环境准备</h3><p>做LVS高可用，我们需要准备四台服务器</p>
+<h4 id="服务器设定"><a href="#服务器设定" class="headerlink" title="服务器设定"></a>服务器设定</h4><p>共需要四台服务器，两台LVS，两台RealServer，<strong>端口号必须保持一致，设为80</strong>，所以需要4台服务器。</p>
+<p><strong>设定IP环境如下</strong></p>
+<table>
+<thead>
+<tr>
+<th>服务名</th>
+<th>IP</th>
+<th>端口</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LVS-Master<br>Keepalived-Master</td>
+<td>VIP 192.168.120.200<br>RIP 192.168.120.127</td>
+<td>80</td>
+<td>主LVS，对外提供虚拟IP访问</td>
+</tr>
+<tr>
+<td>LVS-Backup<br/>Keepalived-Backup</td>
+<td>VIP 192.168.120.200<br/>RIP 192.168.120.128</td>
+<td>80</td>
+<td>备份LVS，对外提供虚拟IP访问<br>当主LVS不可用时，VIP漂移到备份LVS<br>当主LVS恢复可用时，VIP漂移回主LVS</td>
+</tr>
+<tr>
+<td>RealServer-Nginx1</td>
+<td>192.168.120.124</td>
+<td>80</td>
+<td>运行nginx及tomcat服务，作为真实服务1</td>
+</tr>
+<tr>
+<td>RealServer-Nginx2</td>
+<td>192.168.120.120</td>
+<td>80</td>
+<td>运行nginx及tomcat服务，作为真实服务2</td>
+</tr>
+</tbody></table>
+<p>LVS-Director负责将80端口的请求均衡到Nginx1、Nginx2两台真实服务器上去，接下来我们将进行配置LVS-Director的路由方式-DR，直接路由。</p>
+<p>准备IP地址信息打印程序balancer-1.0.0.jar，<a href="http://hostname:port/server/ip，打印服务器的IP端口号信息。">http://hostname:port/server/ip，打印服务器的IP端口号信息。</a></p>
+<h4 id="准备LVS"><a href="#准备LVS" class="headerlink" title="准备LVS"></a>准备LVS</h4><p>在LVS-Master、LVS-Backup两台服务器上启用LVS，具体参考前面LVS安装部分内容。确保任意的LVS能够进行负载均衡。</p>
+<h4 id="准备后端服务"><a href="#准备后端服务" class="headerlink" title="准备后端服务"></a>准备后端服务</h4><p>在RealServer-Nginx1、RealServer-Nginx2两台服务上启动后端服务，具体操作参考前面的环境准备。<strong>确保各个服务端口可用正常</strong>。</p>
+<h3 id="准备Keepalived"><a href="#准备Keepalived" class="headerlink" title="准备Keepalived"></a>准备Keepalived</h3><p>在两台LVS服务上安装Keepalived 2.0.18版本</p>
+<h4 id="安装依赖-1"><a href="#安装依赖-1" class="headerlink" title="安装依赖"></a>安装依赖</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y openssl-devel popt-devel libnl-devel kernel-devel gcc</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="安装Keepalived"><a href="#安装Keepalived" class="headerlink" title="安装Keepalived"></a>安装Keepalived</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cd ~</span><br><span class="line">wget https://www.keepalived.org/software/keepalived-2.0.18.tar.gz</span><br><span class="line">tar -xvzf keepalived-2.0.18.tar.gz</span><br><span class="line">cd keepalived-2.0.18 </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装到/usr/local/keepalived目录</span></span><br><span class="line">./configure --prefix=/usr/local/keepalived --sysconf=/etc  </span><br><span class="line"></span><br><span class="line">sudo make &amp; sudo make install</span><br></pre></td></tr></table></figure>
+
+<p>安装成功后，配置放在&#x2F;etc&#x2F;keepalived&#x2F;目录中。</p>
+<h3 id="LVS高可用配置"><a href="#LVS高可用配置" class="headerlink" title="LVS高可用配置"></a>LVS高可用配置</h3><h4 id="LVS-Master配置"><a href="#LVS-Master配置" class="headerlink" title="LVS-Master配置"></a>LVS-Master配置</h4><p>文件内容，参考课件资料keepalived-lvs-master.conf</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 全局段，故障通知邮件配置</span></span><br><span class="line">global_defs &#123;</span><br><span class="line">   notification_email &#123;</span><br><span class="line">        root@localhost</span><br><span class="line">   &#125;</span><br><span class="line">   notification_email_from root@along.com</span><br><span class="line">   smtp_server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span></span><br><span class="line">   smtp_connect_timeout <span class="number">30</span></span><br><span class="line">   router_id keepalived_lvs</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置虚拟路由器的实例段，VI_1是自定义的实例名称，可以有多个实例段</span></span><br><span class="line"><span class="comment"># VI_1是自定义的实例名称</span></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    <span class="comment">#初始状态，MASTER|BACKUP</span></span><br><span class="line">    <span class="keyword">state</span> MASTER</span><br><span class="line">    <span class="comment">#通告选举所用端口</span></span><br><span class="line">    interface enp0s3</span><br><span class="line">    <span class="comment">#虚拟路由的ID号（一般不可大于255）</span></span><br><span class="line">    virtual_router_id <span class="number">51</span></span><br><span class="line">    <span class="comment">#优先级信息 #备节点必须更低</span></span><br><span class="line">    priority <span class="number">100</span></span><br><span class="line">    <span class="comment">#VRRP通告间隔，秒</span></span><br><span class="line">    advert_int <span class="number">1</span></span><br><span class="line">    <span class="comment">#vip</span></span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        <span class="number">192.168</span>.<span class="number">120.200</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置一个virtual server段</span></span><br><span class="line">virtual_server <span class="number">192.168</span>.<span class="number">120.200</span> <span class="number">80</span> &#123;</span><br><span class="line">    <span class="comment"># service polling的delay时间，即检查realserver状态的间隔时间</span></span><br><span class="line">    <span class="comment"># 作为测试改为0，默认6</span></span><br><span class="line">    delay_loop <span class="number">0</span></span><br><span class="line">    <span class="comment">#LVS调度算法：rr|wrr|lc|wlc|lblc|sh|dh</span></span><br><span class="line">    lb_algo rr</span><br><span class="line">    <span class="comment">#LVS集群模式：NAT|DR|TUN</span></span><br><span class="line">    lb_kind DR</span><br><span class="line">    <span class="comment">#会话保持时间（持久连接，秒），即以用户在600秒内被分配到同一个后端realserver</span></span><br><span class="line">    <span class="comment">#作为测试改为0</span></span><br><span class="line">    persistence_timeout <span class="number">0</span></span><br><span class="line">    <span class="comment">#健康检查用的是TCP还是UDP</span></span><br><span class="line">    protocol TCP</span><br><span class="line"></span><br><span class="line">    <span class="comment"># real server设置段</span></span><br><span class="line">    <span class="comment"># 后端真实节点主机的权重等设置</span></span><br><span class="line">    real_server <span class="number">192.168</span>.<span class="number">120.120</span> <span class="number">80</span> &#123;</span><br><span class="line">        <span class="comment">#weight 1  #给每台的权重，rr无效</span></span><br><span class="line">        <span class="comment">#http服务</span></span><br><span class="line">        HTTP_GET &#123;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">#连接超时时间</span></span><br><span class="line">            connect_timeout <span class="number">3</span></span><br><span class="line">            <span class="comment">#重连次数</span></span><br><span class="line">            retry <span class="number">3</span></span><br><span class="line">            <span class="comment">#重连间隔</span></span><br><span class="line">            delay_before_retry <span class="number">3</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    real_server <span class="number">192.168</span>.<span class="number">120.124</span> <span class="number">80</span> &#123;</span><br><span class="line">        <span class="comment">#weight 2</span></span><br><span class="line">        HTTP_GET &#123;</span><br><span class="line">            url &#123;</span><br><span class="line">              path /</span><br><span class="line">            &#125;</span><br><span class="line">            connect_timeout <span class="number">3</span></span><br><span class="line">            retry <span class="number">3</span></span><br><span class="line">            delay_before_retry <span class="number">3</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="LVS-Backup配置"><a href="#LVS-Backup配置" class="headerlink" title="LVS-Backup配置"></a>LVS-Backup配置</h4><p>文件内容，参考课件资料keepalived-lvs-backup.conf</p>
+<p>参考LVS-Master配置，修改vrrp_instance VI_1部分的内容，state、priority两个地方。其他的保持不变。</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置虚拟路由器的实例段，VI_1是自定义的实例名称，可以有多个实例段</span></span><br><span class="line"><span class="comment"># VI_1是自定义的实例名称</span></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    <span class="comment">#初始状态，MASTER|BACKUP</span></span><br><span class="line">    <span class="keyword">state</span> BACKUP</span><br><span class="line">    <span class="comment">#通告选举所用端口</span></span><br><span class="line">    interface enp0s3</span><br><span class="line">    <span class="comment">#虚拟路由的ID号（一般不可大于255）</span></span><br><span class="line">    virtual_router_id <span class="number">51</span></span><br><span class="line">    <span class="comment">#优先级信息 #备节点必须更低</span></span><br><span class="line">    priority <span class="number">90</span></span><br><span class="line">    <span class="comment">#VRRP通告间隔，秒</span></span><br><span class="line">    advert_int <span class="number">1</span></span><br><span class="line">    <span class="comment">#vip</span></span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        <span class="number">192.168</span>.<span class="number">120.200</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="启动配置"><a href="#启动配置" class="headerlink" title="启动配置"></a>启动配置</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动master主机</span></span><br><span class="line">sudo /usr/local/keepalived/sbin/keepalived -f /etc/keepalived/keepalived-lvs-master.conf</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动backup备机</span></span><br><span class="line">sudo /usr/local/keepalived/sbin/keepalived -f /etc/keepalived/keepalived-lvs-backup.conf</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="测试-1"><a href="#测试-1" class="headerlink" title="测试"></a>测试</h4><p>关闭master，服务是否仍然可用？</p>
+<h3 id="Nginx高可用配置"><a href="#Nginx高可用配置" class="headerlink" title="Nginx高可用配置"></a>Nginx高可用配置</h3><h4 id="环境准备-2"><a href="#环境准备-2" class="headerlink" title="环境准备"></a>环境准备</h4><p>共需要两台linux centos服务器，一台LVS，两台RealServer，<strong>端口号必须保持一致，设为80</strong>，所以需要3台服务器。</p>
+<table>
+<thead>
+<tr>
+<th>服务名</th>
+<th>IP</th>
+<th>端口</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LVS(Nginx)-Master</td>
+<td>VIP 192.168.120.200<br>RIP 192.168.120.58</td>
+<td>80</td>
+<td>运行LVS均衡调度，对外提供虚拟IP访问</td>
+</tr>
+<tr>
+<td>LVS(Nginx)-Backup</td>
+<td>192.168.120.83</td>
+<td>80</td>
+<td>运行nginx及tomcat服务，作为真实服务1</td>
+</tr>
+</tbody></table>
+<p>Keepalived不仅仅保证LVS高可用，也能保证其他应用高可用，比如tomcat、Nginx、甚至RPC服务。</p>
+<p>我们需要三份配置文件（一个nginx_monitor监控脚本，主备LVS各一份keepalived配置）</p>
+<h4 id="Nginx监控脚本"><a href="#Nginx监控脚本" class="headerlink" title="Nginx监控脚本"></a>Nginx监控脚本</h4><p>编辑nginx_monitor.sh文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/keepalived/nginx_monitor.sh</span><br></pre></td></tr></table></figure>
+
+<p>脚本内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">shell脚本监控：如果程序的进程存在，则认为没有问题</span></span><br><span class="line">if [ &quot;$(ps -ef | grep &quot;nginx&quot;| grep -v grep| grep -v keepalived )&quot; == &quot;&quot; ]</span><br><span class="line">  then</span><br><span class="line">    # 输出日志</span><br><span class="line">    echo &quot;nginx ############# app down &quot; &gt;&gt; /var/log/messages</span><br><span class="line">    exit 1</span><br><span class="line">  else</span><br><span class="line">    # 一切正常</span><br><span class="line">	exit 0</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+<p>执行脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建nginx monitor 脚本，并赋予可执行权限</span></span><br><span class="line">sudo chmod +x /etc/keepalived/nginx_monitor.sh</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">测试一下脚本能不能执行</span></span><br><span class="line">sh /etc/keepalived/nginx_monitor.sh </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">没报错即表示为成功</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="Keepalived配置"><a href="#Keepalived配置" class="headerlink" title="Keepalived配置"></a>Keepalived配置</h4><p><strong>主配置</strong> &#x2F;etc&#x2F;keepalived&#x2F;keepalived-nginx-master.conf</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义一个名为monitor的脚本</span></span><br><span class="line">vrrp_script monitor &#123;</span><br><span class="line">     <span class="comment"># 监控脚本存放地址</span></span><br><span class="line">	 script <span class="string">&quot;/etc/keepalived/nginx_monitor.sh&quot;</span></span><br><span class="line">	 <span class="comment"># 每隔1秒执行一次</span></span><br><span class="line">	 interval <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个vrrp示例</span></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">	<span class="keyword">state</span> MASTER    <span class="comment">#(主机为MASTER，备用机为BACKUP)</span></span><br><span class="line">	interface enp0s3  <span class="comment">#(HA监测网卡接口)</span></span><br><span class="line"></span><br><span class="line">	virtual_router_id <span class="number">61</span> <span class="comment">#(主、备机的virtual_router_id必须相同，不大于255)</span></span><br><span class="line">	priority <span class="number">90</span> <span class="comment">#(主、备机取不同的优先级，主机值较大，备份机值较小,值越大优先级越高)</span></span><br><span class="line">	advert_int <span class="number">1</span> <span class="comment">#(VRRP Multicast广播周期秒数)</span></span><br><span class="line"></span><br><span class="line">	track_script &#123;</span><br><span class="line">		monitor <span class="comment">#(监控脚本名称)</span></span><br><span class="line">	&#125;</span><br><span class="line">	virtual_ipaddress &#123;</span><br><span class="line">            <span class="number">192.168</span>.<span class="number">120.200</span> <span class="comment">#(VRRP HA虚拟IP)</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>备份配置</strong> &#x2F;etc&#x2F;keepalived&#x2F;keepalived-nginx-backup.conf</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义一个名为monitor的脚本</span></span><br><span class="line">vrrp_script monitor &#123;</span><br><span class="line">     <span class="comment"># 监控nginx的脚本存放地址</span></span><br><span class="line">	 script <span class="string">&quot;/etc/keepalived/nginx_monitor.sh&quot;</span></span><br><span class="line">	 <span class="comment"># 每隔1秒执行一次</span></span><br><span class="line">	 interval <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个vrrp示例</span></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">	<span class="keyword">state</span> BACKUP    <span class="comment">#(主机为MASTER，备用机为BACKUP)</span></span><br><span class="line">	interface enp0s3  <span class="comment">#(HA监测网卡接口)</span></span><br><span class="line"></span><br><span class="line">	virtual_router_id <span class="number">61</span> <span class="comment">#(主、备机的virtual_router_id必须相同)</span></span><br><span class="line">	priority <span class="number">80</span> <span class="comment">#(主、备机取不同的优先级，主机值较大，备份机值较小,值越大优先级越高)</span></span><br><span class="line">	advert_int <span class="number">1</span> <span class="comment">#(VRRP Multicast广播周期秒数)</span></span><br><span class="line"></span><br><span class="line">	track_script &#123;</span><br><span class="line">		monitor <span class="comment">#(监控脚本名称)</span></span><br><span class="line">	&#125;</span><br><span class="line">	virtual_ipaddress &#123;</span><br><span class="line">            <span class="number">192.168</span>.<span class="number">120.200</span> <span class="comment">#(VRRP HA虚拟IP)</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># - master主机</span><br><span class="line">keepalived-nginx-master.conf</span><br><span class="line"># - backup备机</span><br><span class="line">keepalived-nginx-backup.conf</span><br></pre></td></tr></table></figure>
+
+<h4 id="启动Keepalived服务"><a href="#启动Keepalived服务" class="headerlink" title="启动Keepalived服务"></a>启动Keepalived服务</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动master主机</span></span><br><span class="line">/usr/local/keepalived/sbin/keepalived -f /etc/keepalived/keepalived-nginx-master.conf</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动backup备机</span></span><br><span class="line">/usr/local/keepalived/sbin/keepalived -f /etc/keepalived/keepalived-nginx-backup.conf</span><br></pre></td></tr></table></figure>
+
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>两台keepalived服务间需要通信，关闭防火墙</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --state #查看默认防火墙状态（关闭后显示notrunning，开启后显示running）</span><br><span class="line">systemctl list-unit-files|grep firewalld.service</span><br><span class="line">systemctl stop firewalld.service #停止firewall</span><br><span class="line">systemctl disable firewalld.service #禁止firewall开机启动</span><br><span class="line"></span><br><span class="line">[root@localhost ~]#systemctl stop firewalld.service</span><br><span class="line">[root@localhost ~]#systemctl disable firewalld.service</span><br><span class="line">启动一个服务：systemctl start firewalld.service</span><br><span class="line">关闭一个服务：systemctl stop firewalld.service</span><br><span class="line">重启一个服务：systemctl restart firewalld.service</span><br><span class="line">显示一个服务的状态：systemctl status firewalld.service</span><br><span class="line">在开机时启用一个服务：systemctl enable firewalld.service</span><br><span class="line">在开机时禁用一个服务：systemctl disable firewalld.service</span><br><span class="line">查看服务是否开机启动：systemctl is-enabled firewalld.service;echo $?</span><br><span class="line">查看已启动的服务列表：systemctl list-unit-files|grep enabled</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="测试-2"><a href="#测试-2" class="headerlink" title="测试"></a>测试</h3><p>关闭master nginx服务，服务是否仍然可用，backup服务是否替补上来。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ps -ef|grep nginx</span><br><span class="line">root      5189     1  0 22:01 ?        00:00:00 nginx: master process /usr/sbin/nginx -c /etc/nginx/nginx_lvs_upstream.conf</span><br><span class="line">nginx     5190  5189  0 22:01 ?        00:00:00 nginx: worker process</span><br><span class="line">sudo kill 5189</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/16-Nginx/07-01-%E9%AB%98%E5%8F%AF%E7%94%A8Nginx%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/" data-id="clmcxecd6003bu8wahkd29nb8" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/16-Nginx/08-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/16-Nginx/07-00-LVS%E5%AE%9E%E7%8E%B0Nginx%E9%9B%86%E7%BE%A4/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

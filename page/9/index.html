@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/page/9/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:locale" content="en_US">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-98-Go/03-Golang复合数据类型/02-切片类型" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/12/25/98-Go/03-Golang%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/02-%E5%88%87%E7%89%87%E7%B1%BB%E5%9E%8B/" class="article-date">
+  <time class="dt-published" datetime="2021-12-25T04:00:00.000Z" itemprop="datePublished">2021-12-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/12/25/98-Go/03-Golang%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/02-%E5%88%87%E7%89%87%E7%B1%BB%E5%9E%8B/">切片类型</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="切片的定义方式"><a href="#切片的定义方式" class="headerlink" title="切片的定义方式"></a>切片的定义方式</h1><p>切片的定义方式：[]类型</p>
+<p>数组是定长的，切片是变长的，长度会随着存储数量而变化</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> slice []<span class="type">int</span></span><br><span class="line">	<span class="comment">// 切片未分片内存空间，输出：0x0</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%p\n&quot;</span>, slice)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> slice2 []<span class="type">int</span> = <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">1</span>)</span><br><span class="line">	<span class="comment">// 切片分片长度为1的内存空间，输出：0xc00011c038</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%p\n&quot;</span>, slice2)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 初始切片长度为1，int 类型，下标为0的值默认值为0</span></span><br><span class="line">	<span class="keyword">var</span> slice []<span class="type">int</span> = <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">1</span>)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%p\n&quot;</span>, slice)</span><br><span class="line">	<span class="comment">// 向切片后面追加数据</span></span><br><span class="line">	slice = <span class="built_in">append</span>(slice, <span class="number">1</span>)</span><br><span class="line">	slice = <span class="built_in">append</span>(slice, <span class="number">2</span>)</span><br><span class="line">	slice = <span class="built_in">append</span>(slice, <span class="number">3</span>)</span><br><span class="line">	<span class="comment">// [0 1 2 3]</span></span><br><span class="line">	fmt.Println(slice)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// make(数据类型,初始长度,容量)</span></span><br><span class="line">	<span class="keyword">var</span> slice []<span class="type">int</span> = <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">	<span class="comment">// len函数代表数据或切片的长度</span></span><br><span class="line">	fmt.Println(<span class="built_in">len</span>(slice))</span><br><span class="line">	<span class="comment">// cap函数能够求切片的容量</span></span><br><span class="line">	fmt.Println(<span class="built_in">cap</span>(slice))</span><br><span class="line">	slice = <span class="built_in">append</span>(slice, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>, <span class="number">16</span>)</span><br><span class="line">	fmt.Println(slice)</span><br><span class="line">	fmt.Println(<span class="built_in">len</span>(slice))</span><br><span class="line">	fmt.Println(<span class="built_in">cap</span>(slice))</span><br><span class="line">	<span class="comment">// 超出容量的时候，切片不会报错，长度和容量会自动增长和扩容</span></span><br><span class="line">	<span class="comment">// 容量一般扩充上一次的两倍，如果超过1024字节，就改为扩充上一次的1/4倍</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="type">string</span></span><br><span class="line">	fmt.Scan(&amp;str)</span><br><span class="line">	<span class="comment">// 将字符串转换成字符类型切片</span></span><br><span class="line">	ch := []<span class="type">byte</span>(str)</span><br><span class="line">	<span class="keyword">var</span> count [<span class="number">26</span>]<span class="type">int</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(ch); i++ &#123;</span><br><span class="line">		<span class="comment">// 计算字符和a字符的一个偏移量（差值）</span></span><br><span class="line">		offset := ch[i] - <span class="string">&#x27;a&#x27;</span></span><br><span class="line">		count[offset]++</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(count)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">26</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">if</span> count[i] != <span class="number">0</span> &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;字符：%c出现%d次\n&quot;</span>, <span class="string">&#x27;a&#x27;</span>+i, count[i])</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/12/25/98-Go/03-Golang%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/02-%E5%88%87%E7%89%87%E7%B1%BB%E5%9E%8B/" data-id="clmcxeckf004pu8waew1agrjw" data-title="切片类型" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-98-Go/03-Golang复合数据类型/03-Map类型" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/12/25/98-Go/03-Golang%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/03-Map%E7%B1%BB%E5%9E%8B/" class="article-date">
+  <time class="dt-published" datetime="2021-12-25T04:00:00.000Z" itemprop="datePublished">2021-12-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/12/25/98-Go/03-Golang%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/03-Map%E7%B1%BB%E5%9E%8B/">Map类型</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="map-的定义方式"><a href="#map-的定义方式" class="headerlink" title="map 的定义方式"></a>map 的定义方式</h1><p>map 的定义格式：[key]value</p>
+<p>赋值：对象[key]&#x3D;value</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	m := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">int</span>]<span class="type">string</span>)</span><br><span class="line">	m[<span class="number">1</span>] = <span class="string">&quot;python&quot;</span></span><br><span class="line">	m[<span class="number">2</span>] = <span class="string">&quot;c++&quot;</span></span><br><span class="line">	m[<span class="number">3</span>] = <span class="string">&quot;java&quot;</span></span><br><span class="line">	m[<span class="number">4</span>] = <span class="string">&quot;c#&quot;</span></span><br><span class="line">	m[<span class="number">5</span>] = <span class="string">&quot;golang&quot;</span></span><br><span class="line">	m[<span class="number">1</span>] = <span class="string">&quot;erlang&quot;</span></span><br><span class="line">	fmt.Println(m)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> m1 = <span class="keyword">map</span>[<span class="type">int</span>]<span class="type">string</span>&#123;<span class="number">1</span>: <span class="string">&quot;小明&quot;</span>, <span class="number">2</span>: <span class="string">&quot;小华&quot;</span>&#125;</span><br><span class="line">	<span class="comment">// map 初始化 key 不能重复</span></span><br><span class="line">	<span class="comment">//var m1 = map[int]string&#123;1: &quot;小明&quot;, 2: &quot;小华&quot;, 2: &quot;小华&quot;&#125;</span></span><br><span class="line">	fmt.Println(m1)</span><br><span class="line">	<span class="keyword">for</span> k, v := <span class="keyword">range</span> m1 &#123;</span><br><span class="line">		fmt.Println(k, v)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> _, v := <span class="keyword">range</span> m1 &#123;</span><br><span class="line">		fmt.Println(v)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> k, _ := <span class="keyword">range</span> m1 &#123;</span><br><span class="line">		fmt.Println(k)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> str <span class="type">string</span></span><br><span class="line">	fmt.Scan(&amp;str)</span><br><span class="line">	ch := []<span class="type">byte</span>(str)</span><br><span class="line">	m := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">byte</span>]<span class="type">int</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(ch); i++ &#123;</span><br><span class="line">		m[ch[i]]++</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> k, v := <span class="keyword">range</span> m &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;%c %d\n&quot;</span>, k, v)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/12/25/98-Go/03-Golang%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/03-Map%E7%B1%BB%E5%9E%8B/" data-id="clmcxeckn004su8wa1xwsf75j" data-title="Map类型" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-98-Go/03-Golang复合数据类型/04-指针" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/12/25/98-Go/03-Golang%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/04-%E6%8C%87%E9%92%88/" class="article-date">
+  <time class="dt-published" datetime="2021-12-25T04:00:00.000Z" itemprop="datePublished">2021-12-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/12/25/98-Go/03-Golang%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/04-%E6%8C%87%E9%92%88/">指针</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h1><p>指针基本写法：*类型</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> a <span class="type">int</span> = <span class="number">10</span></span><br><span class="line">	fmt.Println(a)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%p\n&quot;</span>, &amp;a)</span><br><span class="line">	<span class="keyword">var</span> p *<span class="type">int</span> = &amp;a</span><br><span class="line">	fmt.Println(p)</span><br><span class="line">	*p = <span class="number">100</span></span><br><span class="line">	fmt.Println(a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实际上是将 a 和 b 复制了一份传入到栈，所以无法改变 a 和 b 真实的内存地址的值</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test1</span><span class="params">(a, b <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	a, b = b, a</span><br><span class="line">	<span class="built_in">println</span>(<span class="string">&quot;test1&quot;</span>, a, b)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 传入引用，引用指向 main 函数中 a 和 b 的地址</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test2</span><span class="params">(a, b *<span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	*a, *b = *b, *a</span><br><span class="line">	<span class="built_in">println</span>(<span class="string">&quot;test2&quot;</span>, a, b)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="number">10</span></span><br><span class="line">	b := <span class="number">20</span></span><br><span class="line">	test1(a, b)</span><br><span class="line">	<span class="built_in">println</span>(<span class="string">&quot;main&quot;</span>, a, b)</span><br><span class="line">	test2(&amp;a, &amp;b)</span><br><span class="line">	<span class="built_in">println</span>(<span class="string">&quot;main&quot;</span>, a, b)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/12/25/98-Go/03-Golang%E5%A4%8D%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/04-%E6%8C%87%E9%92%88/" data-id="clmcxeckv004vu8wa81nr6gpt" data-title="指针" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-98-Go/05-爬虫项目实战/01-用Golang编写爬虫" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/12/25/98-Go/05-%E7%88%AC%E8%99%AB%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/01-%E7%94%A8Golang%E7%BC%96%E5%86%99%E7%88%AC%E8%99%AB/" class="article-date">
+  <time class="dt-published" datetime="2021-12-25T04:00:00.000Z" itemprop="datePublished">2021-12-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/12/25/98-Go/05-%E7%88%AC%E8%99%AB%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/01-%E7%94%A8Golang%E7%BC%96%E5%86%99%E7%88%AC%E8%99%AB/">用Golang编写爬虫</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="用-Golang-编写爬虫"><a href="#用-Golang-编写爬虫" class="headerlink" title="用 Golang 编写爬虫"></a>用 Golang 编写爬虫</h1><p>豆瓣</p>
+<p>top250 电影名称、评分、评论人数，写入到 txt 文件中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;io&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;regexp&quot;</span></span><br><span class="line">	<span class="string">&quot;strconv&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> start, end <span class="type">int</span></span><br><span class="line">	fmt.Print(<span class="string">&quot;请输入起始页（&gt;=1）：&quot;</span>)</span><br><span class="line">	fmt.Scan(&amp;start)</span><br><span class="line">	fmt.Print(<span class="string">&quot;请输入终止页（&gt;=start）：&quot;</span>)</span><br><span class="line">	fmt.Scan(&amp;end)</span><br><span class="line">	doWork(start, end)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">doWork</span><span class="params">(start, end <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	page := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>)</span><br><span class="line">	<span class="comment">// 循环创建多个 goroutine，提高爬取效率</span></span><br><span class="line">	<span class="keyword">for</span> i := start; i &lt;= end; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> SpiderPageDB(i, page)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> i := start; i &lt;= end; i++ &#123;</span><br><span class="line">		fmt.Printf(<span class="string">&quot;第%d页爬取完成\n&quot;</span>, &lt;-page)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">SpiderPageDB</span><span class="params">(i <span class="type">int</span>, page <span class="keyword">chan</span>&lt;- <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	url := <span class="string">&quot;https://movie.douban.com/top250?start=&quot;</span> + strconv.Itoa((i<span class="number">-1</span>)*<span class="number">25</span>) + <span class="string">&quot;&amp;filter=&quot;</span></span><br><span class="line"></span><br><span class="line">	result, err := HttpGetDB(url)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 通过正则获取电影名</span></span><br><span class="line">	ret1 := regexp.MustCompile(<span class="string">`&lt;img width=&quot;100&quot; alt=&quot;(?s:(.*?))&quot; src=&quot;`</span>)</span><br><span class="line">	fileNames := ret1.FindAllStringSubmatch(result, <span class="number">-1</span>)</span><br><span class="line">	<span class="comment">// 通过正则得到评分</span></span><br><span class="line">	ret2 := regexp.MustCompile(<span class="string">`&lt;span class=&quot;rating_num&quot; property=&quot;v:average&quot;&gt;(.*?)&lt;/span&gt;`</span>)</span><br><span class="line">	fileScore := ret2.FindAllStringSubmatch(result, <span class="number">-1</span>)</span><br><span class="line">	<span class="comment">// 通过正则得到评论人数</span></span><br><span class="line">	ret3 := regexp.MustCompile(<span class="string">`&lt;span&gt;(\d*?)人评价&lt;/span&gt;`</span>)</span><br><span class="line">	pepleNum := ret3.FindAllStringSubmatch(result, <span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line">	save2file(i, fileNames, fileScore, pepleNum)</span><br><span class="line">	page &lt;- i <span class="comment">// 协调主子 Go 程的调用顺序</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">save2file</span><span class="params">(idx <span class="type">int</span>, fileNames, fileScore, pepleNum [][]<span class="type">string</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 组织保存文件路径及名称</span></span><br><span class="line">	path := <span class="string">&quot;C:/a/第&quot;</span> + strconv.Itoa(idx) + <span class="string">&quot;页.txt&quot;</span></span><br><span class="line">	f, err := os.Create(path)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> f.Close()</span><br><span class="line">	<span class="comment">// 获取网页中的条目数</span></span><br><span class="line">	n := <span class="built_in">len</span>(fileNames)</span><br><span class="line">	<span class="comment">// 写一行标题</span></span><br><span class="line">	f.WriteString(<span class="string">&quot;电影名称&quot;</span> + <span class="string">&quot;\t&quot;</span> + <span class="string">&quot;评分&quot;</span> + <span class="string">&quot;\t&quot;</span> + <span class="string">&quot;评论人数&quot;</span> + <span class="string">&quot;\n&quot;</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">		f.WriteString(fileNames[i][<span class="number">1</span>] + <span class="string">&quot;\t&quot;</span> + fileScore[i][<span class="number">1</span>] + <span class="string">&quot;\t&quot;</span> + pepleNum[i][<span class="number">1</span>] + <span class="string">&quot;\n&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HttpGetDB</span><span class="params">(url <span class="type">string</span>)</span></span> (result <span class="type">string</span>, err <span class="type">error</span>) &#123;</span><br><span class="line">	client := &amp;http.Client&#123;&#125;</span><br><span class="line">	request, err := http.NewRequest(<span class="string">&quot;GET&quot;</span>, url, <span class="literal">nil</span>)</span><br><span class="line">	<span class="comment">//设置header属性，反正反爬拦截</span></span><br><span class="line">	request.Header.Add(<span class="string">&quot;User-Agent&quot;</span>, <span class="string">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36 OPR/66.0.3515.115&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//resp, err1 := http.Get(url)</span></span><br><span class="line">	resp, err1 := client.Do(request)</span><br><span class="line">	<span class="keyword">if</span> err1 != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> resp.Body.Close()</span><br><span class="line">	buf := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">4096</span>)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		n, err2 := resp.Body.Read(buf)</span><br><span class="line">		<span class="keyword">if</span> n == <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> err2 != <span class="literal">nil</span> &amp;&amp; err2 != io.EOF &#123;</span><br><span class="line">			err = err2</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		result += <span class="type">string</span>(buf[:n])</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/12/25/98-Go/05-%E7%88%AC%E8%99%AB%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/01-%E7%94%A8Golang%E7%BC%96%E5%86%99%E7%88%AC%E8%99%AB/" data-id="clmcxecm3004zu8wa0xilcehb" data-title="用Golang编写爬虫" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-98-Go/04-面向对象编程/02-结构体的继承关系" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/12/25/98-Go/04-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/02-%E7%BB%93%E6%9E%84%E4%BD%93%E7%9A%84%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB/" class="article-date">
+  <time class="dt-published" datetime="2021-12-25T04:00:00.000Z" itemprop="datePublished">2021-12-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/12/25/98-Go/04-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/02-%E7%BB%93%E6%9E%84%E4%BD%93%E7%9A%84%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB/">结构体的继承关系</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="结构体的继承关系"><a href="#结构体的继承关系" class="headerlink" title="结构体的继承关系"></a>结构体的继承关系</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">	name   <span class="type">string</span></span><br><span class="line">	age    <span class="type">int</span></span><br><span class="line">	gender <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 继承 Person</span></span><br><span class="line"><span class="keyword">type</span> Student <span class="keyword">struct</span> &#123;</span><br><span class="line">	Person</span><br><span class="line">	id    <span class="type">int</span></span><br><span class="line">	name  <span class="type">string</span></span><br><span class="line">	score <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	stu := Student&#123;Person&#123;<span class="string">&quot;张三丰&quot;</span>, <span class="number">190</span>, <span class="string">&quot;男&quot;</span>&#125;, <span class="number">1</span>, <span class="string">&quot;张三&quot;</span>, <span class="number">100</span>&#125;</span><br><span class="line">	fmt.Println(stu)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> TestA <span class="keyword">struct</span> &#123;</span><br><span class="line">	name <span class="type">string</span></span><br><span class="line">	id   <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> TestB <span class="keyword">struct</span> &#123;</span><br><span class="line">	TestA</span><br><span class="line">	gender <span class="type">string</span></span><br><span class="line">	age    <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> TestC <span class="keyword">struct</span> &#123;</span><br><span class="line">	TestB</span><br><span class="line">	score <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	c := TestC&#123;TestB&#123;TestA&#123;<span class="string">&quot;科比&quot;</span>, <span class="number">23</span>&#125;, <span class="string">&quot;男&quot;</span>, <span class="number">40</span>&#125;, <span class="number">90</span>&#125;</span><br><span class="line">	fmt.Println(c)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> TestA <span class="keyword">struct</span> &#123;</span><br><span class="line">	name <span class="type">string</span></span><br><span class="line">	id   <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> TestB <span class="keyword">struct</span> &#123;</span><br><span class="line">	gender <span class="type">string</span></span><br><span class="line">	age    <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> TestC <span class="keyword">struct</span> &#123;</span><br><span class="line">	TestA</span><br><span class="line">	TestB</span><br><span class="line">	score <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	c := TestC&#123;TestA&#123;<span class="string">&quot;科比&quot;</span>, <span class="number">23</span>&#125;, TestB&#123;<span class="string">&quot;男&quot;</span>, <span class="number">40</span>&#125;, <span class="number">90</span>&#125;</span><br><span class="line">	fmt.Println(c)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/12/25/98-Go/04-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/02-%E7%BB%93%E6%9E%84%E4%BD%93%E7%9A%84%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB/" data-id="clmcxeco6005ou8wabs2vdw65" data-title="结构体的继承关系" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-02-Spring/01-Spring高级特性及用法" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/02-Spring/01-Spring%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7%E5%8F%8A%E7%94%A8%E6%B3%95/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spring/">Spring</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/07/02-Spring/01-Spring%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7%E5%8F%8A%E7%94%A8%E6%B3%95/">Spring高级特性及用法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Spring介绍"><a href="#Spring介绍" class="headerlink" title="Spring介绍"></a>Spring介绍</h1><h2 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h2><p>Spring是一个Java轻量级的IOC容器，实现了AOP特性，非侵入性框架。提供对持久层、事务 、Web层等各个方面组件集成与一致性封装。涉及到的组件非常丰富，但核心仍然是Spring Framework。Spring Framework真正的核心组件只有几个，下面是Spring 框架的总体架构图：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210725121135.png"></p>
+<p>核心组件只有三个：Core、Context 和 Beans。它们构建起了整个 Spring 的骨骼架构。没有它们就不可能有 AOP、Web 等上层的特性功能。</p>
+<p>Spring包含的组件∶ <a target="_blank" rel="noopener" href="https://spring.io/projects">https://spring.io/projects</a></p>
+<h2 id="Spring-的设计理念"><a href="#Spring-的设计理念" class="headerlink" title="Spring 的设计理念"></a>Spring 的设计理念</h2><p><strong>Spring的设计理念：构建一个数据结构，然后根据这个数据结构设计它的生存环境。</strong></p>
+<p><strong>Spring的三个核心组件中核心是Beans组件</strong>，Bean则是Spring构建的数据结构。</p>
+<ul>
+<li>在Spring中Bean才是真正的主角，Spring是面向Bean的编程</li>
+<li>Bean在Spring中作用就像Object对OOP的作用一样</li>
+<li>通过IOC容器完成依赖注入机制，构建Bean生存环境</li>
+<li>IOC容器就是被Bean包裹的对象，Spring正是通过把对象包装在Bean中，从而达到对这些对象的管理以及一些列额外操作的目的。</li>
+</ul>
+<p>达到Spring框架设计目标：依赖注入机制，把对象之间的依赖关系用配置文件或注解来管理。</p>
+<h2 id="核心组件的协同工作"><a href="#核心组件的协同工作" class="headerlink" title="核心组件的协同工作"></a>核心组件的协同工作</h2><p>Bean 是 Spring 中关键因素，那 Context 和 Core 又有何作用呢？ </p>
+<p>把Bean比作一场演出中的演员，那Context就是这场演出的舞台背景，Core就是演出的道具。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210725191302.png"></p>
+<p>Context 组件解决Bean的生存环境问题</p>
+<p>Context发现每个Bean之间的关系，为它们建立维护好Bean关系。</p>
+<p>Context是一个Bean关系的集合，这个关系集合又叫Ioc容器，一旦建立起这个Ioc容器后Spring就可以工作了。</p>
+<p>Core组件就是发现、建立和维护Bean关系需要的一些列的工具，从这个角度看来，Core组件叫Util更容易理解。</p>
+<h1 id="Spring中设计模式的应用"><a href="#Spring中设计模式的应用" class="headerlink" title="Spring中设计模式的应用"></a>Spring中设计模式的应用</h1><h2 id="Spring中代理模式"><a href="#Spring中代理模式" class="headerlink" title="Spring中代理模式"></a>Spring中代理模式</h2><p>Spring AOP中CGLIB、JDK动态代理就是利用代理模式设计实现的，来看看JDK动态代理的例子</p>
+<p>Spring除了实现被代理对象的接口，还有SpringProxy和Advised 两个接口。</p>
+<p>$Proxy 就是创建的代理对象，而 Subject 是抽象主题，代理对象是通过 InvocationHandler 来持有对目标对象的引用的。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210725192514.png"></p>
+<p><strong>Spring 中一个真实的代理对象结构如下：</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210725192754.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210725192816.png"></p>
+<h2 id="Spring中策略模式"><a href="#Spring中策略模式" class="headerlink" title="Spring中策略模式"></a>Spring中策略模式</h2><p>Spring 中代理对象的创建就是通过策略模式来实现的</p>
+<p>Spring的代理方式有两个，JDK动态代理和CGLIB代理，两个代理方式都使用了策略模式。结构如图：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210725192930.png"></p>
+<p>AopProxy 接口表示抽象策略</p>
+<ul>
+<li>Cglib2AopProxy 和 JdkDynamicAopProxy 分别代表两种策略的实现方式</li>
+<li>ProxyFactoryBean 就是代表 Context 角色，它根据条件选择使用 Jdk 代理方式还是 CGLIB 方式</li>
+<li>另外三个类主要是来负责创建具体策略对象</li>
+<li>ProxyFactoryBean通过依赖关联具体策略对象，通过调用策略对象getProxy(ClassLoader classLoader)方法来完成操作。</li>
+</ul>
+<h1 id="特性应用"><a href="#特性应用" class="headerlink" title="特性应用"></a>特性应用</h1><h2 id="事件驱动编程"><a href="#事件驱动编程" class="headerlink" title="事件驱动编程"></a>事件驱动编程</h2><p>事件驱动编程，基于发布-订阅模式的编程模型，即观察者模式。</p>
+<p>事件驱动模型的核心构件通常包含以下几个：</p>
+<ol>
+<li>事件源：负责产生事件的对象。比如我们常见的按钮，按钮就是一个事件源，能够产生”点击”这个事件</li>
+<li>事件监听器（事件处理器）：负责处理事件的对象</li>
+<li>事件：或者称为事件对象，是事件源和事件监听器之间的信息桥梁。是整个事件模型驱动的核心</li>
+</ol>
+<p><strong>事件源、事件、监听器的关系</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210725194816.png"></p>
+<p>事件驱动模型的实现包含以下几种：</p>
+<ul>
+<li>观察者模式</li>
+<li>JDK观察者模式</li>
+<li>JavaBean事件驱动</li>
+<li><strong>Spring事件驱动</strong></li>
+</ul>
+<h2 id="Spring事件驱动编程"><a href="#Spring事件驱动编程" class="headerlink" title="Spring事件驱动编程"></a>Spring事件驱动编程</h2><p>Spring事件驱动模型原理比较复杂，涉及到的类比较多，从代码示例入手。</p>
+<p>示例，当一个订单的支付状态发生变化时，能够通知到邮件服务、短信服务、库存服务。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210725201123.png"></p>
+<p>涉及类：</p>
+<p>ApplicationEvent</p>
+<p>ApplicationListener<E></p>
+<p>SmartApplicationListener</p>
+<p>ApplicationContext</p>
+<h2 id="异步执行"><a href="#异步执行" class="headerlink" title="异步执行"></a>异步执行</h2><p>Spring 2种异步执行方式：全局异步、注解式配置异步</p>
+<p><strong>全局异步的操作步骤：</strong></p>
+<ol>
+<li>定义并配置Executor Bean</li>
+<li>配置名为applicationEventMulticaster的SimpleApplicationEventMulticaster Bean</li>
+<li>设置applicationEventMulticaster执行器为第一步的Executor</li>
+</ol>
+<p><strong>@Async注解的使用操作执行步骤：</strong></p>
+<ol>
+<li>开启异步执行：@EnableAsync</li>
+<li>配置线程池，非必须，没有则用默认线程池</li>
+<li>Bean方法指定为异步：@Async</li>
+</ol>
+<p>异步执行原理本质是AOP，具体步骤：</p>
+<ol>
+<li><p>初始化线程池和异常处理器</p>
+</li>
+<li><p>创建异步方法所在Bean后，执行Async对应的BeanPostProcessor，创建AOP代理类，代理对象替换原来的对象</p>
+</li>
+<li><p>代理对象中，异步方法被动态植入了异步执行方法</p>
+</li>
+<li><p>执行异步方法，其实执行的是代理对象里面的方法，从而实现异步，除了Async这个注解，没有任何入侵</p>
+</li>
+</ol>
+<h2 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h2><p>SpringTask</p>
+<ol>
+<li><p>fixedRate，上一次<strong>开始执行时间</strong>点之后再执行</p>
+</li>
+<li><p>fixedDelay，上一次<strong>执行完毕时间</strong>点之后再执行</p>
+</li>
+<li><p>initialDelay，第一次延迟后执行，之后按上面指定的规则执行</p>
+</li>
+<li><p><strong>默认</strong>是，上一次执行完毕时间后执行下一轮	Spring集成Quartz</p>
+</li>
+</ol>
+<p>Cron表达式，一个cron表达式有至少6个（也可能7个）有空格分隔的时</p>
+<p>间元素。按照顺序依次是：</p>
+<p>- 秒（0~59） </p>
+<p>- 分钟（0~59） </p>
+<p>- 3 小时（0~23） 	</p>
+<p>- 4 天（0~31） </p>
+<p>- 5 月（0~11） </p>
+<p>- 6 星期（1~7 1&#x3D;SUN 或 SUN，MON，TUE，WED，THU，FRI，SAT） </p>
+<p>- 年份（1970－2099）</p>
+<p>Corn表达式生成工具：<a target="_blank" rel="noopener" href="http://qqe2.com/cron/index">http://qqe2.com/cron/index</a></p>
+<h1 id="AOP应用重点剖析"><a href="#AOP应用重点剖析" class="headerlink" title="AOP应用重点剖析"></a>AOP应用重点剖析</h1><h2 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h2><p><strong>AOP（Aspect Orient Programming）</strong>，作为面向对象编程的一种补充，广泛应用于处理一些具有横切性质的系统级服务，如事务管理、安全检查、缓存、对象池管理等。 </p>
+<ul>
+<li>AOP的实现关键在于 AOP 框架自动创建的 AOP 代理，代理分为静态代理和动态代理。</li>
+<li>动态代理在运行时在内存中临时产生动态代理类，达到运行时增强。</li>
+</ul>
+<p>AOP由<strong>切面、切点、连接点、目标对象、回调</strong> 五个元素构成</p>
+<ol>
+<li>aspect：切面，通俗的讲可以理解为一个功能，比如具备某项能力(如：帮助他人是一种能力)，定义为一个切面；</li>
+<li>pointCut：切点，可以理解为一种匹配规则，比如哪些人需要被帮助，通过一些规则进行分组筛选；</li>
+<li>Target Object：目标对象，比如某种能力需要对某个人使用，这个某个人就是目标对象；</li>
+<li>joinpoint：连接点，具体的需要做的事情，可以理解为需要使用某项能力帮助某人做什么事情的时候提供帮助；这个做什么事情就是连接点了；</li>
+<li>Advice：回调的通知，比如：在什么时间点去帮助他们，在什么时间点提供某种能力帮助别人；</li>
+</ol>
+<h2 id="AOP在Spring框架中的应用"><a href="#AOP在Spring框架中的应用" class="headerlink" title="AOP在Spring框架中的应用"></a>AOP在Spring框架中的应用</h2><p><strong>Spring中6中AOP增强方式</strong></p>
+<ol>
+<li>Before 前置增强</li>
+<li>After 后置增强</li>
+<li>Around 环绕增强</li>
+<li>AfterReturning 最终增强</li>
+<li>AfterThrowing 异常增强</li>
+<li>DeclareParents 引入增强</li>
+</ol>
+<p>AOP在Spring框架中应用非常广泛，比如最常见的事务。</p>
+<ul>
+<li>在方法前开启事务</li>
+<li>方法后提交事务</li>
+<li>检测到有异常时，回滚事务…</li>
+</ul>
+<h1 id="代码地址"><a href="#代码地址" class="headerlink" title="代码地址"></a>代码地址</h1><p><a target="_blank" rel="noopener" href="https://github.com/chengchen901/spring-study.git">https://github.com/chengchen901/spring-study.git</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/02-Spring/01-Spring%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7%E5%8F%8A%E7%94%A8%E6%B3%95/" data-id="clmcxecmf0052u8wad5bqao03" data-title="Spring高级特性及用法" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-01-Java基础/01-多线程/06-Lock接口" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/06-Lock%E6%8E%A5%E5%8F%A3/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/06-Lock%E6%8E%A5%E5%8F%A3/">Lock接口</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1-锁的本质"><a href="#1-锁的本质" class="headerlink" title="1 锁的本质"></a>1 锁的本质</h1><h2 id="1-1-加锁和获得锁区别"><a href="#1-1-加锁和获得锁区别" class="headerlink" title="1.1 加锁和获得锁区别"></a>1.1 加锁和获得锁区别</h2><p>场景：土豪小区车位紧张，只有0357车位还未出售，此时，此时大家都想买0357车位</p>
+<p>买了0357车位，才能在这儿停车 （加锁）</p>
+<p>跟小区签订合同后，你就具备了停车到0357的资格就说你获得了锁</p>
+<p>会有一把车位锁，来象征你的0357车位停车资格（获得锁）</p>
+<h2 id="1-2-CustomLock"><a href="#1-2-CustomLock" class="headerlink" title="1.2 CustomLock"></a>1.2 CustomLock</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CustomLock</span> <span class="keyword">implements</span> <span class="title class_">Lock</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> AtomicReference&lt;Thread&gt; owner = <span class="keyword">new</span> <span class="title class_">AtomicReference</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> LinkedBlockingQueue&lt;Thread&gt; waiters = <span class="keyword">new</span> <span class="title class_">LinkedBlockingQueue</span>&lt;&gt;();;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">tryLock</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> owner.compareAndSet(<span class="literal">null</span>, Thread.currentThread());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">lock</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (!tryLock())&#123;</span><br><span class="line">            waiters.offer(Thread.currentThread());</span><br><span class="line">            LockSupport.park();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">unlock</span><span class="params">()</span> &#123;  <span class="comment">//释放锁</span></span><br><span class="line">        <span class="keyword">if</span> (owner.compareAndSet(Thread.currentThread(), <span class="literal">null</span>)) &#123;</span><br><span class="line">            <span class="type">Thread</span> <span class="variable">th</span> <span class="operator">=</span>  waiters.poll();</span><br><span class="line">            LockSupport.unpark(th);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-Lock-API"><a href="#2-Lock-API" class="headerlink" title="2 Lock API"></a>2 Lock API</h1><h2 id="2-1-Locks包-类层次结构"><a href="#2-1-Locks包-类层次结构" class="headerlink" title="2.1 Locks包 类层次结构"></a>2.1 Locks包 类层次结构</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210507224926200.png" alt="image-20210507224926200"><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210507224943214.png" alt="image-20210507224943214"></p>
+<h2 id="2-2-Lock接口"><a href="#2-2-Lock接口" class="headerlink" title="2.2 Lock接口"></a>2.2 Lock接口</h2><table>
+<thead>
+<tr>
+<th>方法签名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>void lock();</td>
+<td>获取锁（不死不休）</td>
+</tr>
+<tr>
+<td>boolean tryLock();</td>
+<td>获取锁（浅尝辄止）</td>
+</tr>
+<tr>
+<td>boolean tryLock(long time, TimeUnit unit) throws InterruptedException;</td>
+<td>获取锁（过时不候）</td>
+</tr>
+<tr>
+<td>void lockInterruptibly() throws InterruptedException;</td>
+<td>获取锁（任人摆布）</td>
+</tr>
+<tr>
+<td>void unlock();</td>
+<td>释放锁</td>
+</tr>
+<tr>
+<td>Condition newCondition();</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>结论：</p>
+<ol>
+<li>lock()最常用; </li>
+<li>lockInterruptibly()方法一般更昂贵，有的impl可能没有实现lockInterruptibly()，只有真的需要效应中断时，才使用，使用之前看看impl对该方法的描述。</li>
+</ol>
+<p>提示：根据Lock接口的源码注释，Lock接口的实现，具备和同步关键字同样的内存语义。</p>
+<h2 id="2-3-ReentrantLock"><a href="#2-3-ReentrantLock" class="headerlink" title="2.3 ReentrantLock"></a>2.3 ReentrantLock</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Demo2_Reentrant</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">Lock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String args[])</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;get lock 1...\n&quot;</span>);</span><br><span class="line">        lock.lock(); <span class="comment">//当前线程已获取锁</span></span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;get lock 2...\n&quot;</span>);</span><br><span class="line">        lock.lock(); <span class="comment">//再次获取，是否能成功</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//打印消息，说明再次获取锁成功</span></span><br><span class="line">        System.out.println(<span class="string">&quot;here I am ...\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;unlock 1...\n&quot;</span>);</span><br><span class="line">        lock.unlock();</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;unlock 2...\n&quot;</span>);</span><br><span class="line">        lock.unlock();</span><br><span class="line">        </span><br><span class="line">        System.out.println(<span class="string">&quot;unlock 3...\n&quot;</span>);</span><br><span class="line">        lock.unlock(); <span class="comment">//第三次释放锁，报错</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210507225812808.png" alt="image-20210507225812808"></p>
+<h2 id="2-4-Condition"><a href="#2-4-Condition" class="headerlink" title="2.4 Condition"></a>2.4 Condition</h2><p>用于替代wait&#x2F;notify。Object中的wait(),notify(),notifyAll()方法是和synchronized配合使用的，可以唤醒一个或者全部(单个等待集)；</p>
+<p>Condition是需要与Lock配合使用的，提供多个等待集合，更精确的控制(底层是park&#x2F;unpark机制)；</p>
+<table>
+<thead>
+<tr>
+<th>协作方式</th>
+<th>死锁方式1（锁）</th>
+<th>死锁方式2（先唤醒，再挂起）</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>suspend&#x2F;resume</td>
+<td>死锁</td>
+<td>死锁</td>
+<td>弃用</td>
+</tr>
+<tr>
+<td>wait&#x2F;notify</td>
+<td>不死锁</td>
+<td>死锁</td>
+<td>只用于synchronized关键字</td>
+</tr>
+<tr>
+<td>park&#x2F;unpark</td>
+<td>死锁</td>
+<td>不死锁</td>
+<td></td>
+</tr>
+<tr>
+<td>Condition</td>
+<td>不死锁</td>
+<td>不死锁</td>
+<td>基于park&#x2F;unpark实现</td>
+</tr>
+</tbody></table>
+<h2 id="2-5-Synchronized-vs-Lock"><a href="#2-5-Synchronized-vs-Lock" class="headerlink" title="2.5 Synchronized vs Lock"></a>2.5 Synchronized vs Lock</h2><p><strong>Synchronized</strong></p>
+<p>优点：</p>
+<ol>
+<li>使用简单，语义清晰，哪里需要点哪里。</li>
+<li>由JVM提供，提供了多种优化方案(锁粗化、锁消除、偏向锁、轻量级锁)</li>
+<li>锁的释放由虚拟机来完成，不用人工干预，也降低了死锁的可能性</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>无法实现一些锁的高级功能如：公平锁、中断锁、超时锁、读写锁、共享锁等</li>
+</ol>
+<p><strong>Lock</strong></p>
+<p>优点：</p>
+<ol>
+<li><p>所有synchronized的缺点 </p>
+</li>
+<li><p>可以实现更多的功能，让synchronized缺点更多</p>
+</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>需手动释放锁unlock，新手使用不当可能造成死锁</li>
+</ol>
+<p>结论：synchronized是<strong>卡片机</strong>，Lock是<strong>单反</strong></p>
+<h1 id="3-读写锁"><a href="#3-读写锁" class="headerlink" title="3 读写锁"></a>3 读写锁</h1><h2 id="3-1-ReadWriteLock"><a href="#3-1-ReadWriteLock" class="headerlink" title="3.1 ReadWriteLock"></a>3.1 ReadWriteLock</h2><p><strong>概念</strong></p>
+<p>​	维护一对关联锁，一个只用于<strong>读</strong>操作，一个只用于<strong>写</strong>操作；</p>
+<p>​	<strong>读锁</strong>可以由多个读线程同时持有，写锁是排他的。<strong>同一时间，两把锁不能被不同线程持有</strong>。</p>
+<p><strong>适用场景</strong></p>
+<p>​	适合<strong>读取</strong>操作<strong>多于写入</strong>操作的场景，改进互斥锁的性能，比如：<strong>集合的并发线程安全性改造</strong>、<strong>缓存组件</strong>。</p>
+<p><strong>锁降级</strong></p>
+<p>​	指的是<strong>写锁降级成为读锁</strong>。持有写锁的同时，再获取读锁，随后释放写锁的过程。</p>
+<p>​	写锁是线程独占，读锁是共享，所以写-&gt;读是降级。(读-&gt;写，是不能实现的）</p>
+<h2 id="3-2-图解读写锁内部原理"><a href="#3-2-图解读写锁内部原理" class="headerlink" title="3.2 图解读写锁内部原理"></a>3.2 图解读写锁内部原理</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210509200952290.png" alt="image-20210509200952290"></p>
+<h1 id="4-读写锁实现"><a href="#4-读写锁实现" class="headerlink" title="4 读写锁实现"></a>4 读写锁实现</h1><h2 id="4-1-AQS抽象队列同步器"><a href="#4-1-AQS抽象队列同步器" class="headerlink" title="4.1 AQS抽象队列同步器"></a>4.1 AQS抽象队列同步器</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210509201154938.png" alt="image-20210509201154938"></p>
+<p>提供了对资源占用、释放，线程的挂起、唤醒的逻辑。</p>
+<p>预留了各种 try 方法给用户实现</p>
+<p>可以用在各种需要控制资源争用的场景中。(ReentrantLock&#x2F;CountDownLatch&#x2F;Semphore)</p>
+<h2 id="4-2-ReadWriteLock-用int存储了俩个count值"><a href="#4-2-ReadWriteLock-用int存储了俩个count值" class="headerlink" title="4.2 ReadWriteLock 用int存储了俩个count值"></a>4.2 ReadWriteLock 用int存储了俩个count值</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210509201304030.png" alt="image-20210509201304030"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/06-Lock%E6%8E%A5%E5%8F%A3/" data-id="clmcxecof005uu8wa01z27ner" data-title="Lock接口" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-01-Java基础/01-多线程/07-ForkJoinPool" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/07-ForkJoinPool/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/07-ForkJoinPool/">ForkJoinPool</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="ForkJoinPool"><a href="#ForkJoinPool" class="headerlink" title="ForkJoinPool"></a>ForkJoinPool</h1><p>关键点：分解任务fork出新任务，汇集join任务执行结果</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/ForkJoinPool%E5%8E%9F%E7%90%86.png" alt="ForkJoinPool原理.png"></p>
+<h2 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h2><ul>
+<li>每个Worker线程都维护一个任务队列，即ForkJoinWorkerThread中的任务队列</li>
+<li>任务队列是双向队列，这样可以同时实现LIFO和FIFO</li>
+<li>子任务会被加入到原先任务所在Worker线程的任务队列</li>
+<li>Worker线程用LIFO的方法取出任务，后进队列的任务先取出来（子任务总是后加入队列，但是需要先执行）</li>
+<li>当任务队列为空，会随机从其他的worker的队列中以FIFO拿走一个任务执行（工作窃取：steal work）</li>
+<li>如果一个Worker线程遇到了join操作，有子任务没有执行完成，会等到这个任务结束。否则直接返回</li>
+<li>如果一个Worker线程窃取任务失败，它会用yield或者sleep之类的方法休息一会儿，再尝试（如果所有线程都是空闲状态，即没有任务运行，那么该线程也会进入阻塞状态等待新任务的到来）</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/07-ForkJoinPool/" data-id="clmcxecom005xu8wa2g6lafvv" data-title="ForkJoinPool" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-01-Java基础/02-集合源码/01-List源码解析" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/02-%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/01-List%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/02-%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/01-List%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">List源码解析</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/ArrayList%E5%8E%9F%E7%90%86.png" alt="ArrayList原理"></p>
+<h1 id="CopyOnWriteArrayList"><a href="#CopyOnWriteArrayList" class="headerlink" title="CopyOnWriteArrayList"></a>CopyOnWriteArrayList</h1><p>CopyOnWriteArrayList容器即写时复制的容器。和ArrayList比较，优点是并发安全，缺点有两个：</p>
+<p>1、 多了内存占用： 写数据是copy一份完整的数据，单独进行操作。占用双份内存。</p>
+<p>2、 数据一致性： 数据写完之后，其他线程不一定是马上读取到最新内容。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/CopyOnWriteArrayList%E5%8E%9F%E7%90%86.png" alt="CopyOnWriteArrayList原理"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/02-%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/01-List%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" data-id="clmcxecot0060u8waes4whbe5" data-title="List源码解析" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-01-Java基础/02-集合源码/02-Map源码解读" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/02-%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/02-Map%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/02-%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/02-Map%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/">Map源码解析</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="HashMap-JDK1-7"><a href="#HashMap-JDK1-7" class="headerlink" title="HashMap JDK1.7"></a>HashMap JDK1.7</h1><p><strong>数据的插入和查找</strong></p>
+<p>顺序查找∶ 插入时按先后顺序插入，查找时轮询扫描进行比对。</p>
+<p> 二分查找∶ 插入时进行排序;查找时将n个元素分成大致相等的两部分，减少复杂度。</p>
+<p>分块查找∶ 分块查找是二分查找和顺序查找的一种改进。 </p>
+<p><strong>哈希表</strong>：对元素的关键信息进行hash计算，求出下标后直接插入或查找。常用的实现是除留余数法。</p>
+<p><strong>若出现</strong> hash(key2)&#x3D;hash(key1)的情况，如何解决：</p>
+<ul>
+<li>链地址法;</li>
+<li>hash(key2)用不同的hash算法，再次计算hash</li>
+</ul>
+<p><strong>合理控制数组和链表的长度</strong></p>
+<p>     动态扩容resize（）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Entry &#123;</span><br><span class="line">	<span class="keyword">final</span> <span class="type">int</span> hash;</span><br><span class="line">	<span class="keyword">final</span> K key;</span><br><span class="line">	V value;</span><br><span class="line">	Entry&lt;K,V&gt; next; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210604224208.png" alt="HashMap-JDK1.7原理"></p>
+<h1 id="HashMap-JDK1-8"><a href="#HashMap-JDK1-8" class="headerlink" title="HashMap JDK1.8"></a>HashMap JDK1.8</h1><p>jdk8更新：链表中元素超过一个数量后，转变为红黑树结构</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210604224638.png" alt="HashMap-JDK1.8原理"></p>
+<h1 id="ConcurrentHashMap-JDK1-7-线程安全"><a href="#ConcurrentHashMap-JDK1-7-线程安全" class="headerlink" title="ConcurrentHashMap JDK1.7 - 线程安全"></a>ConcurrentHashMap JDK1.7 - 线程安全</h1><p>HashTable太过于粗暴，推荐使用ConcurrentHashMap，包一层segment确保线程安全</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210604231729.png" alt="ConcurrentHashMap-JDK1.7原理"></p>
+<h1 id="ConcurrentHashMap-JDK1-8-线程安全"><a href="#ConcurrentHashMap-JDK1-8-线程安全" class="headerlink" title="ConcurrentHashMap JDK1.8 - 线程安全"></a>ConcurrentHashMap JDK1.8 - 线程安全</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210604231737.png" alt="ConcurrentHashMap-JDK1.8原理"></p>
+<h1 id="ConcurrentSkipListMap"><a href="#ConcurrentSkipListMap" class="headerlink" title="ConcurrentSkipListMap"></a>ConcurrentSkipListMap</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/ConcurrentSkipListMap%E5%8E%9F%E7%90%86.png" alt="ConcurrentSkipListMap原理"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/ConcurrentSkipListMap%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE%E5%8A%A8%E7%94%BB.gif" alt="ConcurrentSkipListMap插入数据动画"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/02-%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/02-Map%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" data-id="clmcxecp50064u8wagen547eq" data-title="Map源码解析" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/page/8/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/10/">Next &raquo;</a>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

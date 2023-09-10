@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="为何选用logstash-input-jdbc从关系型数据库同步数据到ES通常情况下用插件来做，常用的插件包括logstash-input-jdbc、go-mysql-elasticsearch、 elasticsearch-jdbc。 go-mysql-elasticsearch无法实现数据全量同步，且仍处于开发、相对不稳定阶段，而elasticsearch-jdbc 目前最新的版本是2.3.4">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/17-%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/02-02-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E5%88%B0ES/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="为何选用logstash-input-jdbc从关系型数据库同步数据到ES通常情况下用插件来做，常用的插件包括logstash-input-jdbc、go-mysql-elasticsearch、 elasticsearch-jdbc。 go-mysql-elasticsearch无法实现数据全量同步，且仍处于开发、相对不稳定阶段，而elasticsearch-jdbc 目前最新的版本是2.3.4">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230109222150.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230109222257.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230109222338.png">
+<meta property="article:published_time" content="2023-09-10T03:59:07.883Z">
+<meta property="article:modified_time" content="2023-01-09T14:26:51.080Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230109222150.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-17-搜索引擎/02-02-数据库同步数据到ES" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/17-%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/02-02-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E5%88%B0ES/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:07.883Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="为何选用logstash-input-jdbc"><a href="#为何选用logstash-input-jdbc" class="headerlink" title="为何选用logstash-input-jdbc"></a>为何选用logstash-input-jdbc</h1><p>从关系型数据库同步数据到ES通常情况下用插件来做，常用的插件包括logstash-input-jdbc、go-mysql-elasticsearch、 elasticsearch-jdbc。</p>
+<p>go-mysql-elasticsearch无法实现数据全量同步，且仍处于开发、相对不稳定阶段，而elasticsearch-jdbc 目前最新的版本是2.3.4，支持的ElasticSearch的版本为2.3.4，当前主流的ES版本已经是ES5.x及以上了，故不选用。</p>
+<p>因此我们最终选用logstash-input-jdbc插件，此插件课兼顾全量同步、增量同步，但不能实现删除操作。</p>
+<h1 id="环境描述"><a href="#环境描述" class="headerlink" title="环境描述"></a>环境描述</h1><p>系统环境	CentOS-6.10-x86_64-minimal</p>
+<p>JDK		jdk 1.8.0_11  64位</p>
+<p>Elasticsearch	6.5.3</p>
+<p>Logstash	6.5.3</p>
+<p>ruby		2.2.3</p>
+<p>gem		2.6.12</p>
+<p>MySQL		5.7.10</p>
+<h1 id="安装ruby相关"><a href="#安装ruby相关" class="headerlink" title="安装ruby相关"></a>安装ruby相关</h1><h2 id="安装ruby"><a href="#安装ruby" class="headerlink" title="安装ruby"></a>安装ruby</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">yum install -y gcc* openssl* wget</span><br><span class="line"></span><br><span class="line">wget https://cache.ruby-lang.org/pub/ruby/2.2/ruby-2.2.3.tar.gz</span><br><span class="line">tar zxvf ruby-2.2.3.tar.gz</span><br><span class="line"><span class="built_in">cd</span> ruby-2.2.3</span><br><span class="line">./configure --prefix=/usr/local/ruby</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line"><span class="built_in">ln</span> -sf /usr/local/ruby/bin/* /usr/bin/</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装openssl"><a href="#安装openssl" class="headerlink" title="安装openssl"></a>安装openssl</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span>  ruby-2.2.3/ext/openssl</span><br><span class="line">ruby extconf.rb</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line"></span><br><span class="line">注：make时可能会报如下错</span><br><span class="line">make: *** No rule to make target `/include/ruby.h<span class="string">&#x27;, needed by `ossl_x509revoked.o&#x27;</span>.  Stop.</span><br><span class="line">解决方法：修改 Makefile 在最上面增加变量 top_srcdir = ../.. 即可。</span><br></pre></td></tr></table></figure>
+
+<h2 id="修改gem源"><a href="#修改gem源" class="headerlink" title="修改gem源"></a>修改gem源</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gem sources --remove https://rubygems.org/</span><br><span class="line">gem sources -a https://gems.ruby-china.com/</span><br><span class="line">gem sources -l</span><br></pre></td></tr></table></figure>
+
+<h1 id="安装logstash"><a href="#安装logstash" class="headerlink" title="安装logstash"></a>安装logstash</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://artifacts.elastic.co/downloads/logstash/logstash-6.5.3.zip</span><br><span class="line">unzip logstash-6.5.3.zip</span><br></pre></td></tr></table></figure>
+
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> logstash-6.5.3/bin/</span><br><span class="line">./logstash -e <span class="string">&#x27;input &#123; stdin &#123; &#125; &#125; output &#123; stdout &#123;&#125; &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果出现下面的东西就表示成功</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230109222150.png"></p>
+<p>随便输入一些类容：HelloWorld<br>会变成下面这样</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230109222257.png"></p>
+<p>基本上这样就算是安装成功了</p>
+<h1 id="安装logstash-input-jdbc插件"><a href="#安装logstash-input-jdbc插件" class="headerlink" title="安装logstash-input-jdbc插件"></a>安装logstash-input-jdbc插件</h1><p>logstash-input-jdbc插件是logstash 的一个个插件，使用ruby语言开发，安装它首先需要安装ruby gem，并指定股呢的镜像库。如果没有安装gem，先安装ruby gem。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vi logstash-6.5.3/Gemfile</span><br><span class="line">修改 <span class="built_in">source</span> 的值 为： <span class="string">&quot;https://gems.ruby-china.com/&quot;</span></span><br><span class="line"></span><br><span class="line">vi logstash-6.5.3/Gemfile.lock</span><br><span class="line">修改GEM下的remote属性为： https://gems.ruby-china.com/</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230109222338.png"></p>
+<p>logstash-6.5.3&#x2F;bin&#x2F;logstash-plugin install logstash-input-jdbc</p>
+<h1 id="导数实战"><a href="#导数实战" class="headerlink" title="导数实战"></a>导数实战</h1><p>经过前面的准备工作，我们已经准备好了logstash-input-jdbc插件环境，另外你还需要Elasticsearch6.5.3、MySQL5.7.10的环境，参考其它文章即可。</p>
+<h2 id="创建一个ES索引"><a href="#创建一个ES索引" class="headerlink" title="创建一个ES索引"></a>创建一个ES索引</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PUT /songs_v11</span><br></pre></td></tr></table></figure>
+
+<h2 id="MySQL-表准备"><a href="#MySQL-表准备" class="headerlink" title="MySQL 表准备"></a>MySQL 表准备</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">create database music;</span><br><span class="line">grant all privileges on music.* to <span class="string">&#x27;music&#x27;</span>@<span class="string">&#x27;%&#x27;</span> identified by <span class="string">&#x27;music&#x27;</span>;</span><br><span class="line">flush privileges;</span><br><span class="line"></span><br><span class="line">use music;</span><br><span class="line"></span><br><span class="line">create table songs(</span><br><span class="line">   song_id int primary key auto_increment,</span><br><span class="line">   song_name varchar(18),</span><br><span class="line">   singer varchar(18),</span><br><span class="line">   lyrics varchar(3000),</span><br><span class="line">   create_time DATETIME</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h2 id="logstash-jdbc-input"><a href="#logstash-jdbc-input" class="headerlink" title="logstash-jdbc-input"></a>logstash-jdbc-input</h2><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> logstash-6.5.3/jdbc_conf/</span><br></pre></td></tr></table></figure>
+
+<p>添加jdbc.conf 文件，内容如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">input &#123;</span><br><span class="line">    stdin &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    jdbc &#123;</span><br><span class="line">      jdbc_connection_string =&gt; &quot;jdbc:mysql://192.168.90.136:3306/music&quot;</span><br><span class="line">      jdbc_user =&gt; &quot;music&quot;</span><br><span class="line">      jdbc_password =&gt; &quot;music&quot;</span><br><span class="line">      jdbc_driver_library =&gt; &quot;/root/mysql-connector-java-5.1.28.jar&quot;</span><br><span class="line">      jdbc_driver_class =&gt; &quot;com.mysql.jdbc.Driver&quot;</span><br><span class="line">      jdbc_paging_enabled =&gt; &quot;true&quot;</span><br><span class="line">      jdbc_page_size =&gt; &quot;50000&quot;</span><br><span class="line"></span><br><span class="line">      statement =&gt; &quot;select song_id,song_name,singer,lyrics,create_time from music.songs where create_time &gt;= :sql_last_value&quot;</span><br><span class="line">      schedule =&gt; &quot;* * * * *&quot;</span><br><span class="line">      type =&gt; &quot;jdbc&quot;</span><br><span class="line">      lowercase_column_names =&gt; &quot;false&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">filter &#123;&#125;</span><br><span class="line"></span><br><span class="line">output &#123;</span><br><span class="line"></span><br><span class="line">    elasticsearch &#123;</span><br><span class="line">        hosts =&gt; [&quot;192.168.90.131:9200&quot;]</span><br><span class="line">        index =&gt; &quot;songs_v11&quot;</span><br><span class="line">        document_id =&gt; &quot;%&#123;song_id&#125;&quot;</span><br><span class="line">        template_overwrite =&gt; true</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    stdout &#123;</span><br><span class="line">        codec =&gt; json_lines</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/logstash -f jdbc_conf/jdbc.conf</span><br></pre></td></tr></table></figure>
+
+<h2 id="往MySQL中插入测试数据"><a href="#往MySQL中插入测试数据" class="headerlink" title="往MySQL中插入测试数据"></a>往MySQL中插入测试数据</h2><p>现在所有的准备工作已经做好，接下来需要往MySQL中插入数据，如果能同步到ES，说明链路已经打通。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> music.songs(song_name,singer,lyrics,create_time) <span class="keyword">values</span>(<span class="string">&#x27;take me &#x27;</span>,<span class="string">&#x27;James Blunt&#x27;</span>,<span class="string">&#x27;fasdfasfasdfasdfasdfasdfas&#x27;</span>,now());</span><br><span class="line"></span><br><span class="line">查询ES，是否有插入的数据</span><br><span class="line"><span class="keyword">GET</span> <span class="operator">/</span>songs_v11<span class="operator">/</span>_search</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/17-%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/02-02-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E5%88%B0ES/" data-id="clmcxece1003iu8waggfd1e3r" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/17-%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/03-ES%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95%E8%A7%A3%E6%9E%90/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/17-%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/02-01-ES%E5%AE%89%E8%A3%85%E6%96%87%E6%A1%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

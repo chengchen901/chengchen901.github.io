@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>ActiveMQ入门 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="ActiveMQ是一款用Java开发的、开源的、支持多种协议的、非常流行的消息服务（消息中间件）。因为它的支持多协议，支持工业标准的协议，所以我们可以跨平台、跨语言来使用它。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ActiveMQ入门">
+<meta property="og:url" content="http://example.com/2020/08/16/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/01-ActiveMQ/01-ActiveMQ%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="ActiveMQ是一款用Java开发的、开源的、支持多种协议的、非常流行的消息服务（消息中间件）。因为它的支持多协议，支持工业标准的协议，所以我们可以跨平台、跨语言来使用它。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815152033595.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815152949384.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815153332088.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816162834269.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816171819627.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816173708776.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816173803125.png">
+<meta property="article:published_time" content="2020-08-16T07:15:25.000Z">
+<meta property="article:modified_time" content="2022-09-25T14:02:07.556Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="ActiveMQ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815152033595.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-08-消息队列/01-ActiveMQ/01-ActiveMQ入门" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/16/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/01-ActiveMQ/01-ActiveMQ%E5%85%A5%E9%97%A8/" class="article-date">
+  <time class="dt-published" datetime="2020-08-16T07:15:25.000Z" itemprop="datePublished">2020-08-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ActiveMQ/">ActiveMQ</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      ActiveMQ入门
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>ActiveMQ是一款用Java开发的、开源的、支持多种协议的、非常流行的消息服务（消息中间件）。因为它的支持多协议，支持工业标准的协议，所以我们可以跨平台、跨语言来使用它。</p>
+<span id="more"></span>
+
+<h1 id="ActiveMQ入门指南"><a href="#ActiveMQ入门指南" class="headerlink" title="ActiveMQ入门指南"></a><strong>ActiveMQ入门指南</strong></h1><h1 id="1-ActiveMQ简介"><a href="#1-ActiveMQ简介" class="headerlink" title="1.ActiveMQ简介"></a>1.ActiveMQ简介</h1><p>官网的介绍<a target="_blank" rel="noopener" href="https://activemq.apache.org/"> </a><a target="_blank" rel="noopener" href="https://activemq.apache.org/">https://activemq.apache.or</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/">g</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/">&#x2F;</a></p>
+<p>从官网介绍能很好地获知ActiveMQ的用处：</p>
+<p>Apache ActiveMQ™ is the most popular open source, multi-protocol, Java-based messaging server. It supports industry standard protocols so users get the benefits of client choices across a broad range of languages and platforms. Connectivity from C, C++, Python, .Net, and more is available. Integrate your multi-platform applications using the ubiquitous <strong>AMQP</strong> protocol. Exchange messages between your web applications using <strong>STOMP</strong> over websockets. Manage your IoT devices using <strong>MQTT</strong>. Support your existing <strong>JMS</strong> infrastructure and beyond. ActiveMQ offers the power and flexibility to support any messaging use-case.</p>
+<p>一款用Java开发的、开源的、支持多种协议的、非常流行的消息服务（消息中间件）。因为它的支持多协议，支持工业标准的协议，所以我们可以跨平台、跨语言来使用它。</p>
+<ul>
+<li>用AMQP工业标准协议进行多平台应用集成</li>
+<li>Web应用可基于websocket用STOMP协议与ActiveMQ直接交互</li>
+<li>物联网设备用MQTT协议基于JMS的已有基础设施</li>
+<li>支持还有更多…</li>
+</ul>
+<p>当前有两个版本：ActiveMQ 5 “Classic” 和 ActiveMQ Artemis (下一代版本)。我们学习 ActiveMQ 5 “Classic” 经典版。有兴趣可以了解 ActiveMQ Artemis。</p>
+<!--more-->
+
+<h1 id="2-ActiveMQ-官方学习资源介绍"><a href="#2-ActiveMQ-官方学习资源介绍" class="headerlink" title="2.ActiveMQ 官方学习资源介绍"></a>2.ActiveMQ 官方学习资源介绍</h1><p>ActiveMQ作为一个老牌的消息中间件，其提供了详细的官方文档，强烈大家从官网文档来进行学习，及工作中新需求解决办法的查找。</p>
+<p>官网文档入口：<a target="_blank" rel="noopener" href="https://activemq.apache.org/components/classic/documentation">https://activemq.apache.or</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/components/classic/documentation">g</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/components/classic/documentation">&#x2F;components&#x2F;classic&#x2F;documentation</a></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815152033595.png" alt="image-20200815152033595"></p>
+<h1 id="3-Linux安装指南"><a href="#3-Linux安装指南" class="headerlink" title="3.Linux安装指南"></a>3.Linux安装指南</h1><p>各种环境下安装，请参考官网文档：<a target="_blank" rel="noopener" href="https://activemq.apache.org/getting-started">https://activemq.apache.or</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/getting-started">g</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/getting-started">&#x2F;</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/getting-started">g</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/getting-started">ettin</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/getting-started">g</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/getting-started">-started </a>下面说明一下linux上的安装。</p>
+<h2 id="3-1环境准备"><a href="#3-1环境准备" class="headerlink" title="3.1环境准备"></a>3.1环境准备</h2><ul>
+<li><p>虚拟机软件：Oracle VM VirtualBox</p>
+<p>下载地址：<a target="_blank" rel="noopener" href="https://www.virtualbox.org/wiki/Downloads">https://www.virtualbox.or</a><a target="_blank" rel="noopener" href="https://www.virtualbox.org/wiki/Downloads">g</a><a target="_blank" rel="noopener" href="https://www.virtualbox.org/wiki/Downloads">&#x2F;wiki&#x2F;Downloads </a></p>
+</li>
+<li><p>Linux: Centos 7镜像下载</p>
+<p>官网下载地址：<a target="_blank" rel="noopener" href="https://www.centos.org/download/">https://www.centos.org/download/</a></p>
+</li>
+</ul>
+<h2 id="3-2安装"><a href="#3-2安装" class="headerlink" title="3.2安装"></a>3.2安装</h2><h3 id="3-2-1下载安装包"><a href="#3-2-1下载安装包" class="headerlink" title="3.2.1下载安装包"></a>3.2.1下载安装包</h3><p><a target="_blank" rel="noopener" href="https://activemq.apache.org/components/classic/download/">https://activemq.apache.or</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/components/classic/download/">g</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/components/classic/download/">&#x2F;components&#x2F;classic&#x2F;download&#x2F;</a></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815152949384.png" alt="image-20200815152949384"></p>
+<h3 id="3-2-2安装"><a href="#3-2-2安装" class="headerlink" title="3.2.2安装"></a>3.2.2安装</h3><p>1.创建安装目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> /usr/activemq</span><br></pre></td></tr></table></figure>
+
+<p>2.解压安装包到安装目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf apache-activemq-5.16.0 -C /user/activemq</span><br></pre></td></tr></table></figure>
+
+<p>3.为方便配置时书写，创建软链接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ln</span> -s /usr/activemq/apache-activemq-5.16.0 /usr/activemq/latest</span><br></pre></td></tr></table></figure>
+
+<p>4.熟悉activemq的目录构成</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815153332088.png" alt="image-20200815153332088"></p>
+<h3 id="3-2-3启动-停止"><a href="#3-2-3启动-停止" class="headerlink" title="3.2.3启动&#x2F;停止"></a>3.2.3启动&#x2F;停止</h3><p>1.启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/activemq/latest/bin</span><br></pre></td></tr></table></figure>
+
+<p>作为前台进程启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./activemq console</span><br></pre></td></tr></table></figure>
+
+<p>作为后台守护进程启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./activemq start</span><br></pre></td></tr></table></figure>
+
+<p>2.启动成功检测</p>
+<p>访问管理控制台：<a target="_blank" rel="noopener" href="http://ip:8161/admin">http://ip:8161/admin</a></p>
+<p><strong>如果防火墙阻止了，请看下面防火墙开发端口</strong>，ActiveMQ的管理页面默认开启 了身份校验，账号：admin，密码：admin</p>
+<p>3.停止</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./activemq stop</span><br></pre></td></tr></table></figure>
+
+<p>4.了解activemq命令的用法（快速了解一下）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./activemq</span><br></pre></td></tr></table></figure>
+
+<p>浏览用法说明信息，也可以查看官网链接：<a target="_blank" rel="noopener" href="https://activemq.apache.org/unix-shell-script">https://activemq.apache.or</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/unix-shell-script">g</a><a target="_blank" rel="noopener" href="https://activemq.apache.org/unix-shell-script">&#x2F;unix-shell-script</a></p>
+<h3 id="3-2-4防火墙开放ActiveMQ的端口"><a href="#3-2-4防火墙开放ActiveMQ的端口" class="headerlink" title="3.2.4防火墙开放ActiveMQ的端口"></a>3.2.4防火墙开放ActiveMQ的端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Web管理端口默认为8161，通讯端口默认为61616</span></span><br><span class="line">firewall-cmd --zone=public --add-port=8161/tcp --permanent </span><br><span class="line">firewall-cmd --zone=public --add-port=61616/tcp --permanent</span><br></pre></td></tr></table></figure>
+
+<p>重启防火墙</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart firewalld.service</span><br></pre></td></tr></table></figure>
+
+<p>学习用，可以直接关闭防火墙</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld</span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld</span><br></pre></td></tr></table></figure>
+
+<p>修改conf目录下jetty.xml文件</p>
+<p>原配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;jettyPort&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.activemq.web.WebConsolePort&quot;</span> <span class="attr">init-method</span>=<span class="string">&quot;start&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- the default port number for the web console --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;host&quot;</span> <span class="attr">value</span>=<span class="string">&quot;127.0.0.1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;port&quot;</span> <span class="attr">value</span>=<span class="string">&quot;8161&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>修改后：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;jettyPort&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.activemq.web.WebConsolePort&quot;</span> <span class="attr">init-method</span>=<span class="string">&quot;start&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- the default port number for the web console --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;host&quot;</span> <span class="attr">value</span>=<span class="string">&quot;ip&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;port&quot;</span> <span class="attr">value</span>=<span class="string">&quot;8161&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="4-ActiveMQ配置"><a href="#4-ActiveMQ配置" class="headerlink" title="4.ActiveMQ配置"></a>4.ActiveMQ配置</h1><ul>
+<li>了解conf目录</li>
+<li>掌握web控制台配置</li>
+<li>掌握ActiveMQ配置 <a target="_blank" rel="noopener" href="https://activemq.apache.org/xml-configuration">https://activemq.apache.org/xml-configuration</a></li>
+<li>了解安全配置 <a target="_blank" rel="noopener" href="https://activemq.apache.org/security">https://activemq.apache.org/security</a></li>
+</ul>
+<h2 id="4-1Web管理配置"><a href="#4-1Web管理配置" class="headerlink" title="4.1Web管理配置"></a>4.1Web管理配置</h2><p>ActiveMQ的Web管理平台是基于jetty运行，因此在activemq&#x2F;conf目录可以看到jetty的配置文件</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816162834269.png" alt="image-20200816162834269"></p>
+<h3 id="4-1-1-jetty-realm-properties配置"><a href="#4-1-1-jetty-realm-properties配置" class="headerlink" title="4.1.1 jetty-realm.properties配置"></a>4.1.1 <strong>jetty-realm.properties配置</strong></h3><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## ---------------------------------------------------------------------------</span></span><br><span class="line"><span class="comment">## Licensed to the Apache Software Foundation (ASF) under one or more</span></span><br><span class="line"><span class="comment">## contributor license agreements.  See the NOTICE file distributed with</span></span><br><span class="line"><span class="comment">## this work for additional information regarding copyright ownership.</span></span><br><span class="line"><span class="comment">## The ASF licenses this file to You under the Apache License, Version 2.0</span></span><br><span class="line"><span class="comment">## (the &quot;License&quot;); you may not use this file except in compliance with</span></span><br><span class="line"><span class="comment">## the License.  You may obtain a copy of the License at</span></span><br><span class="line"><span class="comment">## </span></span><br><span class="line"><span class="comment">## http://www.apache.org/licenses/LICENSE-2.0</span></span><br><span class="line"><span class="comment">## </span></span><br><span class="line"><span class="comment">## Unless required by applicable law or agreed to in writing, software</span></span><br><span class="line"><span class="comment">## distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span></span><br><span class="line"><span class="comment">## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></span><br><span class="line"><span class="comment">## See the License for the specific language governing permissions and</span></span><br><span class="line"><span class="comment">## limitations under the License.</span></span><br><span class="line"><span class="comment">## ---------------------------------------------------------------------------</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># Defines users that can access the web (console, demo, etc.)</span></span><br><span class="line"><span class="comment"># username: password [,rolename ...]</span></span><br><span class="line"><span class="attr">admin</span>: <span class="string">admin, admin</span></span><br><span class="line"><span class="attr">user</span>: <span class="string">user, user</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 用户名: 密码, 角色</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-1-2-jetty-xml配置"><a href="#4-1-2-jetty-xml配置" class="headerlink" title="4.1.2 jetty.xml配置"></a>4.1.2 jetty.xml配置</h3><p>修改web管理平台的默认端口，在activemq&#x2F;conf&#x2F;jetty.xml中。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;jettyPort&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.activemq.web.WebConsolePort&quot;</span> <span class="attr">init-method</span>=<span class="string">&quot;start&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 设置管理平台白名单ip,0.0.0.0为没有限制 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;host&quot;</span> <span class="attr">value</span>=<span class="string">&quot;0.0.0.0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 管理平台端口 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;port&quot;</span> <span class="attr">value</span>=<span class="string">&quot;8161&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;securityConstraint&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.eclipse.jetty.util.security.Constraint&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;BASIC&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;roles&quot;</span> <span class="attr">value</span>=<span class="string">&quot;user,admin&quot;</span> /&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 改为false即可关闭登录 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;authenticate&quot;</span> <span class="attr">value</span>=<span class="string">&quot;true&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="5-ActiveMQ使用"><a href="#5-ActiveMQ使用" class="headerlink" title="5.ActiveMQ使用"></a>5.ActiveMQ使用</h1><h2 id="5-1在Java中使用ActiveMQ"><a href="#5-1在Java中使用ActiveMQ" class="headerlink" title="5.1在Java中使用ActiveMQ"></a>5.1在Java中使用ActiveMQ</h2><p><strong>使用Jar包</strong></p>
+<p>在activemq的根目录有activemq-all-5.16.0.jar包，将其直接复制到工程即可</p>
+<p><strong>Maven依赖</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.activemq<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>activemq-all<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.15.9<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="5-2在Spring-boot中使用ActiveMQ"><a href="#5-2在Spring-boot中使用ActiveMQ" class="headerlink" title="5.2在Spring boot中使用ActiveMQ"></a>5.2在Spring boot中使用ActiveMQ</h2><p>Spring官方教程</p>
+<p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.1.6.RELEASE/reference/html/boot-features-messaging.html">https://docs.spring.io/spring-boot/docs/2.1.6.RELEASE/reference/html/boot-features-messaging.html</a></p>
+<p><a target="_blank" rel="noopener" href="http://spring.io/guides/gs/messaging-jms/">http://spring.io/guides/gs/messaging-jms/</a></p>
+<p><strong>Maven依赖</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-activemq<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="6-JMS"><a href="#6-JMS" class="headerlink" title="6.JMS"></a>6.JMS</h1><h2 id="6-1JMS是什么"><a href="#6-1JMS是什么" class="headerlink" title="6.1JMS是什么"></a>6.1JMS是什么</h2><p><strong>Java Message Service(JMS) Java消息操作的标准API</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816171819627.png" alt="image-20200816171819627"></p>
+<h2 id="6-2JMS的API"><a href="#6-2JMS的API" class="headerlink" title="6.2JMS的API"></a>6.2JMS的API</h2><table>
+<thead>
+<tr>
+<th>定义</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ConnectionFactory</td>
+<td>连接工厂</td>
+</tr>
+<tr>
+<td>Connection</td>
+<td>连接</td>
+</tr>
+<tr>
+<td>Session</td>
+<td>会话</td>
+</tr>
+<tr>
+<td>Destination</td>
+<td>目标</td>
+</tr>
+<tr>
+<td>MessageProducer</td>
+<td>生产者</td>
+</tr>
+<tr>
+<td>MessageConsumer</td>
+<td>消费者</td>
+</tr>
+<tr>
+<td>Message</td>
+<td>消息</td>
+</tr>
+<tr>
+<td>Broker</td>
+<td>消息中间件的实例</td>
+</tr>
+</tbody></table>
+<h2 id="6-3JMS支持的两种消息传递方式"><a href="#6-3JMS支持的两种消息传递方式" class="headerlink" title="6.3JMS支持的两种消息传递方式"></a>6.3JMS支持的两种消息传递方式</h2><h3 id="6-3-1Point-to-Point-P2P-点对点"><a href="#6-3-1Point-to-Point-P2P-点对点" class="headerlink" title="6.3.1Point-to-Point (P2P) &#x2F; 点对点"></a>6.3.1Point-to-Point (P2P) &#x2F; 点对点</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816173708776.png" alt="image-20200816173708776"></p>
+<h3 id="6-3-2Publish-Subscribe-Pub-Sub-主题-发布订阅"><a href="#6-3-2Publish-Subscribe-Pub-Sub-主题-发布订阅" class="headerlink" title="6.3.2Publish&#x2F;Subscribe (Pub&#x2F;Sub) &#x2F; 主题 (发布订阅)"></a>6.3.2Publish&#x2F;Subscribe (Pub&#x2F;Sub) &#x2F; 主题 (发布订阅)</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816173803125.png" alt="image-20200816173803125"></p>
+<h2 id="6-4JMS消息模型"><a href="#6-4JMS消息模型" class="headerlink" title="6.4JMS消息模型"></a>6.4JMS消息模型</h2><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Header消息头</td>
+<td>Properties消息属性</td>
+<td>Body消息体</td>
+</tr>
+</tbody></table>
+<h3 id="6-4-1JMS消息模型-Header"><a href="#6-4-1JMS消息模型-Header" class="headerlink" title="6.4.1JMS消息模型-Header"></a>6.4.1JMS消息模型-Header</h3><p>消息头关于一些消息的描述信息，客户端不能修改或添加header</p>
+<table>
+<thead>
+<tr>
+<th>定义</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JMSDestination</td>
+<td>消息的目的地，Topic或是Queue</td>
+</tr>
+<tr>
+<td>JMSDeliveryMode</td>
+<td>消息的发送模式</td>
+</tr>
+<tr>
+<td>JMSTimestamp</td>
+<td>消息传递给Broker的时间戳，它不是实际发送的时间</td>
+</tr>
+<tr>
+<td>JMSExpiration</td>
+<td>消息的有效期，在有效期内，消息消费者才可以消费这个消息</td>
+</tr>
+<tr>
+<td>JMSPriority</td>
+<td>消息的优先级。0-4为正常的优先级，5-9为高优先级</td>
+</tr>
+<tr>
+<td>JMSMessageID</td>
+<td>一个字符串用来唯一标示一个消息</td>
+</tr>
+<tr>
+<td>JMSReplyTo</td>
+<td>有时消息生产者希望消费者回复一个消息，JMSReplyTo为一个Destination，表示需要回复的目的地</td>
+</tr>
+<tr>
+<td>JMSCorrelationID</td>
+<td>通常用来关联多个Message</td>
+</tr>
+<tr>
+<td>JMSType</td>
+<td>表示消息体的结构，和JMS提供者有关、</td>
+</tr>
+<tr>
+<td>JMSRedelivered</td>
+<td>如果这个值为true，表示消息是被重新发送了</td>
+</tr>
+</tbody></table>
+<h3 id="6-4-2JMS消息模型-Properties"><a href="#6-4-2JMS消息模型-Properties" class="headerlink" title="6.4.2JMS消息模型-Properties"></a>6.4.2JMS消息模型-Properties</h3><p><strong>消息属性</strong>可以理解为消息的附加消息头，属性名可以自定义</p>
+<p>属性值类型：boolean、byte、short、int、long、float、double、String</p>
+<h3 id="6-4-3JMS消息模型-Body"><a href="#6-4-3JMS消息模型-Body" class="headerlink" title="6.4.3JMS消息模型-Body"></a>6.4.3JMS消息模型-Body</h3><p><strong>消息体类型</strong></p>
+<table>
+<thead>
+<tr>
+<th>定义</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BytesMessage</td>
+<td>用来传递字节消息</td>
+</tr>
+<tr>
+<td>MapMessage</td>
+<td>用来传递键值对消息</td>
+</tr>
+<tr>
+<td>ObjectMessage</td>
+<td>用来传递序列化对象</td>
+</tr>
+<tr>
+<td>StreamMessage</td>
+<td>用来传递文件等</td>
+</tr>
+<tr>
+<td>TextMessage</td>
+<td>用来传递字符串</td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/16/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/01-ActiveMQ/01-ActiveMQ%E5%85%A5%E9%97%A8/" data-id="clmcxed0z00agu8wa4zky16se" data-title="ActiveMQ入门" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/10/03/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/02-RabbitMQ/01-RabbitMQ%E5%85%A5%E9%97%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          RabbitMQ入门
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/12-Tomcat/01-Tomcat%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%901/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Tomcat源码分析1</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

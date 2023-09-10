@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>手写RPC框架 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="手写RPC框架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手写RPC框架">
+<meta property="og:url" content="http://example.com/2021/01/16/06-Dubbo/02-%E6%89%8B%E5%86%99RPC%E6%A1%86%E6%9E%B6/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="手写RPC框架">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210116151616192.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210116151733381.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210116152048300.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117142218431.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117142308766.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117142648626.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117142710729.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117171224602.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117171335734.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117171756549.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117172120586.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117172154767.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117172403672.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117172416031.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117172552829.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117172718388.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117172919045.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117173026461.png">
+<meta property="article:published_time" content="2021-01-16T07:12:48.000Z">
+<meta property="article:modified_time" content="2022-09-25T13:13:56.958Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="RPC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210116151616192.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-06-Dubbo/02-手写RPC框架" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/16/06-Dubbo/02-%E6%89%8B%E5%86%99RPC%E6%A1%86%E6%9E%B6/" class="article-date">
+  <time class="dt-published" datetime="2021-01-16T07:12:48.000Z" itemprop="datePublished">2021-01-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/RPC/">RPC</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      手写RPC框架
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>手写RPC框架</p>
+<span id="more"></span>
+
+<p><strong>RPC学习代码：</strong><a target="_blank" rel="noopener" href="https://github.com/chengchen901/rpc-study.git">https://github.com/chengchen901/rpc-study.git</a></p>
+<h1 id="1-学习目标"><a href="#1-学习目标" class="headerlink" title="1 学习目标"></a>1 学习目标</h1><ul>
+<li><strong>通过手写掌握RPC的核心环节</strong></li>
+</ul>
+<h1 id="2-RPC的流程及任务"><a href="#2-RPC的流程及任务" class="headerlink" title="2 RPC的流程及任务"></a>2 RPC的流程及任务</h1><h2 id="2-1-RPC的流程"><a href="#2-1-RPC的流程" class="headerlink" title="2.1 RPC的流程"></a>2.1 RPC的流程</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210116151616192.png" alt="image-20210116151616192"></p>
+<ol>
+<li><p>客户端处理过程中调用Client stub（就像调用本地方法一样），传入参数; </p>
+</li>
+<li><p>Client stub 将参数编组为消息，然后通过系统调用向服务端发送消息; </p>
+</li>
+<li><p>客户端本地操作系统将消息从客户端机器发送到服务端机器; </p>
+</li>
+<li><p>服务端操作系统将接收到的数据包传递给Server stub; </p>
+</li>
+<li><p>Server stub 解组消息为参数;</p>
+</li>
+<li><p>Sever stub再调用服务端的过程，过程执行结果以反方向的相同步骤响应给客户端。</p>
+</li>
+</ol>
+<h2 id="2-2-从使用者角度开始"><a href="#2-2-从使用者角度开始" class="headerlink" title="2.2 从使用者角度开始"></a>2.2 从使用者角度开始</h2><p>用户使用RPC框架开发过程时需要做什么? </p>
+<ol>
+<li>定义过程定义接口 </li>
+<li>服务端实现过程 </li>
+<li>客户端使用生成的stub代理对象</li>
+</ol>
+<p>  </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210116151733381.png" alt="image-20210116151733381"></p>
+<h1 id="3-RPC框架设计及实现"><a href="#3-RPC框架设计及实现" class="headerlink" title="3 RPC框架设计及实现"></a>3 RPC框架设计及实现</h1><h2 id="3-1-设计客户端"><a href="#3-1-设计客户端" class="headerlink" title="3.1 设计客户端"></a>3.1 设计客户端</h2><p>客户端生成过程接口的代理对象</p>
+<p>我设计客户端代理工厂，用JDK动态代理即可生成接口的代理对象</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210116152048300.png" alt="image-20210116152048300"></p>
+<p>1、在ClientStubInvocationHandler中需要完成哪些事情？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117142218431.png" alt="image-20210117142218431"></p>
+<p>2、将请求的内容编组为消息这件事由谁来做？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117142308766.png" alt="image-20210117142308766"></p>
+<p>3、消息协议是固定不变的吗？它与什么有关？</p>
+<p>看框架对协议的支持广度，如果支持多种协议，就是会灵活变化的，它与具体的服务相关，A服务提供者可能选用的是协议1，B服务提供者可能选用协议2。</p>
+<p>4、某服务是用的什么消息协议这个信息从哪来？</p>
+<p>获取的服务信息中来。我们需要一个服务信息发现者</p>
+<p><strong>把发现者设计出来，要求∶可灵活支持多种发现机制</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117142648626.png" alt="image-20210117142648626"></p>
+<h2 id="3-2-设计客户端-发现者"><a href="#3-2-设计客户端-发现者" class="headerlink" title="3.2 设计客户端-发现者"></a>3.2 设计客户端-发现者</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117142710729.png" alt="image-20210117142710729"></p>
+<h2 id="3-3-设计客户端-协议层"><a href="#3-3-设计客户端-协议层" class="headerlink" title="3.3 设计客户端-协议层"></a>3.3 设计客户端-协议层</h2><p>5、我们想要做到可以支持多种协议，我们的类该如何设计？</p>
+<p>面向接口、策略模式、组合</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117171224602.png" alt="image-20210117171224602"></p>
+<p>问题∶ marshalling和unmarshalling方法该定义怎样的参数与返回值？</p>
+<p>编组、解组的操作对象是请求、响应。请求、响应的内容是不同的。就编组、解组两个方法是否够？</p>
+<p>6、定义框架标准的请求、响应类</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117171335734.png" alt="image-20210117171335734"></p>
+<p>7、将协议层方法扩展为四个</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117171756549.png" alt="image-20210117171756549"></p>
+<p><strong>将消息协议独立为一层。客户端、服务端都需要用到它。</strong></p>
+<h2 id="3-4-设计客户端-网络层"><a href="#3-4-设计客户端-网络层" class="headerlink" title="3.4 设计客户端-网络层"></a>3.4 设计客户端-网络层</h2><p>8、网络层的工作是什么？</p>
+<p>​	发送请求，获得响应。要发起网络请求，就需要知道服务地址。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117172120586.png" alt="image-20210117172120586"></p>
+<h2 id="3-5-设计客户端-客户端完整类图"><a href="#3-5-设计客户端-客户端完整类图" class="headerlink" title="3.5 设计客户端-客户端完整类图"></a>3.5 设计客户端-客户端完整类图</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117172154767.png" alt="image-20210117172154767"></p>
+<h2 id="3-6-实现客户端"><a href="#3-6-实现客户端" class="headerlink" title="3.6 实现客户端"></a>3.6 实现客户端</h2><p>按照类图设计，填码！</p>
+<p>​	看ClientStubProxyFactory核心类的代码示例！</p>
+<p>​	在实现过程中∶协议层涉及一个重要概念∶参数序列化、反序列</p>
+<h2 id="3-7-设计服务端"><a href="#3-7-设计服务端" class="headerlink" title="3.7 设计服务端"></a>3.7 设计服务端</h2><p>客户端请求过来了，服务端首先需要通过RPCServer接收请求。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117172403672.png" alt="image-20210117172403672"></p>
+<p>在RPC Server中开启网络服务</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117172416031.png" alt="image-20210117172416031"></p>
+<h2 id="3-8-设计服务端-思考"><a href="#3-8-设计服务端-思考" class="headerlink" title="3.8 设计服务端-思考"></a>3.8 设计服务端-思考</h2><p>RpcServer接收到客户端请求后，还需要做哪些工作？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117172552829.png" alt="image-20210117172552829"></p>
+<p>网络层在RpcServer中提供，多线程来处理请求，消息协议层复用客户端设计的。</p>
+<p>设计一个请求处理类，来完成网络层以上的事情。</p>
+<h2 id="3-9-设计服务端"><a href="#3-9-设计服务端" class="headerlink" title="3.9 设计服务端"></a>3.9 设计服务端</h2><p>RpcServer接收到请求后，将请求交给RequestHandler来处理，RequestHandler调用协议层来解组请求消息为Request对象。然后调用过程。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117172718388.png" alt="image-20210117172718388"></p>
+<p>问题∶ RequestHandler如何得到过程对象？Request中有什么？</p>
+<p>服务名、方法名、参数类型、参数值</p>
+<p><strong>需要一个过程注册模块</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117172919045.png" alt="image-20210117172919045"></p>
+<p>过程注册模块来让用户将他们的过程注册到RPC框架中来。同时如果我们想对外发布（暴露）我们的服务，还需要一个过程暴露模块。注册、暴露可以由同一个类实现。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210117173026461.png" alt="image-20210117173026461"></p>
+<h2 id="3-10-实现服务端"><a href="#3-10-实现服务端" class="headerlink" title="3.10 实现服务端"></a>3.10 实现服务端</h2><ol>
+<li>RpcServer中实现网络层∶Netty，使用RequestHandler </li>
+<li>ServiceRegister模块实现服务注册、发布。 </li>
+<li>RequestHandler中实现消息协议处理、过程调用</li>
+</ol>
+<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4 总结"></a>4 总结</h1><h2 id="4-1-知识总结"><a href="#4-1-知识总结" class="headerlink" title="4.1 知识总结"></a>4.1 知识总结</h2><p><strong>RPC的流程及任务</strong></p>
+<p>​	RPC流程、流程中需要处理的事情</p>
+<ul>
+<li>RPC流程</li>
+</ul>
+<ol>
+<li><p>客户端处理过程中调用Client stub（就像调用本地方法一样），传入参数; </p>
+</li>
+<li><p>Client stub 将参数编组为消息，然后通过系统调用向服务端发送消息; </p>
+</li>
+<li><p>客户端本地操作系统将消息从客户端机器发送到服务端机器; </p>
+</li>
+<li><p>服务端操作系统将接收到的数据包传递给Server stub; </p>
+</li>
+<li><p>Server stub 解组消息为参数;</p>
+</li>
+<li><p>Sever stub再调用服务端的过程，过程执行结果以反方向的相同步骤响应给客户端。</p>
+</li>
+</ol>
+<ul>
+<li>流程中需要处理的事情</li>
+</ul>
+<ol>
+<li>Client stub、Server stub的开发; </li>
+<li>参数如何编组为消息，以及解组消息; </li>
+<li>消息如何发送;</li>
+<li>过程结果如何表示、异常情况如何处理; </li>
+<li>如何实现安全的访问控制。</li>
+</ol>
+<p><strong>RPC框架设计实现</strong></p>
+<p>​	框架客户端设计、服务端设计、RPC框架代码实现</p>
+<ul>
+<li>客户端设计</li>
+</ul>
+<ol>
+<li>使用jdk动态代理生成接口代理类</li>
+<li>服务注册，本地注册、ZooKeeper注册等方式</li>
+<li>协议层，http、json等方式进行消息编解码</li>
+<li>网络层，bio、netty等方式进行与服务端通信</li>
+</ol>
+<ul>
+<li>服务端设计</li>
+</ul>
+<ol>
+<li>服务注册，本地注册、ZooKeeper注册等方式</li>
+<li>协议层，http、json等方式进行消息编解码</li>
+<li>网络层，bio、netty等方式进行与服务端通信</li>
+</ol>
+<p><strong>学习目标</strong></p>
+<p>​	通过手写掌握RPC的核心环节</p>
+<h2 id="4-2-扩展"><a href="#4-2-扩展" class="headerlink" title="4.2 扩展"></a>4.2 扩展</h2><p>思考：如何与spring集成</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/16/06-Dubbo/02-%E6%89%8B%E5%86%99RPC%E6%A1%86%E6%9E%B6/" data-id="clmcxecxz008qu8wa7knjc41g" data-title="手写RPC框架" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/02/07/00-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/01-KDTree%E6%9F%A5%E8%AF%A2%E9%82%BB%E8%BF%91n%E4%B8%AA%E7%AB%99%E7%82%B9/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          KDTree查询邻近n个站点
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/01/16/06-Dubbo/01-RPC%E7%90%86%E8%AE%BA/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">RPC理论</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

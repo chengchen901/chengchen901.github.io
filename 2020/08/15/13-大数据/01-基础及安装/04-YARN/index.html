@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>YARN | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Yarn产生背景和基本架构Yarn产生背景Question：  如何管理集群资源？ 如何给任务合理分配资源？  服务器资源：CPU、内存、GPU 在Yarn产生之前 MapReduce是Master&#x2F;Slave结构 JobTracker 一个集群一个，安装在Master节点上 管理MapReduce作业(Job) 向TaskTracker分发任务(Task)   TaskTracker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="YARN">
+<meta property="og:url" content="http://example.com/2020/08/15/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/04-YARN/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Yarn产生背景和基本架构Yarn产生背景Question：  如何管理集群资源？ 如何给任务合理分配资源？  服务器资源：CPU、内存、GPU 在Yarn产生之前 MapReduce是Master&#x2F;Slave结构 JobTracker 一个集群一个，安装在Master节点上 管理MapReduce作业(Job) 向TaskTracker分发任务(Task)   TaskTracker">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212214240.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212215722.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212220042.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212215321.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212215524.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212220239.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212220905.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212221631.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212221855.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212221937.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212222004.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212222158.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-7.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-8.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-9.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-10.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215225244.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215230040.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215230101.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215230134.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215230305.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215230740.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215230800.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215231840.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211218103223.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-MapReduce%20On%20Yarn.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Spark%20%E8%BF%AD%E4%BB%A3%E8%AE%A1%E7%AE%97.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211218122242.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-%E5%9F%BA%E4%BA%8EMapReduce%E3%80%81Spark%E7%9A%84%E8%BF%AD%E4%BB%A3%E8%AE%A1%E7%AE%97.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Spark%20%E8%AE%A1%E7%AE%97%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Spark%20On%20Yarn.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2022-01-16T12:52:51.795Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="YARN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212214240.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-13-大数据/01-基础及安装/04-YARN" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/04-YARN/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      YARN
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212214240.png"></p>
+<h1 id="Yarn产生背景和基本架构"><a href="#Yarn产生背景和基本架构" class="headerlink" title="Yarn产生背景和基本架构"></a>Yarn产生背景和基本架构</h1><h2 id="Yarn产生背景"><a href="#Yarn产生背景" class="headerlink" title="Yarn产生背景"></a>Yarn产生背景</h2><p><strong>Question：</strong></p>
+<ol>
+<li>如何管理集群资源？</li>
+<li>如何给任务合理分配资源？</li>
+</ol>
+<p>服务器资源：CPU、内存、GPU</p>
+<h2 id="在Yarn产生之前"><a href="#在Yarn产生之前" class="headerlink" title="在Yarn产生之前"></a>在Yarn产生之前</h2><ul>
+<li>MapReduce是Master&#x2F;Slave结构</li>
+<li>JobTracker<ul>
+<li>一个集群一个，安装在Master节点上</li>
+<li>管理MapReduce作业(Job)</li>
+<li>向TaskTracker分发任务(Task)</li>
+</ul>
+</li>
+<li>TaskTracker<ul>
+<li>每个slave节点一个</li>
+<li>运行监控Map&#x2F;Reduce任务</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212215722.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212220042.png"></p>
+<h2 id="MapReduce-V1-执行job流程"><a href="#MapReduce-V1-执行job流程" class="headerlink" title="MapReduce V1 执行job流程"></a>MapReduce V1 执行job流程</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212215321.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212215524.png"></p>
+<h2 id="MapReduce-V1-存在的问题"><a href="#MapReduce-V1-存在的问题" class="headerlink" title="MapReduce V1 存在的问题"></a>MapReduce V1 存在的问题</h2><ul>
+<li>MapReduce 模型简单，But</li>
+<li>Job类型<ul>
+<li>只能是MapReduce任务</li>
+</ul>
+</li>
+<li>集群资源管理<ul>
+<li>只有一个JobTracker，单点故障</li>
+<li>每个Slave机器可运行的最大Map tasks数量和Reduce tasks数量固定</li>
+</ul>
+</li>
+<li>难以共享集群资源<ul>
+<li>Spark Strom Impala</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212220239.png"></p>
+<h2 id="Yarn-基本概念"><a href="#Yarn-基本概念" class="headerlink" title="Yarn 基本概念"></a>Yarn 基本概念</h2><ul>
+<li><p>从Hadoop 2.0开始出现了Yarn</p>
+</li>
+<li><p>Yarn</p>
+<ul>
+<li>Yet Another Resource Negotiator（<strong>另一种资源协调者</strong>）</li>
+</ul>
+</li>
+<li><p>在Yarn上天然支持各种分布式计算框架</p>
+</li>
+<li><p><strong>ResourceManager</strong></p>
+<ul>
+<li>一个集群只有一个，全局的资源管理器</li>
+<li>负责启动客户端提交的Application</li>
+<li>监控Node Manger，汇总上报的资源</li>
+<li>根据请求分配资源</li>
+</ul>
+</li>
+<li><p><strong>NodeManager</strong></p>
+<ul>
+<li>每个从属节点一个</li>
+<li>管理自身所属节点的资源</li>
+<li>监控资源使用情况（cpu, memory, disk, network)并向Resource Manager汇报</li>
+</ul>
+</li>
+</ul>
+<p>通常NodeManager会和DataNode混合部署，why？</p>
+<p>NodeManager 执行任务从 DataNode 拉取数据，相当于从本地拉取数据，性能会有提升</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212220905.png"></p>
+<h2 id="Yarn-基本思想"><a href="#Yarn-基本思想" class="headerlink" title="Yarn 基本思想"></a>Yarn 基本思想</h2><ul>
+<li>在MapReduce V1中<ul>
+<li>JobTracker &#x3D; 资源管理器 + 任务调度器</li>
+</ul>
+</li>
+<li>在Yarn中做了切分<ul>
+<li>资源管理<ul>
+<li>让<strong>ResourceManager</strong>负责</li>
+</ul>
+</li>
+<li>任务调度<ul>
+<li>让<strong>ApplicationMaster</strong>负责<ul>
+<li>每个作业启动一个</li>
+<li>根据作业切分任务tasks</li>
+<li>向Resource Manager申请资源</li>
+<li>与NodeManager协作，将分配申请到的资源给内部任务tasks</li>
+<li>监控tasks运行情况，重启失败的任务</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>JobHistoryServer<ul>
+<li>每个集群每种计算框架一个</li>
+<li>负责搜集归档所有的日志</li>
+</ul>
+</li>
+</ul>
+<h2 id="Yarn-计算资源抽象"><a href="#Yarn-计算资源抽象" class="headerlink" title="Yarn 计算资源抽象"></a>Yarn 计算资源抽象</h2><ul>
+<li>在Yarn中，计算资源被抽象为Container</li>
+<li>每个Container描述：<ul>
+<li>可使用的CPU资源和内存资源</li>
+<li>执行命令</li>
+<li>环境变量</li>
+<li>外部资源</li>
+</ul>
+</li>
+<li>如何获得运行各个任务的Container?<ul>
+<li>由ApplicationMaster向ResourceManager申请</li>
+<li>ApplicationMaster本身也运行在一个Container，这个Container由ResourceManager向自身申请启动</li>
+</ul>
+</li>
+<li>如何启动运行？<ul>
+<li>向Container所属的Node Manager发起运行</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212221631.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212221855.png"></p>
+<ul>
+<li><p>CPU资源</p>
+<ul>
+<li><p>CPU资源不够，任务会运行慢</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212221937.png"></p>
+</li>
+</ul>
+</li>
+<li><p>Memory资源</p>
+<ul>
+<li><p>内存资源不够，任务就有可能会运行失败</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212222004.png"></p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211212222158.png"></p>
+<h1 id="Yarn资源调度过程"><a href="#Yarn资源调度过程" class="headerlink" title="Yarn资源调度过程"></a>Yarn资源调度过程</h1><h2 id="Yarn资源调度过程-1"><a href="#Yarn资源调度过程-1" class="headerlink" title="Yarn资源调度过程"></a>Yarn资源调度过程</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-1.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-2.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-3.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-4.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-5.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-6.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-7.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-8.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-9.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-10.png"></p>
+<h2 id="Yarn各个组件之间的心跳信号"><a href="#Yarn各个组件之间的心跳信号" class="headerlink" title="Yarn各个组件之间的心跳信号"></a>Yarn各个组件之间的心跳信号</h2><ul>
+<li>Application Master与Resource Manager心跳<ul>
+<li>AM-&gt;RM<ul>
+<li>对Container的资源需求（CPU和Memory）和优先级</li>
+<li>已用完等待回收的Container列表</li>
+</ul>
+</li>
+<li>RM-&gt;AM<ul>
+<li>新申请到的Container</li>
+<li>已完成Container的状态</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Application Master与Node Manager心跳<ul>
+<li>AM -&gt; NM<ul>
+<li>发起启动Container请求</li>
+</ul>
+</li>
+<li>NM -&gt; AM<ul>
+<li>汇报Container状态</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Node Manager与Resource Manager心跳<ul>
+<li>NM-&gt;RM<ul>
+<li>Node Manager上所有的Container状态</li>
+</ul>
+</li>
+<li>RM-&gt;NM<ul>
+<li>已删除和等待清理的Container列表</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Yarn资源隔离策略"><a href="#Yarn资源隔离策略" class="headerlink" title="Yarn资源隔离策略"></a>Yarn资源隔离策略</h2><p>主要两种，第一种线程监控方案，第二种基于 cgroups</p>
+<p>为什么采用线程监控方案？<br>在 linux 下进程创建子进程使用 fork 命令，刚创建时资源会有一个突增，可能会超过限制大小，yarn 基于线程监控方案允许在短时间内资源上限，资源上限时间过长则会 kill 掉进程，所以使用的是监控的策略。cgroups 只要超过资源限制就 kill 掉进程。 </p>
+<ul>
+<li><p>内存资源隔离</p>
+<ul>
+<li><p>基于线程监控方案</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Container[pid=container_1406552545451_0009_01_000002,containerID=container_234132_0001_01_000001] is running beyond physical memory limits. Current usage: 569.1 MB of 512 MB physical memory used; 970.1 MB of 1.0 GB virtual memory used. Killing container.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>基于cgroups</p>
+</li>
+</ul>
+</li>
+<li><p>CPU资源隔离</p>
+<ul>
+<li>默认不对CPU资源进行隔离</li>
+<li>基于cgroups</li>
+</ul>
+</li>
+<li><p>IO资源隔离</p>
+<ul>
+<li>默认不对IO资源进行隔离</li>
+<li>基于cgroups</li>
+</ul>
+</li>
+</ul>
+<p>yarn 默认不对 cpu、io 资源进行隔离，如果需要对 cpu、io 隔离则使用 cgroups，勾选下面两个配置即可。</p>
+<p>注意：cgroups 只能对读进行隔离，写不能对写隔离。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215225244.png"></p>
+<h2 id="Yarn容错处理"><a href="#Yarn容错处理" class="headerlink" title="Yarn容错处理"></a>Yarn容错处理</h2><ul>
+<li>失败类型<ul>
+<li>程序失败 进程奔溃 硬件问题</li>
+</ul>
+</li>
+<li>如果作业失败了<ul>
+<li>作业异常均会汇报给Application Master</li>
+<li>通过心跳信号检查挂住的任务</li>
+<li>一个作业的任务失败比例超过配置，就会认为该任务失败</li>
+</ul>
+</li>
+<li>如果Application Master失败了<ul>
+<li>Resource Manager接收不到心跳信号时会重启Application Master</li>
+</ul>
+</li>
+<li>如果Node Manager失败了<ul>
+<li>Resource Manager接收不到心跳信号时会将其移出</li>
+<li>Resource Manager通知Application Master，让Application Master决定任务如何处理</li>
+<li>如果某个Node Manager失败任务次数过多，Resource Manager调度任务时不再其上面运行任务</li>
+</ul>
+</li>
+<li>如果Resource Manager运行失败<ul>
+<li>通过checkpoint机制，定时将其状态保存到磁盘，失败的时候，重新运行</li>
+<li>通过Zookeeper同步状态和实现透明的HA</li>
+</ul>
+</li>
+</ul>
+<h2 id="Example-Yarn-HelloWorld"><a href="#Example-Yarn-HelloWorld" class="headerlink" title="Example Yarn HelloWorld"></a>Example Yarn HelloWorld</h2><ul>
+<li><p>Client &lt;–&gt; ResourceManager 通信</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215230040.png"></p>
+</li>
+<li><p>ApplicationMaster &lt;–&gt; ResourceManager 通信</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215230101.png"></p>
+</li>
+<li><p>ApplicationMaster &lt;–&gt; NodeManager 通信</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215230134.png"></p>
+</li>
+<li><p>Yarn Example Code演示讲解</p>
+<p>注意项目 pom.xml 文件中的 cdh 版本</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 我使用的是 cdh6.2.0版本，根据自己版本修改</span><br><span class="line"><span class="tag">&lt;<span class="name">hadoop.version</span>&gt;</span>3.0.0-cdh6.2.0<span class="tag">&lt;/<span class="name">hadoop.version</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>提交 client 到 yarn 执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop jar yarn-example-master-1.0-SNAPSHOT.jar com.study.bigdata.yarn.examples.MyClient</span><br></pre></td></tr></table></figure>
+
+<p>查看 application 日志</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yarn logs -applicationId &lt;应用<span class="built_in">id</span>&gt;</span><br><span class="line">yarn logs -applicationId application_1636115927565_0037</span><br></pre></td></tr></table></figure>
+
+<p>查看 containerId 日志</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yarn logs -containerId &lt;容器<span class="built_in">id</span>&gt;</span><br><span class="line">yarn logs -containerId container_1636115927565_0037_01_000003</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="Yarn调度器和调度算法"><a href="#Yarn调度器和调度算法" class="headerlink" title="Yarn调度器和调度算法"></a>Yarn调度器和调度算法</h1><h2 id="Yarn资源调度算法"><a href="#Yarn资源调度算法" class="headerlink" title="Yarn资源调度算法"></a>Yarn资源调度算法</h2><ul>
+<li>集群资源调度器需要解决：<ul>
+<li>多租户(Multi-tenancy)：<ul>
+<li>多用户同时提交多种应用程序</li>
+<li>资源调度器需要解决如何合理分配资源。</li>
+</ul>
+</li>
+<li>可扩展性(Scalability)：增加集群机器的数量可以提高整体集群性能。</li>
+</ul>
+</li>
+<li>Yarn使用队列解决多租户中共享资源的问题</li>
+</ul>
+<p>root</p>
+<p>|—-prd</p>
+<p>|—-dev</p>
+<p>​	|—-eng</p>
+<p>​	|—-science</p>
+<ul>
+<li>支持三种资源调度器<ul>
+<li>FIFO</li>
+<li>Capacity Scheduler</li>
+<li>Fair Scheduler</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215230305.png"></p>
+<h2 id="FIFO调度器"><a href="#FIFO调度器" class="headerlink" title="FIFO调度器"></a>FIFO调度器</h2><ul>
+<li>所有向集群提交的作业使用一个队列</li>
+<li>根据提交作业的顺序来运行（先来先服务）</li>
+<li>优点：<ul>
+<li>简单易懂</li>
+<li>可以按照作业优先级调度</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>资源利用率不高</li>
+<li>不允许抢占</li>
+</ul>
+</li>
+</ul>
+<h2 id="Capacity-Scheduler资源调度器"><a href="#Capacity-Scheduler资源调度器" class="headerlink" title="Capacity Scheduler资源调度器"></a>Capacity Scheduler资源调度器</h2><ul>
+<li>设计思想：<ul>
+<li>资源按照比例分配给各个队列</li>
+</ul>
+</li>
+<li>特点<ul>
+<li>计算能力保证<ul>
+<li>以队列为单位划分资源，每个队列最低资源保证。</li>
+</ul>
+</li>
+<li>灵活性<ul>
+<li>当某个队列空闲时，其资源可以分配给其他的队列使用。</li>
+</ul>
+</li>
+<li>支持优先级<ul>
+<li>单个队列内部使用FIFO，支持作业优先级调度</li>
+</ul>
+</li>
+<li>多租户<ul>
+<li>综合考虑多种因素防止单个作业、用户或者队列独占资源。</li>
+<li>每个队列可以配置一定比例的最低资源配置和使用上限。</li>
+<li>每个队列有严格的访问控制，只能向自己的队列提交任务。</li>
+</ul>
+</li>
+<li>基于资源的调度<ul>
+<li>支持内存资源调度和CPU资源的调度。</li>
+</ul>
+</li>
+<li>支持抢占（从2.8.0版本开始）</li>
+</ul>
+</li>
+</ul>
+<p>root</p>
+<p>|—-prd <span style="color:red">70%</span></p>
+<p>|—-dev <span style="color:red">30%</span></p>
+<p>​	|—-eng <span style="color:red">50%</span></p>
+<p>​	|—-science <span style="color:red">50%</span></p>
+<h2 id="Capacity-Scheduler配置"><a href="#Capacity-Scheduler配置" class="headerlink" title="Capacity Scheduler配置"></a>Capacity Scheduler配置</h2><p>配置capacity-scheduler.xml</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215230740.png"></p>
+<p>配置yarn-site.xml</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215230800.png"></p>
+<p>root</p>
+<p>|—-prd <span style="color:red">70%</span></p>
+<p>|—-dev <span style="color:red">30%</span></p>
+<p>​	|—-eng <span style="color:red">50%</span></p>
+<p>​	|—-science <span style="color:red">50%</span></p>
+<h2 id="Capacity-Scheduler资源分配算法"><a href="#Capacity-Scheduler资源分配算法" class="headerlink" title="Capacity Scheduler资源分配算法"></a>Capacity Scheduler资源分配算法</h2><ol>
+<li><p>选择队列</p>
+<p>从根队列开始，使用深度优先算法找出资源占用率最低的叶子队列</p>
+</li>
+<li><p>选择作业</p>
+<p>默认按照作业优先级和提交时间顺序选择</p>
+</li>
+<li><p>选择Container</p>
+<p>取该作业中最高优先级的Container，如果优先级相同会选择满足本地性的Container：Node Local &gt; Rack ocal &gt; Different Rack</p>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211215231840.png"></p>
+<h2 id="Fair-Scheduler资源调度器"><a href="#Fair-Scheduler资源调度器" class="headerlink" title="Fair Scheduler资源调度器"></a>Fair Scheduler资源调度器</h2><ul>
+<li>设计思想<ul>
+<li>资源公平分配</li>
+</ul>
+</li>
+<li>具有与Capacity Scheduler相似的特点<ul>
+<li>树状队列</li>
+<li>每个队列有独立的最小资源保证</li>
+<li>空闲时可以分配资源给其他队列使用</li>
+<li>支持内存资源调度和CPU资源调度</li>
+<li>支持抢占</li>
+</ul>
+</li>
+<li>不同点<ul>
+<li>核心调度策略不同<ul>
+<li>Capacity Scheduler优先选择资源利用率低的队列</li>
+<li>公平调度器考虑的是公平，公平体现在作业对资源的缺额</li>
+</ul>
+</li>
+<li>单独设置队列间资源分配方式<ul>
+<li>FAIR（默认used memory&#x2F;min share） </li>
+<li>DRF（主资源公平调度）</li>
+</ul>
+</li>
+<li>单独设置队列内部资源分配方式<ul>
+<li>FAIR DRF FIFO</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Fair-Scheduler-FAIR资源分配算法"><a href="#Fair-Scheduler-FAIR资源分配算法" class="headerlink" title="Fair Scheduler - FAIR资源分配算法"></a>Fair Scheduler - FAIR资源分配算法</h2><ul>
+<li><p>总体流程与Capacity Scheduler一致</p>
+<ol>
+<li>选择队列</li>
+<li>选择作业</li>
+<li>选择Container</li>
+</ol>
+</li>
+<li><p>选择选择队列和作业使用公平排序算法</p>
+<ul>
+<li><p>实际最小份额</p>
+<p>minShare &#x3D; Min(资源需求量，配置minShare） </p>
+</li>
+<li><p>是否饥饿</p>
+<p>isNeedy &#x3D; 资源使用量&lt; minShare</p>
+</li>
+<li><p>资源分配比</p>
+<p>minShareRatio &#x3D; 资源使用量&#x2F;Max(minShare, 1)</p>
+</li>
+<li><p>资源使用权重比</p>
+<p>useToWeightRatio &#x3D; 资源使用量&#x2F;权重权重在配置文件中配置</p>
+</li>
+</ul>
+</li>
+<li><p>参考 FairShareComparator 实现类</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211218103223.png"></p>
+<h2 id="Capacity-Scheduler和Fair-Scheduler对比"><a href="#Capacity-Scheduler和Fair-Scheduler对比" class="headerlink" title="Capacity Scheduler和Fair Scheduler对比"></a>Capacity Scheduler和Fair Scheduler对比</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>Capacity Scheduler</th>
+<th>Fair Scheduler</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>设计思想</td>
+<td>资源按照比例分配，并添加各种严格限制，防止个别用户或者队列单独占资源。</td>
+<td>基于公平算法分配资源</td>
+</tr>
+<tr>
+<td>队列是树状结构</td>
+<td>是</td>
+<td>是</td>
+</tr>
+<tr>
+<td>多用户</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>最小资源保证</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>最大资源限制</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>资源共享</td>
+<td>支持。当一个队列有资源剩余时，可暂时将剩余资源共享给其他队列。</td>
+<td>支持。当一个队列有资源剩余时，可暂时将剩余资源共享给其他队列。</td>
+</tr>
+<tr>
+<td>限制集群或队列并发作业数</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>支持抢占</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>支持批量调度</td>
+<td>支持。当一个节点有大量资源可用时，可一次性分配完成，不用多次分配每次分配一份资源。</td>
+<td>支持。当一个节点有大量资源可用时，可一次性分配完成，不用多次分配每次分配一份资源。</td>
+</tr>
+<tr>
+<td>为每个队列单独设置调度策略</td>
+<td>不支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>资源分配策略</td>
+<td>FIFO或DRF</td>
+<td>Fair、FIFO或DRF</td>
+</tr>
+<tr>
+<td>动态加载配置文件</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+</tbody></table>
+<h1 id="Yarn常用命令介绍"><a href="#Yarn常用命令介绍" class="headerlink" title="Yarn常用命令介绍"></a>Yarn常用命令介绍</h1><h2 id="常用Yarn命令"><a href="#常用Yarn命令" class="headerlink" title="常用Yarn命令"></a>常用Yarn命令</h2><ul>
+<li><p>yarn application</p>
+<ul>
+<li><p>列出所有Application</p>
+<p>yarn application -list</p>
+</li>
+<li><p>根据Application状态过滤</p>
+<p>yarn application -list -appStatus ACCEPTED</p>
+</li>
+<li><p>Kill掉Application</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn application -<span class="built_in">kill</span> &lt;ApplicationId&gt; </span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>yarn logs</p>
+<ul>
+<li><p>查询Application日志</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn logs -applicationId &lt;ApplicationId&gt; </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查询Container日志</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yarn logs -applicationId &lt;ApplicationId&gt; \ </span><br><span class="line">-containerId &lt;ContainerId&gt; \ </span><br><span class="line">-nodeAddress &lt;NodeAddress&gt;</span><br></pre></td></tr></table></figure>
+
+<p>端口是配置文件中yarn.nodemanager.webapp.address参数指定</p>
+</li>
+</ul>
+</li>
+<li><p>yarn applicationattempt</p>
+<ul>
+<li><p>列出所有Application尝试的列表</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn applicationattempt -list &lt;ApplicationId&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打印ApplicationAttemp状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn applicationattempt -status &lt;ApplicationAttemptId&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>yarn container</p>
+<ul>
+<li><p>列出所有Container</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn container -list &lt;ApplicationAttemptId&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打印Container状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn container -status &lt;ContainerId&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>yarn node</p>
+<ul>
+<li><p>列出所有节点</p>
+<p>yarn node -list -all</p>
+</li>
+</ul>
+</li>
+<li><p>yarn rmadmin</p>
+<ul>
+<li><p>加载队列配置</p>
+<p>yarn rmadmin –refreshQueues</p>
+</li>
+</ul>
+</li>
+<li><p>yarn queue</p>
+<ul>
+<li><p>打印队列信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn queue -status &lt;QueueName&gt; </span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>yarn classpath</p>
+<ul>
+<li>打印Hadoop Jar包路径</li>
+</ul>
+</li>
+</ul>
+<h1 id="常见基于Yarn的计算框架"><a href="#常见基于Yarn的计算框架" class="headerlink" title="常见基于Yarn的计算框架"></a>常见基于Yarn的计算框架</h1><h2 id="MapReduce-On-Yarn"><a href="#MapReduce-On-Yarn" class="headerlink" title="MapReduce On Yarn"></a>MapReduce On Yarn</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-MapReduce%20On%20Yarn.png"></p>
+<h2 id="Spark"><a href="#Spark" class="headerlink" title="Spark"></a>Spark</h2><ul>
+<li>基于内存的大数据计算引擎</li>
+<li>MapReduce不适合的计算场景：<ul>
+<li>迭代式作业<ul>
+<li>机器学习，图算法需要迭代运行Mapper和Reducer多次</li>
+</ul>
+</li>
+<li>交互式作业<ul>
+<li>交互式数据分析，尤其是涉及到机器学习算法</li>
+</ul>
+</li>
+<li>流式作业<ul>
+<li>无穷无尽的流式数据，需要不断的对数据进行聚合计算</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Spark提供了一种新的数据抽象RDD弹性分布式数据集，可以将数据存储在内存中，而不是存储到HDFS上，使得快速迭代计算成为可能。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Spark%20%E8%BF%AD%E4%BB%A3%E8%AE%A1%E7%AE%97.png"></p>
+<p>在MapReduce和Spark上使用逻辑回归耗时</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211218122242.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-%E5%9F%BA%E4%BA%8EMapReduce%E3%80%81Spark%E7%9A%84%E8%BF%AD%E4%BB%A3%E8%AE%A1%E7%AE%97.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Spark%20%E8%AE%A1%E7%AE%97%E6%B5%81%E7%A8%8B.png"></p>
+<h2 id="Spark-On-Yarn"><a href="#Spark-On-Yarn" class="headerlink" title="Spark On Yarn"></a>Spark On Yarn</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Spark%20On%20Yarn.png"></p>
+<h1 id="思考和动手"><a href="#思考和动手" class="headerlink" title="思考和动手"></a>思考和动手</h1><ol>
+<li><p>请简述一下Yarn的结构</p>
+</li>
+<li><p>描述RM和NM是如何交互的</p>
+</li>
+<li><p>完成在CDH集群中配置队列</p>
+</li>
+<li><p>将WordCount作业提交到队列上运行并观察运行过程</p>
+</li>
+<li><p>熟悉Yarn-Example代码</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/04-YARN/" data-id="clmcxec6r000ru8wa8wb9br81" data-title="YARN" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/03-MapReduce/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          MapReduce
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/14-Docker/01-Docker%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Docker基本概念</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

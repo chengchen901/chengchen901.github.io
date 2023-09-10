@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>synchronized原理 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="1 Java中锁的概念自旋锁： 是指当一个线程在获取锁的时候，如果锁已经被其它线程获取，那么该线程将循环等待，然后不断的判断锁是否能够被成功获取，直到获取到锁才会退出循环。 乐观锁： 假定没有冲突，在修改数据时如果发现数据和之前获取的不一致，则读最新数据，修改后重试修改。 悲观锁： 假定会发生并发冲突，同步所有对数据的相关操作，从读数据就开始上锁。 独享锁(写)：给资源加上写锁，线程可以修改资源，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="synchronized原理">
+<meta property="og:url" content="http://example.com/2021/04/19/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/05-synchronized%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1 Java中锁的概念自旋锁： 是指当一个线程在获取锁的时候，如果锁已经被其它线程获取，那么该线程将循环等待，然后不断的判断锁是否能够被成功获取，直到获取到锁才会退出循环。 乐观锁： 假定没有冲突，在修改数据时如果发现数据和之前获取的不一致，则读最新数据，修改后重试修改。 悲观锁： 假定会发生并发冲突，同步所有对数据的相关操作，从读数据就开始上锁。 独享锁(写)：给资源加上写锁，线程可以修改资源，">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210426222848332.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210426222853395.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210426222919760.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210430145036359.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210430145119346.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210430145159646.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210430145248601.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210430145447564.png">
+<meta property="article:published_time" content="2021-04-19T13:33:48.000Z">
+<meta property="article:modified_time" content="2022-09-25T09:21:13.506Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="多线程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210426222848332.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-01-Java基础/01-多线程/05-synchronized原理" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/04/19/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/05-synchronized%E5%8E%9F%E7%90%86/" class="article-date">
+  <time class="dt-published" datetime="2021-04-19T13:33:48.000Z" itemprop="datePublished">2021-04-19</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      synchronized原理
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="1-Java中锁的概念"><a href="#1-Java中锁的概念" class="headerlink" title="1 Java中锁的概念"></a>1 Java中锁的概念</h1><p><strong>自旋锁：</strong> 是指当一个线程在获取锁的时候，如果锁已经被其它线程获取，那么该线程将循环等待，然后不断的判断锁是否能够被成功获取，直到获取到锁才会退出循环。</p>
+<p><strong>乐观锁：</strong> 假定没有冲突，在修改数据时如果发现数据和之前获取的不一致，则读最新数据，修改后重试修改。</p>
+<p><strong>悲观锁：</strong> 假定会发生并发冲突，同步所有对数据的相关操作，从读数据就开始上锁。</p>
+<p><strong>独享锁(写)：</strong>给资源加上写锁，线程可以修改资源，其他线程不能再加锁； (单写)</p>
+<p><strong>共享锁(读)：</strong> 给资源加上读锁后只能读不能改，其他线程也只能加读锁，不能加写锁； (多读)</p>
+<p><strong>可重入锁、不可重入锁：</strong> 线程拿到一把锁之后，可以自由进入同一把锁所同步的其他代码。</p>
+<p><strong>公平锁、非公平锁：</strong> 争抢锁的顺序，如果是按先来后到，则为公平。</p>
+<h1 id="2-同步关键字Synchronized"><a href="#2-同步关键字Synchronized" class="headerlink" title="2 同步关键字Synchronized"></a>2 同步关键字Synchronized</h1><ol>
+<li>用于实例方法、静态方法时，隐式指定锁对象</li>
+<li>用于代码块时，显示指定锁对象</li>
+<li>锁的作用域：对象锁、类锁、分布式锁</li>
+<li>引申：如果是多个进程，怎么办？</li>
+</ol>
+<p><strong>特性：</strong> 可重入、独享、悲观锁</p>
+<p><strong>特殊优化 :</strong> <strong>锁消除 （开启锁消除的参数：-XX:+DoEscapeAnalysis -XX:+EliminateLocks）</strong>、<strong>锁粗化 JDK做了锁粗化的优化， 但我们自己可从代码层面优化</strong></p>
+<p><strong>Note</strong>：synchronized关键字，不仅实现同步，JMM中规定，synchronized要保证<strong>可见性</strong>(不能够被缓存)。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span>(<span class="built_in">this</span>)&#123;</span><br><span class="line">	i++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>提供了锁住this对象的语义，加锁的状态如何记录？</p>
+<p>状态会被记录到this对象中吗？</p>
+<p>若锁占用，线程挂起，释放锁时，唤醒挂起的线程，是如何做到的？</p>
+<h1 id="3-堆内存中的Java对象"><a href="#3-堆内存中的Java对象" class="headerlink" title="3 堆内存中的Java对象"></a>3 堆内存中的Java对象</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210426222848332.png" alt="image-20210426222848332"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210426222853395.png" alt="image-20210426222853395"></p>
+<h1 id="4-Mark-Word"><a href="#4-Mark-Word" class="headerlink" title="4 Mark Word"></a>4 Mark Word</h1><p>padding：对象占用大小补齐</p>
+<p>array length：对象长度</p>
+<p>class meta address：类元信息地址</p>
+<p>mark word：状态</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210426222919760.png" alt="image-20210426222919760"></p>
+<p>默认情况下JVM锁会经历：未锁定-&gt;偏向锁 -&gt; 轻量级锁 -&gt; 重量级锁 这四个状态</p>
+<p>参考来源：<a target="_blank" rel="noopener" href="https://www.cs.princeton.edu/picasso/mats/HotspotOverview.pdf">https://www.cs.princeton.edu/picasso/mats/HotspotOverview.pdf</a></p>
+<p><a target="_blank" rel="noopener" href="https://wiki.openjdk.java.net/display/HotSpot/Synchronization">https://wiki.openjdk.java.net/display/HotSpot/Synchronization</a></p>
+<p>《深入理解Java虚拟机》</p>
+<h1 id="5-轻量级锁"><a href="#5-轻量级锁" class="headerlink" title="5 轻量级锁"></a>5 轻量级锁</h1><p>在未锁定的状态下，可以通过CAS来抢锁，抢到的是轻量级锁</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210430145036359.png" alt="image-20210430145036359"></p>
+<h1 id="6-重量级锁"><a href="#6-重量级锁" class="headerlink" title="6 重量级锁"></a>6 重量级锁</h1><p>轻量级锁中的自旋有一定的次数限制，超过了次数限制，轻量级锁升级为重量级锁。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210430145119346.png" alt="image-20210430145119346"></p>
+<h1 id="7-偏向锁"><a href="#7-偏向锁" class="headerlink" title="7 偏向锁"></a>7 偏向锁</h1><p>在JDK6 以后,默认已经开启了偏向锁这个优化，通过JVM 参数 <strong>-XX:-UseBiasedLocking</strong> 来禁用偏向锁</p>
+<p>若偏向锁开启，只有一个线程抢锁，可获取到偏向锁</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210430145159646.png" alt="image-20210430145159646"></p>
+<h1 id="8-锁的升级过程"><a href="#8-锁的升级过程" class="headerlink" title="8 锁的升级过程"></a>8 锁的升级过程</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210430145248601.png" alt="image-20210430145248601"></p>
+<p>​	偏向标记第一次有用，出现过争用后就没用了。 -XX：-UseBiasedLocking 禁用使用偏置锁定，偏向锁，本质就是无锁，如果没有发生过任何多线程争抢锁的情况，JVM认为就是单线程，无需做同步（jvm为了少干活：同步在JVM底层是有很多操作来实现的，如果是没有争用，就不需要去做同步操作）</p>
+<h1 id="9-重量级锁-监视器（monitor）"><a href="#9-重量级锁-监视器（monitor）" class="headerlink" title="9 重量级锁 - 监视器（monitor）"></a>9 重量级锁 - 监视器（monitor）</h1><p>修改mark word如果失败，会自旋CAS一定次数，该次数可以通过参数配置：</p>
+<p>超过次数，仍未抢到锁，则锁升级为重量级锁，进入阻塞。</p>
+<p>monitor也叫做管程，计算机操作系统原理中有提及类似概念。一个对象会有一个对应的monitor。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210430145447564.png" alt="image-20210430145447564"></p>
+<h1 id="10-wait-notify机制"><a href="#10-wait-notify机制" class="headerlink" title="10 wait&#x2F;notify机制"></a>10 wait&#x2F;notify机制</h1><p><strong>wait</strong>方法导致当前线程等待，加入该对象的等待集合中，并且放弃当前持有的对象锁。</p>
+<p><strong>notify&#x2F;notifyAll</strong>方法唤醒一个或所有正在等待这个对象锁的线程。</p>
+<p><strong>注意：</strong></p>
+<ol>
+<li>只能在synchronized关键字中使用，且调用wait、notify的对象与锁对象相同，否则会抛出IllegalMonitorStateException异常。</li>
+<li>wait() 方法调用后，<strong>会破坏原子性</strong>。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>协作方式</th>
+<th>死锁方式1（锁）</th>
+<th>死锁方式2（先唤醒，再挂起）</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>suspend&#x2F;resume</td>
+<td>死锁</td>
+<td>死锁</td>
+<td>弃用</td>
+</tr>
+<tr>
+<td>wait&#x2F;notify</td>
+<td>不死锁</td>
+<td>死锁</td>
+<td>只适用于synchronized关键字</td>
+</tr>
+<tr>
+<td>park&#x2F;unpark</td>
+<td>死锁</td>
+<td>不死锁</td>
+<td></td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/19/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/05-synchronized%E5%8E%9F%E7%90%86/" data-id="clmcxeco7005ru8waexnx1hr6" data-title="synchronized原理" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/04/19/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/02-Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Java内存模型
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/31/06-Dubbo/06-Dubbo%E6%BA%90%E7%A0%81%E5%AF%BC%E8%AF%BB/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Dubbo源码导读</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

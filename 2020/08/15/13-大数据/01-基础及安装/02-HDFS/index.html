@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>HDFS | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="HDFS简介什么是HDFS？Hadoop 分布式文件系统  起源与发展Hadoop之父 Doug Cutting  Hadoop最早起源于lucene下的Nutch。Nutch的设计目标是构建一个大型的全网搜索引擎，包括网页抓取、索引、查询等功能，但随着抓取网页数量的增加，遇到了严重的可扩展性问题——如何解决数十亿网页的存储和索引问题。 2003年、2004年谷歌发表的三篇论文为该问题提供了可行的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HDFS">
+<meta property="og:url" content="http://example.com/2020/08/15/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/02-HDFS/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="HDFS简介什么是HDFS？Hadoop 分布式文件系统  起源与发展Hadoop之父 Doug Cutting  Hadoop最早起源于lucene下的Nutch。Nutch的设计目标是构建一个大型的全网搜索引擎，包括网页抓取、索引、查询等功能，但随着抓取网页数量的增加，遇到了严重的可扩展性问题——如何解决数十亿网页的存储和索引问题。 2003年、2004年谷歌发表的三篇论文为该问题提供了可行的">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211121183230.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/HDFS2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211121224930.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127142126.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/HA.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127145757.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127152038.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127152049.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127164830.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127162211.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127155144.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/namenode%E5%86%85%E5%AD%98.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127155529.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127155546.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:57:29.767Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="HDFS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211121183230.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-13-大数据/01-基础及安装/02-HDFS" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/02-HDFS/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      HDFS
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="HDFS简介"><a href="#HDFS简介" class="headerlink" title="HDFS简介"></a>HDFS简介</h1><h2 id="什么是HDFS？"><a href="#什么是HDFS？" class="headerlink" title="什么是HDFS？"></a>什么是HDFS？</h2><p>Hadoop 分布式文件系统</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211121183230.png"></p>
+<h2 id="起源与发展"><a href="#起源与发展" class="headerlink" title="起源与发展"></a>起源与发展</h2><p>Hadoop之父 <strong>Doug Cutting</strong></p>
+<ol>
+<li>Hadoop最早起源于<strong>lucene</strong>下的<strong>Nutch</strong>。Nutch的设计目标是构建一个大型的全网搜索引擎，包括网页抓取、索引、查询等功能，但随着抓取网页数量的增加，遇到了严重的可扩展性问题——如何解决数十亿网页的存储和索引问题。</li>
+<li>2003年、2004年谷歌发表的三篇论文为该问题提供了可行的解决方案。<br>——分布式文件系统（GFS），可用于处理海量网页的存储<br>——分布式计算框架MAPREDUCE，可用于处理海量网页的索引计算问题。<br>——分布式的结构化数据存储系统<strong>Bigtable</strong>，用来处理海量结构化数据。</li>
+<li>Doug Cutting基于这三篇论文完成了相应的开源实现HDFS和MAPREDUCE，并从Nutch中剥离成为独立项目HADOOP，到2008年1月，HADOOP成为Apache顶级项目(同年，<strong>cloudera</strong>公司成立)，迎来了它的快速发展期。</li>
+</ol>
+<p>0.x-1.x：hdfs，mapreduce</p>
+<p>2.x：hdfs（namenode 支持ha），mapreduce，yarn</p>
+<p>3.x：hdfs（namenode 支持ha），mapreduce，yarn，其它高级特性</p>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ul>
+<li>基于JAVA实现的一个分布式文件系统</li>
+<li>基于unix&#x2F;linux</li>
+<li>是Hadoop最重要的核心组件</li>
+<li>支持顺序写入，而非随机定位读写</li>
+</ul>
+<h2 id="HDFS前提和设计目标"><a href="#HDFS前提和设计目标" class="headerlink" title="HDFS前提和设计目标"></a>HDFS前提和设计目标</h2><ul>
+<li><p>存储超大文件</p>
+<p>HDFS适合存储大文件，单个文件大小通常在百MB以上 </p>
+<p>HDFS适合存储海量文件，总存储量可达PB,EB级 </p>
+</li>
+<li><p>硬件容错<br>基于普通机器搭建，硬件错误是常态而不是异常，因此错误检测和快速、自动的恢复是HDFS最核心的架构目标</p>
+</li>
+<li><p>流式数据访问<br>为数据批处理而设计，关注数据访问的高吞吐量</p>
+</li>
+<li><p>简单的一致性模型<br>一次写入，多次读取<br>一个文件经过创建、写入和关闭之后就不需要改变</p>
+</li>
+<li><p>本地计算<br>将计算移动到数据附近</p>
+</li>
+</ul>
+<h1 id="HDFS构成及工作原理解析"><a href="#HDFS构成及工作原理解析" class="headerlink" title="HDFS构成及工作原理解析"></a>HDFS构成及工作原理解析</h1><h2 id="基本构成"><a href="#基本构成" class="headerlink" title="基本构成"></a>基本构成</h2><ul>
+<li>数据块<ul>
+<li>文件以块为单位进行切分存储，块通常设置的比较大（最小6M，默认 128M） </li>
+<li>块越大，寻址越快，读取效率越高，但同时由于MapReduce任务也是以块为最小单位来处理，所以太大的块不利于于对数据的并行处理</li>
+<li>一个文件至少占用一个块（逻辑概念）</li>
+</ul>
+</li>
+<li>Namenode与Datanode<ul>
+<li>namenode 负责维护整个文件系统的信息，包括：整个文件树，文件的块分布信息，文件系统的元数据，数据复制策略等</li>
+<li>datanode 存储文件内容，负责文件实际的读写操作，保持与namenode的通信，同步文件块信息</li>
+</ul>
+</li>
+</ul>
+<h2 id="数据读写过程"><a href="#数据读写过程" class="headerlink" title="数据读写过程"></a>数据读写过程</h2><h3 id="数据写入过程"><a href="#数据写入过程" class="headerlink" title="数据写入过程"></a>数据写入过程</h3><ol>
+<li><p>client 发起创建文件请求，namenode 检查是否可以创建文件，检查权限、检查目录结构、集群是否可用、检查文件租约（lease）</p>
+</li>
+<li><p>namenode 返回 client 确认，可以创建文件</p>
+</li>
+<li><p>client 在本地切分 block，具体切分由 dfs.replication、block.size 俩个参数指定，默认 dfs.replication&#x3D;3、block.size&#x3D;128m，文件130m，需要创建俩个 block，client 向 namenode 发送创建 block 请求</p>
+</li>
+<li><p>namenode 给 block 分配写入的 datanode，分配策略考虑的因素有数据可靠性、数据的写入效率、datanode 的负载均衡性。第一个 datanode 为与 client 最接近的 rack（机架）上的 datanode，第二个为不同 rack（机架）的 datanode，第三个为与第二个相同 rack（机架）的 datanode，namenode 返回写入的 datanode 队列 datanode1、datanode4、datanode5</p>
+</li>
+<li><p>client  以 pipline 方式写入 block 数据，client 向 namenode 返回的队列中第一个 datanode 写入数据，下一个 datanode 数据由前一个 datanode 写入，即 client 向 datanode1 写入数据，datanode1 向 datanode2 写入数据，datanode2 向 datanode3 写入数据。</p>
+<p>为了保证数据的可靠性需要将数据写入到多个机架。</p>
+<p>首先写入 datanode1 是因为 client 离 datanode1 最近，在 hdfs 是以网络结构拓扑图来定义距离。如下图的 switch 所示，client 到 datanode1 需要经过 rack1、datanode1 俩跳。</p>
+<p>pipline 真正在写入时候的数据单位，client 在写入的时候以 packet（64kb）单位来发送数据，packet 内是以 chunk 为单元，在每次读取数据写入到磁盘时需要校验数据是否没有丢失，校验是以 chunk 为单位，根据 chunk 来确认接收，如果以整个 block 来确认接收力度太大，失败成本很高。</p>
+<p>datanode 在接收到 client 写入数据时，会执行俩个任务，第一个是数据接收与存储任务，第二个是数据确认任务。确认任务由写入 block 的 datanode 队列中最后的 datanode 依次向前进行 ack 确认</p>
+<p><strong>失败情况</strong></p>
+<p><strong>在建立 pipeline 时失败</strong>，发现部分或全部 datanode 异常，client 会根据最小写入副本数（默认1）来判断是否需要 namenode 重新生成 datanode 对象。</p>
+<p>例如 datanode4 异常，只有2个 datanode 满足最小写入副本数，则由 datanode1 将数据写入到 datanode5 </p>
+<p><strong>发送 ack 失败</strong>，如果满足最小写入副本数则写入成功。只写入成功2份数据，不满足 dfs.replication&#x3D;3，这种情况是由 namenode 不间断接受 datanode 发送心跳、blockreport，namenode 根据 datanode 的反馈，发现 client 只写成功2个数据，namenode 会维护一个队列根据配置的副本数策略将数据补齐</p>
+</li>
+<li><p>client 接收到 ack 进行判断是否满足最小写入的副本数，满足则成功。不满足则失败，client 再次向 namenode 申请 datanode 队列尝试写入</p>
+</li>
+</ol>
+<h3 id="数据读取过程"><a href="#数据读取过程" class="headerlink" title="数据读取过程"></a>数据读取过程</h3><ol>
+<li><p>client 读取 &#x2F;user&#x2F;zhangsan&#x2F;sample.txt 文件向 namenode 发送请求</p>
+</li>
+<li><p>namenode 进行权限、目录是否存在等校验，之后根据内存中维护目录结构得到数据存在哪些 datanode 上。namenode 返回块的地址信息，例如存在俩个块，b1、b2，获取所有 block 所在节点，根据 client 读取那一个 datanode 效率进行排序返回，例如下面格式<br>b1:dn1,dn4,dn5<br>b2:dn4,dn3,dn2</p>
+</li>
+<li><p>读取数据</p>
+<p>一次返回每个 block 所有的 datanode，这么做的好处就是读取失败后可以使用下一个 datanode 读取数据，不需要重复请求 namenode</p>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/HDFS2.png"></p>
+<h2 id="集群结构"><a href="#集群结构" class="headerlink" title="集群结构"></a>集群结构</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211121224930.png"></p>
+<h2 id="namenode深入"><a href="#namenode深入" class="headerlink" title="namenode深入"></a>namenode深入</h2><h3 id="作用："><a href="#作用：" class="headerlink" title="作用："></a>作用：</h3><ul>
+<li>Namespace管理：负责管理文件系统中的树状目录结构以及文件与数据块的映射关系</li>
+<li>块信息管理：负责管理文件系统中文件的物理块与实际存储位置的映射关系BlocksMap</li>
+<li>集群信息管理：机架信息，datanode信息</li>
+<li>集中式缓存管理：从Hadoop2.3 开始，支持datanode将文件缓存到内存中，这部分缓存通过NN集中管理</li>
+</ul>
+<h3 id="存储结构："><a href="#存储结构：" class="headerlink" title="存储结构："></a>存储结构：</h3><ul>
+<li>内存： Namespace数据，BlocksMap数据，其他信息</li>
+<li>文件：<ul>
+<li>已持久化的namespace数据：FsImage</li>
+<li>未持久化的namespace操作：Edits</li>
+</ul>
+</li>
+</ul>
+<h3 id="启动过程："><a href="#启动过程：" class="headerlink" title="启动过程："></a>启动过程：</h3><ol>
+<li>开启安全模式：不能执行数据修改操作 </li>
+<li>加载fsimage</li>
+<li>逐个执行所有Edits文件中的每一条操作将操作合并到fsimage，完成后生成一个空的edits文件</li>
+<li>接收datanode发送来的心跳消息和块信息</li>
+<li>根据以上信息确定文件系统状态</li>
+<li>退出安全模式</li>
+</ol>
+<ul>
+<li><p>安全模式：文件系统只接受读数据请求，而不接受删除、修改等变更请求 </p>
+</li>
+<li><p>什么情况下进入：NameNode主节点启动时，HDFS进入安全模式 </p>
+</li>
+<li><p>什么时候时候退出：系统达到安全标准时，HDFS退出安全模式</p>
+<ul>
+<li>dfs.namenode.safemode.min.datanodes: 最小可用datanode数量</li>
+<li>dfs.namenode.safemode.threshold-pct: 副本数达到最小要求的block占系统总block数的百分比</li>
+<li>dfs.namenode.safemode.extension: 稳定时间</li>
+</ul>
+</li>
+<li><p>相关命令：</p>
+<ul>
+<li>hdfs dfsadmin -safemode get：查看当前状态</li>
+<li>hdfs dfsadmin -safemode enter：进入安全模式</li>
+<li>hdfs dfsadmin -safemode leave：强制离开安全模式</li>
+<li>hdfs dfsadmin -safemode wait：一直等待直到安全模式结束</li>
+</ul>
+</li>
+</ul>
+<h3 id="namenode-edits-和-fsimage-关系"><a href="#namenode-edits-和-fsimage-关系" class="headerlink" title="namenode edits 和 fsimage 关系"></a>namenode edits 和 fsimage 关系</h3><ol>
+<li><p>namenode 在启动的时候将 edits 合并到 fsimage，加载 fsimage 文件到内存</p>
+</li>
+<li><p>client 进行读操作时直接从内存读取，写操作先把数据写入到 edits 文件，再写入到内存</p>
+<p>这样会导致 edits 文件越来越大，每次启动时都需要合并导致启动变慢，这时需要另一个角色 secondaty namenode</p>
+<p>secondaty namenode 有俩个作用</p>
+<ul>
+<li>冷备，在 namenode 挂掉后 secondaty namenode 可以进行切换</li>
+<li>负责在 namenode 运行过程中进行 edits 合并</li>
+</ul>
+</li>
+</ol>
+<h3 id="secondaty-namenode-合并-edtis-过程"><a href="#secondaty-namenode-合并-edtis-过程" class="headerlink" title="secondaty namenode 合并 edtis 过程"></a>secondaty namenode 合并 edtis 过程</h3><ol>
+<li>secondaty namenode 在启动时会拉取 namenode 的 fsimage 文件</li>
+<li>在某一个时间点通过请求获取到 namenode 的 edits 文件，在请求时 namenode 生成 edits.new 文件，对新的写操作写入到 edits.new 文件，这样是让 namenode 和 secondaty namenode 俩边的 edits 文件保持一致，这样最终合并的文件才没有问题</li>
+<li>secondaty namenode 将获取到的 edits 文件与启动时拉取到的 fsimage 文件进行合并生成 fsimage.ckpt 文件</li>
+<li>secondaty namenode 将 fsimage.ckpt 文件发送给 namenode</li>
+<li>namenode 将旧的 fsimage 进行重命名或清理，例如：fsimage.history，把 fsimage.ckpt 修改为 fsimage。将旧的 edits 文件进行重命名或清理，例如：edits.history，将 edits.new 重命名为 edits</li>
+</ol>
+<p>edits 合并叫过程有一个 checkpoint 概念，触发 checkpoint 的俩个触发时机，每隔一段时间，另一个是 edits 文件大小，谁先达到就执行合并动作</p>
+<p>文件系统检查点事务阈值（客户端累计操作次数）：dfs.namenode.checkpoint.txns</p>
+<p>文件系统将检查点周期：dfs.namenode.checkpoint.period</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127142126.png"></p>
+<h2 id="HDFS-HA"><a href="#HDFS-HA" class="headerlink" title="HDFS HA"></a>HDFS HA</h2><ul>
+<li><p>Datanode: 通过数据冗余保证数据的可用性</p>
+</li>
+<li><p>Namenode: 在2.0以前存在SPOF风险，从2.0之后：</p>
+<ol>
+<li>把name.dir指向NFS（Network File System）</li>
+<li>QJM（Quorum Journal Manager） 方案</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/HA.png"></p>
+</li>
+</ul>
+<h2 id="HDFS文件格式"><a href="#HDFS文件格式" class="headerlink" title="HDFS文件格式"></a>HDFS文件格式</h2><p>文件格式会影响写入效率、存储效率、读取性能、读取便利性</p>
+<p>HDFS 支持任意文件格式</p>
+<h2 id="HDFS文件类型-列式与行式存储"><a href="#HDFS文件类型-列式与行式存储" class="headerlink" title="HDFS文件类型-列式与行式存储"></a>HDFS文件类型-列式与行式存储</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127145757.png"></p>
+<h2 id="HDFS文件类型-常用文件类型"><a href="#HDFS文件类型-常用文件类型" class="headerlink" title="HDFS文件类型-常用文件类型"></a>HDFS文件类型-常用文件类型</h2><table>
+<thead>
+<tr>
+<th>文件格式</th>
+<th>类型</th>
+<th>存储方式</th>
+<th>是否带 schema</th>
+<th>特点描述</th>
+<th>出处</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>txt,json,csv</td>
+<td>行式</td>
+<td>文本</td>
+<td>否</td>
+<td>默认存储方式(txt)，数据内容可以直接cat查看，存储效率较高，处理效率低。压缩比较低</td>
+<td>Hadoop</td>
+</tr>
+<tr>
+<td>Sequence file</td>
+<td>行式</td>
+<td>二进制</td>
+<td>是</td>
+<td>以key，value对的方式存储。压缩比中等</td>
+<td>Hadoop</td>
+</tr>
+<tr>
+<td>Avro</td>
+<td>行式</td>
+<td>二进制</td>
+<td>是</td>
+<td>数据序列化框架，同时支持RPC，数据自带schema，支持比较丰富的数据类型。与protobuf, thrift 类似。压缩比中等</td>
+<td>Hadoop</td>
+</tr>
+<tr>
+<td>RC(record columnar)</td>
+<td>列式</td>
+<td>二进制</td>
+<td>是</td>
+<td>列式存储，将数据按照行组分块，读取以行组为单位，但是行组中可以跳过不需要的列。压缩比中等</td>
+<td>Hive</td>
+</tr>
+<tr>
+<td>ORC(optimized record columnar)</td>
+<td>列式</td>
+<td>二进制</td>
+<td>是</td>
+<td>升级版的RC，使用了更优化的存储结构，从而获得更好的性能，另外支持对数据的修改和ACID。压缩比高</td>
+<td>Hive</td>
+</tr>
+<tr>
+<td>Parquet</td>
+<td>列式</td>
+<td>二进制</td>
+<td>是</td>
+<td>支持嵌套类型，可高效实现对列的查询或统计。压缩比高</td>
+<td>Impala</td>
+</tr>
+</tbody></table>
+<h2 id="HDFS文件类型-如何使用？"><a href="#HDFS文件类型-如何使用？" class="headerlink" title="HDFS文件类型-如何使用？"></a>HDFS文件类型-如何使用？</h2><p>ALTER TABLE table_name <strong>SET FILEFORMAT PARQUET;</strong> </p>
+<p>CREATE TABLE table_name (x INT, y STRING) <strong>STORED AS PARQUET;</strong> </p>
+<p>SET <strong>hive.default.fileformat&#x3D;Orc</strong></p>
+<h1 id="如何提高数据存取效率"><a href="#如何提高数据存取效率" class="headerlink" title="如何提高数据存取效率"></a>如何提高数据存取效率</h1><h2 id="存储效率"><a href="#存储效率" class="headerlink" title="存储效率"></a>存储效率</h2><p><strong>压缩</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127152038.png"></p>
+<p><strong>纠删码</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127152049.png"></p>
+<p><strong>异构存储</strong></p>
+<p>HOT：DISK</p>
+<p>WARN：DISK、ARCHIVE</p>
+<p>COLD：ARCHIVE</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127164830.png"></p>
+<h2 id="数据压缩-作用"><a href="#数据压缩-作用" class="headerlink" title="数据压缩-作用"></a>数据压缩-作用</h2><ul>
+<li>节省数据占用的磁盘空间</li>
+<li>加快数据在磁盘和网络中的传输速度，从而提高系统的处理速度</li>
+</ul>
+<h2 id="数据压缩-评价指标"><a href="#数据压缩-评价指标" class="headerlink" title="数据压缩-评价指标"></a>数据压缩-评价指标</h2><ul>
+<li>压缩比：压缩比越高，压缩后文件越小，所以压缩比越高越好</li>
+<li>压缩时间：越快越好</li>
+<li>已经压缩的格式文件是否可以再分割：可以分割的格式允许单一文件由多个Mapper程序处理，可以更好的并行化</li>
+</ul>
+<h2 id="数据压缩-类型"><a href="#数据压缩-类型" class="headerlink" title="数据压缩-类型"></a>数据压缩-类型</h2><table>
+<thead>
+<tr>
+<th>压缩格式</th>
+<th>split</th>
+<th>压缩率</th>
+<th>压缩速度</th>
+<th>是否hadoop自带</th>
+<th>linux命令</th>
+<th>换成压缩格式后，原来的应用程序是否要修改</th>
+<th>使用建议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>gzip</td>
+<td>否</td>
+<td>很高</td>
+<td>比较快</td>
+<td>是</td>
+<td>有</td>
+<td>和文本处理一样，不需要修改</td>
+<td>使用方便<br/>当每个文件压缩之后在130M以内的（1个块大小内），都可以考虑用gzip压缩格式</td>
+</tr>
+<tr>
+<td>lzo</td>
+<td>是</td>
+<td>比较高</td>
+<td>很快</td>
+<td>否，需要安装</td>
+<td>有</td>
+<td>需要建索引，还需要指定输入格式</td>
+<td>压缩率和压缩速度综合考虑<br/>支持split，是hadoop中最流行的压缩格式；<br/>一个很大的文本文件，压缩之后还大于200M以上的可以考虑，而且单个文件越大，lzo优点越明显<br/>cloudera&amp;twitter</td>
+</tr>
+<tr>
+<td>snappy</td>
+<td>否</td>
+<td>比较高</td>
+<td>很快</td>
+<td>否，需要安装</td>
+<td>没有</td>
+<td>和文本处理一样，不需要修改</td>
+<td>压缩率和压缩速度综合考虑<br/>当mapreduce作业的map输出的数据比较大的时候， 作为map到reduce的中间数据的压缩格式<br/>spark默认压缩格式<br/>google出品</td>
+</tr>
+<tr>
+<td>bzip2</td>
+<td>是</td>
+<td>最高</td>
+<td>慢</td>
+<td>是</td>
+<td>有</td>
+<td>和文本处理一样，不需要修改</td>
+<td>压缩率高<br/>适合对速度要求不高，但需要较高的压缩率，比如数据比较大，需要压缩存档减少磁盘空间并且以后数据用得比较少的情况</td>
+</tr>
+</tbody></table>
+<h2 id="数据压缩-使用场景？"><a href="#数据压缩-使用场景？" class="headerlink" title="数据压缩-使用场景？"></a>数据压缩-使用场景？</h2><ul>
+<li><p>HDFS命令行写入：将数据压缩后写入</p>
+</li>
+<li><p>Flume写入：写入时指定hdfs.codeC参数 </p>
+</li>
+<li><p>Sqoop写入：写入时指定参数<br>–compression-codec org.apache.hadoop.io.compress.SnappyCodec</p>
+</li>
+<li><p>HBase 数据存储: 创建表时指定<br>create ‘xx_table’, {NAME &#x3D;&gt; ‘xx_cf’, COMPRESSION &#x3D;&gt; ‘GZ’}</p>
+</li>
+<li><p>Mapreduce中间结果和最终结果：hadoop jar xxx “-Dmapred.compress.map.output&#x3D;true” <br>“-Dmapred.map.output.compression.codec&#x3D;xxx” <br>“-Dmapred.output.compress&#x3D;true” “-Dmapred.output.compression.codec&#x3D;xxx”</p>
+</li>
+<li><p>Hive中间结果和最终结果：</p>
+<p>set hive.exec.compress.intermediate&#x3D;true </p>
+<p>set mapred.map.output.compression.codec&#x3D;xxx </p>
+<p>set mapred.map.output.compression.codec&#x3D;xxx </p>
+<p>set hive.exec.compress.output&#x3D;true </p>
+<p>set mapred.output.compression.codec&#x3D;xxx</p>
+</li>
+</ul>
+<p>Spark（RDD分区、广播变量、shuffle输出）：</p>
+<ul>
+<li>rdd：spark.rdd.compress，是否压缩已序列化的rdd，默认关闭</li>
+<li>broadcast：spark.broadcast.compress，是否压缩broadcast数据，默认打开</li>
+<li>结果存储：saveAsTextFile(path,codec)</li>
+<li>压缩算法：spark.io.compression.codec，默认为snappy</li>
+</ul>
+<h2 id="数据压缩-使用建议"><a href="#数据压缩-使用建议" class="headerlink" title="数据压缩-使用建议"></a>数据压缩-使用建议</h2><ul>
+<li>选择何种压缩格式：<ul>
+<li>考虑是否支持切分</li>
+<li>压缩率vs压缩速度</li>
+</ul>
+</li>
+<li>什么时候使用：<ul>
+<li>存储：磁盘空间紧张</li>
+<li>计算：性能调优（内存空间占用，IO传输）</li>
+</ul>
+</li>
+</ul>
+<h2 id="纠删码-朴素原理"><a href="#纠删码-朴素原理" class="headerlink" title="纠删码-朴素原理"></a>纠删码-朴素原理</h2><p>hadoop 3.0 之后有了纠删码实现</p>
+<p>复制策略：hdfs 保证数据可靠性通常是使用拷贝3份数据，这种方式会使用较多的磁盘空间，1TB数据需要3TB磁盘存储</p>
+<p>纠删码：只需要复制策略50%的磁盘空间，而且同样可以保证数据的可靠性，1TB只需要1.5TB磁盘空间</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">朴素原理</span><br><span class="line"></span><br><span class="line">理解思路如下：</span><br><span class="line">x1=1</span><br><span class="line">x2=2</span><br><span class="line">x3=3</span><br><span class="line">x1+x2+x3=6</span><br><span class="line">x1+2*x2+3*x3=14</span><br><span class="line">x1+3*x2+4*x3=19</span><br><span class="line"></span><br><span class="line">我们需要求出x1，x2，x3的值，那么我们最少需要的方程数是？3</span><br><span class="line">如果有4个方程，允许丢失任意一个方程</span><br><span class="line"></span><br><span class="line">x1=1</span><br><span class="line">x2=2</span><br><span class="line">x3=3</span><br><span class="line">视为我们的数据</span><br><span class="line"></span><br><span class="line">x1+x2+x3=6</span><br><span class="line">x1+2*x2+3*x3=14</span><br><span class="line">x1+3*x2+4*x3=19</span><br><span class="line">视为一个校验/冗余数据</span><br><span class="line"></span><br><span class="line">如果是复制策略，要允许任意2份数据丢失，我们需要：3*3=9份数据</span><br><span class="line">如果是纠删码，要允许任意2份数据丢失，我们需要：3+2=5份数据，时间换空间的策略</span><br><span class="line"></span><br><span class="line">一个文件有n个块，最少需要的数据块数是多少？n+2</span><br><span class="line">不是针对一个文件所有的块进行纠删码的计算，而是按照一定的size切分成block group，按照bg来计算冗余块</span><br></pre></td></tr></table></figure>
+
+<p>D为原始数据，C为校验&#x2F;冗余数据</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127162211.png"></p>
+<h2 id="纠删码-相关命令"><a href="#纠删码-相关命令" class="headerlink" title="纠删码-相关命令"></a>纠删码-相关命令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">hdfs ec -listPolicies</span><br><span class="line">Name=RS-3-2-1024K，</span><br><span class="line">RS：实现的算法</span><br><span class="line">3：block group 原始数据块的数量，3表示按照3个数据库进行 block group 的切分</span><br><span class="line">2：要计算几个冗余块</span><br><span class="line"></span><br><span class="line">Policy默认状态是<span class="built_in">disable</span>，需要先 hdfs ec -enablePolicy -policy &lt;policy&gt; 开启</span><br><span class="line">设置纠删码策略：hdfs ec -setPolicy -path /user -policy RS-3-2-1024K</span><br><span class="line"></span><br><span class="line">hdfs ec [COMMAND] </span><br><span class="line">[-listPolicies] </span><br><span class="line">[-addPolicies -policyFile &lt;file&gt;] </span><br><span class="line">[-getPolicy -path &lt;path&gt;] </span><br><span class="line">[-removePolicy -policy &lt;policy&gt;] </span><br><span class="line">[-setPolicy -path &lt;path&gt; [-policy &lt;policy&gt;] [-replicate]] </span><br><span class="line">[-unsetPolicy -path &lt;path&gt;] </span><br><span class="line">[-listCodecs] </span><br><span class="line">[-enablePolicy -policy &lt;policy&gt;] </span><br><span class="line">[-disablePolicy -policy &lt;policy&gt;] </span><br><span class="line">[-<span class="built_in">help</span> &lt;command-name&gt;]</span><br></pre></td></tr></table></figure>
+
+<h2 id="纠删码-使用建议"><a href="#纠删码-使用建议" class="headerlink" title="纠删码-使用建议"></a>纠删码-使用建议</h2><p>将冷门数据以纠删码格式转存，减少空间占用： </p>
+<ol>
+<li>指定某个目录为纠删码模式：<br>hdfs ec -setPolicy -path [path] -policy [policy]</li>
+<li>通过distcp命令将原有数据转存</li>
+</ol>
+<h2 id="异构存储"><a href="#异构存储" class="headerlink" title="异构存储"></a>异构存储</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127155144.png"></p>
+<ol>
+<li><p>配置dn存储路径时指定存储格式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[SSD]file:///path,[ARCHIVE]file:///path</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>dn通过心跳汇报自身数据存储目录的StorageType给nn</p>
+</li>
+<li><p>nn汇总并更新集群内各个节点的存储类型情况</p>
+</li>
+<li><p>客户端写入时根据设定的存储策略向nn请求响应的dn作为候选节点</p>
+</li>
+</ol>
+<h2 id="异构存储-相关命令"><a href="#异构存储-相关命令" class="headerlink" title="异构存储-相关命令"></a>异构存储-相关命令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">hdfs storagepolicies [COMMAND] </span><br><span class="line">[-listPolicies] </span><br><span class="line">[-setStoragePolicy -path &lt;path&gt; -policy &lt;policy&gt;] </span><br><span class="line">[-getStoragePolicy -path &lt;path&gt;] </span><br><span class="line">[-unsetStoragePolicy -path &lt;path&gt;] </span><br><span class="line">[-<span class="built_in">help</span> &lt;command-name&gt;]</span><br><span class="line"></span><br><span class="line">hdfs mover [-p &lt;files/dirs&gt; | -f &lt;<span class="built_in">local</span> file&gt;]</span><br></pre></td></tr></table></figure>
+
+<h2 id="异构存储-使用建议"><a href="#异构存储-使用建议" class="headerlink" title="异构存储-使用建议"></a>异构存储-使用建议</h2><ul>
+<li>一般使用默认策略（HOT，磁盘）即可</li>
+<li>ARCHIVE：计算能力较弱，存储密度高，存储冷数据</li>
+<li>SSD：土豪专用</li>
+</ul>
+<h1 id="HDFS关键设置及常见问题"><a href="#HDFS关键设置及常见问题" class="headerlink" title="HDFS关键设置及常见问题"></a>HDFS关键设置及常见问题</h1><h2 id="常用配置"><a href="#常用配置" class="headerlink" title="常用配置"></a>常用配置</h2><p>配置文件路径：$HADOOP_HOME$&#x2F;etc&#x2F;hadoop </p>
+<p>主要配置文件： </p>
+<ul>
+<li>hdfs-site.xml</li>
+<li>core-site.xm</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+<th>默认</th>
+<th>配置文件</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>fs.default.name</td>
+<td>namenode RPC交互端口</td>
+<td>localhost:8020</td>
+<td>core-site.xml</td>
+<td>hdfs:&#x2F;&#x2F;master:8020&#x2F;</td>
+</tr>
+<tr>
+<td>dfs.http.address</td>
+<td>namenode web管理端口</td>
+<td>50070</td>
+<td>hdfs-site.xml</td>
+<td>0.0.0.0:50070</td>
+</tr>
+<tr>
+<td>dfs.datanode.address</td>
+<td>datanode 控制端口</td>
+<td>50010</td>
+<td>hdfs-site.xml</td>
+<td>0.0.0.0:50010</td>
+</tr>
+<tr>
+<td>dfs.datanode.data.dir</td>
+<td>数据存储路径</td>
+<td>NA</td>
+<td>hdfs-site.xml</td>
+<td>&#x2F;mnt&#x2F;data&#x2F;dfs&#x2F;nn</td>
+</tr>
+<tr>
+<td>dfs.namenode.name.dir</td>
+<td>namenode 数据存储目录</td>
+<td>NA</td>
+<td>hdfs-site.xml</td>
+<td>&#x2F;mnt&#x2F;data&#x2F;dfs&#x2F;nn</td>
+</tr>
+<tr>
+<td>dfs.replication</td>
+<td>默认副本数</td>
+<td>3</td>
+<td>hdfs-site.xml</td>
+<td>3</td>
+</tr>
+<tr>
+<td>dfs.blocksize</td>
+<td>默认块大小</td>
+<td>128M</td>
+<td>hdfs-site.xml</td>
+<td>256M</td>
+</tr>
+<tr>
+<td>namenode_java_heapsize</td>
+<td>namenode堆大小</td>
+<td>2048M</td>
+<td>hdfs-site.xml</td>
+<td>1024M</td>
+</tr>
+<tr>
+<td>dfs.permissions</td>
+<td>是否开启权限检查</td>
+<td>true</td>
+<td>hdfs-site.xml</td>
+<td>false</td>
+</tr>
+</tbody></table>
+<h2 id="小文件问题"><a href="#小文件问题" class="headerlink" title="小文件问题"></a>小文件问题</h2><ul>
+<li><p>定义：大量大小小于块大小的文件</p>
+</li>
+<li><p>实际场景：网页，Hive动态分区插入数据等</p>
+</li>
+<li><p>背景：每个文件的元数据对象约占150byte，所以如果有1千万个小文件，每个文件占用一个block，则NameNode大约需要2G空间。如果存储1亿个文件，则NameNode需要20G空间；数据以块为单位进行处理。</p>
+</li>
+<li><p>影响：占用资源，降低处理效率</p>
+</li>
+<li><p>解决方案：</p>
+<ul>
+<li><p>从源头减少小文件</p>
+</li>
+<li><p>使用archive打包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop archive</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用其他存储方式，如Hbase，ES等</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Namenode管理-内存结构"><a href="#Namenode管理-内存结构" class="headerlink" title="Namenode管理-内存结构"></a>Namenode管理-内存结构</h2><p>内存主要占用为 Namespace、BlockManager，Namespace、BlockManager 是会随着数据的增加而增加的</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/namenode%E5%86%85%E5%AD%98.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127155529.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211127155546.png"></p>
+<h2 id="Namenode-管理"><a href="#Namenode-管理" class="headerlink" title="Namenode 管理"></a>Namenode 管理</h2><p>大数据量下的namenode问题： </p>
+<ol>
+<li>启动时间变长 </li>
+<li>性能开始下降</li>
+<li>NameNode JVM FGC风险较高</li>
+</ol>
+<p>解决方案： </p>
+<ol>
+<li>根据数据增长情况，预估namenode内存需求，提前做好预案</li>
+<li>使用HDFS Federation，扩展NameNode分散单点负载</li>
+<li>引入外部系统支持NameNode内存数据</li>
+<li>合并小文件</li>
+<li>调整合适的BlockSize</li>
+</ol>
+<h2 id="数据迁移"><a href="#数据迁移" class="headerlink" title="数据迁移"></a>数据迁移</h2><h2 id="Namenode管理-内存预估"><a href="#Namenode管理-内存预估" class="headerlink" title="Namenode管理-内存预估"></a>Namenode管理-内存预估</h2><p>文件元数据对象约占200byte，block元数据约占180byte： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">总内存=198 * num(Directory + Files) + 176 * num(blocks) + 2% * 总内存</span><br></pre></td></tr></table></figure>
+
+<h2 id="数据迁移-1"><a href="#数据迁移-1" class="headerlink" title="数据迁移"></a>数据迁移</h2><p>场景：</p>
+<ul>
+<li>冷热数据迁移</li>
+<li>集群升级、维护</li>
+</ul>
+<p>方案：</p>
+<ul>
+<li>hadoop distcp 命令</li>
+</ul>
+<h2 id="数据平衡"><a href="#数据平衡" class="headerlink" title="数据平衡"></a>数据平衡</h2><p>原因：长期运行的集群增删节点，节点增删磁盘等 </p>
+<p>影响：</p>
+<ul>
+<li>跨节点拷贝数据</li>
+<li>task会存在任务失败的风险</li>
+<li>磁盘利用不均</li>
+</ul>
+<p>方案：</p>
+<ul>
+<li>集群节点间：hdfs balancer 命令</li>
+<li>单节点磁盘间：hdfs diskbalancer 命令</li>
+</ul>
+<h2 id="数据平衡-hdfs-balancer"><a href="#数据平衡-hdfs-balancer" class="headerlink" title="数据平衡-hdfs balancer"></a>数据平衡-hdfs balancer</h2><p>参数：</p>
+<ul>
+<li><p>-threshold 30 ：判断集群是否平衡的目标参数，每一个 datanode 存储使用率和集群总存储使用率的差值的绝对值都应该小于这个阀值</p>
+<p>例如：整体空间占用：30%，threshold：10，balancer 之后每个dn的空间占用：20~40%</p>
+<p>dn1：60%</p>
+<p>dn2：10%</p>
+<p>dn3：30%</p>
+<p>每个机器配置都一样的话整体占用：33.3%，threshold 10 ，balancer 后结果如下，每一个 datanode 存储使用率和集群总存储使用率的差值的绝对值都小于10</p>
+<p>dn1：40%</p>
+<p>dn2：30%</p>
+<p>dn3：30%</p>
+<p>threshold  是不是越低越好，因为在 balancer 时 client 还会写入数据，执行完 balancer 后检查发现还没有到达阈值，继续执行，导致执行时间变长。可以多次执行调整</p>
+</li>
+<li><p>-include ：执行balance的DN列表</p>
+</li>
+<li><p>dfs.balance.bandwidthPerSec 300MB ：balance工具在运行中所能占用的带宽，设置的过大会影响其他任务</p>
+</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>对于一些大型的HDFS集群(随时可能扩容或下架服务器)，balance脚本建议作为后台常驻进程</li>
+<li>根据官方建议，脚本需要部署在相对空闲的服务器上</li>
+<li>停止脚本通过kill进程实现</li>
+</ul>
+<h2 id="其他管理命令"><a href="#其他管理命令" class="headerlink" title="其他管理命令"></a>其他管理命令</h2><ul>
+<li>hdfs dfsadmin</li>
+<li>hdfs fsck</li>
+</ul>
+<h1 id="Java-API"><a href="#Java-API" class="headerlink" title="Java API"></a>Java API</h1><p><a target="_blank" rel="noopener" href="https://github.com/chengchen901/demo_hdfs.git">https://github.com/chengchen901/demo_hdfs.git</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hadoop jar demo_hdfs-1.0-SNAPSHOT-jar-with-dependencies.jar com.study.sample.hdfs.HDFSFileWrite /root/test.txt /root/word.txt</span><br><span class="line"></span><br><span class="line">hadoop jar demo_hdfs-1.0-SNAPSHOT-jar-with-dependencies.jar com.study.sample.hdfs.HDFSFileRead /root/word.txt</span><br></pre></td></tr></table></figure>
+
+<h1 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h1><ul>
+<li>数据块的复制策略？ </li>
+<li>调整块的大小会造成哪些影响？ </li>
+<li>namenode 启动过程？ </li>
+<li>namenode HA方案？ </li>
+<li>secondary namenode 的作用？ </li>
+<li>hdfs常用文件格式有哪些？各有什么优缺点？ </li>
+<li>如何扩展HDFS的存储容量？</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/02-HDFS/" data-id="clmcxec6c000ju8wa833z0blq" data-title="HDFS" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/01-CDH6.2%E5%AE%89%E8%A3%85/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          CDH6.2安装
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/03-MapReduce/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">MapReduce</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

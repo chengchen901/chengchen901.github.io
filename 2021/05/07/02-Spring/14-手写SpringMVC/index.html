@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>手写SpringMVC | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="SpringMVC基本架构MVC简介Model：数据 View：视图 Controller：控制器 MVC是一种软件设计典范，用一种业务逻辑、数据、界面显示分层，分离的方法组织代码，将业务逻辑聚集到一个部件里面，在改进 Java领域典型的MVC实现及框架:   Servlet + jsp Servlet是曾经唯一的Java Web编程规范，现在出现了竞争者Reactive 为尽量少依赖servle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手写SpringMVC">
+<meta property="og:url" content="http://example.com/2021/05/07/02-Spring/14-%E6%89%8B%E5%86%99SpringMVC/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="SpringMVC基本架构MVC简介Model：数据 View：视图 Controller：控制器 MVC是一种软件设计典范，用一种业务逻辑、数据、界面显示分层，分离的方法组织代码，将业务逻辑聚集到一个部件里面，在改进 Java领域典型的MVC实现及框架:   Servlet + jsp Servlet是曾经唯一的Java Web编程规范，现在出现了竞争者Reactive 为尽量少依赖servle">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912135812.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912142234.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912142516.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912142837.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912152709.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912152804.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912153133.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912153357.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912154324.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912154608.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912154807.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912171547.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912175050.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912175157.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912175615.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912175645.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912175834.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912180002.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912180038.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912180147.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912180238.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912180546.png">
+<meta property="article:published_time" content="2021-05-07T14:36:30.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:22:17.466Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Spring">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912135812.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-02-Spring/14-手写SpringMVC" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/02-Spring/14-%E6%89%8B%E5%86%99SpringMVC/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spring/">Spring</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      手写SpringMVC
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="SpringMVC基本架构"><a href="#SpringMVC基本架构" class="headerlink" title="SpringMVC基本架构"></a>SpringMVC基本架构</h1><h2 id="MVC简介"><a href="#MVC简介" class="headerlink" title="MVC简介"></a>MVC简介</h2><p><strong>Model：数据</strong></p>
+<p><strong>View：视图</strong></p>
+<p><strong>Controller：控制器</strong></p>
+<p><strong>MVC是一种软件设计典范</strong>，用一种业务逻辑、数据、界面显示分层，分离的方法组织代码，将业务逻辑聚集到一个部件里面，在改进</p>
+<p><strong>Java领域典型的MVC实现及框架:</strong> </p>
+<ul>
+<li>Servlet + jsp Servlet是曾经唯一的Java Web编程规范，现在出现了竞争者Reactive</li>
+<li>为尽量少依赖servlet api，提高可测试性、可复用性而发展的:<ul>
+<li>Struts1 Struts2已成历史</li>
+<li>SpringMVc当下最流行的MVC框架，依托spring框架带来的强大开发便利性。</li>
+</ul>
+</li>
+</ul>
+<p><strong>面试题:Struts2和SpringMVC的区别?</strong> </p>
+<ul>
+<li>请求映射上的区别:<ul>
+<li>Struts2的请求是映射到Action类级别的，每个请求创建一个Action类的实例来处理。</li>
+<li>SpringMVC也支持这种方式，请求映射到实现了Controller接口的bean，但要求Controller Bean是单例的、线程安全的。这种方式很少被采用。因为有更好的方式:请求映射到Bean的方法（方法级别的映射），这样一个类中可以处理多种请求，大大减少控制器类的数量，同时方法级更易于保证并发请求的线程安全。</li>
+</ul>
+</li>
+<li>请求数据的绑定上的区别: <ul>
+<li>Struts2将请求的数据绑定到Action类实例的属性;</li>
+<li>SpringMVC则是将请求数据绑定到处理方法的参数。</li>
+</ul>
+</li>
+</ul>
+<h2 id="SpringMVC基本架构-1"><a href="#SpringMVC基本架构-1" class="headerlink" title="SpringMVC基本架构"></a>SpringMVC基本架构</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912135812.png"></p>
+<p>目的:搞清楚SprngMVC框架由什么构成?做了什么事情? </p>
+<p>从图上可以得到哪些信息及疑问?</p>
+<p><strong>从图中可以得到</strong></p>
+<ol>
+<li>有四个个重要角色:DispatcherServlet Controller View Model</li>
+<li>DispatcherServlet的工作很繁重，它很重要! </li>
+<li>谁来充当Controller?</li>
+<li>DispatcherServlet根据什么规则来分发请求给Controller?</li>
+<li>View可以是什么? </li>
+<li>DispatcherServelt来负责转发，它又如何知道该怎么转发?因为它要帮所有的Controller完成转发。</li>
+</ol>
+<h2 id="手写SpringMVC工程准备"><a href="#手写SpringMVC工程准备" class="headerlink" title="手写SpringMVC工程准备"></a>手写SpringMVC工程准备</h2><p><strong>建立一个maven工程，只需下面的依赖</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-context<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.2.8.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>javax.servlet<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>javax.servlet-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.0.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="控制层"><a href="#控制层" class="headerlink" title="控制层"></a>控制层</h1><h2 id="谁来充当Controller"><a href="#谁来充当Controller" class="headerlink" title="谁来充当Controller?"></a>谁来充当Controller?</h2><ul>
+<li><p>我们希望能以普通的JavaBean来当Controller，好处有哪些?</p>
+</li>
+<li><p>在spring中当然希望以spring lOC容器管理的Bean来当Controller,这样可以很好地利用spring IOC、AOP的功能! </p>
+</li>
+<li><p>问题:</p>
+<ul>
+<li>请求如何与Bean对应? </li>
+<li>请求如何与Bean的方法对应?</li>
+</ul>
+</li>
+<li><p>两种方式</p>
+<ul>
+<li>方式一:实例级别的映射</li>
+<li>方式二∶方法级别的映射</li>
+</ul>
+</li>
+</ul>
+<h2 id="方式一-实例级别的映射"><a href="#方式一-实例级别的映射" class="headerlink" title="方式一:实例级别的映射"></a>方式一:实例级别的映射</h2><ul>
+<li><p>规则:</p>
+<ul>
+<li>请求地址与Bean的名称对应: Bean以请求地址为BeanName或别名; </li>
+<li>做Controller的Bean实现Controller接口（如下)，这样就知道该调用哪个方法了</li>
+</ul>
+</li>
+<li><p>问题: </p>
+<ul>
+<li>该返回什么值?</li>
+</ul>
+<p>	</p>
+</li>
+<li><p>思考1: handleRequest方法能返回什么信息? </p>
+<ul>
+<li>Controller处理的结果数据，以及它对应的View</li>
+</ul>
+</li>
+<li><p>思考2:结果数据有什么特点?它将被谁使用?</p>
+<ul>
+<li>数据多样化(未知的)，被下一个处理者或view使用。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912142234.png"></p>
+<ul>
+<li>思考3: 返回的结果如何存放可方便view使用?<ul>
+<li>Map</li>
+</ul>
+</li>
+<li>思考4: View有什么特点?<ul>
+<li>多种多样，但是都是向浏览器做出响应的，响应的内容不同。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912142516.png"></p>
+<p><strong>定义handleRequest方法返回值类型</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912142837.png"></p>
+<h2 id="方式二-方法级别的映射"><a href="#方式二-方法级别的映射" class="headerlink" title="方式二:方法级别的映射"></a>方式二:方法级别的映射</h2><ul>
+<li><p><strong>规则:</strong> </p>
+</li>
+<li><p><strong>普通的Bean(不需要实现Controller接口)做Controller;</strong></p>
+</li>
+<li><p><strong>请求映射到Bean的方法</strong></p>
+</li>
+<li><p><strong>问题:</strong> </p>
+<ul>
+<li><strong>怎么表示一个bean是一个Controller?</strong> 	<ul>
+<li><strong>加@Controller注解标识</strong></li>
+</ul>
+</li>
+<li><strong>怎么映射请求到方法?</strong><ul>
+<li><strong>用RequestMapping注解说明</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>定义注解</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912152709.png"></p>
+<h2 id="SpringMVC框架中实现多种Controller方式支持"><a href="#SpringMVC框架中实现多种Controller方式支持" class="headerlink" title="SpringMVC框架中实现多种Controller方式支持"></a>SpringMVC框架中实现多种Controller方式支持</h2><p><strong>思考:如果我们的springMVC框架要支持这两种方式，甚至更多种方式，该如何设计?</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912152804.png"></p>
+<p><strong>分析:</strong></p>
+<ol>
+<li><strong>各种方式的请求映射是一样的吗?</strong> </li>
+<li><strong>各种方式对应的request handler(请求处理器）一样的吗?</strong> <ol>
+<li><strong>方式一:Controller接口实现对象</strong></li>
+<li><strong>@Controller、@RequestMapping注解标识的bean的方法</strong></li>
+</ol>
+</li>
+<li><strong>如何设计让DispatcherServlet能避开这种变化?</strong></li>
+</ol>
+<p><strong>不同的方式，映射规则不一样，请求处理器也不一样，考虑一下策略模式!</strong></p>
+<h2 id="设计不同请求处理分发方式的策略接口-HandlerMapping"><a href="#设计不同请求处理分发方式的策略接口-HandlerMapping" class="headerlink" title="设计不同请求处理分发方式的策略接口:HandlerMapping"></a>设计不同请求处理分发方式的策略接口:HandlerMapping</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912153133.png"></p>
+<p><strong>将实现者配置为Bean，DispatcherServlet从ApplicationContext中获取所有配置的</strong></p>
+<ul>
+<li><p><strong>它的返回值是Object,DispatcherServlet怎么执行它?</strong></p>
+<p><strong>设计不同Handler执行的适配器接口: HandlerAdapter</strong></p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912153357.png"></p>
+<ol>
+<li><strong>每种不同的请求处理器提供它的适配实现，配置为Bean</strong></li>
+<li><strong>DispatcherServlet从ApplicationContext中获取所有配置的，面向HandlerAdapter，隔绝Handler的变化影响!</strong></li>
+</ol>
+<h2 id="Handler表示"><a href="#Handler表示" class="headerlink" title="Handler表示"></a>Handler表示</h2><p><strong>方式二的Handler如何表示?</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912154324.png"></p>
+<p><strong>分析:方式二的Handler是@Controller、@RequestMapping注解标识的bean和方法，需要定义一个实体类保存BeanName，方法名，@RequestMapping注解信息。</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912154608.png"></p>
+<h2 id="Handler检测"><a href="#Handler检测" class="headerlink" title="Handler检测"></a>Handler检测</h2><p><strong>分析:这个注解信息该由谁去获取?在什么时候获取?</strong></p>
+<p>RequestMappingHandlerMapping，在它的实例创建好，初始化后</p>
+<p><strong>该怎么做？</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912154807.png"></p>
+<ul>
+<li><strong>回顾:我们在学习ApplicationContext扫描注解bean的时候学习到了它是以何种方式来获取类、注解信息的？</strong><ul>
+<li><strong>ASM</strong></li>
+</ul>
+</li>
+<li><strong>疑问1:那么我们此时通过ApplicationContext获取Bean的MVC注解信息，是通过原来的AnnotatedBeanDefinition，还是加载类，通过反射方式获取?</strong><ul>
+<li><strong>加载类，通过反射方式获取</strong></li>
+</ul>
+</li>
+</ul>
+<p><strong>为什么?</strong></p>
+<p><strong>XML配置方式也可配置带MVC注解的bean</strong></p>
+<ul>
+<li><p><strong>问题2:MVC注解检测的逻辑是怎样的?</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">afterPropertiesSet</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">      <span class="comment">// 检测@Controller Bean</span></span><br><span class="line">      <span class="keyword">for</span> (String beanName : <span class="built_in">this</span>.applicationContext.getBeanNamesForType(Object.class)) &#123;</span><br><span class="line">          Class&lt;?&gt; beanType = <span class="built_in">this</span>.applicationContext.getType(beanName);</span><br><span class="line">          <span class="keyword">if</span> (isHandlerBean(beanType)) &#123;</span><br><span class="line">              detectHandlerMethod(beanType);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">- **问题<span class="number">3</span>: RequestMappingHandlerMapping中该如何来存放检测到的 RequestMappinglnfo?**</span><br><span class="line"></span><br><span class="line">  **为什么要考虑存放问题?** </span><br><span class="line"></span><br><span class="line">  - **要考虑在getHandler(request)阶段能更快速地获取**</span><br><span class="line"></span><br><span class="line">  - **初步设计:**</span><br><span class="line"></span><br><span class="line">    ![](https:<span class="comment">//raw.githubusercontent.com/chengchen901/img/master/blog/20210912155418.png)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## 小结-类汇总</span><br><span class="line"></span><br><span class="line">![](https:<span class="comment">//raw.githubusercontent.com/chengchen901/img/master/blog/20210912155540.png)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">![](https:<span class="comment">//raw.githubusercontent.com/chengchen901/img/master/blog/20210912155605.png)</span></span><br><span class="line"></span><br><span class="line">![](https:<span class="comment">//raw.githubusercontent.com/chengchen901/img/master/blog/20210912155620.png)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## DispatcherServlet</span><br><span class="line"></span><br><span class="line">**可以来设计DispatcherServlet了**</span><br><span class="line"></span><br><span class="line">![](https:<span class="comment">//raw.githubusercontent.com/chengchen901/img/master/blog/20210912163356.png)</span></span><br><span class="line"></span><br><span class="line">- **思考<span class="number">1</span>: DispatcherServlet要完成些什么事情?** </span><br><span class="line">  <span class="number">1.</span> 创建ApplicationContext容器</span><br><span class="line">  <span class="number">2.</span> 要从容器中获得HandlerMapping、HandlerAdapter</span><br><span class="line">  <span class="number">3.</span> 完成分发</span><br><span class="line">  <span class="number">4.</span> 完成view转发</span><br><span class="line">  <span class="number">5.</span> 完成异常处理</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">- **思考<span class="number">2</span>: DispatcherServlet要完成这些事情，它得持有什么?**</span><br><span class="line"></span><br><span class="line">  <span class="number">1.</span> 在init方法中完成<span class="number">3</span>个属性的初始化</span><br><span class="line">  <span class="number">2.</span> 在service方法中完成handler分发、执行的逻辑</span><br><span class="line">  <span class="number">3.</span> 在destroy方法中关闭applicationContext</span><br><span class="line"></span><br><span class="line">  ![](https:<span class="comment">//raw.githubusercontent.com/chengchen901/img/master/blog/20210912163607.png)</span></span><br><span class="line"></span><br><span class="line">## 实现 DispatcherServlet的初始化、分发</span><br><span class="line"></span><br><span class="line">**完成上面<span class="number">3</span>步后，你的DispatcherServlet可能会是这个样子**</span><br><span class="line"></span><br><span class="line">![](https:<span class="comment">//raw.githubusercontent.com/chengchen901/img/master/blog/20210912165628.png)</span></span><br><span class="line"></span><br><span class="line"># 模型与视图</span><br><span class="line"></span><br><span class="line">## View</span><br><span class="line"></span><br><span class="line">- **回看HandlerAdapter**</span><br><span class="line"></span><br><span class="line">  ![](https:<span class="comment">//raw.githubusercontent.com/chengchen901/img/master/blog/20210912171124.png)</span></span><br><span class="line"></span><br><span class="line">疑问:Handle()方法的返回值是ModelAndView,</span><br><span class="line"></span><br><span class="line">是否要求对应的Handler也要返回ModelAndView?</span><br><span class="line"></span><br><span class="line">````java</span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/myGirl&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyGirlController</span> &#123; <span class="meta">@RequestMapping(&quot;do1&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> ModelAndView <span class="title function_">do1</span><span class="params">(String pos)</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>不应该这样，这样太不好了</p>
+<ol>
+<li>要返回ModelAndView，方法中就需要创建它的实例，需提供view对象，这样Controller方法的职责就不专一了，被污染! </li>
+<li>不能做到可以替换View层了，不可灵活扩展了。</li>
+</ol>
+<p>怎么办?</p>
+<p>加个逻辑名称层</p>
+<h2 id="重新定义ModelAndView"><a href="#重新定义ModelAndView" class="headerlink" title="重新定义ModelAndView"></a>重新定义ModelAndView</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912171547.png"></p>
+<h2 id="View玩法"><a href="#View玩法" class="headerlink" title="View玩法"></a>View玩法</h2><ul>
+<li><p><strong>玩法1:加入视图名称</strong></p>
+</li>
+<li><p>**玩法2:**由HandlerAdapter根据handler返回结果来创建ModelAndView</p>
+</li>
+<li><p>**问题1:**那model数据怎么返回?</p>
+<p>参数</p>
+</li>
+<li><p>**问题2:**还可以返回ModelAndView吗?</p>
+<p>可以</p>
+</li>
+<li><p>**问题3:**视图名怎么转为View对象?谁来做?</p>
+<p>HandlerAdapter吗?</p>
+<p>还是交个一个专门做这件事的家伙吧，毕竟这是视图层处理的事</p>
+</li>
+</ul>
+<h2 id="View-ViewResolver"><a href="#View-ViewResolver" class="headerlink" title="View-ViewResolver"></a>View-ViewResolver</h2><p><strong>ViewResolver完成从视图名到视图的转换，也不知道怎么转换，先来个接口定义，让我的DispatcherServlet代码看起来完整吧!</strong> </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912175050.png"></p>
+<ul>
+<li><p><strong>玩法3:不同的视图技术可能有不同的View实现及转换规则，那就实现ViewResolver来提供对应的转换规则，都配置为Bean，DispatcherServlet好从容器中获取!</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912175157.png"></p>
+</li>
+</ul>
+<p>在DispatcherServlet中完成它的初始化，及视图渲染逻辑。</p>
+<ul>
+<li><strong>该提供怎样的ViewResolver实现呢?</strong> <ul>
+<li>那要看有哪些视图类型</li>
+</ul>
+</li>
+<li><strong>思考:</strong><ol>
+<li>在Servlet中一个servlet处理完请求后，可以如何处理请求?<ul>
+<li>转发给下一个内部URL（这里都是url，字符串，直接可以当视图名）</li>
+<li>重定向到其他的URL</li>
+<li>直接操作response做出响应（在mvc模式下，该工作要交给view来做)</li>
+</ul>
+</li>
+<li>对应的View应该是怎样渲染的?<ul>
+<li>完成转发、重定向</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<p>问题: view实现中怎么区分转发、重定向?</p>
+<p>字符串带前缀:forward:或redirect:</p>
+<p>来定义第一个实现!</p>
+<h2 id="View-ViewResolver实现"><a href="#View-ViewResolver实现" class="headerlink" title="View-ViewResolver实现"></a>View-ViewResolver实现</h2><ul>
+<li><p><strong>一个基于URL的转发、重定向的ViewResolver实现</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912175615.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912175645.png"></p>
+</li>
+<li><p><strong>增加其他的ViewResolver实现</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912175834.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912180002.png"></p>
+</li>
+</ul>
+<h2 id="Model设计"><a href="#Model设计" class="headerlink" title="Model设计"></a>Model设计</h2><ul>
+<li><p><strong>为方便方法返回数据，我们需要设计Model</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912180038.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/myGirl&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyGirlController</span> &#123; <span class="meta">@RequestMapping(&quot;do1&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">do1</span><span class="params">(String pos,Mode model)</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>思考:为什么不直接用Map?</strong> </p>
+<p>Map是一个通用的集合类型，没法在方法参数上区分是否用来返回值的。</p>
+</li>
+<li><p><strong>设计Model的实现</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912180147.png">、</p>
+</li>
+</ul>
+<h1 id="拦截处理器"><a href="#拦截处理器" class="headerlink" title="拦截处理器"></a>拦截处理器</h1><h2 id="待处理问题"><a href="#待处理问题" class="headerlink" title="待处理问题"></a>待处理问题</h2><ol>
+<li><strong>请求参数如何绑定到方法参数?</strong> </li>
+<li><strong>要能对请求进行一些过滤处理，再交给Handler处理</strong></li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912180238.png"></p>
+<p><strong>这些事情都交给Handlerlnterceptor来做!</strong></p>
+<h2 id="Handlerlnterceptor"><a href="#Handlerlnterceptor" class="headerlink" title="Handlerlnterceptor"></a>Handlerlnterceptor</h2><p><strong>HandlerInterceptor接口定义</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210912180546.png"></p>
+<ul>
+<li><strong>玩法:用户实现它来提供拦截器，可同时实现Ordered接口来指定顺序</strong>。 <ol>
+<li>用户实现它来提供拦截器，可同时实现Ordered接口或@order来指定顺序</li>
+<li>在其上加@requestMapping来指定它要过滤的请求</li>
+<li>配置为Bean</li>
+<li>HandleMapping初始化阶段完成HandlerInterceptor的加载</li>
+<li>在获取Handler阶段，把拦截器加入，形成链返回</li>
+<li>执行链</li>
+</ol>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/02-Spring/14-%E6%89%8B%E5%86%99SpringMVC/" data-id="clmcxecux007pu8wafg4u1z0l" data-title="手写SpringMVC" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/05/07/02-Spring/13-Spring%E6%BA%90%E7%A0%81-%E6%89%A9%E5%B1%95%E7%82%B9%E6%80%BB%E7%BB%93/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Spring中的扩展点总结
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/05/07/02-Spring/15-SpringMVC%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">SpringMVC高级应用实战及源码解读</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

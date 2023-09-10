@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="何为主从复制，主从复制拓扑类型和实战搭建为什么需要主从复制 数据库存在海量数据量、性能、高并发读写的问题  我们用分库分表来处理海量数据 我们用分库分表、分区提升性能 我们用分库分表、分布式缓存应对高并发读写  为解决数据存储、访问问题我们需要数据库中间件。 还有什么方式应对读写压力？ 何为主从复制主从复制：MySQL提供了复制的功能，就是把一个数据库的数据复制到其它数据库的机制，源数据库称为主服">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="何为主从复制，主从复制拓扑类型和实战搭建为什么需要主从复制 数据库存在海量数据量、性能、高并发读写的问题  我们用分库分表来处理海量数据 我们用分库分表、分区提升性能 我们用分库分表、分布式缓存应对高并发读写  为解决数据存储、访问问题我们需要数据库中间件。 还有什么方式应对读写压力？ 何为主从复制主从复制：MySQL提供了复制的功能，就是把一个数据库的数据复制到其它数据库的机制，源数据库称为主服">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230102134654.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230102134622.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230102134508.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230102134224.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230102134845.png">
+<meta property="article:published_time" content="2023-09-10T03:59:08.944Z">
+<meta property="article:modified_time" content="2023-01-04T02:59:43.699Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230102134654.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-11-MySQL/04-MySQL高可用及读写分离/01-MySQL主从复制和高可用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.944Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="何为主从复制，主从复制拓扑类型和实战搭建"><a href="#何为主从复制，主从复制拓扑类型和实战搭建" class="headerlink" title="何为主从复制，主从复制拓扑类型和实战搭建"></a>何为主从复制，主从复制拓扑类型和实战搭建</h1><h2 id="为什么需要主从复制"><a href="#为什么需要主从复制" class="headerlink" title="为什么需要主从复制"></a>为什么需要主从复制</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230102134654.png"></p>
+<p>数据库存在海量数据量、性能、高并发读写的问题</p>
+<ul>
+<li>我们用分库分表来处理海量数据</li>
+<li>我们用分库分表、分区提升性能</li>
+<li>我们用分库分表、分布式缓存应对高并发读写</li>
+</ul>
+<p>为解决数据存储、访问问题我们需要<strong>数据库中间件</strong>。</p>
+<p>还有什么方式应对读写压力？</p>
+<h2 id="何为主从复制"><a href="#何为主从复制" class="headerlink" title="何为主从复制"></a>何为主从复制</h2><p>主从复制：MySQL提供了复制的功能，就是把一个数据库的数据复制到其它数据库的机制，源数据库称为主服务器，目的数据库称为从服务器</p>
+<p>构建高性能应用的基础：</p>
+<ul>
+<li>实现数据库的读写分离</li>
+<li>实现数据库高可用的基础等。</li>
+</ul>
+<h2 id="主从复制的拓扑结构"><a href="#主从复制的拓扑结构" class="headerlink" title="主从复制的拓扑结构"></a>主从复制的拓扑结构</h2><ul>
+<li>一主多从<br>由一个master和多个slave组成，Slave之间并不相互通信，只能与master进行通信。如果写操作较少，而读操作很多时，可以采取这种结构。</li>
+<li>互为主从<br>复制中的两台服务器，既是master，又是另一台服务器的slave，两台mysql都可读写</li>
+<li>级联复制<br>也就是打开log-slave-update选项，然后通过二级（或者是更多级别）复制来减少Master端因为复制所带来的压力，相当于从服务器再带从服务器器</li>
+</ul>
+<h1 id="主从复制工作原理理解，binlog的底层原理分析"><a href="#主从复制工作原理理解，binlog的底层原理分析" class="headerlink" title="主从复制工作原理理解，binlog的底层原理分析"></a>主从复制工作原理理解，binlog的底层原理分析</h1><h2 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230102134622.png"></p>
+<ol>
+<li>主服务器将更新操作写入二进制日志文件（binary log ） </li>
+<li>当从服务器连上主服务器的时候，它告诉主服务器它最后一次成功读取更新日志的位置，然后拷贝该位置后的二进制日志文件到它的中继日志(relay log) </li>
+<li>从服务器会重做中继日志中的事件，更新到自己数据库中</li>
+</ol>
+<h2 id="binlog的底层原理分析"><a href="#binlog的底层原理分析" class="headerlink" title="binlog的底层原理分析"></a>binlog的底层原理分析</h2><p>记录mysql的数据更新，主从复制主要依靠binlog</p>
+<p><strong>复制类型</strong></p>
+<ul>
+<li>基于语句的复制(Statement)：在从服务器上执行与主服务器上一样的SQL语句（insert） </li>
+<li>基于行的复制(Row)：把改变的内容复制过去，而不是把命令在从服务器上执行一次(update)</li>
+<li>混合类型的复制(Mixed)：默认采用基于语句的复制，一旦发现基于语句的无法精确的复制时，就会采用基于行的复制。</li>
+</ul>
+<h2 id="主从复制注意点"><a href="#主从复制注意点" class="headerlink" title="主从复制注意点"></a>主从复制注意点</h2><p>主从复制基本原则</p>
+<ol>
+<li>每个slave只能有一个master</li>
+<li>每个slave只能有一个唯一的服务器ID</li>
+<li>每个master可以有很多slave</li>
+<li>如果你设置log_slave_updates，slave可以是其它slave的master</li>
+<li>MySQL不支持多主服务器复制，即一个slave可以有多个master</li>
+</ol>
+<p>主从复制最大的问题</p>
+<p><strong>复制延时</strong><br>由于所有的写操作都是先在Master上操作，然后同步更新到Slave上，所以从Master同步到Slave机器有一定的延迟，当系统很繁忙的时候，延迟问题会更加严重，Slave机器数量的增加也会使这个问题更加严重。</p>
+<h1 id="如何使用数据库中间件实现读写分离"><a href="#如何使用数据库中间件实现读写分离" class="headerlink" title="如何使用数据库中间件实现读写分离"></a>如何使用数据库中间件实现读写分离</h1><h2 id="读写分离"><a href="#读写分离" class="headerlink" title="读写分离"></a>读写分离</h2><p>数据库经过复制后，多台机器拥有一样的数据，这样就可以同时利用这些机器来分担应用的请求，通常的方式是，主服务器负责处理写的请求，而其余从服务器负责处理读的请求，这就是所谓的读写分离。</p>
+<p>读写分离的实现<br>核心任务就一个：决定请求交给哪一个服务器来处理<br>那么中间件如何来配置读写分离？</p>
+<h2 id="Mycat读写分离"><a href="#Mycat读写分离" class="headerlink" title="Mycat读写分离"></a>Mycat读写分离</h2><ul>
+<li>配置mysql端主从的数据自动同步，mycat不负责任何的数据同步问题。 </li>
+<li>Mycat配置读写分离，具体参数参考其它文章。</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dataHost</span> <span class="attr">name</span>=<span class="string">&quot;localhost1&quot;</span> <span class="attr">maxCon</span>=<span class="string">&quot;1000&quot;</span> <span class="attr">minCon</span>=<span class="string">&quot;10&quot;</span> <span class="attr">balance</span>=<span class="string">&quot;3&quot;</span> <span class="attr">writeType</span>=<span class="string">&quot;0&quot;</span> <span class="attr">dbType</span>=<span class="string">&quot;mysql&quot;</span> <span class="attr">dbDriver</span>=<span class="string">&quot;native&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">heartbeat</span>&gt;</span>select user()<span class="tag">&lt;/<span class="name">heartbeat</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">writeHost</span> <span class="attr">host</span>=<span class="string">&quot;hostM1&quot;</span> <span class="attr">url</span>=<span class="string">&quot;192.168.1.201:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;123456&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">readHost</span> <span class="attr">host</span>=<span class="string">&quot;hostS1&quot;</span> <span class="attr">url</span>=<span class="string">&quot;192.168.1.202:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;123456&quot;</span> <span class="attr">weight</span>=<span class="string">&quot;1&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">writeHost</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dataHost</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dataHost</span> <span class="attr">name</span>=<span class="string">&quot;localhost1&quot;</span> <span class="attr">maxCon</span>=<span class="string">&quot;1000&quot;</span> <span class="attr">minCon</span>=<span class="string">&quot;10&quot;</span> <span class="attr">balance</span>=<span class="string">&quot;1&quot;</span> <span class="attr">writeType</span>=<span class="string">&quot;0&quot;</span> <span class="attr">dbType</span>=<span class="string">&quot;mysql&quot;</span> <span class="attr">dbDriver</span>=<span class="string">&quot;native&quot;</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">heartbeat</span>&gt;</span>select user()<span class="tag">&lt;/<span class="name">heartbeat</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">writeHost</span> <span class="attr">host</span>=<span class="string">&quot;hostM1&quot;</span> <span class="attr">url</span>=<span class="string">&quot;192.168.1.201:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;123456&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">writeHost</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">writeHost</span> <span class="attr">host</span>=<span class="string">&quot;hostS1&quot;</span> <span class="attr">url</span>=<span class="string">&quot;192.168.1.202:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;123456&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">writeHost</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dataHost</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>第一种当写挂了读不可用，第二种可以继续使用。事务内部的一切操作都会走写节点，所以读操作不要加事务。</p>
+<h2 id="Sharding-JDBC读写分离"><a href="#Sharding-JDBC读写分离" class="headerlink" title="Sharding-JDBC读写分离"></a>Sharding-JDBC读写分离</h2><ul>
+<li>配置mysql主从复制，Sharding-JDBC不负责任何的数据同步问题。 </li>
+<li>应用中配置Sharding-JDBC读写分离</li>
+</ul>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">shardingRule:</span> </span><br><span class="line"> </span><br><span class="line"> <span class="attr">masterSlaveRules:</span></span><br><span class="line">     <span class="attr">ms_ds0:</span></span><br><span class="line">     	<span class="attr">masterDataSourceName:</span> <span class="string">ds0</span></span><br><span class="line">     	<span class="attr">slaveDataSourceNames:</span></span><br><span class="line">     		<span class="bullet">-</span> <span class="string">ds0_slave0</span></span><br><span class="line">     		<span class="bullet">-</span> <span class="string">ds0_slave1</span></span><br><span class="line">     	<span class="attr">loadBalanceAlgorithmType:</span> <span class="string">ROUND_ROBIN</span></span><br><span class="line">     <span class="attr">ms_ds1:</span></span><br><span class="line">     	<span class="attr">masterDataSourceName:</span> <span class="string">ds1</span></span><br><span class="line">     	<span class="attr">slaveDataSourceNames:</span> </span><br><span class="line">         <span class="bullet">-</span> <span class="string">ds1_slave0</span></span><br><span class="line">         <span class="bullet">-</span> <span class="string">ds1_slave1</span></span><br><span class="line">    	 <span class="attr">loadBalanceAlgorithmType:</span> <span class="string">ROUND_ROBIN</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="企业级数据库集群之HA高可用架构"><a href="#企业级数据库集群之HA高可用架构" class="headerlink" title="企业级数据库集群之HA高可用架构"></a>企业级数据库集群之HA高可用架构</h1><h2 id="什么是HA"><a href="#什么是HA" class="headerlink" title="什么是HA"></a>什么是HA</h2><p>HA(High Available)，高可用性集群，指的是通过一组计算机系统提供透明的冗余处理能力，从而保证系统服务高度的连续可用。 </p>
+<p>其主要是利用复制技术，多个不同数据库主机之间进行复制，以保持数据的一致性，并通过一些第三方开源软件来实现负载均衡和统一的访问接口，既减少应用程序开发的复杂性，也降低了企业的运营成本。</p>
+<h2 id="HA基本实现原理"><a href="#HA基本实现原理" class="headerlink" title="HA基本实现原理"></a>HA基本实现原理</h2><ul>
+<li>监控软件节点之间通过心跳或信息报文来确定健康状态（故障检测）</li>
+<li>当前提供服务的机器出现问题后，需要按照一定的规则，投票选举出新的提供服务的机器，并接管服务（故障切换）</li>
+<li>能实现请求均匀分发（负载均衡）</li>
+<li>提供虚拟IP给外部访问（对应用透明）</li>
+</ul>
+<h2 id="企业中MySQL的HA架构"><a href="#企业中MySQL的HA架构" class="headerlink" title="企业中MySQL的HA架构"></a>企业中MySQL的HA架构</h2><ul>
+<li>主从复制</li>
+<li>Keepalived + LVS + MySQL双主复制</li>
+<li>HeartBeat + MySQL双主复制</li>
+<li>HeartBeat + DRDB + MySQL</li>
+</ul>
+<h2 id="HA架构-主从复制"><a href="#HA架构-主从复制" class="headerlink" title="HA架构-主从复制"></a>HA架构-主从复制</h2><p>主从方案缺点</p>
+<ul>
+<li>从库切换成主库需要作改动，改动时间内服务不可用，</li>
+<li>不能故障判断、故障切换、负载均衡、对应用透明。</li>
+</ul>
+<h2 id="HA架构-Keepalived-LVS-MySQL双主复制"><a href="#HA架构-Keepalived-LVS-MySQL双主复制" class="headerlink" title="HA架构-Keepalived+LVS+MySQL双主复制"></a>HA架构-Keepalived+LVS+MySQL双主复制</h2><ul>
+<li>Keepalived提供故障检测、故障切换、对应用透明功能</li>
+<li>LVS提供负载均衡功能</li>
+<li>双主复制提供数据同步功能和读写功能</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230102134508.png"></p>
+<h2 id="HA架构-HeartBeat-MySQL双主复制"><a href="#HA架构-HeartBeat-MySQL双主复制" class="headerlink" title="HA架构-HeartBeat+MySQL双主复制"></a>HA架构-HeartBeat+MySQL双主复制</h2><ul>
+<li>HeartBeat提供了故障检测、故障切换、对应用透明功能</li>
+<li>双主复制提供数据同步功能和读写功能</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230102134224.png"></p>
+<h2 id="HA架构-HeartBeat-DRDB-MySQL"><a href="#HA架构-HeartBeat-DRDB-MySQL" class="headerlink" title="HA架构-HeartBeat+DRDB+MySQL"></a>HA架构-HeartBeat+DRDB+MySQL</h2><ul>
+<li>HeartBeat提供了故障检测、故障切换、对应用透明功能</li>
+<li>DRDB提供了数据同步功能(通过网络实现两个服务器上的磁盘同步，是binlog更底层磁盘同步，更适用高可用)</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230102134845.png"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/" data-id="clmcxed7k00csu8waajnd52cv" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/11-MySQL/03-ShardingSphere/05-Sharding-JDBC%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%BA%94%E7%94%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

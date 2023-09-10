@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Redis缓存失效解决方案 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Redis缓存失效解决方案">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis缓存失效解决方案">
+<meta property="og:url" content="http://example.com/2020/12/19/07-Redis/06-Redis%E7%BC%93%E5%AD%98%E5%A4%B1%E6%95%88%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Redis缓存失效解决方案">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219180437960.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219220444624.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219231228000.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219235439366.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219234115751.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219235543292.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219235621630.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219235714632.png">
+<meta property="article:published_time" content="2020-12-19T10:03:08.000Z">
+<meta property="article:modified_time" content="2022-09-25T13:43:01.027Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219180437960.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-07-Redis/06-Redis缓存失效解决方案" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/12/19/07-Redis/06-Redis%E7%BC%93%E5%AD%98%E5%A4%B1%E6%95%88%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" class="article-date">
+  <time class="dt-published" datetime="2020-12-19T10:03:08.000Z" itemprop="datePublished">2020-12-19</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Redis/">Redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Redis缓存失效解决方案
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Redis缓存失效解决方案</p>
+<span id="more"></span>
+
+<h1 id="1-Redis的持久化机制"><a href="#1-Redis的持久化机制" class="headerlink" title="1 Redis的持久化机制"></a>1 Redis的持久化机制</h1><h2 id="1-1-持久化介绍"><a href="#1-1-持久化介绍" class="headerlink" title="1.1 持久化介绍"></a>1.1 持久化介绍</h2><p>Redis的数据都存放在内存中，如果没有配置持久化，redis重启后数据就全丢失了，于是需要开启redis的持久化功能，将数据保存到磁盘上，当redis重启后，可以从磁盘中恢复数据。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219180437960.png" alt="image-20201219180437960"></p>
+<h2 id="1-2-持久化的方式"><a href="#1-2-持久化的方式" class="headerlink" title="1.2 持久化的方式"></a>1.2 持久化的方式</h2><ul>
+<li>RDB 持久化<br>RDB 持久化方式能够在指定的时间间隔对你的数据进行快照存储</li>
+<li>AOF（append only file）持久化<br>AOF 持久化方式记录每次对服务器写的操作，当服务器重启的时候会重新执行这些命令来恢复原始的数据</li>
+</ul>
+<h3 id="1-2-1-RDB-持久化方式"><a href="#1-2-1-RDB-持久化方式" class="headerlink" title="1.2.1 RDB 持久化方式"></a>1.2.1 RDB 持久化方式</h3><ul>
+<li>客户端直接通过命令BGSAVE或者SAVE来创建一个内存快照<ul>
+<li>BGSAVE 调用fork来创建一个子进程，子进程负责将快照写入磁盘，而父进程仍然继续处理命令。</li>
+<li>SAVE 执行SAVE命令过程中，不再响应其他命令。</li>
+</ul>
+</li>
+</ul>
+<p>在redis.conf中调整save配置选项，当在规定的时间内，Redis发生了写操作的个数满足条件会触发发生BGSAVE命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">900秒之内至少一次写操作</span></span><br><span class="line">save 900 1 </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">300秒之内至少发生10次写操作</span></span><br><span class="line">save 300 10</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">60秒之内发生至少10000次</span></span><br><span class="line">save 60 10000</span><br></pre></td></tr></table></figure>
+
+
+
+<p>rdb文件格式：<a target="_blank" rel="noopener" href="https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format">https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format</a></p>
+<h3 id="1-2-2-RDB-优点和缺点"><a href="#1-2-2-RDB-优点和缺点" class="headerlink" title="1.2.2 RDB 优点和缺点"></a>1.2.2 RDB 优点和缺点</h3><table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>对性能影响最小</td>
+<td>同步时丢失数据</td>
+</tr>
+<tr>
+<td>RDB文件进行数据恢复比使用AOF要快很多</td>
+<td>如果数据集非常大且CPU不够强（比如单核CPU），Redis在fork子进程时可能会消耗相对较长的时间，影响Redis对外提供服务的能力。</td>
+</tr>
+</tbody></table>
+<h3 id="1-2-3-AOF-持久化方式"><a href="#1-2-3-AOF-持久化方式" class="headerlink" title="1.2.3 AOF 持久化方式"></a>1.2.3 AOF 持久化方式</h3><ul>
+<li><p><strong>记录每次服务受到的写</strong><br>BGREWRITEAOF命令可以触发日志重写或自动重写，废除对同一个Key历史的无用命令，重建当前数据集所需的最短命令序列。意外中断，如果最后的命令只写了一部分，恢复时则会跳过它，执行后面完整的命令。</p>
+</li>
+<li><p>开启AOF持久化</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">appendonly yes</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>AOF策略调整</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">每次有数据修改发生时都会写入AOF文件，非常安全非常慢</span></span><br><span class="line">appendfsync always</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">每秒钟同步一次，该策略为AOF的缺省策略，够快可能会丢失1秒的数据</span></span><br><span class="line">appendfsync everysec</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">不主动fsync,由操作系统决定，更快，更不安全的方法（linux 30秒将应用程序中的缓存刷新到磁盘）</span></span><br><span class="line">appendfsync no</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>aof持久化过程：<a target="_blank" rel="noopener" href="http://oldblog.antirez.com/post/redis-persistence-demystified.html">http://oldblog.antirez.com/post/redis-persistence-demystified.html</a></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219220444624.png" alt="image-20201219220444624"></p>
+<h3 id="1-2-4-AOF优点和缺点"><a href="#1-2-4-AOF优点和缺点" class="headerlink" title="1.2.4 AOF优点和缺点"></a>1.2.4 AOF优点和缺点</h3><table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>最安全</td>
+<td>文件体积大</td>
+</tr>
+<tr>
+<td>容灾</td>
+<td>性能消耗比RDB高</td>
+</tr>
+<tr>
+<td>易读，可修改</td>
+<td>数据恢复速度比RDB慢</td>
+</tr>
+</tbody></table>
+<h2 id="1-3-Redis丢失数据的可能性"><a href="#1-3-Redis丢失数据的可能性" class="headerlink" title="1.3 Redis丢失数据的可能性"></a>1.3 Redis丢失数据的可能性</h2><p><strong>持久化丢失的可能</strong></p>
+<p><strong>RDB方式</strong></p>
+<p>​	快照产生的策略，天生就不保证数据安全</p>
+<p><strong>AOF持久化策略</strong></p>
+<p>​	默认每秒同步一次磁盘，可能会有1秒的数据丢失</p>
+<p>​	每次修改都同步，数据安全可保证，但Redis高性能的特性全无</p>
+<p><strong>主从复制丢失的可能</strong></p>
+<p>​	异步复制，存在一定的时间窗口数据丢失</p>
+<p>​	网络、服务器问题，存在一定数据的丢失</p>
+<p><strong>总结：持久化和主从都可能出现数据丢失</strong></p>
+<h1 id="2-淘汰策略导致数据失效"><a href="#2-淘汰策略导致数据失效" class="headerlink" title="2 淘汰策略导致数据失效"></a>2 淘汰策略导致数据失效</h1><h2 id="2-1-内存分配"><a href="#2-1-内存分配" class="headerlink" title="2.1 内存分配"></a>2.1 内存分配</h2><p>不同数据类型的大小限制</p>
+<ul>
+<li><p>Strings类型：一个String类型的value最大可以存储512M。 </p>
+</li>
+<li><p>Lists类型：list的元素个数最多为2^32-1个，也就是4294967295个。</p>
+</li>
+<li><p>Sets类型：元素个数最多为2^32-1个，也就是4294967295个。</p>
+</li>
+<li><p>Hashes类型：键值对个数最多为2^32-1个，也就是4294967295个</p>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">最大内存控制</span></span><br><span class="line">maxmemory 最大内存阈值</span><br><span class="line">maxmemory-policy 到达阈值的执行策略</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-2-内存压缩"><a href="#2-2-内存压缩" class="headerlink" title="2.2 内存压缩"></a>2.2 内存压缩</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">配置字段最多512个</span></span><br><span class="line">hash-max-zipmap-entries 512 </span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">配置value最大为64字节</span></span><br><span class="line">hash-max-zipmap-value 64</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">配置元素个数最多512个</span></span><br><span class="line">list-max-ziplist-entries 512</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">配置value最大为64字节</span></span><br><span class="line">list-max-ziplist-value 64</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">配置元素个数最多512个</span></span><br><span class="line">set-max-intset-entries 512</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">配置元素个数最多128个</span></span><br><span class="line">zset-max-ziplist-entries 128 </span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">配置value最大为64字节</span></span><br><span class="line">zset-max-ziplist-value 64</span><br></pre></td></tr></table></figure>
+
+
+
+<p>大小超出压缩范围，溢出后Redis将自动将其转换为正常大小</p>
+<h2 id="2-3-过期数据的处理策略"><a href="#2-3-过期数据的处理策略" class="headerlink" title="2.3 过期数据的处理策略"></a>2.3 过期数据的处理策略</h2><p>主动处理（ redis 主动触发检测key是否过期）每秒执行10次。过程如下：</p>
+<ol>
+<li><p>从具有相关过期的key集中测试20个随机key</p>
+</li>
+<li><p>删除找到的所有key已过期</p>
+</li>
+<li><p>如果超过25％的key已过期，请从步骤1重新开始</p>
+</li>
+</ol>
+<p>以上的处理步骤为rdb处理方式，aof发现数据过期会在添加一条del key命令</p>
+<p>被动处理：</p>
+<ol>
+<li>每次访问key的时候，发现超时后被动过期，清理掉</li>
+</ol>
+<h2 id="2-4-数据恢复阶段过期数据的处理策略"><a href="#2-4-数据恢复阶段过期数据的处理策略" class="headerlink" title="2.4 数据恢复阶段过期数据的处理策略"></a>2.4 数据恢复阶段过期数据的处理策略</h2><p><strong>RDB方式</strong></p>
+<p>过期的key不会被持久化到文件中。</p>
+<p>载入时过期的key，会通过redis的主动和被动方式清理掉。</p>
+<p><strong>AOF方式</strong></p>
+<p>当 redis 使用 AOF 方式持久化时，每次遇到过期的 key redis 会追</p>
+<p>加一条 DEL 命令 到 AOF 文件，</p>
+<p>也就是说只要我们顺序载入执行 AOF 命令文件就会删除过期的键。</p>
+<p>注意： 过期数据的计算和计算机本身的时间是有直接联系的！</p>
+<p>主从集群下，master同步到slave上的过期数据slave节点不会进行删除，等待master节点发送del命令才进行删除过期数据，当master宕机时，slave变为master节点对过期节点执行del命令</p>
+<h2 id="2-5-LRU算法"><a href="#2-5-LRU算法" class="headerlink" title="2.5 LRU算法"></a>2.5 LRU算法</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219231228000.png" alt="image-20201219231228000"></p>
+<p>LRU（Least recently used，最近最少使用）：根据数据的历史访问记录来进行淘汰数据</p>
+<ul>
+<li><p>核心思想：如果数据最近被访问过，那么将来被访问的几率也更高。</p>
+</li>
+<li><p>注意：Redis的LRU算法并非完整的实现，完整的LRU实现是因为这需要太多的内存。</p>
+</li>
+<li><p>方法：通过对少量keys进行取样(50%)，然后回收其中一个最好的key。 </p>
+</li>
+<li><p>配置方式： maxmemory-samples 5</p>
+</li>
+</ul>
+<h2 id="2-6-LFU算法"><a href="#2-6-LFU算法" class="headerlink" title="2.6 LFU算法"></a>2.6 LFU算法</h2><p>LFU（Least Frequently Used）根据数据的历史访问频率来淘汰数据</p>
+<ul>
+<li><p>核心思想：如果数据过去被访问多次，那么将来被访问的频率也更高。</p>
+</li>
+<li><p>Redis实现的是近似的实现，每次对key进行访问时，用基于概率的对数计数器来记录访问次数，同时这个计数器会随着时间推移而减小。</p>
+</li>
+<li><p>Morris counter算法依据：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Approximate_counting_algorithm">https://en.wikipedia.org/wiki/Approximate_counting_algorithm</a></p>
+</li>
+<li><p>启用LFU算法后，可以使用热点数据分析功能。（ redis-cli –hotkeys ）</p>
+</li>
+</ul>
+<h2 id="2-7-Redis内存回收策略"><a href="#2-7-Redis内存回收策略" class="headerlink" title="2.7 Redis内存回收策略"></a>2.7 Redis内存回收策略</h2><p>配置文件中设置：maxmemory-policy noeviction</p>
+<p>动态调整：config set maxmemory-policy noeviction</p>
+<table>
+<thead>
+<tr>
+<th>回收策略</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>noeviction</td>
+<td>客户端尝试执行会让更多内存被使用的命令直接报错</td>
+</tr>
+<tr>
+<td>allkeys-lru</td>
+<td>在所有key里执行LRU算法</td>
+</tr>
+<tr>
+<td>volatile-lru</td>
+<td>在所有已经过期的key里执行LRU算法</td>
+</tr>
+<tr>
+<td>volatile-lfu</td>
+<td>使用过期集在密钥中使用近似LFU进行驱逐</td>
+</tr>
+<tr>
+<td>allkeys-lfu</td>
+<td>使用近似LFU逐出任何键</td>
+</tr>
+<tr>
+<td>allkeys-random</td>
+<td>在所有key里随机回收</td>
+</tr>
+<tr>
+<td>volatile-random</td>
+<td>在已经过期的key里随机回收</td>
+</tr>
+<tr>
+<td>volatile-ttl</td>
+<td>回收已经过期的key，并且优先回收存活时间（TTL）较短的键</td>
+</tr>
+</tbody></table>
+<h2 id="2-8-什么样的数据适合缓存"><a href="#2-8-什么样的数据适合缓存" class="headerlink" title="2.8 什么样的数据适合缓存"></a>2.8 什么样的数据适合缓存</h2><p>三个维度评判数据是否合适缓存</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>适合缓存</th>
+<th>不适合缓存</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>访问频率</td>
+<td>访问频率高</td>
+<td>访问频率低</td>
+</tr>
+<tr>
+<td>读写比</td>
+<td>读多写少</td>
+<td>写多读少</td>
+</tr>
+<tr>
+<td>一致性要求</td>
+<td>一致性要求低</td>
+<td>一致性要求高</td>
+</tr>
+</tbody></table>
+<h1 id="3-缓存穿透、缓存雪崩的解决方案"><a href="#3-缓存穿透、缓存雪崩的解决方案" class="headerlink" title="3 缓存穿透、缓存雪崩的解决方案"></a>3 缓存穿透、缓存雪崩的解决方案</h1><h2 id="3-1-缓存雪崩原因-缓存穿透"><a href="#3-1-缓存雪崩原因-缓存穿透" class="headerlink" title="3.1 缓存雪崩原因-缓存穿透"></a>3.1 缓存雪崩原因-缓存穿透</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219235439366.png" alt="image-20201219235439366"></p>
+<p><strong>缓存失效的两种情况：</strong></p>
+<ol>
+<li>高峰期大面积缓存Key失效。（所有请求全部访问后端数据库）</li>
+<li>局部高峰期，热点缓存Key失效。（导致海量的请求直击数据库）</li>
+</ol>
+<p>缓存数据有效期到来的那一瞬间</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219234115751.png" alt="image-20201219234115751"></p>
+<ol>
+<li><p>突发重要热点事件</p>
+</li>
+<li><p>春节发红包</p>
+</li>
+<li><p>电商降价、抢购、促销活动</p>
+</li>
+<li><p>……</p>
+</li>
+</ol>
+<h2 id="3-2-缓存雪崩风险"><a href="#3-2-缓存雪崩风险" class="headerlink" title="3.2 缓存雪崩风险"></a>3.2 缓存雪崩风险</h2><p>缓存雪崩：因为缓存服务挂掉或者热点缓存失效，从而导致海量请求去查询数据库，</p>
+<p>导致数据库连接不够用或者数据库处理不过来，从而导致整个系统不可用。</p>
+<p><strong>数据库服务器压力大，依赖数据库的其他系统也会面临崩溃风险。</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219235543292.png" alt="image-20201219235543292"></p>
+<h2 id="3-3-雪崩的解决方案-互斥锁"><a href="#3-3-雪崩的解决方案-互斥锁" class="headerlink" title="3.3 雪崩的解决方案 - 互斥锁"></a>3.3 雪崩的解决方案 - 互斥锁</h2><p>任由洪水猛兽般的流量轰击数据库？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219235621630.png" alt="image-20201219235621630"></p>
+<h2 id="3-4-雪崩的解决方案-缓存降级"><a href="#3-4-雪崩的解决方案-缓存降级" class="headerlink" title="3.4 雪崩的解决方案 - 缓存降级"></a>3.4 雪崩的解决方案 - 缓存降级</h2><p>拿到锁的线程负责更新缓存，其他请求读取备份缓存数据或者执行降级策略；</p>
+<p>备份缓存通常是不设置过期时间的，异步更新的缓存。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201219235714632.png" alt="image-20201219235714632"></p>
+<p>优点：</p>
+<ul>
+<li><p>灵活多变，根据业务需要进行调整；</p>
+</li>
+<li><p>使用方便</p>
+</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li><p>降级策略的选择对开发人员的要求高，需要能掌控业务；</p>
+</li>
+<li><p>为了保证备份缓存的数据一致性，增加了维护的复杂度；</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/12/19/07-Redis/06-Redis%E7%BC%93%E5%AD%98%E5%A4%B1%E6%95%88%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" data-id="clmcxed0200a2u8waesjvhp88" data-title="Redis缓存失效解决方案" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/12/20/07-Redis/07-Redis%E9%AB%98%E6%80%A7%E8%83%BD%E5%BA%95%E5%B1%82%E6%8E%A2%E7%A7%98-%E5%A6%82%E4%BD%95%E6%94%AF%E6%92%9150ws%E8%AF%B7%E6%B1%82/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Redis高性能底层探秘-如何支撑50ws请求
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/12/13/07-Redis/05-Redis%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E6%96%B9%E6%A1%88/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Redis海量数据存储方案</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

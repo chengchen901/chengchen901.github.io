@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="初识 Flink大数据计算引擎发展 首先第一代的计算引擎，无疑就是 Hadoop 承载的 MapReduce。  支持 DAG 的框架被划分为第二代计算引擎,如 Tez 。  接下来就是以 Spark 为代表的第三代的计算引擎。  Flink 的诞生就被归在了第四代：流计算、批流合一。   Flink 是什么官网：https:&#x2F;&#x2F;flink.apache.org&#x2F; ApacheFlink 是一个开">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/04-Flink/01-Flink%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="初识 Flink大数据计算引擎发展 首先第一代的计算引擎，无疑就是 Hadoop 承载的 MapReduce。  支持 DAG 的框架被划分为第二代计算引擎,如 Tez 。  接下来就是以 Spark 为代表的第三代的计算引擎。  Flink 的诞生就被归在了第四代：流计算、批流合一。   Flink 是什么官网：https:&#x2F;&#x2F;flink.apache.org&#x2F; ApacheFlink 是一个开">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409213530.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/streaming-flow.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409214421.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409215351.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409215604.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409230639.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409230442.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409231708.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409234720.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409235809.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220410113222.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220410114215.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220410115656.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409230639.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220410115734.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220410115755.png">
+<meta property="article:published_time" content="2023-09-10T03:59:07.659Z">
+<meta property="article:modified_time" content="2022-09-25T15:54:11.060Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409213530.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-13-大数据/04-Flink/01-Flink基础" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/04-Flink/01-Flink%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:07.659Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="初识-Flink"><a href="#初识-Flink" class="headerlink" title="初识 Flink"></a>初识 Flink</h1><h2 id="大数据计算引擎发展"><a href="#大数据计算引擎发展" class="headerlink" title="大数据计算引擎发展"></a>大数据计算引擎发展</h2><ol>
+<li><p>首先第一代的计算引擎，无疑就是 Hadoop 承载的 MapReduce。</p>
+</li>
+<li><p>支持 DAG 的框架被划分为第二代计算引擎,如 Tez 。</p>
+</li>
+<li><p>接下来就是以 Spark 为代表的第三代的计算引擎。</p>
+</li>
+<li><p>Flink 的诞生就被归在了第四代：流计算、批流合一。</p>
+</li>
+</ol>
+<h2 id="Flink-是什么"><a href="#Flink-是什么" class="headerlink" title="Flink 是什么"></a>Flink 是什么</h2><p>官网：<a target="_blank" rel="noopener" href="https://flink.apache.org/">https://flink.apache.org/</a></p>
+<p>ApacheFlink 是一个开源的、分布式的、流式实时计算框架。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409213530.png"></p>
+<h2 id="Flink-发展历程"><a href="#Flink-发展历程" class="headerlink" title="Flink 发展历程"></a>Flink 发展历程</h2><ol>
+<li>2008：柏林理工大学一个研究性项目Stratosphere，Next Generation Big DataAnalytics Platform（目标是建立下一代大数据分析引擎）；</li>
+<li>2014-04-16，Stratosphere成为Apache孵化项目，从Stratosphere 0.6开始，正式更名为Flink。由Java语言编写；</li>
+<li>2014-08-26，Flink 0.6发布；</li>
+<li>2014-11-04，Flink 0.7.0发布，介绍了最重要的特性：StreamingAPI； ⑤ 2016-03-08，Flink 1.0.0，支持Scala；提供了 RocksDB状态后端的支持；</li>
+<li>2017-02-06，Flink 1.2.0发布；</li>
+<li>2017-06-01，Flink 1.3.0发布，支持了增量检查点机制。</li>
+<li>2017-11-29，Flink 1.4.0发布，提供了端到端的 exactly-once 的语义保证。 ⑨ 2018-05-25，Flink 1.5.0发布，引入了本地状态恢复的机制；</li>
+<li>2018-08-08，Flink 1.6.0发布；</li>
+<li>2018-11-30，Flink 1.7.0发布，是第一个完全支持 Scala2.12 的版本。</li>
+<li>2019-04-09，Flink 1.8.0发布，不发布带有Hadoop的二进制安装包。</li>
+<li>2019-08-22，Flink 1.9.0发布，首次合并阿里内部版本Blink重要功能。</li>
+<li>2020-02-11，Flink 1.10.0 发布， 是一个历时非常长、代码变动非常大的版本，也是 Flink 社区迄今为止规模最大的一次版本升级, 与 Blink 整合正式完成。</li>
+</ol>
+<h2 id="Flink-的特性"><a href="#Flink-的特性" class="headerlink" title="Flink 的特性"></a>Flink 的特性</h2><p>flink作为第四代大数据计算引擎，具备了优秀的特性，比如：高性能，低延迟，支持事件时间和无序事件，内存管理，可扩展性等特性。以下列举了flink几个比较重要的特性： </p>
+<ol>
+<li>事件驱动型 </li>
+<li>流与批的世界观不同 </li>
+<li>分层API</li>
+<li>支持有状态计算 </li>
+<li>支持exactly-once语义 </li>
+<li>支持事件时间</li>
+</ol>
+<h3 id="Flink-的重要特点-事件驱动型"><a href="#Flink-的重要特点-事件驱动型" class="headerlink" title="Flink 的重要特点-事件驱动型"></a>Flink 的重要特点-事件驱动型</h3><p>事件驱动型(Event-driven)：事件驱动型应用以事件为单位进行处理，它从一个或多个事件流提取数据，并根据到来的事件触发计算、状态更新或其他外部动作。比较典型的就是以kafka为代表的消息队列几乎都是事件驱动型应用。</p>
+<p>与事件驱动型之不同的就是SparkStreaming微批次驱动(时间驱动型)，如图：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/streaming-flow.png"></p>
+<p>Flink事件驱动型：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409214421.png"></p>
+<h3 id="Flink-的重要特点-流与批的世界观"><a href="#Flink-的重要特点-流与批的世界观" class="headerlink" title="Flink 的重要特点-流与批的世界观"></a>Flink 的重要特点-流与批的世界观</h3><ol>
+<li>批处理的特点是有界、持久、大量，非常适合需要访问全套记录才能完成的计算工作</li>
+<li>流处理的特点是无界、实时, 无需针对整个数据集执行操作，而是对通过系统传输的每个数据项执行操作，一般用于实时统计。在flink的世界观中，一切都是由流组成的，离线数据是有界限的流，实时数据是一个没有界限的流，这就是所谓的有界流和无界流。<ul>
+<li>无界数据流：无界数据流有一个开始但是没有结束，它们不会在生成时终止并提供数据，必须连续处理无界流，也就是说必须在获取后立即处理event。</li>
+<li>有界数据流：有界数据流有明确定义的开始和结束，可以在执行任何计算之前通过获取所有数据来处理有界流。</li>
+</ul>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409215351.png"></p>
+<h3 id="Flink-的重要特点-分层-API"><a href="#Flink-的重要特点-分层-API" class="headerlink" title="Flink 的重要特点-分层 API"></a>Flink 的重要特点-分层 API</h3><p>Flink提供了三层API。每个API在简洁性和表达性之间提供了不同的权衡，并且针对不同的用例。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409215604.png"></p>
+<ol>
+<li>Stateful Stream Processing<ol>
+<li>它位于最底层，是Core API 的底层实现。</li>
+<li>它是嵌入到Stream流里面的处理函数（processFunction）。</li>
+<li>当Core API满足不了用户需求，可以利用低阶API构建一些新的组件或者算子。</li>
+<li>它虽然灵活性高，但开发比较复杂，需要具备一定的编码能力。</li>
+</ol>
+</li>
+<li>Core API<ol>
+<li>DataSet API 是批处理API。 对静态数据进行批处理操作，将静态数据抽象成分布式的数据集，用户可以方便地使用Flink提供的各种操作符对分布式数据集进行处理，支持Java、Scala和Python。</li>
+<li>DataStream API是流处理API。对数据流进行流处理操作，将流式的数据抽象成分布式的数据流，用户可以方便地对分布式数 据流进行各种操作，支持JavaScala。</li>
+</ol>
+</li>
+<li>Table API &amp; SQL<ol>
+<li>SQL 构建在Table 之上，都需要构建Table 环境。</li>
+<li>不同的类型的Table 构建不同的Table 环境中。</li>
+<li>Table 可以与DataStream或者DataSet进行相互转换。</li>
+<li>Streaming SQL不同于存储的SQL，最终会转化为流式执行 计划。</li>
+</ol>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409230639.png"></p>
+<h3 id="Flink-的重要特点-支持有状态计算"><a href="#Flink-的重要特点-支持有状态计算" class="headerlink" title="Flink 的重要特点-支持有状态计算"></a>Flink 的重要特点-支持有状态计算</h3><p>Flink计算引擎支持状态管理，所谓状态管理就是在流式计算过程中将算子的中间结果保存在内存或者 文件系统中，等下一个事件进入算子后可以让当前事件的值与历史值进行汇总累计。 </p>
+<p>Flink 维护了两种状态：</p>
+<ol>
+<li><p>operator state：维护业务执行情况相关状态</p>
+</li>
+<li><p>keyed state：维护业务执行数据相关状态</p>
+</li>
+</ol>
+<p>同时flink的checkpoint机制可以将状态进行持久化，能够做到失败恢复，具备优秀的容错性关于flink状态管理</p>
+<h3 id="Flink-的重要特点-支持exactly-once语义"><a href="#Flink-的重要特点-支持exactly-once语义" class="headerlink" title="Flink 的重要特点-支持exactly-once语义"></a>Flink 的重要特点-支持exactly-once语义</h3><p>exactly-once是消息message 传递分为三种语义中的一种，消息传递三种语义如下：</p>
+<ol>
+<li><p>At Most once:就是保证提交的数据最多处理一次，存在数据丢失；</p>
+</li>
+<li><p>At Least once: 就是保证提交的数据最少处理一次，存在重复处理问题；</p>
+</li>
+<li><p>Exactly once: 就是保证最后的数据处理的结果和数据摄入时没有数据的丢失与重复；</p>
+</li>
+</ol>
+<h3 id="Flink-的重要特点-支持事件时间"><a href="#Flink-的重要特点-支持事件时间" class="headerlink" title="Flink 的重要特点-支持事件时间"></a>Flink 的重要特点-支持事件时间</h3><p>目前大多数框架时间窗口计算，都是采用当前系统时间，以时间为单位进行的聚合计算只能反应数据到达计算引擎的时间，而并不是实际业务时间</p>
+<p>Flink 支持不同的时间概念，包括： </p>
+<ol>
+<li>Event Time ：事件时间 </li>
+<li>Ingestion Time ：消息提取时间 </li>
+<li>Processing Time ：处理时间</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409230442.png"></p>
+<h2 id="Flink-vs-Storm-vs-SparkStreaming"><a href="#Flink-vs-Storm-vs-SparkStreaming" class="headerlink" title="Flink vs Storm vs SparkStreaming"></a>Flink vs Storm vs SparkStreaming</h2><table>
+<thead>
+<tr>
+<th>产品</th>
+<th>模型</th>
+<th>API</th>
+<th>保证次数</th>
+<th>容错机制</th>
+<th>状态管理</th>
+<th>延时</th>
+<th>吞吐量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>storm</td>
+<td>Native（数据进入立即处理）</td>
+<td>组合式（基础API）</td>
+<td>At-least-once</td>
+<td>Record ACKs（ack机制）</td>
+<td>无</td>
+<td>Low</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>Spark streaming</td>
+<td>mirco-batching</td>
+<td>声明式（提供封装后的高阶函数，例如count函数）</td>
+<td>Exectly-once</td>
+<td>RDD Checkpoint（基于RDD做Checkpoint）</td>
+<td>基于DStream</td>
+<td>Medium</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Flink</td>
+<td>Native</td>
+<td>声明式</td>
+<td>Exectly-once</td>
+<td>Checkpoint（flink的一种快照）</td>
+<td>基于操作</td>
+<td>Low</td>
+<td>High</td>
+</tr>
+</tbody></table>
+<h3 id="Flink-vs-storm-对比图"><a href="#Flink-vs-storm-对比图" class="headerlink" title="Flink vs storm 对比图"></a>Flink vs storm 对比图</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409231708.png"></p>
+<h3 id="实时框架如何选择"><a href="#实时框架如何选择" class="headerlink" title="实时框架如何选择"></a>实时框架如何选择</h3><ol>
+<li><p>需要关注流数据是否需要进行状态管理</p>
+</li>
+<li><p>At-least-once或者Exectly-once消息投递模式是否有特殊要求</p>
+</li>
+<li><p>对于数据量小，并且需要低延迟的场景，建议使用storm</p>
+</li>
+<li><p>如果你的项目已经使用了spark，并且秒级别的实时处理可以满足需求的话，建议使用sparkStreaming</p>
+</li>
+<li><p>要求消息投递语义为 ExactlyOnce的场景；数据量较大，要求高吞吐低延迟的场景；需要进行状态管理或窗口统计的场景，建议使用flink</p>
+</li>
+</ol>
+<h2 id="Flink商业应用"><a href="#Flink商业应用" class="headerlink" title="Flink商业应用"></a>Flink商业应用</h2><ol>
+<li><p>针对数据分析团队提供实时流处理服务。通过flink数据分析平台提供实时数据分析服务，及时发现问题。</p>
+</li>
+<li><p>实时数据仓库</p>
+</li>
+<li><p>大屏监控、实时风控、实时推荐</p>
+</li>
+</ol>
+<h1 id="Flink-系统基本组件与集群安装部署"><a href="#Flink-系统基本组件与集群安装部署" class="headerlink" title="Flink 系统基本组件与集群安装部署"></a>Flink 系统基本组件与集群安装部署</h1><h2 id="Flink-系统基本组件"><a href="#Flink-系统基本组件" class="headerlink" title="Flink 系统基本组件"></a>Flink 系统基本组件</h2><p>Flink 整个系统主要由两个组件组成，分别为 JobManager 和 TaskManager，Flink 架构也遵循 Master-Slave架构设计原则，JobManager 为 Master 节点，TaskManager 为 Worker（Slave）节点。</p>
+<h2 id="Flink-集群安装部署模式"><a href="#Flink-集群安装部署模式" class="headerlink" title="Flink 集群安装部署模式"></a>Flink 集群安装部署模式</h2><p>部署模式：</p>
+<ol>
+<li><p>Standalone cluster</p>
+</li>
+<li><p>Yarn</p>
+</li>
+<li><p>单机模式</p>
+</li>
+</ol>
+<h2 id="Flink-Standalone-集群部署"><a href="#Flink-Standalone-集群部署" class="headerlink" title="Flink-Standalone 集群部署"></a>Flink-Standalone 集群部署</h2><ol>
+<li><p>依赖环境： </p>
+<ol>
+<li><p>JDK环境，1.8.x或者更高，配置好JAVA_HOME;</p>
+</li>
+<li><p>主机名和hosts配置文件集群内完全对应，准确配置; </p>
+<ol>
+<li><p>确定各节点hostname 正确设置：</p>
+<p>vi &#x2F;etc&#x2F;hostname</p>
+</li>
+<li><p>设置hosts（ip 根据自己服务器修改）：</p>
+<p>vi &#x2F;etc&#x2F;hosts</p>
+<p>192.168.254.171 master01<br>192.168.254.172 worker01<br>192.168.254.173 worker02</p>
+</li>
+</ol>
+</li>
+<li><p>集群之间保证通信正常，关闭防火墙; </p>
+<ol>
+<li><p>关闭SELinux:<br>vi &#x2F;etc&#x2F;selinux&#x2F;config，修改如下：<br>SELINUX&#x3D;disabled</p>
+</li>
+<li><p>关闭防火墙：<br>systemctl stop firewalld<br>systemctl disable firewalld</p>
+</li>
+</ol>
+</li>
+<li><p>集群所有节点配置ssh免密; </p>
+<ol>
+<li>生成密钥：<br>ssh-keygen -t rsa（默认位于 ~&#x2F;.ssh&#x2F;）</li>
+<li>拷贝公钥到所有机器：<br>ssh-copy-id root@master01<br>ssh-copy-id root@worker01<br>ssh-copy-id root@worker02</li>
+<li>测试免密登录：<br>ssh master01<br>ssh worker01<br>ssh worker02</li>
+</ol>
+</li>
+<li><p>集群配置时间同步服务（ntp）。</p>
+<p>将master设置为主服务器（在master节点操作）：</p>
+<ol>
+<li><p>vi &#x2F;etc&#x2F;ntp.conf，内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">driftfile /var/lib/ntp/ntp.drift #草稿文件</span><br><span class="line">允许内网其他机器同步时间（192.168.254.0 修改为自己的ip掩码）</span><br><span class="line">restrict 192.168.254.0 mask 255.255.255.0 nomodify notrap</span><br><span class="line"> </span><br><span class="line"># Use public servers from the pool.ntp.org project.</span><br><span class="line"># 中国这边最活跃的时间服务器 : [http://www.pool.ntp.org/zone/cn](http://www.pool.ntp.org/zone/cn)</span><br><span class="line">server 210.72.145.44 perfer   # 中国国家受时中心</span><br><span class="line">server 202.112.10.36             # 1.cn.pool.ntp.org</span><br><span class="line">server 59.124.196.83             # 0.asia.pool.ntp.org</span><br><span class="line"> </span><br><span class="line"># allow update time by the upper server </span><br><span class="line"># 允许上层时间服务器主动修改本机时间</span><br><span class="line">restrict 210.72.145.44 nomodify notrap noquery</span><br><span class="line">restrict 202.112.10.36 nomodify notrap noquery</span><br><span class="line">restrict 59.124.196.83 nomodify notrap noquery</span><br><span class="line"> </span><br><span class="line"># 外部时间服务器不可用时，以本地时间作为时间服务</span><br><span class="line">server  127.127.1.0     # local clock</span><br><span class="line">fudge   127.127.1.0 stratum 10</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启服务： service ntpd restart</p>
+</li>
+<li><p>查看同步状态： netstat -tlunp | grep ntp</p>
+</li>
+</ol>
+<p>设置slave到master 的同步（在slave节点操作）：</p>
+<ol>
+<li><p>vi &#x2F;etc&#x2F;ntp.conf，内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">driftfile /var/lib/ntp/ntp.drift # 草稿文件</span><br><span class="line"></span><br><span class="line">statsdir /var/log/ntpstats/</span><br><span class="line">statistics loopstats peerstats clockstats</span><br><span class="line">filegen loopstats file loopstats type day enable</span><br><span class="line">filegen peerstats file peerstats type day enable</span><br><span class="line">filegen clockstats file clockstats type day enable</span><br><span class="line"></span><br><span class="line"># 让NTP Server为内网的ntp服务器（192.168.254.171修改为master节点ip）</span><br><span class="line">server 192.168.254.171</span><br><span class="line">fudge 192.168.254.171 stratum 5</span><br><span class="line"></span><br><span class="line"># 不允许来自公网上ipv4和ipv6客户端的访问</span><br><span class="line">restrict -4 default kod notrap nomodify nopeer noquery </span><br><span class="line">restrict -6 default kod notrap nomodify nopeer noquery</span><br><span class="line"></span><br><span class="line"># Local users may interrogate the ntp server more closely.</span><br><span class="line">restrict 127.0.0.1</span><br><span class="line">restrict ::1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启服务： service ntpd restart</p>
+</li>
+<li><p>手动同步： ntpdate -u 192.168.254.171</p>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>Flink软件准备</p>
+<p>下载地址：<a target="_blank" rel="noopener" href="https://archive.apache.org/dist/flink/">https://archive.apache.org/dist/flink/</a></p>
+<p>我这里使用 flink-1.11.2-bin-scala_2.12.tgz 版本，下载地址：<a target="_blank" rel="noopener" href="https://archive.apache.org/dist/flink/flink-1.11.2/flink-1.11.2-bin-scala_2.12.tgz">https://archive.apache.org/dist/flink/flink-1.11.2/flink-1.11.2-bin-scala_2.12.tgz</a></p>
+</li>
+<li><p>集群规划 </p>
+<p>一主两从：</p>
+<p>master01:JobManager </p>
+<p>worker01:TaskManager </p>
+<p>worker02:TaskManager</p>
+</li>
+</ol>
+<h3 id="Flink-Standalone-安装步骤"><a href="#Flink-Standalone-安装步骤" class="headerlink" title="Flink-Standalone-安装步骤"></a>Flink-Standalone-安装步骤</h3><ol>
+<li><p>解压安装包：tar -zxvf flink-1.11.2-bin-scala_2.12.tgz</p>
+</li>
+<li><p>修改conf&#x2F;flink-conf.yaml</p>
+<p>jobmanager.rpc.address: 192.168.254.171</p>
+</li>
+<li><p>修改<strong>conf&#x2F;workers</strong></p>
+<p>192.168.254.172</p>
+<p>192.168.254.173</p>
+</li>
+<li><p>拷贝到其他节点</p>
+<p>scp -r &#x2F;root&#x2F;flink-1.11.2 worker01:&#x2F;root&#x2F;</p>
+<p>scp -r &#x2F;root&#x2F;flink-1.11.2 worker02:&#x2F;root&#x2F;</p>
+</li>
+<li><p>配置环境变量 &#x2F;etc&#x2F;profile</p>
+<p>#flink</p>
+<p>export FLINK_HOME&#x3D;&#x2F;root&#x2F;flink-1.11.2</p>
+<p>export PATH&#x3D;$FLINK_HOME&#x2F;bin:$PATH</p>
+<p>启动flink集群</p>
+<p>start-cluster.sh</p>
+</li>
+<li><p>访问: <a target="_blank" rel="noopener" href="http://192.168.254.171:8081/">http://192.168.254.171:8081</a></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409234720.png"></p>
+</li>
+</ol>
+<h3 id="可选配置"><a href="#可选配置" class="headerlink" title="可选配置"></a>可选配置</h3><p>可选配置： </p>
+<ul>
+<li>每个JobManager（jobmanager.memory.process.size）的可用内存量</li>
+<li>每个TaskManager（taskmanager.memory.process.size）的可用内存量</li>
+<li>每台机器的可用CPU数量（taskmanager.numberOfTaskSlots）</li>
+<li>集群中的CPU总数（parallelism.default）</li>
+<li>临时目录（taskmanager.tmp.dirs）</li>
+</ul>
+<h3 id="Flink-Standalone-集群节点重启及扩容"><a href="#Flink-Standalone-集群节点重启及扩容" class="headerlink" title="Flink-Standalone-集群节点重启及扩容"></a>Flink-Standalone-集群节点重启及扩容</h3><ol>
+<li><p>启动jobmanager</p>
+<p>如果集群中的jobmanager进程挂了，执行下面命令启动。</p>
+<p>jobmanager.sh start</p>
+<p>jobmanager.sh stop</p>
+</li>
+<li><p>启动taskmanager</p>
+<p>添加新的taskmanager节点或者重启taskmanager节点</p>
+<p>taskmanager.sh start</p>
+<p>taskmanager.sh stop</p>
+</li>
+<li><p>一次性全部停止</p>
+<p>stop-cluster.sh</p>
+</li>
+</ol>
+<h3 id="Flink-Standalone-集群任务提交测试"><a href="#Flink-Standalone-集群任务提交测试" class="headerlink" title="Flink-Standalone-集群任务提交测试"></a>Flink-Standalone-集群任务提交测试</h3><p>Flink安装包的examples目录下有很多官方开发好的案例，我们可以拿来测试我们的集群SocketWindowWordCount.jar：官方这个例子是通过监听socket的方式测试。</p>
+<p>独立运行模式： </p>
+<ul>
+<li><p>启动监听：</p>
+<p>nc -l 9000</p>
+</li>
+<li><p>在集群节点上运行</p>
+<p>flink run &#x2F;root&#x2F;flink-1.11.2&#x2F;examples&#x2F;streaming&#x2F;SocketWindowWordCount.jar –hostname 192.168.254.172 –port 9000</p>
+</li>
+<li><p>到taskmanager或者webui下面看标准输出日志</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409235809.png"></p>
+</li>
+</ul>
+<h3 id="Flink-Standalone-集群任务提交方式"><a href="#Flink-Standalone-集群任务提交方式" class="headerlink" title="Flink-Standalone-集群任务提交方式"></a>Flink-Standalone-集群任务提交方式</h3><p>常用提交方式分为local，standalone，yarn三种。 </p>
+<ul>
+<li>local：本地提交项目，可纯粹的在本地单节点运行，也可以将本地代码提交到远端flink集群运行。</li>
+<li>standalone：flink集群自己完成资源调度，不依赖于其他资源调度器，需要手动启动flink集群。 </li>
+<li>yarn：依赖于hadoop yarn资源调度器，由yarn负责资源调度，不需要手动启动flink集群。需要先启动yarn和hdfs。又分为yarn-session和yarn-cluster两种方式。</li>
+</ul>
+<h2 id="Flink-on-Yarn-集群部署"><a href="#Flink-on-Yarn-集群部署" class="headerlink" title="Flink on Yarn 集群部署"></a>Flink on Yarn 集群部署</h2><ol>
+<li>Flink on Yarn集群部署（有条件自己尝试）<ol>
+<li>至少需要Apache Hadoop 2.2以上版本，并在每个节点上配置好HADOOP_HOME</li>
+<li>启动HDFS和 Yarn集群</li>
+<li>由于Flink从1.8版本开始Flink官方是将hadoop以及其他的一些依赖包没有编译进Flink的lib目录中，所以需要自己编译编译flink-shaded，并将编译好的Flink依赖 的hadoop相关jar包上传到Flink节点客 户端</li>
+</ol>
+</li>
+<li>具体编译步骤<ol>
+<li>下载flink-shaded源码包，并解压</li>
+<li>使用IDEA开发工具打开flink-shaded项目进行编译，然后打成jar包</li>
+<li>将hadoop相关的jar包上传到flink客户端lib目录下</li>
+</ol>
+</li>
+</ol>
+<h2 id="Flink-on-Yarn-两种使用方式"><a href="#Flink-on-Yarn-两种使用方式" class="headerlink" title="Flink on Yarn 两种使用方式"></a>Flink on Yarn 两种使用方式</h2><ol>
+<li><p>yarn session模式(先启动集群，然后再提交任务)。所有job共用一套集群，资源按需申请一次，任务结束后回收空闲的TaskManager相关计算资源; </p>
+<ol>
+<li><p>启动一个一直运行的flink集群:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/yarn-session.sh -d -jm 1024 -tm 2048 -s 2 </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行任务: </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/flink run -d -p 3 ./examples/streaming/TopSpeedWindowing.jar</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>默认查找当前yarn集群中已有的yarn-session信息中的jobmanager【&#x2F;tmp&#x2F;.yarn-properties-root】</p>
+</li>
+</ol>
+</li>
+<li><p>yarn cluster开辟资源+提交任务：每一个job都重新启动一个Flink集群，完成后结束Flink集群，释放资源。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/flink run -d -m yarn-cluster -p 2 -yjm 1024m -ytm 1024m./examples/streaming/TopSpeedWindowing.jar</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220410113222.png"></p>
+<h2 id="命令参数"><a href="#命令参数" class="headerlink" title="命令参数"></a>命令参数</h2><p>启动yarn-session：yarn-session.sh -n 4 -tm 8192 -s 8</p>
+<p>-n,–container 指YARN container分配的个数(即TaskManagers的个数) </p>
+<p>-jm,–jobManagerMemory 指JobManager Containe的内存大小，单位为MB</p>
+<p>-tm,–taskManagerMemory 指每个TaskManagerContainer的内存大小，单位为MB</p>
+<p>-s 指每个TaskManager的slot个数。</p>
+<p>flink run参数：flink run命令执行模板： </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">flink run [option] &lt;jar-file&gt; &lt;arguments&gt;</span><br><span class="line"></span><br><span class="line">-c,--class &lt;classname&gt; : 需要指定的main方法的类</span><br><span class="line"></span><br><span class="line">-m,--jobmanager : yarn-cluster集群</span><br><span class="line"></span><br><span class="line">-d,--detached : 在后台运行</span><br><span class="line"></span><br><span class="line">-p,--parallelism &lt;parallelism&gt; : job需要指定<span class="built_in">env</span>的并行度，这个一般都需要设置。 </span><br><span class="line"></span><br><span class="line">-C,--classpath &lt;url&gt; : 向每个用户代码添加url，他是通过UrlClassLoader加载。url需要指定文件的schema如（file://） </span><br><span class="line"></span><br><span class="line">-s,--fromSavepoint &lt;savepointPath&gt; : 基于savepoint保存下来的路径，进行恢复。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">flink run -m yarn-cluster参数 </span><br><span class="line"></span><br><span class="line">-yd,--yarndetached : 后台 </span><br><span class="line"></span><br><span class="line">-yjm,--yarnjobManager : jobmanager的内存</span><br><span class="line"></span><br><span class="line">-ytm,--yarntaskManager : taskmanager的内存</span><br><span class="line"></span><br><span class="line">-yn,--yarncontainer : TaskManager的个数</span><br><span class="line"></span><br><span class="line">-yid,--yarnapplicationId : job依附的applicationId</span><br><span class="line"></span><br><span class="line">-ynm,--yarnname : application的名称 </span><br><span class="line"></span><br><span class="line">-ys,--yarnslots : 分配的slots个数</span><br><span class="line"></span><br><span class="line">flink run -m yarn-cluster -yd -yjm 1024m -ytm 1024m -ynm &lt;name&gt; -ys 1 &lt;jar&gt; &lt;arguments&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Flink-提交任务流程初步分析"><a href="#Flink-提交任务流程初步分析" class="headerlink" title="Flink 提交任务流程初步分析"></a>Flink 提交任务流程初步分析</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220410114215.png"></p>
+<h1 id="Flink开发环境搭建"><a href="#Flink开发环境搭建" class="headerlink" title="Flink开发环境搭建"></a>Flink开发环境搭建</h1><h2 id="Flink-开发内容"><a href="#Flink-开发内容" class="headerlink" title="Flink 开发内容"></a>Flink 开发内容</h2><p>flink的API包含：DataStream、DataSet、Table、SQLAPI</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220410115656.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220409230639.png"></p>
+<p>datastream 和 dataset api是Flink的核心api，因此Flink的开发内容为面向这两个Api的：</p>
+<ol>
+<li>基于DataStreamAPI的流处理</li>
+<li>基于DataSetAPI批处理</li>
+</ol>
+<h2 id="Flink-开发步骤"><a href="#Flink-开发步骤" class="headerlink" title="Flink 开发步骤"></a>Flink 开发步骤</h2><ol>
+<li><p>获取一个Flink程序执行环境(execution environment)</p>
+</li>
+<li><p>加载&#x2F;创建初始数据（数据源source）</p>
+</li>
+<li><p>指定此数据的转换（transformation）</p>
+</li>
+<li><p>指定放置计算结果的位置</p>
+</li>
+<li><p>触发程序执行</p>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220410115734.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220410115755.png"></p>
+<h2 id="Flink开发环境搭建-1"><a href="#Flink开发环境搭建-1" class="headerlink" title="Flink开发环境搭建"></a>Flink开发环境搭建</h2><ol>
+<li><p>开发工具</p>
+<ol>
+<li>官方建议使用Intellij IDEA，因为它默认集成scala和maven环境，使用更加方便； </li>
+<li>Flink支持java和scala两种语言开发，但是个人建议，使用scala，因为实现起来更加简洁； </li>
+<li>使用maven管理项目依赖； </li>
+<li>JDK使用1.8+</li>
+</ol>
+</li>
+<li><p>Flink - scala依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.flink<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>flink-scala_2.12<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.10.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.flink<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>flink-streaming-scala_2.12<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.10.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="Flink入门程序开发"><a href="#Flink入门程序开发" class="headerlink" title="Flink入门程序开发"></a>Flink入门程序开发</h2><ol>
+<li>需求：从指定的socket端口实时获取数据，进行词频统计，将结果进行打印输出；</li>
+<li>需求：读取文件中的数据，进行词频统计，将结果进行打印输出；</li>
+</ol>
+<p><strong>Java 代码</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.study.flink.java;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.functions.FlatMapFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.functions.MapFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.java.tuple.Tuple;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.java.tuple.Tuple2;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.DataStreamSource;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.KeyedStream;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.util.Collector;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 1. 需求：从指定的socket端口实时获取数据，进行词频统计，将结果进行打印输出；</span></span><br><span class="line"><span class="comment"> * 2. 需求：读取文件中的数据，进行词频统计，将结果进行打印输出；</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DataStreamWordCountDemo</span>  &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">if</span> (args == <span class="literal">null</span> || args.length &lt; <span class="number">2</span>) &#123;</span><br><span class="line">            System.err.println(<span class="string">&quot;Usage: DataStreamWordCountDemo &lt;hostname&gt; &lt;port&gt;&quot;</span>);</span><br><span class="line">            System.exit(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">String</span> <span class="variable">hostname</span> <span class="operator">=</span> args[<span class="number">0</span>];</span><br><span class="line">        String port= args[<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1、获取执行环境</span></span><br><span class="line">        <span class="type">StreamExecutionEnvironment</span> <span class="variable">env</span> <span class="operator">=</span> StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2、创建初始的数据流</span></span><br><span class="line">        DataStreamSource&lt;String&gt; ds = env.socketTextStream(hostname, Integer.parseInt(port));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3、使用 transform 算子对初始的流进行转换操作</span></span><br><span class="line">        <span class="comment">// 对每一行输入的字符进行切分成一个一个单词</span></span><br><span class="line">        SingleOutputStreamOperator&lt;String&gt; wordsDS = ds.flatMap(<span class="keyword">new</span> <span class="title class_">FlatMapFunction</span>&lt;String, String&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">flatMap</span><span class="params">(String lineStr, Collector&lt;String&gt; out)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">                String[] words = lineStr.split(<span class="string">&quot; &quot;</span>);</span><br><span class="line">                <span class="keyword">for</span> (String word : words) &#123;</span><br><span class="line">                    out.collect(word);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="comment">// 将每个单词组成元组（单词，数量）</span></span><br><span class="line">        SingleOutputStreamOperator&lt;Tuple2&lt;String, Integer&gt;&gt; tuple2DS = wordsDS.map(<span class="keyword">new</span> <span class="title class_">MapFunction</span>&lt;String, Tuple2&lt;String, Integer&gt;&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> Tuple2&lt;String, Integer&gt; <span class="title function_">map</span><span class="params">(String value)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Tuple2</span>&lt;&gt;(value, <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="comment">// 按单词进行分区，相同的单词需要到同一个分区</span></span><br><span class="line">        KeyedStream&lt;Tuple2&lt;String, Integer&gt;, Tuple&gt; keybyDS = tuple2DS.keyBy(<span class="number">0</span>);</span><br><span class="line">        <span class="comment">// 对key相同的value值进行累计求和</span></span><br><span class="line">        SingleOutputStreamOperator&lt;Tuple2&lt;String, Integer&gt;&gt; wordCountDS = keybyDS.sum(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 4、将操作的结果保存到目的地</span></span><br><span class="line">        wordCountDS.print();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 5、触发程序执行</span></span><br><span class="line">        env.execute(<span class="string">&quot;DataStreamWordCountDemoJava&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Scala 代码</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.study.flink.scala</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.scala.&#123;<span class="type">DataStream</span>, <span class="type">StreamExecutionEnvironment</span>, createTypeInformation&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 1. 需求：从指定的socket端口实时获取数据，进行词频统计，将结果进行打印输出；</span></span><br><span class="line"><span class="comment"> * 2. 需求：读取文件中的数据，进行词频统计，将结果进行打印输出；</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">DataStreamWordCountDemo</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">if</span> (args.length &lt; <span class="number">2</span>) &#123;</span><br><span class="line">      <span class="type">System</span>.err.println(<span class="string">&quot;Usage: DataStreamWordCountDemo &lt;hostname&gt; &lt;port&gt;&quot;</span>)</span><br><span class="line">      <span class="type">System</span>.exit(<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> hostname = args(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">val</span> port = args(<span class="number">1</span>).toInt</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 1、获取执行环境</span></span><br><span class="line">    <span class="keyword">val</span> env = <span class="type">StreamExecutionEnvironment</span>.getExecutionEnvironment</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2、获取数据，创建数据流</span></span><br><span class="line">    <span class="keyword">val</span> lineStrDs = env.socketTextStream(hostname, port)</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 3、计算词频统计</span></span><br><span class="line"><span class="comment">     * hello flink hello kafka</span></span><br><span class="line"><span class="comment">     * hello hadoop</span></span><br><span class="line"><span class="comment">     * [hello, flink, hello, kafka],[hello, hadoop]</span></span><br><span class="line"><span class="comment">     * [(hello,1),(flink,1), (hello,1),(kafka,1)]</span></span><br><span class="line"><span class="comment">     * [(hello,1),(hello,1)], [(flink,1)], [(kafka,1)]</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">val</span> wordCountDs = lineStrDs</span><br><span class="line">      .flatMap(x =&gt; x.split(<span class="string">&quot; &quot;</span>))</span><br><span class="line">      .map(x =&gt; (x, <span class="number">1</span>))</span><br><span class="line">      .keyBy(<span class="number">0</span>)</span><br><span class="line">      .sum(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4、输出：控制台</span></span><br><span class="line">    wordCountDs.print()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 5、触发程序执行</span></span><br><span class="line">    env.execute(<span class="string">&quot;DataStreamWordCountDemoScala&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="打包集群运行"><a href="#打包集群运行" class="headerlink" title="打包集群运行"></a>打包集群运行</h2><p>Standalone集群上运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">flink run -c com.study.flink.java.DataStreamWordCountDemo /root/flink-study-1.0-SNAPSHOT-jar-with-dependencies.jar 192.168.254.172 9000</span><br><span class="line"></span><br><span class="line">flink run -c com.study.flink.scala.DataStreamWordCountDemo /root/flink-study-1.0-SNAPSHOT-jar-with-dependencies.jar 192.168.254.172 9000</span><br></pre></td></tr></table></figure>
+
+<p>打包项目至yarn集群上运行需要注意：</p>
+<ol>
+<li>flink集群上有的jar包在项目中需要使用scope属性provided排除</li>
+</ol>
+<p>提交流处理任务执行命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flink run -d -m yarn-cluster -yjm 1024 -ytm 1024 -c com.study.flink.java.DataStreamWordCountDemo /root/flink-study-1.0-SNAPSHOT-jar-with-dependencies.jar 192.168.254.172 9000</span><br></pre></td></tr></table></figure>
+
+<p>提交流批处理任务执行命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/flink run -m yarn-cluster -yjm 1024 -ytm 1024 -c com.study.flink.java.DataStreamWordCountDemo /root/flink-study-1.0-SNAPSHOT-jar-with-dependencies.jar --inputpath hdfs://xxxx:xxxx/flink/wc/wc.txt</span><br></pre></td></tr></table></figure>
+
+<h1 id="思考和操作"><a href="#思考和操作" class="headerlink" title="思考和操作"></a>思考和操作</h1><ol>
+<li><p>理解flink的特性</p>
+</li>
+<li><p>安装flink集群</p>
+<p>思考：如何搭建HA的集群</p>
+</li>
+<li><p>搭建开发环境，并提交一个任务</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/04-Flink/01-Flink%E5%9F%BA%E7%A1%80/" data-id="clmcxec840017u8waheg8840f" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/16-Nginx/00-Nginx%E5%AE%89%E8%A3%85/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/03-Spark/04-StructuredStreaming/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

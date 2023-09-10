@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Spark | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Spark编程模型函数的定义和使用函数定义 函数在scala中是一等公民 12345678910111213141516171819val 函数名:(参数类型1, … , 参数类型n)&#x3D;&gt;返回值类型 &#x3D; (T1,…, Tn) &#x3D;&gt; 函数体val f0 : (Int) &#x3D;&gt; Boolean &#x3D; i &#x3D;&gt; &amp;#123; i % 2 &#x3D;&#x3D; 0 &amp;#125;val f1 : Int">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark">
+<meta property="og:url" content="http://example.com/2022/01/01/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/03-Spark/02-SparkCore/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Spark编程模型函数的定义和使用函数定义 函数在scala中是一等公民 12345678910111213141516171819val 函数名:(参数类型1, … , 参数类型n)&#x3D;&gt;返回值类型 &#x3D; (T1,…, Tn) &#x3D;&gt; 函数体val f0 : (Int) &#x3D;&gt; Boolean &#x3D; i &#x3D;&gt; &amp;#123; i % 2 &#x3D;&#x3D; 0 &amp;#125;val f1 : Int">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302223549.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302224024.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302224716.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302225220.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302225619.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302230240.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302230816.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-10.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302231621.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302231753.png">
+<meta property="article:published_time" content="2022-01-01T04:00:00.000Z">
+<meta property="article:modified_time" content="2022-04-04T03:40:08.334Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Spark">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302223549.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-13-大数据/03-Spark/02-SparkCore" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/01/01/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/03-Spark/02-SparkCore/" class="article-date">
+  <time class="dt-published" datetime="2022-01-01T04:00:00.000Z" itemprop="datePublished">2022-01-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Spark
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Spark编程模型"><a href="#Spark编程模型" class="headerlink" title="Spark编程模型"></a>Spark编程模型</h1><h2 id="函数的定义和使用"><a href="#函数的定义和使用" class="headerlink" title="函数的定义和使用"></a>函数的定义和使用</h2><p><strong>函数定义</strong></p>
+<p>函数在scala中是一等公民</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> 函数名:(参数类型<span class="number">1</span>, … , 参数类型n)=&gt;返回值类型 = (<span class="type">T1</span>,…, <span class="type">Tn</span>) =&gt; 函数体</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> f0 : (<span class="type">Int</span>) =&gt; <span class="type">Boolean</span> = i =&gt; &#123; i % <span class="number">2</span> == <span class="number">0</span> &#125;</span><br><span class="line"><span class="keyword">val</span> f1 : <span class="type">Int</span> =&gt; <span class="type">Boolean</span> = i =&gt; &#123; i % <span class="number">2</span> == <span class="number">0</span> &#125;</span><br><span class="line"><span class="keyword">val</span> f2 : <span class="type">Int</span> =&gt; <span class="type">Boolean</span> = i =&gt; i % <span class="number">2</span> == <span class="number">0</span></span><br><span class="line"><span class="keyword">val</span> f3 : <span class="type">Int</span> =&gt; <span class="type">Boolean</span> = _ % <span class="number">2</span> == <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> 函数名 = (参数名<span class="number">1</span>: 参数类型<span class="number">1</span>, … , 参数名n: 参数类型n) =&gt;函数体</span><br><span class="line"></span><br><span class="line"><span class="comment">// implicit approach</span></span><br><span class="line"><span class="keyword">val</span> add0 = (x: <span class="type">Int</span>, y: <span class="type">Int</span>) =&gt; &#123; x + y &#125;</span><br><span class="line"><span class="keyword">val</span> add1 = (x: <span class="type">Int</span>, y: <span class="type">Int</span>) =&gt; x + y</span><br><span class="line"><span class="comment">// explicit approach</span></span><br><span class="line"><span class="keyword">val</span> add2 : (<span class="type">Int</span>, <span class="type">Int</span>) =&gt; <span class="type">Int</span> = (x,y) =&gt; &#123; x + y &#125;</span><br><span class="line"><span class="keyword">val</span> add3 : (<span class="type">Int</span>, <span class="type">Int</span>) =&gt; <span class="type">Int</span> = (x,y) =&gt; x + y</span><br><span class="line"></span><br><span class="line">函数必须有参数列表，否则报错</span><br><span class="line"><span class="keyword">val</span> f1 = =&gt; <span class="number">100</span> <span class="comment">// 错误</span></span><br><span class="line"><span class="keyword">val</span> f2 = () =&gt; <span class="number">100</span> <span class="comment">// 正确</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Spark编程模型-核心思想"><a href="#Spark编程模型-核心思想" class="headerlink" title="Spark编程模型-核心思想"></a>Spark编程模型-核心思想</h2><p><strong>函数式编程</strong></p>
+<ul>
+<li>数据映射<br>只关心数据的映射，不需要关系其它东西，并且这个函数中操作的数据都是通过参数传入的。我们之前定义一个函数会在函数内操作一个公共变量，在函数式编程中是看不到这样的写法的。在函数式编程中数据传入进来是什么返回就是什么</li>
+<li>变量不可变<br>函数在用的过程中只能是申请新的变量，最好不要更改变量，这样并发编程会更加的高效</li>
+<li>没有副作用<br>数据映射的好处，不需要担心更改了外部变量带来的影响，方便单元测试</li>
+<li>一等公民<br>定义了一个函数可以通过返回值返回，甚至可以把函数作为方法的参数传入</li>
+</ul>
+<h2 id="Spark编程模型-1"><a href="#Spark编程模型-1" class="headerlink" title="Spark编程模型"></a>Spark编程模型</h2><p>对于RDD有四种类型的算子</p>
+<p><strong>Create</strong><br>SparkContext.textFile()<br>SparkContext.parallelize()</p>
+<p><strong>Transformation</strong><br>作用于一个或者多个RDD，输出转换后的RDD<br>例如：map, filter, groupBy</p>
+<p><strong>Action</strong><br>会触发Spark提交作业，并将结果返回Driver Program<br>例如：reduce, countByKey</p>
+<p><strong>Cache</strong><br>cache 缓存<br>persist 持久化</p>
+<p>惰性运算：遇到Action时才会真正的执行。</p>
+<p>Example</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> lines = sc.textFile(<span class="string">&quot;/hdfs/parth&quot;</span>)</span><br><span class="line">lines.filter(x =&gt; x.contains(<span class="string">&quot;ERROR&quot;</span>)).count()</span><br><span class="line"></span><br><span class="line">filter 属于transformation算子</span><br><span class="line">count属于<span class="type">Action</span>算子</span><br></pre></td></tr></table></figure>
+
+<p>运行Spark方式</p>
+<ul>
+<li>开发环境单机版运行</li>
+<li>CDH 集群上运行Spark-Shell<br>在Shell中输入spark-shell –master yarn-client</li>
+<li>使用Zeppelin<br>sudo docker run -p 8080:8080 –rm –name zeppelin apache&#x2F;zeppelin:0.8.1<br><a target="_blank" rel="noopener" href="https://zeppelin.apache.org/">https://zeppelin.apache.org</a></li>
+<li>使用spark-submit递交作业</li>
+</ul>
+<h2 id="Spark-API文档"><a href="#Spark-API文档" class="headerlink" title="Spark API文档"></a>Spark API文档</h2><p>访问官方文档：<a target="_blank" rel="noopener" href="https://spark.apache.org/docs/latest/">https://spark.apache.org/docs/latest/</a></p>
+<h2 id="Value类型-Transformation-算子分类"><a href="#Value类型-Transformation-算子分类" class="headerlink" title="Value类型 Transformation 算子分类"></a>Value类型 Transformation 算子分类</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302223549.png"></p>
+<h2 id="Transformation-map"><a href="#Transformation-map" class="headerlink" title="Transformation-map"></a>Transformation-map</h2><p><strong>map</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">map</span></span>[<span class="type">U</span>](f: (<span class="type">T</span>) ⇒ <span class="type">U</span>)(<span class="keyword">implicit</span> arg0: <span class="type">ClassTag</span>[<span class="type">U</span>]): <span class="type">RDD</span>[<span class="type">U</span>]</span><br></pre></td></tr></table></figure>
+
+<p>生成一个新的RDD，新的RDD中每个元素均有父RDD通过作用func函数映射变换而来 </p>
+<p>新的RDD叫做MappedRDD</p>
+<p>Example</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> rd1 = sc.parallelize(<span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>), <span class="number">2</span>)</span><br><span class="line"><span class="keyword">val</span> rd2 = rd1.map(x =&gt; x * <span class="number">2</span>)</span><br><span class="line">rd2.collect()</span><br><span class="line"></span><br><span class="line">rd1: org.apache.spark.rdd.<span class="type">RDD</span>[<span class="type">Int</span>] = <span class="type">ParallelCollectionRDD</span>[<span class="number">2</span>] at </span><br><span class="line">parallelize</span><br><span class="line">rd2: org.apache.spark.rdd.<span class="type">RDD</span>[<span class="type">Int</span>] = <span class="type">MapPartitionsRDD</span>[<span class="number">3</span>] at map</span><br><span class="line">res1: <span class="type">Array</span>[<span class="type">Int</span>] = <span class="type">Array</span>(<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>, <span class="number">12</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302224024.png"></p>
+<h2 id="Transformation-mapPartitions"><a href="#Transformation-mapPartitions" class="headerlink" title="Transformation-mapPartitions"></a>Transformation-mapPartitions</h2><p><strong>mapPartitions</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mapPartitions</span></span>[<span class="type">U</span>](f: (<span class="type">Iterator</span>[<span class="type">T</span>]) =&gt; <span class="type">Iterator</span>[<span class="type">U</span>], preservesPartitioning: <span class="type">Boolean</span> = <span class="literal">false</span>)(<span class="keyword">implicit</span> arg0: <span class="type">ClassTag</span>[<span class="type">U</span>]): <span class="type">RDD</span>[<span class="type">U</span>]</span><br></pre></td></tr></table></figure>
+
+<p>获取到每个分区的迭代器</p>
+<p>对每个分区中每个元素进行操作</p>
+<p><strong>Example</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> rd1 = sc.parallelize(<span class="type">List</span>(<span class="string">&quot;20180101&quot;</span>, <span class="string">&quot;20180102&quot;</span>, <span class="string">&quot;20180103&quot;</span>, <span class="string">&quot;20180104&quot;</span>, <span class="string">&quot;20180105&quot;</span>, </span><br><span class="line"><span class="string">&quot;20180106&quot;</span>), <span class="number">2</span>)</span><br><span class="line"><span class="keyword">val</span> rd2 = rd1.mapPartitions(iter =&gt; &#123;</span><br><span class="line"><span class="keyword">val</span> dateFormat = <span class="keyword">new</span> java.text.<span class="type">SimpleDateFormat</span>(<span class="string">&quot;yyyyMMdd&quot;</span>)</span><br><span class="line">iter.map(dateStr =&gt; dateFormat.parse(dateStr))</span><br><span class="line">&#125;)</span><br><span class="line">rd2.collect()</span><br><span class="line"></span><br><span class="line">res1: <span class="type">Array</span>[java.util.<span class="type">Date</span>] = <span class="type">Array</span>(<span class="type">Mon</span> <span class="type">Jan</span> <span class="number">01</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span> <span class="type">UTC</span> <span class="number">2018</span>, <span class="type">Tue</span> <span class="type">Jan</span> <span class="number">02</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span> <span class="type">UTC</span> <span class="number">2018</span>, <span class="type">Wed</span> <span class="type">Jan</span> <span class="number">03</span> </span><br><span class="line"><span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span> <span class="type">UTC</span> <span class="number">2018</span>, <span class="type">Thu</span> <span class="type">Jan</span> <span class="number">04</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span> <span class="type">UTC</span> <span class="number">2018</span>, <span class="type">Fri</span> <span class="type">Jan</span> <span class="number">05</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span> <span class="type">UTC</span> <span class="number">2018</span>, <span class="type">Sat</span> <span class="type">Jan</span> <span class="number">06</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span> <span class="type">UTC</span> <span class="number">2018</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Transformation-flatMap"><a href="#Transformation-flatMap" class="headerlink" title="Transformation-flatMap"></a>Transformation-flatMap</h2><p><strong>flatMap</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">flatMap</span></span>[<span class="type">U</span>](f: (<span class="type">T</span>) ⇒ <span class="type">TraversableOnce</span>[<span class="type">U</span>])(<span class="keyword">implicit</span> arg0: <span class="type">ClassTag</span>[<span class="type">U</span>]): <span class="type">RDD</span>[<span class="type">U</span>]</span><br></pre></td></tr></table></figure>
+
+<p>将RDD中的每个元素通过func转换为新的元素</p>
+<p>进行扁平化：合并所有的集合为一个新集合</p>
+<p>新的RDD叫做FlatMappedRDD</p>
+<p><strong>Example</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> rd1 = sc.parallelize(<span class="type">Seq</span>(<span class="string">&quot;I have a pen&quot;</span>,</span><br><span class="line"><span class="string">&quot;I have an apple&quot;</span>,</span><br><span class="line"><span class="string">&quot;I have a pen&quot;</span>,</span><br><span class="line"><span class="string">&quot;I have a pineapple&quot;</span>), <span class="number">2</span>)</span><br><span class="line"><span class="keyword">val</span> rd2 = rd1.map(s =&gt; s.split(<span class="string">&quot; &quot;</span>))</span><br><span class="line">rd2.collect()</span><br><span class="line"><span class="keyword">val</span> rd3 = rd1.flatMap(s =&gt; s.split(<span class="string">&quot; &quot;</span>))</span><br><span class="line">rd3.collect()</span><br><span class="line">rd3.partitions</span><br><span class="line"></span><br><span class="line">res136: <span class="type">Array</span>[<span class="type">Array</span>[<span class="type">String</span>]] = <span class="type">Array</span>(<span class="type">Array</span>(<span class="type">I</span>, have, a, pen), <span class="type">Array</span>(<span class="type">I</span>, have, an, apple), <span class="type">Array</span>(<span class="type">I</span>, have, a, pen), <span class="type">Array</span>(<span class="type">I</span>, have, </span><br><span class="line">a, pineapple))</span><br><span class="line">res137: <span class="type">Array</span>[<span class="type">String</span>] = <span class="type">Array</span>(<span class="type">I</span>, have, a, pen, <span class="type">I</span>, have, an, apple, <span class="type">I</span>, have, a, pen, <span class="type">I</span>, have, a, pineapple)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302224716.png"></p>
+<h2 id="Transformation-union"><a href="#Transformation-union" class="headerlink" title="Transformation-union"></a>Transformation-union</h2><p><strong>union</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">union</span></span>(other: <span class="type">RDD</span>[<span class="type">T</span>]): <span class="type">RDD</span>[<span class="type">T</span>]</span><br></pre></td></tr></table></figure>
+
+<p>合并两个RDD</p>
+<p>元素数据类型需要相同，并不进行去重操作</p>
+<p><strong>Example</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> rdd1 = sc.parallelize(<span class="type">Seq</span>(<span class="string">&quot;Apple&quot;</span>, <span class="string">&quot;Banana&quot;</span>, <span class="string">&quot;Orange&quot;</span>))</span><br><span class="line"><span class="keyword">val</span> rdd2 = sc.parallelize(<span class="type">Seq</span>(<span class="string">&quot;Banana&quot;</span>, <span class="string">&quot;Pineapple&quot;</span>))</span><br><span class="line"><span class="keyword">val</span> rdd3 = sc.parallelize(<span class="type">Seq</span>(<span class="string">&quot;Durian&quot;</span>))</span><br><span class="line"><span class="keyword">val</span> rddUnion = rdd1.union(rdd2).union(rdd3)</span><br><span class="line">rddUnion.collect.foreach(println)</span><br><span class="line">res1: <span class="type">Array</span>[<span class="type">String</span>] = <span class="type">Array</span>(<span class="type">Apple</span>, <span class="type">Banana</span>, <span class="type">Orange</span>, <span class="type">Banana</span>, <span class="type">Pineapple</span>, <span class="type">Durian</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Transformation-distinct"><a href="#Transformation-distinct" class="headerlink" title="Transformation-distinct"></a>Transformation-distinct</h2><p><strong>distinct</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">distinct</span></span>(): <span class="type">RDD</span>[<span class="type">T</span>]</span><br></pre></td></tr></table></figure>
+
+<p>对RDD中的元素进行去重操作</p>
+<p><strong>Example</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> rdd1 = sc.parallelize(<span class="type">Seq</span>(<span class="string">&quot;Apple&quot;</span>, <span class="string">&quot;Banana&quot;</span>, <span class="string">&quot;Orange&quot;</span>))</span><br><span class="line"><span class="keyword">val</span> rdd2 = sc.parallelize(<span class="type">Seq</span>(<span class="string">&quot;Banana&quot;</span>, <span class="string">&quot;Pineapple&quot;</span>))</span><br><span class="line"><span class="keyword">val</span> rdd3 = sc.parallelize(<span class="type">Seq</span>(<span class="string">&quot;Durian&quot;</span>))</span><br><span class="line"><span class="keyword">val</span> rddUnion = rdd1.union(rdd2).union(rdd3)</span><br><span class="line"><span class="keyword">val</span> rddDistinct = rddUnion.distinct()</span><br><span class="line">rddDistinct.collect()</span><br><span class="line">res1: <span class="type">Array</span>[<span class="type">String</span>] = <span class="type">Array</span>(<span class="type">Orange</span>, <span class="type">Apple</span>, <span class="type">Banana</span>, <span class="type">Pineapple</span>, <span class="type">Durian</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Transformation-filter"><a href="#Transformation-filter" class="headerlink" title="Transformation-filter"></a>Transformation-filter</h2><p><strong>filter</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">filter</span></span>(f: (<span class="type">T</span>) ⇒ <span class="type">Boolean</span>): <span class="type">RDD</span>[<span class="type">T</span>]</span><br></pre></td></tr></table></figure>
+
+<p>对RDD元素的数据进行过滤</p>
+<p>当满足f返回值为true时保留元素，否则丢弃</p>
+<p><strong>Example</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> rdd1 = sc.parallelize(<span class="type">Seq</span>(<span class="string">&quot;Apple&quot;</span>, <span class="string">&quot;Banana&quot;</span>, <span class="string">&quot;Orange&quot;</span>))</span><br><span class="line"><span class="keyword">val</span> filteredRDD = rdd1.filter(item =&gt; item.length() &gt;= <span class="number">6</span>)</span><br><span class="line">filteredRDD.collect()</span><br><span class="line"></span><br><span class="line">*res1: <span class="type">Array</span>[<span class="type">String</span>] = <span class="type">Array</span>(<span class="type">Banana</span>, <span class="type">Orange</span>)*</span><br></pre></td></tr></table></figure>
+
+<h2 id="Transformation-intersection"><a href="#Transformation-intersection" class="headerlink" title="Transformation-intersection"></a>Transformation-intersection</h2><p><strong>interesction</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">intersection</span></span>(other: <span class="type">RDD</span>[<span class="type">T</span>]): <span class="type">RDD</span>[<span class="type">T</span>]</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">intersection</span></span>(other: <span class="type">RDD</span>[<span class="type">T</span>], numPartitions: <span class="type">Int</span>): <span class="type">RDD</span>[<span class="type">T</span>]</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">intersection</span></span>(other: <span class="type">RDD</span>[<span class="type">T</span>], partitioner: <span class="type">Partitioner</span>)(<span class="keyword">implicit</span> ord: <span class="type">Ordering</span>[<span class="type">T</span>] = <span class="literal">null</span>): <span class="type">RDD</span>[<span class="type">T</span>]</span><br></pre></td></tr></table></figure>
+
+<p>对两个RDD元素取交集</p>
+<p><strong>Example</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> rdd1 = sc.parallelize(<span class="type">Seq</span>(<span class="string">&quot;Apple&quot;</span>, <span class="string">&quot;Banana&quot;</span>, <span class="string">&quot;Orange&quot;</span>))</span><br><span class="line"><span class="keyword">val</span> rdd2 = sc.parallelize(<span class="type">Seq</span>(<span class="string">&quot;Banana&quot;</span>, <span class="string">&quot;Pineapple&quot;</span>))</span><br><span class="line"><span class="keyword">val</span> rddIntersection = rdd1.intersection(rdd2)</span><br><span class="line">rddIntersection.collect()</span><br><span class="line">res1: <span class="type">Array</span>[<span class="type">String</span>] = <span class="type">Array</span>(<span class="type">Banana</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Key-Value类型-Transformation-算子分类"><a href="#Key-Value类型-Transformation-算子分类" class="headerlink" title="Key-Value类型 Transformation 算子分类"></a>Key-Value类型 Transformation 算子分类</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302225220.png"></p>
+<h2 id="Transformation-groupByKey"><a href="#Transformation-groupByKey" class="headerlink" title="Transformation-groupByKey"></a>Transformation-groupByKey</h2><p><strong>groupByKey</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">groupByKey</span></span>(): <span class="type">RDD</span>[(<span class="type">K</span>, <span class="type">Iterable</span>[<span class="type">V</span>])]</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">groupByKey</span></span>(numPartitions: <span class="type">Int</span>): <span class="type">RDD</span>[(<span class="type">K</span>, <span class="type">Iterable</span>[<span class="type">V</span>])]</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">groupByKey</span></span>(partitioner: <span class="type">Partitioner</span>): <span class="type">RDD</span>[(<span class="type">K</span>, <span class="type">Iterable</span>[<span class="type">V</span>])]</span><br></pre></td></tr></table></figure>
+
+<p>对RDD[Key, Value]按照相同的key进行分组</p>
+<p><strong>Example</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> scoreDetail = sc.parallelize(<span class="type">List</span>((<span class="string">&quot;xiaoming&quot;</span>,<span class="string">&quot;A&quot;</span>), (<span class="string">&quot;xiaodong&quot;</span>,<span class="string">&quot;B&quot;</span>),(<span class="string">&quot;peter&quot;</span>,<span class="string">&quot;B&quot;</span>), (<span class="string">&quot;liuhua&quot;</span>,<span class="string">&quot;C&quot;</span>), (<span class="string">&quot;xiaofeng&quot;</span>,<span class="string">&quot;A&quot;</span>)), <span class="number">3</span>)</span><br><span class="line">scoreDetail.map(score_info =&gt; (score_info._2, score_info._1)).groupByKey().collect().foreach(println(_))</span><br><span class="line"></span><br><span class="line">scoreDetail: org.apache.spark.rdd.<span class="type">RDD</span>[(<span class="type">String</span>, <span class="type">String</span>)] = <span class="type">ParallelCollectionRDD</span>[<span class="number">110</span>] at parallelize</span><br><span class="line">(<span class="type">A</span>,<span class="type">CompactBuffer</span>(xiaoming, xiaofeng))</span><br><span class="line">(<span class="type">B</span>,<span class="type">CompactBuffer</span>(xiaodong, peter))</span><br><span class="line">(<span class="type">C</span>,<span class="type">CompactBuffer</span>(lihua))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302225619.png"></p>
+<h2 id="Transformation-reduceByKey"><a href="#Transformation-reduceByKey" class="headerlink" title="Transformation-reduceByKey"></a>Transformation-reduceByKey</h2><p><strong>reduceByKey</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reduceByKey</span></span>(func: (<span class="type">V</span>, <span class="type">V</span>) ⇒ <span class="type">V</span>): <span class="type">RDD</span>[(<span class="type">K</span>, <span class="type">V</span>)]</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reduceByKey</span></span>(func: (<span class="type">V</span>, <span class="type">V</span>) ⇒ <span class="type">V</span>, numPartitions: <span class="type">Int</span>): <span class="type">RDD</span>[(<span class="type">K</span>, <span class="type">V</span>)]</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reduceByKey</span></span>(partitioner: <span class="type">Partitioner</span>, func: (<span class="type">V</span>, <span class="type">V</span>) ⇒ <span class="type">V</span>): <span class="type">RDD</span>[(<span class="type">K</span>, <span class="type">V</span>)]</span><br></pre></td></tr></table></figure>
+
+<p>对RDD[Key, Value]按照相同的key进行merge操作<br>可以在shuffle前对当前节点上的结果先进行merge操作</p>
+<p><strong>Example</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> scoreDetail = sc.parallelize(<span class="type">List</span>(<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;D&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;D&quot;</span>, <span class="string">&quot;E&quot;</span>, <span class="string">&quot;A&quot;</span>, <span class="string">&quot;E&quot;</span>), <span class="number">3</span>)</span><br><span class="line">scoreDetail.map(w =&gt; (w, <span class="number">1</span>))</span><br><span class="line">.reduceByKey(_ + _)</span><br><span class="line">.collect()</span><br><span class="line"></span><br><span class="line">scoreDetail: org.apache.spark.rdd.<span class="type">RDD</span>[<span class="type">String</span>] = <span class="type">ParallelCollectionRDD</span>[<span class="number">120</span>] at parallelize</span><br><span class="line">res1: <span class="type">Array</span>[(<span class="type">String</span>, <span class="type">Int</span>)] = <span class="type">Array</span>((<span class="type">B</span>,<span class="number">3</span>), (<span class="type">E</span>,<span class="number">2</span>), (<span class="type">A</span>,<span class="number">2</span>), (<span class="type">D</span>,<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302230240.png"></p>
+<h2 id="Transformation-aggregateByKey"><a href="#Transformation-aggregateByKey" class="headerlink" title="Transformation-aggregateByKey"></a>Transformation-aggregateByKey</h2><p><strong>如何分组计算平均值？</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[(<span class="type">A</span>,<span class="number">110</span>),(<span class="type">A</span>,<span class="number">130</span>),(<span class="type">A</span>,<span class="number">120</span>),(<span class="type">B</span>,<span class="number">200</span>),(<span class="type">B</span>,<span class="number">206</span>),(<span class="type">B</span>,<span class="number">206</span>),(<span class="type">C</span>,<span class="number">150</span>),(<span class="type">C</span>,<span class="number">160</span>),(<span class="type">C</span>,<span class="number">170</span>)]</span><br><span class="line"></span><br><span class="line">[(<span class="type">A</span>, (<span class="number">110</span> + <span class="number">130</span> + <span class="number">120</span>) / <span class="number">3</span>), (<span class="type">B</span>, (<span class="number">200</span> + <span class="number">206</span> + <span class="number">206</span>) / <span class="number">3</span>), (<span class="type">C</span>, (<span class="number">150</span> + <span class="number">160</span> + <span class="number">170</span>) / <span class="number">3</span>)]</span><br></pre></td></tr></table></figure>
+
+<p><strong>aggregateByKey</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">aggregateByKey</span></span>[<span class="type">U</span>: <span class="type">ClassTag</span>](zeroValue: <span class="type">U</span>)(seqOp: (<span class="type">U</span>, <span class="type">T</span>) =&gt; <span class="type">U</span>, combOp: (<span class="type">U</span>, <span class="type">U</span>) =&gt; <span class="type">U</span>): <span class="type">U</span></span><br></pre></td></tr></table></figure>
+
+<p>允许传入两个function：seqOp和combOp</p>
+<p>seqOp负责对每个分区进行聚合，初始值为zeroValue</p>
+<p>combOp负责对每个分区聚合的结果进行合并</p>
+<p><strong>Example</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> rdd = sc.parallelize(<span class="type">Seq</span>( (<span class="string">&quot;A&quot;</span>,<span class="number">110</span>),(<span class="string">&quot;A&quot;</span>,<span class="number">130</span>),(<span class="string">&quot;A&quot;</span>,<span class="number">120</span>),</span><br><span class="line">(<span class="string">&quot;B&quot;</span>,<span class="number">200</span>),(<span class="string">&quot;B&quot;</span>,<span class="number">206</span>),(<span class="string">&quot;B&quot;</span>,<span class="number">206</span>),</span><br><span class="line">(<span class="string">&quot;C&quot;</span>,<span class="number">150</span>),(<span class="string">&quot;C&quot;</span>,<span class="number">160</span>),(<span class="string">&quot;C&quot;</span>,<span class="number">170</span>)))</span><br><span class="line"><span class="keyword">val</span> agg_rdd = rdd.aggregateByKey((<span class="number">0</span>,<span class="number">0</span>))((acc, value) =&gt; (acc._1 + value, acc._2 + </span><br><span class="line"><span class="number">1</span>),(acc1, acc2) =&gt; (acc1._1 + acc2._1, acc1._2 + acc2._2))</span><br><span class="line"><span class="keyword">val</span> avg = agg_rdd.mapValues(x =&gt; (x._1/x._2))</span><br><span class="line">avg.collect</span><br><span class="line"></span><br><span class="line">(<span class="type">B</span>,<span class="number">204</span>) (<span class="type">A</span>,<span class="number">120</span>) (<span class="type">C</span>,<span class="number">160</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Transformation-join"><a href="#Transformation-join" class="headerlink" title="Transformation-join"></a>Transformation-join</h2><p><strong>join</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">join</span></span>[<span class="type">W</span>](other: <span class="type">RDD</span>[(<span class="type">K</span>, <span class="type">W</span>)]): <span class="type">RDD</span>[(<span class="type">K</span>, (<span class="type">V</span>, <span class="type">W</span>))]</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">join</span></span>[<span class="type">W</span>](other: <span class="type">RDD</span>[(<span class="type">K</span>, <span class="type">W</span>)], numPartitions: <span class="type">Int</span>): <span class="type">RDD</span>[(<span class="type">K</span>, (<span class="type">V</span>, <span class="type">W</span>))]</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">join</span></span>[<span class="type">W</span>](other: <span class="type">RDD</span>[(<span class="type">K</span>, <span class="type">W</span>)], partitioner: <span class="type">Partitioner</span>): <span class="type">RDD</span>[(<span class="type">K</span>, (<span class="type">V</span>, <span class="type">W</span>))]</span><br></pre></td></tr></table></figure>
+
+<p>对两个RDD根据key进行连接操作</p>
+<p><strong>Example</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> data1 = sc.parallelize(<span class="type">Array</span>((<span class="string">&quot;A&quot;</span>, <span class="number">1</span>),(<span class="string">&quot;b&quot;</span>, <span class="number">2</span>),(<span class="string">&quot;c&quot;</span>, <span class="number">3</span>),(<span class="string">&quot;d&quot;</span>, <span class="number">3</span>)))</span><br><span class="line"><span class="keyword">val</span> data2 = sc.parallelize(<span class="type">Array</span>((<span class="string">&quot;A&quot;</span>, <span class="number">4</span>),(<span class="string">&quot;A&quot;</span>, <span class="number">6</span>),(<span class="string">&quot;b&quot;</span>, <span class="number">7</span>),(<span class="string">&quot;c&quot;</span>, <span class="number">3</span>),(<span class="string">&quot;c&quot;</span>, <span class="number">8</span>)))</span><br><span class="line"><span class="keyword">val</span> result = data1.join(data2)</span><br><span class="line">result.collect()</span><br><span class="line"></span><br><span class="line">data1: org.apache.spark.rdd.<span class="type">RDD</span>[(<span class="type">String</span>, <span class="type">Int</span>)] = <span class="type">ParallelCollectionRDD</span></span><br><span class="line">data2: org.apache.spark.rdd.<span class="type">RDD</span>[(<span class="type">String</span>, <span class="type">Int</span>)] = <span class="type">ParallelCollectionRDD</span></span><br><span class="line">result: org.apache.spark.rdd.<span class="type">RDD</span>[(<span class="type">String</span>, (<span class="type">Int</span>, <span class="type">Int</span>))] = <span class="type">MapPartitionsRDD</span></span><br><span class="line">res1: <span class="type">Array</span>[(<span class="type">String</span>, (<span class="type">Int</span>, <span class="type">Int</span>))] = <span class="type">Array</span>((<span class="type">A</span>,(<span class="number">1</span>,<span class="number">4</span>)), (<span class="type">A</span>,(<span class="number">1</span>,<span class="number">6</span>)), (b,(<span class="number">2</span>,<span class="number">7</span>)), (c,(<span class="number">3</span>,<span class="number">3</span>)), (c,(<span class="number">3</span>,<span class="number">8</span>)))</span><br></pre></td></tr></table></figure>
+
+<h2 id="Action-算子分类"><a href="#Action-算子分类" class="headerlink" title="Action 算子分类"></a>Action 算子分类</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302230816.png"></p>
+<h2 id="Action-count-countByKey-countByValue"><a href="#Action-count-countByKey-countByValue" class="headerlink" title="Action-count&#x2F;countByKey&#x2F;countByValue"></a>Action-count&#x2F;countByKey&#x2F;countByValue</h2><p><strong>count</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">count</span></span>(): <span class="type">Long</span></span><br></pre></td></tr></table></figure>
+
+<p>从RDD中返回元素的个数</p>
+<p><strong>countByKey</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">countByKey</span></span>(): <span class="type">Map</span>[<span class="type">K</span>, <span class="type">Long</span>]</span><br><span class="line"><span class="keyword">val</span> c = sc.parallelize(<span class="type">List</span>((<span class="number">3</span>, <span class="string">&quot;Gnu&quot;</span>), (<span class="number">3</span>, <span class="string">&quot;Yak&quot;</span>), (<span class="number">5</span>, <span class="string">&quot;Mouse&quot;</span>), (<span class="number">3</span>, <span class="string">&quot;Dog&quot;</span>)), <span class="number">2</span>)</span><br><span class="line">c.countByKey</span><br><span class="line"></span><br><span class="line">res1: scala.collection.<span class="type">Map</span>[<span class="type">Int</span>,<span class="type">Long</span>] = <span class="type">Map</span>(<span class="number">3</span> -&gt; <span class="number">3</span>, <span class="number">5</span> -&gt; <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>从RDD[K, V]中返回key出现的次数</p>
+<p><strong>countByValue</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">countByValue</span></span>(): <span class="type">Map</span>[<span class="type">T</span>, <span class="type">Long</span>]</span><br><span class="line"><span class="keyword">val</span> b = sc.parallelize(<span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">2</span>,<span class="number">4</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>))</span><br><span class="line">b.countByValue</span><br><span class="line"></span><br><span class="line">res1: scala.collection.<span class="type">Map</span>[<span class="type">Int</span>,<span class="type">Long</span>] = <span class="type">Map</span>(<span class="number">5</span> -&gt; <span class="number">1</span>, <span class="number">1</span> -&gt; <span class="number">6</span>, <span class="number">6</span> -&gt; <span class="number">1</span>, <span class="number">2</span> -&gt; <span class="number">3</span>, <span class="number">7</span> -&gt; <span class="number">1</span>, <span class="number">3</span> -&gt; <span class="number">1</span>, <span class="number">8</span> -&gt; <span class="number">1</span>, <span class="number">4</span> -&gt; <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<p>统计RDD中值出现的次数</p>
+<h2 id="Action-collect-take-takeOrdered-top"><a href="#Action-collect-take-takeOrdered-top" class="headerlink" title="Action-collect&#x2F;take&#x2F;takeOrdered&#x2F;top"></a>Action-collect&#x2F;take&#x2F;takeOrdered&#x2F;top</h2><p><strong>collect</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">collect</span></span>(): <span class="type">Array</span>[<span class="type">T</span>]</span><br></pre></td></tr></table></figure>
+
+<p>从RDD中返回所有的元素到Driver Program</p>
+<p><strong>task</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">take</span></span>(num: <span class="type">Int</span>): <span class="type">Array</span>[<span class="type">T</span>]</span><br></pre></td></tr></table></figure>
+
+<p>从RDD中取0到num – 1下标的元素，不排序</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>takeOrdered</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">takeOrdered</span></span>(num: <span class="type">Int</span>)(<span class="keyword">implicit</span> ord: <span class="type">Ordering</span>[<span class="type">T</span>]): <span class="type">Array</span>[<span class="type">T</span>]</span><br></pre></td></tr></table></figure>
+
+<p>从RDD中返按从小到大（默认）返回num个元素</p>
+<p><strong>top</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">top</span></span>(num: <span class="type">Int</span>)(<span class="keyword">implicit</span> ord: <span class="type">Ordering</span>[<span class="type">T</span>]): <span class="type">Array</span>[<span class="type">T</span>]</span><br></pre></td></tr></table></figure>
+
+<p>和takeOrdered类似，但是排序顺序从大到小</p>
+<h2 id="Action-reduce"><a href="#Action-reduce" class="headerlink" title="Action-reduce"></a>Action-reduce</h2><p><strong>reduce</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reduce</span></span>(f: (<span class="type">T</span>, <span class="type">T</span>) =&gt; <span class="type">T</span>): <span class="type">T</span></span><br></pre></td></tr></table></figure>
+
+<p>对RDD中的元素进行聚合操作</p>
+<p>注意：reduceByKey是Transformation</p>
+<p>如果集合为空则会抛出Exception</p>
+<p><strong>Example</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> item = sc.parallelize(<span class="number">1</span> to <span class="number">100</span>, <span class="number">3</span>)</span><br><span class="line">item.reduce((first, second) =&gt; first + second)</span><br><span class="line">item.reduce(_ + _)</span><br><span class="line"></span><br><span class="line">res1: <span class="type">Int</span> = <span class="number">5050</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> item = sc.parallelize(<span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">item.filter(_ &gt; <span class="number">4</span>).reduce(_ + _)</span><br><span class="line"></span><br><span class="line">java.lang.<span class="type">UnsupportedOperationException</span>: empty collection</span><br></pre></td></tr></table></figure>
+
+<h2 id="Action-fold"><a href="#Action-fold" class="headerlink" title="Action-fold"></a>Action-fold</h2><p><strong>fold</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fold</span></span>(zeroValue: <span class="type">T</span>)(op: (<span class="type">T</span>, <span class="type">T</span>) ⇒ <span class="type">T</span>): <span class="type">T</span></span><br></pre></td></tr></table></figure>
+
+<p>类似于reduce，对RDD进行聚合操作</p>
+<p>首先每个分区分别进行聚合，初始值为传入的zeroValue，然后对所有的分区进行聚合</p>
+<p><strong>Example</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> item = sc.parallelize(<span class="number">1</span> to <span class="number">100</span>, <span class="number">3</span>)</span><br><span class="line">item.fold(<span class="number">0</span>)(_ + _)</span><br><span class="line"></span><br><span class="line">res1: <span class="type">Int</span> = <span class="number">5050</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> item = sc.parallelize(<span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">item.filter(_ &gt; <span class="number">4</span>).fold(<span class="number">0</span>)(_ + _)</span><br><span class="line"></span><br><span class="line">res198: <span class="type">Int</span> = <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="Spark内存模型"><a href="#Spark内存模型" class="headerlink" title="Spark内存模型"></a>Spark内存模型</h1><h2 id="Yarn资源调度过程"><a href="#Yarn资源调度过程" class="headerlink" title="Yarn资源调度过程"></a>Yarn资源调度过程</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-10.png"></p>
+<h2 id="Spark内存结构"><a href="#Spark内存结构" class="headerlink" title="Spark内存结构"></a>Spark内存结构</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302231621.png"></p>
+<h3 id="heap-详细内存结构"><a href="#heap-详细内存结构" class="headerlink" title="heap 详细内存结构"></a>heap 详细内存结构</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220302231753.png"></p>
+<h2 id="Spark内存优化方案"><a href="#Spark内存优化方案" class="headerlink" title="Spark内存优化方案"></a>Spark内存优化方案</h2><p><strong>Executor最大任务并行度</strong></p>
+<p>TP &#x3D; N&#x2F;C</p>
+<p>其中N&#x3D;spark.executor.cores, C&#x3D;spark.task.cpus</p>
+<p>任务以Thread方式执行</p>
+<p>活跃线程可使用内存范围(1&#x2F;2n, 1&#x2F;n)<br>why？<br>因为Storage Memory和Execution Memory可以互借内存</p>
+<p><strong>出现Executor OOM错误（错误代码137，143等）</strong></p>
+<p>原因：Executor Memory达到上限</p>
+<p>解决办法：</p>
+<ul>
+<li>增加每个Task内存使用量<ul>
+<li>增大最大Heap值</li>
+<li>降低spark.executor.cores数量</li>
+</ul>
+</li>
+<li>或者降低单个Task内存消耗量<ul>
+<li>每个partition对应一个任务</li>
+<li>非SQL类应用 spark.default.parallism</li>
+<li>SQL类应用 spark.sql.shuffle.partition</li>
+</ul>
+</li>
+</ul>
+<h1 id="Spark案例介绍"><a href="#Spark案例介绍" class="headerlink" title="Spark案例介绍"></a>Spark案例介绍</h1><h2 id="Spark计算PV"><a href="#Spark计算PV" class="headerlink" title="Spark计算PV"></a>Spark计算PV</h2><p>数据格式：IP URL REF_URL Cookie Timestamp</p>
+<ul>
+<li>通过sc.textFile()读入日志文件</li>
+<li>按分隔符切分每行日志文件提取元素</li>
+<li>filter无法识别的URL</li>
+<li>以pageId为Key，并使用reduceByKey进行聚合操作</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.study.spark</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.&#123;<span class="type">SparkConf</span>, <span class="type">SparkContext</span>&#125;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.rdd.<span class="type">RDD</span></span><br><span class="line"><span class="keyword">import</span> org.eclipse.jetty.util.&#123;<span class="type">MultiMap</span>, <span class="type">UrlEncoded</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 数据源 nginx_example.txt</span></span><br><span class="line"><span class="comment"> * 数据格式 ip,url,cookie,time_stamp</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * hadoop fs -mkdir -p /user/root/bill/nginx/input</span></span><br><span class="line"><span class="comment"> * hadoop fs -put nginx_sample.txt /user/root/bill/nginx/input</span></span><br><span class="line"><span class="comment"> * spark-submit --master yarn-client --class com.study.spark.ComputePV ./scala-spark-study-1.0-SNAPSHOT-demo.jar /user/root/bill/nginx/input /user/root/bill/nginx/output</span></span><br><span class="line"><span class="comment"> * 如果报错使用下面启动命令：Exception in thread &quot;main&quot; java.lang.IllegalArgumentException: Required executor memory (1024), overhead (384 MB), and PySpark memory (0 MB) is above the max threshold (1024 MB) of this cluster! Please check the values of &#x27;yarn.scheduler.maximum-allocation-mb&#x27; and/or &#x27;yarn.nodemanager.resource.memory-mb&#x27;.</span></span><br><span class="line"><span class="comment"> * spark-submit --master yarn-client --executor-memory=512m --class com.study.spark.ComputePV ./scala-spark-study-1.0-SNAPSHOT-demo.jar /user/root/bill/nginx/input /user/root/bill/nginx/output</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * hadoop fs -cat /user/root/bill/nginx/output/\*</span></span><br><span class="line"><span class="comment"> * 结果如下</span></span><br><span class="line"><span class="comment"> * 42	4</span></span><br><span class="line"><span class="comment"> * 40	4</span></span><br><span class="line"><span class="comment"> * 41	2</span></span><br><span class="line"><span class="comment"> * 29	2</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">ComputePV</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">computePV</span></span>(textRDD: <span class="type">RDD</span>[<span class="type">String</span>]): <span class="type">RDD</span>[(<span class="type">String</span>, <span class="type">Long</span>)] = &#123;</span><br><span class="line">    <span class="keyword">val</span> splitTextFileRDD = textRDD.map(_.split(<span class="string">&quot;\t&quot;</span>))</span><br><span class="line">    <span class="keyword">val</span> result = splitTextFileRDD</span><br><span class="line">      .filter(log =&gt; log(<span class="number">1</span>).contains(<span class="string">&quot;product_id&quot;</span>))</span><br><span class="line">      .map(log =&gt; &#123;</span><br><span class="line">        <span class="keyword">val</span> paramsMap = <span class="keyword">new</span> <span class="type">MultiMap</span>[<span class="type">String</span>]</span><br><span class="line">        <span class="type">UrlEncoded</span>.decodeTo(log(<span class="number">1</span>), paramsMap, <span class="string">&quot;UTF-8&quot;</span>)</span><br><span class="line">        <span class="keyword">val</span> product_id = paramsMap.getValue(<span class="string">&quot;product_id&quot;</span>, <span class="number">0</span>)</span><br><span class="line">        (product_id, <span class="number">1</span>L)</span><br><span class="line">      &#125;)</span><br><span class="line">      .reduceByKey(_ + _)</span><br><span class="line">    result</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">if</span> (args.length &lt; <span class="number">2</span>) &#123;</span><br><span class="line">      <span class="type">System</span>.err.println(<span class="string">&quot;Usage:&lt;input_file&gt; &lt;output_file&gt;&quot;</span>)</span><br><span class="line">      <span class="type">System</span>.exit(<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">val</span> conf = <span class="keyword">new</span> <span class="type">SparkConf</span>().setAppName(<span class="string">&quot;ComputePV&quot;</span>)</span><br><span class="line">    <span class="keyword">val</span> sc = <span class="keyword">new</span> <span class="type">SparkContext</span>(conf)</span><br><span class="line">    <span class="keyword">val</span> textFileRDD = sc.textFile(args(<span class="number">0</span>))</span><br><span class="line">    <span class="keyword">val</span> result = computePV(textFileRDD)</span><br><span class="line">    result.map(r =&gt; r._1 + <span class="string">&quot;\t&quot;</span> + r._2).saveAsTextFile(args(<span class="number">1</span>))</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Spark计算UV"><a href="#Spark计算UV" class="headerlink" title="Spark计算UV"></a>Spark计算UV</h2><p>数据格式：IP URL REF_URL Cookie Timestamp</p>
+<ul>
+<li>通过sc.textFile()读入日志文件</li>
+<li>按分隔符切分每行日志文件提取元素</li>
+<li>filter无法识别的URL，以pageId和uid作为联合Key</li>
+<li>对Key进行去重操作，使用reduceByKey进行聚合操作</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.study.spark</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.spark.&#123;<span class="type">SparkConf</span>, <span class="type">SparkContext</span>&#125;</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.rdd.<span class="type">RDD</span></span><br><span class="line"><span class="keyword">import</span> org.eclipse.jetty.util.&#123;<span class="type">MultiMap</span>, <span class="type">UrlEncoded</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 数据源 nginx_example.txt</span></span><br><span class="line"><span class="comment"> * 数据格式 IP URL REF_URL Cookie Timestamp</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * hadoop fs -mkdir -p /user/root/bill/nginx/input</span></span><br><span class="line"><span class="comment"> * hadoop fs -put nginx_sample.txt /user/root/bill/nginx/input</span></span><br><span class="line"><span class="comment"> * spark-submit --master yarn-client --class com.study.spark.ComputeUV ./scala-spark-study-1.0-SNAPSHOT-demo.jar /user/root/bill/nginx/input /user/root/bill/nginx/output2</span></span><br><span class="line"><span class="comment"> * 如果报错使用下面启动命令：Exception in thread &quot;main&quot; java.lang.IllegalArgumentException: Required executor memory (1024), overhead (384 MB), and PySpark memory (0 MB) is above the max threshold (1024 MB) of this cluster! Please check the values of &#x27;yarn.scheduler.maximum-allocation-mb&#x27; and/or &#x27;yarn.nodemanager.resource.memory-mb&#x27;.</span></span><br><span class="line"><span class="comment"> * spark-submit --master yarn-client --executor-memory=512m --class com.study.spark.ComputeUV ./scala-spark-study-1.0-SNAPSHOT-demo.jar /user/root/bill/nginx/input /user/root/bill/nginx/output2</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * hadoop fs -cat /user/root/bill/nginx/output2/\*</span></span><br><span class="line"><span class="comment"> * 结果如下</span></span><br><span class="line"><span class="comment"> * 42	1</span></span><br><span class="line"><span class="comment"> * 40	1</span></span><br><span class="line"><span class="comment"> * 41	1</span></span><br><span class="line"><span class="comment"> * 29	1</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">ComputeUV</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">computeUV</span></span>(textRDD: <span class="type">RDD</span>[<span class="type">String</span>]): <span class="type">RDD</span>[(<span class="type">String</span>, <span class="type">Long</span>)] = &#123;</span><br><span class="line">    <span class="keyword">val</span> splitTextFileRDD = textRDD.map(_.split(<span class="string">&quot;\t&quot;</span>))</span><br><span class="line">    <span class="keyword">val</span> result = splitTextFileRDD</span><br><span class="line">      .filter(log =&gt; log(<span class="number">1</span>).contains(<span class="string">&quot;product_id&quot;</span>) &amp;&amp; log(<span class="number">3</span>).contains(<span class="string">&quot;uid&quot;</span>))</span><br><span class="line">      .map(log =&gt; &#123;</span><br><span class="line">        <span class="keyword">val</span> paramsMap = <span class="keyword">new</span> <span class="type">MultiMap</span>[<span class="type">String</span>]</span><br><span class="line">        <span class="type">UrlEncoded</span>.decodeTo(log(<span class="number">1</span>), paramsMap, <span class="string">&quot;UTF-8&quot;</span>)</span><br><span class="line">        <span class="keyword">val</span> productId = paramsMap.getValue(<span class="string">&quot;product_id&quot;</span>, <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">val</span> uid = log(<span class="number">3</span>).split(<span class="string">&quot;=&quot;</span>)(<span class="number">1</span>)</span><br><span class="line">        (productId, uid)</span><br><span class="line">      &#125;)</span><br><span class="line">      .distinct()</span><br><span class="line">      .map(productIdWithUid =&gt; (productIdWithUid._1, <span class="number">1</span>L))</span><br><span class="line">      .reduceByKey(_ + _)</span><br><span class="line">    result</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">if</span> (args.length &lt; <span class="number">2</span>) &#123;</span><br><span class="line">      <span class="type">System</span>.err.println(<span class="string">&quot;Usage:&lt;input_file&gt; &lt;output_file&gt;&quot;</span>)</span><br><span class="line">      <span class="type">System</span>.exit(<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">val</span> conf = <span class="keyword">new</span> <span class="type">SparkConf</span>().setAppName(<span class="string">&quot;ComputeUV&quot;</span>)</span><br><span class="line">    <span class="keyword">val</span> sc = <span class="keyword">new</span> <span class="type">SparkContext</span>(conf)</span><br><span class="line">    <span class="keyword">val</span> textFileRDD = sc.textFile(args(<span class="number">0</span>))</span><br><span class="line">    <span class="keyword">val</span> result = computeUV(textFileRDD)</span><br><span class="line">    result.map(r =&gt; r._1 + <span class="string">&quot;\t&quot;</span> +r._2).saveAsTextFile(args(<span class="number">1</span>))</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="使用DataFrame写入MySQL"><a href="#使用DataFrame写入MySQL" class="headerlink" title="使用DataFrame写入MySQL"></a>使用DataFrame写入MySQL</h2><p><strong>什么是DataFrame</strong></p>
+<ul>
+<li>以RDD为基础的分布式数据集，类似于传统数据库中的表</li>
+<li>在RDD基础上引入了Schema元信息</li>
+<li>DataFrame所表示的二位数据集每一列都带有名称和类型</li>
+</ul>
+<p><strong>借助DataFrame API提供了jdbc方法保存数据</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">saveToMysql</span></span>(sc: <span class="type">SparkContext</span>, result: <span class="type">RDD</span>[(<span class="type">String</span>, <span class="type">Long</span>)]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> sqlContext = <span class="keyword">new</span> <span class="type">SQLContext</span>(sc)</span><br><span class="line">    <span class="keyword">val</span> props = <span class="keyword">new</span> java.util.<span class="type">Properties</span>()</span><br><span class="line">    props.setProperty(<span class="string">&quot;driver&quot;</span>, <span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>)</span><br><span class="line">    props.setProperty(<span class="string">&quot;user&quot;</span>, <span class="string">&quot;root&quot;</span>)</span><br><span class="line">    props.setProperty(<span class="string">&quot;password&quot;</span>, <span class="string">&quot;&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">import</span> sqlContext.implicits._</span><br><span class="line">    result</span><br><span class="line">        .toDF(<span class="string">&quot;column name 1&quot;</span>, <span class="string">&quot;column name 2&quot;</span>)</span><br><span class="line">        .write.mode(<span class="type">SaveMode</span>.<span class="type">Append</span>).jdbc(<span class="string">&quot;jdbc:mysql://localhost:3306/database&quot;</span>, <span class="string">&quot;table&quot;</span>, props)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="动手操作"><a href="#动手操作" class="headerlink" title="动手操作"></a>动手操作</h1><p><strong>思考题</strong></p>
+<ol>
+<li><p>什么是函数式编程？函数式编程有什么特点？</p>
+<p>简单说，”函数式编程”是一种”编程范式”（programming paradigm），也就是如何编写程序的方法论。</p>
+<p>它属于”结构化编程”的一种，主要思想是把运算过程尽量写成一系列嵌套的函数调用。</p>
+<p>函数式编程的特点</p>
+<ul>
+<li>数据映射<br>只关心数据的映射，不需要关系其它东西，并且这个函数中操作的数据都是通过参数传入的。我们之前定义一个函数会在函数内操作一个公共变量，在函数式编程中是看不到这样的写法的。在函数式编程中数据传入进来是什么返回就是什么</li>
+<li>变量不可变<br>函数在用的过程中只能是申请新的变量，最好不要更改变量，这样并发编程会更加的高效</li>
+<li>没有副作用<br>数据映射的好处，不需要担心更改了外部变量带来的影响，方便单元测试</li>
+<li>一等公民<br>定义了一个函数可以通过返回值返回，甚至可以把函数作为方法的参数传入</li>
+</ul>
+</li>
+<li><p>groupByKey和reduceByKey有什么区别？</p>
+<p>groupByKey对RDD[Key, Value]按照相同的key进行分组，直接进行shuffle</p>
+<p>reduceByKey对RDD[Key, Value]按照相同的key进行merge操作，可以在shuffle前对当前节点上的结果先进行merge操作</p>
+</li>
+<li><p>请描述一下Spark的内存结构以及每一部分的作用。</p>
+<ul>
+<li>Spark的Executor在NodeManager节点上执行，最外层是由Yarn Container抽象的cpu+memory资源，控制每个Executor允许申请资源上限<ul>
+<li>Executor Container为JVM运行时内存区域，由堆外内存和堆内内存组成<ul>
+<li>堆外内存存储创建Java对象时额外开销、Native方法调用，线程栈以及NIO Buffer，堆内内存为Executor中运行并发任务共享内存</li>
+<li>堆内内存分为Reserved Memory、User Memory、Spark Memory三个区域，<ul>
+<li>系统保留区域内存为300MB，无法通过任何参数更改，如果Spark设置堆内存小于1.5 * 系统保留区域内存会提示调高堆内存</li>
+<li>用户自定义内存存储用户自定义的数据接口和Spark内部元数据，大小为(Java Heap - Reserved Memory) * (1.0 - spark.memory.fraction)，Spark1.6为(Java Heap - 300MB) * 0.25</li>
+<li>Spark Memory大小为(Java Heap - Reserved Memory) * spark.memory.fraction，Spark Memory又分为Storager Memory和Execution Memory俩个区域，Storager Memory和Execution Memory可以互借内存，Execution Memory不足时可以让Storager Memory归还，Storager Memory内存不够可以将数据写入磁盘，Storager Memory不足时无法让Execution Memory归还<ul>
+<li>Storager Memory用于缓存数据，具体有Cached Data、所有broadcast变量</li>
+<li>Execution Memory用于存储执行过程中的Object，具体有hash aggregation时使用的hash table、shuffle中间结果</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>编程题</strong></p>
+<ul>
+<li><p>对一个数组求平均值。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> numRDD = sc.parallelize(<span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>))</span><br><span class="line"><span class="keyword">val</span> avg1 = numRDD.sum() / numRDD.count()</span><br><span class="line">avg1: <span class="type">Double</span> = <span class="number">5.5</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> sumRDD = numRDD.map(num =&gt; (num, <span class="number">1</span>)).reduce((x, y) =&gt; (x._1 + y._1, x._2 + y._2))</span><br><span class="line"><span class="keyword">val</span> avg2 = sumRDD._1 / sumRDD._2;</span><br><span class="line">avg2: <span class="type">Int</span> = <span class="number">5</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>根据购物车日志实现PV UV 以及页面平均停留时间计算。</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/01/01/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/03-Spark/02-SparkCore/" data-id="clmcxec7e0012u8waeql8c6c9" data-title="Spark" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/01/01/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/03-Spark/01-Scala%E5%92%8CSpark%E5%9F%BA%E7%A1%80/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Spark
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/12/25/98-Go/01-%E5%88%9D%E5%A7%8BGolang/01-Golang%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Golang前世今生</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

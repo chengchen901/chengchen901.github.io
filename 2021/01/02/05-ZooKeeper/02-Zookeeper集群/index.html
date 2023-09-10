@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Zookeeper集群 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="ZooKeeper集群">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zookeeper集群">
+<meta property="og:url" content="http://example.com/2021/01/02/05-ZooKeeper/02-Zookeeper%E9%9B%86%E7%BE%A4/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="ZooKeeper集群">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102170225976.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102175357061.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102175544235.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102185653922.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102192934408.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102193327287.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102194512426.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102193606304.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102200312647.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102200428861.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103105819663.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103110001356.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103110807210.png">
+<meta property="article:published_time" content="2021-01-02T08:57:26.000Z">
+<meta property="article:modified_time" content="2022-09-25T12:56:09.654Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="ZooKeeper">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102170225976.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-05-ZooKeeper/02-Zookeeper集群" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/02/05-ZooKeeper/02-Zookeeper%E9%9B%86%E7%BE%A4/" class="article-date">
+  <time class="dt-published" datetime="2021-01-02T08:57:26.000Z" itemprop="datePublished">2021-01-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ZooKeeper/">ZooKeeper</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Zookeeper集群
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>ZooKeeper集群</p>
+<span id="more"></span>
+
+<h1 id="1-ZK集群简介"><a href="#1-ZK集群简介" class="headerlink" title="1 ZK集群简介"></a>1 ZK集群简介</h1><h2 id="1-1-ZooKeeper集群"><a href="#1-1-ZooKeeper集群" class="headerlink" title="1.1 ZooKeeper集群"></a>1.1 ZooKeeper集群</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102170225976.png" alt="image-20210102170225976"></p>
+<ul>
+<li>可靠的ZooKeeper服务</li>
+<li>只要集群的大多数都准备好了，就可以使用这项服务</li>
+<li>容错集群设置至少需要三个服务器，强烈建议使用奇数个服务器</li>
+<li>建议每个服务运行在单独的机器上</li>
+</ul>
+<h2 id="1-2-ZooKeeper集群搭建"><a href="#1-2-ZooKeeper集群搭建" class="headerlink" title="1.2 ZooKeeper集群搭建"></a>1.2 ZooKeeper集群搭建</h2><p><strong>配置</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">tickTime=2000</span><br><span class="line">dataDir=/software/DevlopTools/ZooKeeper/zookeeper-cluster/zookeeper-3.4.13-1/dataDir</span><br><span class="line">dataLogDir=/software/DevlopTools/ZooKeeper/zookeeper-cluster/zookeeper-3.4.13-1/dataLogDir</span><br><span class="line">clientPort=2181</span><br><span class="line">initLimit=5</span><br><span class="line">syncLimit=2</span><br><span class="line">server.1=127.0.0.1:2881:3881</span><br><span class="line">server.2=127.0.0.1:2882:3882</span><br><span class="line">server.3=127.0.0.1:2883:3883</span><br></pre></td></tr></table></figure>
+
+<p><strong>initLimit</strong><br>集群中的follower服务器(F)与leader服务器(L)之间完成初始化同 步连接时能容忍的最多心跳数（tickTime的数量）。如果zk集群 环境数量确实很大，同步数据的时间会变长，因此这种情况下 可以适当调大该参数。</p>
+<p><strong>syncLimit</strong><br>集群中的follower服务器与leader服务器之间请求和应答之间能 容忍的最多心跳数（tickTime的数量）。</p>
+<p><strong>集群节点</strong><br>server.id&#x3D;host:port:port<br>id，通过在各自的dataDir目录下创建一个名为myid的文件来为每 台机器赋予一个服务器id。<br>两个端口号，第一个跟随者用来连接到领导者，第二个用来选举领导者。</p>
+<p><strong>创建myid文件</strong></p>
+<p>在dataDir目录下创建myid文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<p>一行只包含机器id的文本。id在集群中必须是唯一的，其值应在1到255之间。如服务器1的id为“1”。（1到255指的是推荐zk集群数量）</p>
+<h2 id="1-3-连接ZooKeeper集群"><a href="#1-3-连接ZooKeeper集群" class="headerlink" title="1.3 连接ZooKeeper集群"></a>1.3 连接ZooKeeper集群</h2><p>集群的所有节点都可以提供服务，客户端连接时，连接串中可以指定多个或全部集群节点的连接地址。当一个节点不通时，客户端将自动切换另一个节点。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-4-ZooKeeper集群监控"><a href="#1-4-ZooKeeper集群监控" class="headerlink" title="1.4 ZooKeeper集群监控"></a>1.4 ZooKeeper集群监控</h2><h3 id="1-4-1-四字命令"><a href="#1-4-1-四字命令" class="headerlink" title="1.4.1 四字命令"></a>1.4.1 四字命令</h3><p>示例：echo ruok | telnet 127.0.0.1 2181</p>
+<p>windows可以先 telnet 127.0.0.1 2181，再输入四字命令</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>conf</td>
+<td>输出相关服务配置的详细信息</td>
+</tr>
+<tr>
+<td>cons</td>
+<td>列出所有连接到服务器的客户端的完全的连接&#x2F;会话的详细信息。包括“接受&#x2F;发送”的包数量、会话id、操作延迟、最后的操作执行等等信息。</td>
+</tr>
+<tr>
+<td>crst</td>
+<td>重置当前这台服务器所有连接&#x2F;会话的统计信息</td>
+</tr>
+<tr>
+<td>dump</td>
+<td>列出未经处理的会话和临时节点</td>
+</tr>
+<tr>
+<td>envi</td>
+<td>输出关于服务环境的详细信息（区别于conf命令）</td>
+</tr>
+<tr>
+<td>reqs</td>
+<td>列出未经处理的请求</td>
+</tr>
+<tr>
+<td>ruok</td>
+<td>测试服务是否处于正确状态。如果确实如此，那么服务返回“imok”，否则不做任何响应</td>
+</tr>
+<tr>
+<td>srst</td>
+<td>重置服务器统计信息</td>
+</tr>
+<tr>
+<td>srvr</td>
+<td>列出服务器详细的信息，zk版本、接收&#x2F;发送包数量、连接数、模式（leader&#x2F;follower）、节点总数</td>
+</tr>
+<tr>
+<td>stat</td>
+<td>输出关于性能和连接的客户端的列表</td>
+</tr>
+<tr>
+<td>wchs</td>
+<td>列出服务器watch的详细信息</td>
+</tr>
+<tr>
+<td>wchc</td>
+<td>通过session列出服务器watch的详细信息，它的输出是一个与watch相关的会话的列表</td>
+</tr>
+<tr>
+<td>wchp</td>
+<td>通过路径列出服务器watch的详细信息。它输出一个与session相关的路径</td>
+</tr>
+<tr>
+<td>mntr</td>
+<td>列出集群的健康状态。包括“接受&#x2F;发送”的包数量、操作延迟、当前服务模式（leader&#x2F;follower）、节点总数、watch总数、临时节点总数</td>
+</tr>
+</tbody></table>
+<h3 id="1-4-2-JMX"><a href="#1-4-2-JMX" class="headerlink" title="1.4.2 JMX"></a>1.4.2 JMX</h3><p>JMX（Java Management Extensions）Java管理扩展，是一个为应用程序、设备、系统等植入管理功能的框架。</p>
+<p>软件路径：JAVA_HOME&#x2F;bin&#x2F;jconsole.exe</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102175357061.png" alt="image-20210102175357061"></p>
+<h1 id="2-ZK集群灵魂-Leader"><a href="#2-ZK集群灵魂-Leader" class="headerlink" title="2 ZK集群灵魂 - Leader"></a>2 ZK集群灵魂 - Leader</h1><h2 id="2-1-每个人都是Leader？"><a href="#2-1-每个人都是Leader？" class="headerlink" title="2.1 每个人都是Leader？"></a>2.1 每个人都是Leader？</h2><p>到底谁是Leader？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102175544235.png" alt="image-20210102175544235"></p>
+<p>每台服务器都可能成为Leader</p>
+<h2 id="2-2-Paxos算法"><a href="#2-2-Paxos算法" class="headerlink" title="2.2 Paxos算法"></a>2.2 Paxos算法</h2><p><strong>分布式一致性算法，Paxos</strong></p>
+<p>Paxos算法是LeslieLamport于1990年提出的一种基于消息传递且具有高度容错特性的一致性算法，是分布式一致性中的经典算法。</p>
+<p> Phase1. (a)A proposer selects a proposal number n and sends a prepare request with number n to a majority of acceptors.<br> (b) If anacceptor receives a prepare request with number n greater than that of any prepare request to which it has already responded, then it responds to the request with a promise not to accept any more proposals numbered less than n and with the highest-numbered pro- posal (if any) that it has accepted. </p>
+<p>Phase2. (a) If the proposer receives a response to its prepare requests (numbered n) from a majority of acceptors, then it sends an accept request to each of those acceptors for a proposal numbered n with a value v, where v is the value of the highest-numbered proposal among the responses, or is any value if the responses reported no proposals.<br> (b) If an acceptor receives anaccept request for a proposal numbered n,it accepts the proposal unless it has already responded to a prepare request having a number greater than n.  </p>
+<p>P1a∶提议发起者选择一个提案编号n，并且给大多数接受者发送一个带有编号n的提案预请求。</p>
+<p> P1b∶ 如果接受者收到了一个编号n提案预请求，请求的编号n大于前面已经响应过的预请求编号，这时接受者作出响应，承诺不再接受比编号n小的提案预请求，并且如果存在自己接受过的最高编号提案，则在响应中带上。 </p>
+<p>P2a∶如果提议发起者接收到了大多数接受者对于编号n预请求的响应，这时会给这些接受者的每一个服务发送接受请求，接受请求内容为，编号n的提案并带上value值v。v的取值从哪里选择呢?如果接受者响应中有其他提议内容，则取接受者响应中取最高编号对应的值，如果响应中没有其他提议内容，则可以是任意的值。 </p>
+<p>P2b∶ 如果接受者收到一个编号n的提案接受请求，它接受该提案;如果它已经准备对大于编号n的预请求作出响应，则不接受编号n的提案。  </p>
+<h3 id="2-2-1-Paxos中的角色"><a href="#2-2-1-Paxos中的角色" class="headerlink" title="2.2.1 Paxos中的角色"></a>2.2.1 Paxos中的角色</h3><p>在Paxos算法中，节点可以分为:Proposer（提议者）、Acceptor（接收者）、Learner（学习者）三种角色，可以同时扮演多种角色。</p>
+<p>Proposer：负责提议，提出想要达成一致的value；</p>
+<p>Acceptor：对提议投票，决定是否接受此value；</p>
+<p>Learner：不参与投票，只接收投票结果。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102185653922.png" alt="image-20210102185653922"></p>
+<h3 id="2-2-2-Paxos的约束"><a href="#2-2-2-Paxos的约束" class="headerlink" title="2.2.2 Paxos的约束"></a>2.2.2 Paxos的约束</h3><p>最终只有一个提议值会被选择，只有被选择的提议值才会被Learner节点学习。</p>
+<p>最终总会有一个提议生效，Paxos协议能够让Peoposer发送的提议朝着能被大多数Acceptor接受的那个提议靠拢，因此能够保证可终止性。（少数服从多数）</p>
+<h3 id="2-2-3-Paxos流程"><a href="#2-2-3-Paxos流程" class="headerlink" title="2.2.3 Paxos流程"></a>2.2.3 Paxos流程</h3><p><strong>Paxos的流程 prepare a</strong></p>
+<p>Proposer会发送俩种类型的消息给Acceptors：prepare（准备）和accept（接受）请求。</p>
+<p>Proposer发送的提议请求由两部分组成，（n，v），n为序号（不可重复，具有唯一性），v为提议值。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102192934408.png" alt="image-20210102192934408"></p>
+<p>Proposer A、B都可以发送prepare提议请求，Acceptor C、D先接收到Proposer A的请求，Acceptor E先接收到Proposer B的请求。</p>
+<p><strong>Paxos的流程 prepare b</strong></p>
+<p>如果Acceptor接收到一个prepare提议请求（n1，v1），并且之前还未接收过任何提议请求，会发送一个提议请求的响应，设置当前收到的提议为（n1，v1），保证不再接受序号小于n1的提议请求。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102193327287.png" alt="image-20210102193327287"></p>
+<p><strong>Paxos的流程 accept a</strong></p>
+<p>随后，Acceptor C、D会收到Proposer B的提议请求（n&#x3D;4，v&#x3D;8），先前的提议请求（n&#x3D;2，v&#x3D;5），由于4&gt;2，因此发送（n&#x3D;2，v&#x3D;5）的提议响应，设置当前接受的提议为（n&#x3D;4，v&#x3D;5），并且保证不再接受序号小于4的提议请求；Acceptor E先收到Proposer B的提议请求（n&#x3D;4，v&#x3D;8），后收到Proposer A的提议请求（n&#x3D;2，v&#x3D;5），由于2&lt;4，因此抛弃该提议请求。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102194512426.png" alt="image-20210102194512426"></p>
+<p><strong>Paxos的流程 accept b</strong></p>
+<p>一旦Proposer收到超过半数Acceptor所发的prepare提议响应，便会向所有Acceptor发送一个accept提议请求。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102193606304.png" alt="image-20210102193606304"></p>
+<p>Proposer A收到两个提议响应（no previous）后，发送accept提议请求（n&#x3D;2，v&#x3D;5），会被所有Acceptor丢弃；</p>
+<p>Proposer B收到两个提议响应（n&#x3D;2，v&#x3D;5）后，发送accept提议请求（n&#x3D;4，v&#x3D;5），需要注意：n&#x3D;4是最初Proposer B使用的序号，v&#x3D;5不是初始值，而是提议响应中更高的v值。 </p>
+<p><strong>Paxos的流程 learner</strong></p>
+<p>Acceptor C、D、E收到accept提议请求后，会通知所有Learner</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102200312647.png" alt="image-20210102200312647"></p>
+<h2 id="2-3-ZooKeeper集群Learder选举"><a href="#2-3-ZooKeeper集群Learder选举" class="headerlink" title="2.3 ZooKeeper集群Learder选举"></a>2.3 ZooKeeper集群Learder选举</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102200428861.png" alt="image-20210102200428861"></p>
+<p>对选举Leader的要求：</p>
+<ul>
+<li>选出的Leader节点上要持有最高的zxid</li>
+<li>过半数节点同意</li>
+</ul>
+<p>内置实现的选举算法，可以通过配置文件进行配置：</p>
+<ul>
+<li>LeaderElection</li>
+<li>FastLeaderElection默认的</li>
+<li>AuthFastLeaderElection</li>
+</ul>
+<h2 id="2-4-ZooKeeper集群Learder选举机制概念"><a href="#2-4-ZooKeeper集群Learder选举机制概念" class="headerlink" title="2.4 ZooKeeper集群Learder选举机制概念"></a>2.4 ZooKeeper集群Learder选举机制概念</h2><p>选举消息内容：</p>
+<ul>
+<li>服务器id</li>
+<li>事务id</li>
+<li>逻辑时钟</li>
+<li>选举状态</li>
+</ul>
+<p>选举机制中的概念：</p>
+<ul>
+<li>服务器id myid</li>
+<li>事务id，服务器中存放的最大Zxid</li>
+<li>逻辑时钟，发起的投票轮数计数</li>
+<li>选举状态<ul>
+<li>LOOKING，竞选状态。</li>
+<li>FOLLOWING，随从状态，同步leader状态，参与投票。</li>
+<li>OBSERVING，观察状态，同步leader状态，不参与投票。</li>
+<li>LEADING，领导者状态。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-5-ZooKeeper集群Leader选举算法"><a href="#2-5-ZooKeeper集群Leader选举算法" class="headerlink" title="2.5 ZooKeeper集群Leader选举算法"></a>2.5 ZooKeeper集群Leader选举算法</h2><p>选举算法：</p>
+<ol>
+<li>每个服务实例均发起选举自己为领导者的投票（自己的投给自己）；</li>
+<li>其他服务实例收到投票邀请时，比较发起者的数据事务ID是否比自己最新的事务ID大，大则给它投一票，小则不投票给它，相等则比较发起者的服务器ID，大则投票给它；</li>
+<li>发起者收到大家的投票反馈后，看投票数（含自己的）是否大于集群的半数，大于则胜出，担任领导者；未超过半数且领导者未选出，则再次发起投票</li>
+</ol>
+<p>胜出条件：</p>
+<p>投票赞成数大于半数则胜出的逻辑。</p>
+<h2 id="2-6-ZooKeeper集群Leader选举流程示例说明"><a href="#2-6-ZooKeeper集群Leader选举流程示例说明" class="headerlink" title="2.6 ZooKeeper集群Leader选举流程示例说明"></a>2.6 ZooKeeper集群Leader选举流程示例说明</h2><p>有5台服务器，每台服务器均没有数据，它们的编号分别是1，2，3，4，5按编号依次启动，它们的选举过程如下：</p>
+<ul>
+<li>服务器1启动，给自己投票，然后发投票信息，由于其它机器还没有启动所以它收不到反馈信息，服务器1的状态一直属于Looking，</li>
+<li>服务器2启动，给自己投票，同时与之前启动的服务器1交换结果，由于服务器2的编号大所以服务器2胜出，但此时投票数没有大于半数，所以两个服务器的状态依然时LOOKING。</li>
+<li>服务器3启动该，给自己投票，同时与之前启动的服务器1，2交换信息，由于服务器3的编号最大所以服务器3胜出，此时投票数正好大于半数，所以服务器3成为领导者，服务器1，2成为小弟。</li>
+<li>服务器4启动，给自己投票，同时与之前启动的服务器1，2，3交换信息，尽管服务器4的编号大，但之前服务器3已胜出，所以服务器4只能成为小弟。</li>
+<li>服务器5启动，后面的逻辑同服务器4成为小弟。</li>
+</ul>
+<h1 id="3-问题"><a href="#3-问题" class="headerlink" title="3 问题"></a>3 问题</h1><ol>
+<li>有3台zk服务器，编号1，2，3按编号依次启动，谁会成为Leader？<br>2</li>
+<li>有5台zk服务器，编号是1，2，3，4，5按1，3，5，2，4编号依次启动，谁会成为Leader？<br>5</li>
+<li>每次都会这样的规律吗？到底是怎么样？<br>不一定，如果某一台机器中的存在数据，zxid会相对其它未写数据的要大。</li>
+</ol>
+<h1 id="4-ZK集群工作原理"><a href="#4-ZK集群工作原理" class="headerlink" title="4 ZK集群工作原理"></a>4 ZK集群工作原理</h1><h2 id="4-1-ZK集群-ZAB协议"><a href="#4-1-ZK集群-ZAB协议" class="headerlink" title="4.1 ZK集群-ZAB协议"></a>4.1 ZK集群-ZAB协议</h2><p>ZAB协议（ZooKeeper Atomic Broadcast，ZooKeeper原子消息广播协议）是专为ZooKeeper设计的数据一致性协议。参考Paxos来实现的。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103105819663.png" alt="image-20210103105819663"></p>
+<p>关注点数据的一致性，无关数据的准确性、权威性、实时性</p>
+<h3 id="4-1-1-ZAB协议过程"><a href="#4-1-1-ZAB协议过程" class="headerlink" title="4.1.1 ZAB协议过程"></a>4.1.1 ZAB协议过程</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103110001356.png" alt="image-20210103110001356"></p>
+<ol>
+<li>所有事务请求转发给leader</li>
+<li>Leader分配全局单调递增事务id（Zxid），广播事务提议</li>
+<li>Follower处理提议，做出反馈</li>
+<li>Leader收到过半数反馈，广播Commit</li>
+<li>Leader做出响应</li>
+</ol>
+<p>Leader维护一个队列，保证执行命令的先进先出</p>
+<p>ZAB协议重要特性：有序性</p>
+<p>适合写少读多的场景</p>
+<h3 id="4-1-2-ZAB协议-崩溃恢复"><a href="#4-1-2-ZAB协议-崩溃恢复" class="headerlink" title="4.1.2 ZAB协议-崩溃恢复"></a>4.1.2 ZAB协议-崩溃恢复</h3><p>Leader服务器出现崩溃，或者说由于网络原因导致Leader服务器失去了与过半Follower的联系，那么就会进入崩溃恢复模式。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103110807210.png" alt="image-20210103110807210"></p>
+<ul>
+<li>ZAB协议规定如果一个事务Proposal在一台机器上被处理成功，那么应该在所有的机器上都被处理成功，哪怕机器出现故障崩溃。</li>
+<li>ZAB协议确保那些已经在Leader服务器上提交的事务最终被所有服务器都提交</li>
+<li>ZAB协议确保丢弃那些只在Leader服务器上被提出的事务</li>
+</ul>
+<p>​	ZAB协议需要设计的选举算法应该满足：确保提交已经被Leader提交的事务Proposal，同时丢弃已经被跳过的事务Proposal。</p>
+<p>​	如果让Leader选举算法能够保证新选举出来的Leader服务器拥有集群中所有机器最高ZXID的事务Proposal，那么就可以保证这个新选举出来的Leader一定具有所有已经提交的提案。同时，如果让具有最高编号事务Proposal的机器来成为Leader，就可以省去Leader服务器检查Proposal的提交和丢弃工作的这一步操作。</p>
+<h3 id="4-1-3-ZAB协议-数据同步"><a href="#4-1-3-ZAB协议-数据同步" class="headerlink" title="4.1.3 ZAB协议-数据同步"></a>4.1.3 ZAB协议-数据同步</h3><p>​	Leader选举出来后，需完成Followers与Leader的数据同步，当半数的Followers完成同步，则可以开始提供服务。同步的过程如下。</p>
+<p>​	Leader服务器会为每一个Follower服务器都准备一个队列，并将那些没有被各Follower服务器同步的事务以Proposal消息的形式逐个发送给Follower服务器，并在每一个Proposal消息后面紧接着再发送一个Commit消息，以表示该事务已经被提交。等到Follower服务器将所有其尚未同步的事务Proposal都从Leader服务器上同步过来并成功应用到本地数据库中后，Leader服务器就会将该Follower服务器加入到真正的可用Follower列表中，并开始之后的其它流程。</p>
+<h3 id="4-1-4-ZAB协议-丢弃事务Proposal处理"><a href="#4-1-4-ZAB协议-丢弃事务Proposal处理" class="headerlink" title="4.1.4 ZAB协议-丢弃事务Proposal处理"></a>4.1.4 ZAB协议-丢弃事务Proposal处理</h3><p>​	在ZAB协议的事务编号ZXID设计中，ZXID是一个64位的数字，低32位是一个简单的单调递增的计数器，针对客户端的每一个事务请求，Leader服务器在产生一个新的事务Proposal的时候，都会对该计数器进行加1操作；高32位代表了Leader周期纪元的编号，每当选举产生一个新的Leader服务器，就会从这个Leader服务器上取出其本地日志中最大事务Proposal的ZXID，并从该ZXID中解析出对应的纪元值，然后对其进行加1操作，之后就会以此编号作为新的纪元，并将低32位置0来开始生成新的ZXID。</p>
+<p>​	基于这样的策略，当一个包含了上一个Leader周期中尚未提交过的事务Proposal的服务器启动加入到集群中，发现此时集群中已经存在Leader，将自身以Follower角色连接上Leader服务器之后，Leader服务器会根据自己服务器上最后被提交的Proposal来和Follower服务器的Proposal进行对比，发现Follower中有上一个Leader周期的事务Proposal时，Leader会要求Follower进行一个回退操作，回退到一个确实已经被集群中过半机器提交的最新的事务Proposal。</p>
+<h1 id="5-ZooKeeper参数配置"><a href="#5-ZooKeeper参数配置" class="headerlink" title="5 ZooKeeper参数配置"></a>5 ZooKeeper参数配置</h1><p>官网文档：</p>
+<p><a target="_blank" rel="noopener" href="https://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_configuration">https://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_configuration</a></p>
+<h1 id="6-其它"><a href="#6-其它" class="headerlink" title="6 其它"></a>6 其它</h1><ol>
+<li>三个节点组成的ZK集群，当集群中一个两个节点分别挂掉，验证ZK集群，写事件如何处理<br>一个节点挂掉，还有两个节点，大于等于大多数，写正常<br>两个节点挂掉，还有一个节点，小于大多数，无法写入数据</li>
+<li>三个节点组成的ZK集群，当集群中一个两个节点分别挂掉，验证ZK集群，读事件如何处理<br>一个节点挂掉，还有两个节点，大于等于大多数，读正常<br>两个节点挂掉，还有一个节点，小于大多数，无法读取数据</li>
+<li>三个节点组成的ZK集群，tickTime&#x3D;20000，只连接leader节点，主动关闭俩个从节点，此时只剩leader节点，是否会里面停止服务？<br>对leader节点的读操作还可以在tickTime时间范围内继续执行，写操作则不行</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/02/05-ZooKeeper/02-Zookeeper%E9%9B%86%E7%BE%A4/" data-id="clmcxecxk008ju8wa5ykefpt2" data-title="Zookeeper集群" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/01/03/05-ZooKeeper/03-ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          ZooKeeper经典应用场景
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/01/02/05-ZooKeeper/01-ZooKeeper%E5%85%A5%E9%97%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ZooKeeper入门</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Nginx入门分流限流、多读写少用缓存，写多读少用缓冲。 什么是Nginx一个俄国人用C语言编写的，开源的高性能的HTTP和反向代理服务软件。 Nginx主要应用于静态资源服务、反向代理服务、API服务   静态资源主要借助于服务器本地文件系统来完成   2. 反向代理可以做到Nginx强大的性能、缓存、负载均衡   API服务通过集成nginx_lua模块来实现，比如 OpenResty就是用n">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/16-Nginx/01-Nginx%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Nginx入门分流限流、多读写少用缓存，写多读少用缓冲。 什么是Nginx一个俄国人用C语言编写的，开源的高性能的HTTP和反向代理服务软件。 Nginx主要应用于静态资源服务、反向代理服务、API服务   静态资源主要借助于服务器本地文件系统来完成   2. 反向代理可以做到Nginx强大的性能、缓存、负载均衡   API服务通过集成nginx_lua模块来实现，比如 OpenResty就是用n">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220605145630.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220605145726.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220605145745.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220605152529.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220605172034.png">
+<meta property="article:published_time" content="2023-09-10T03:59:07.767Z">
+<meta property="article:modified_time" content="2022-09-25T08:07:19.307Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220605145630.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-16-Nginx/01-Nginx入门" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/16-Nginx/01-Nginx%E5%85%A5%E9%97%A8/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:07.767Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Nginx入门"><a href="#Nginx入门" class="headerlink" title="Nginx入门"></a>Nginx入门</h1><p><strong>分流限流</strong>、多读写少用缓存，写多读少用缓冲。</p>
+<h2 id="什么是Nginx"><a href="#什么是Nginx" class="headerlink" title="什么是Nginx"></a>什么是Nginx</h2><p>一个俄国人用C语言编写的，开源的高性能的HTTP和反向代理服务软件。</p>
+<p>Nginx主要应用于静态资源服务、反向代理服务、API服务 </p>
+<ol>
+<li>静态资源主要借助于服务器本地文件系统来完成</li>
+</ol>
+<p> 2. 反向代理可以做到Nginx强大的性能、缓存、负载均衡 </p>
+<ol start="3">
+<li>API服务通过集成nginx_lua模块来实现，比如 OpenResty就是用nginx和lua集成特性，整合了大量常用的第三方模块</li>
+</ol>
+<p>  </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220605145630.png"></p>
+<h2 id="正向代理-反向代理"><a href="#正向代理-反向代理" class="headerlink" title="正向代理&#x2F;反向代理"></a>正向代理&#x2F;反向代理</h2><p>正向代理，代表客户端进行网络或服务访问</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220605145726.png"></p>
+<p>反向代理，代表服务端接收客户端的请求</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220605145745.png"></p>
+<h2 id="为什么会选Nginx？"><a href="#为什么会选Nginx？" class="headerlink" title="为什么会选Nginx？"></a>为什么会选Nginx？</h2><p>在高并发的互联网行业，硬件负载均衡器、软件负载均衡器的选择</p>
+<p><strong>高并发、高性能</strong> </p>
+<p>基于NIO非阻塞事件模型处理网络请求，slab内存管理机制。 </p>
+<p><strong>可扩展性好</strong> </p>
+<p>核心模块+扩展模块+第三方插件，丰富的模块及第三方插件是Nginx生命力顽强的原因。</p>
+<p> <strong>高可靠性</strong></p>
+<p> 部署后常年稳定运行 </p>
+<p><strong>热部署</strong> </p>
+<p>无需重启，更新配置文件 </p>
+<p><strong>开源BSD协议</strong>  </p>
+<h2 id="Nginx常规操作"><a href="#Nginx常规操作" class="headerlink" title="Nginx常规操作"></a>Nginx常规操作</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">./nginx -h <span class="comment">#显示帮助文档</span></span><br><span class="line">./nginx -c /usr/local/nginx/conf/nginx.conf <span class="comment">#指定配置文件</span></span><br><span class="line">./nginx -s quit <span class="comment">#比stop更优雅的退出</span></span><br><span class="line">./nginx -s reload <span class="comment">#热更新配置文件，无需重启</span></span><br><span class="line"></span><br><span class="line">./nginx -s reopen <span class="comment">#打开新的日志文件</span></span><br><span class="line">./nginx -t <span class="comment">#测试配置文件是否正确</span></span><br><span class="line">./nginx -v <span class="comment">#版本信息</span></span><br><span class="line">./nginx -V <span class="comment">#版本信息及配置选项</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Nginx的配置文件"><a href="#Nginx的配置文件" class="headerlink" title="Nginx的配置文件"></a>Nginx的配置文件</h2><p>Nginx有一个非常强大的配置文件，可以配置应用对应的模块指令，类似Perl语法风格。配置文件指今主要分为两大块∶简单指令、块指令。  </p>
+<p><strong>简单指令</strong></p>
+<p>简单的指令由名称和参数组成，用空格分隔，以分号;结尾</p>
+<p><strong>块指令</strong></p>
+<p>块指令，以大括号{}包围的一组附加指令，块指令在大括号内可以有其他指令，则称为上下文。在任意上下文之外的指令称为主上下文，http、events指令放在主上下文，server在http中，location在server中。  </p>
+<h2 id="动静分离-静态资源服务"><a href="#动静分离-静态资源服务" class="headerlink" title="动静分离-静态资源服务"></a>动静分离-静态资源服务</h2><p><strong>动静分离术</strong></p>
+<p>Web服务当中，html、js、图片、css等静态资源放在webapp目录下。当静态资源越 来越大时，一个网页获取大量静态资源时，影响到web服务的整体性能。 </p>
+<p>通过Nginx将静态资源独立部署，减轻web 服务的压力。</p>
+<p> 动态计算的数据则通过web服务来获取。 </p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">worker_processes <span class="number">1</span>;</span><br><span class="line">events&#123;</span><br><span class="line">    worker_connections <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line">http&#123;</span><br><span class="line">    server&#123;</span><br><span class="line">        location /&#123;</span><br><span class="line">            root /data/www/;</span><br><span class="line">            <span class="keyword">index</span> index.html;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Nginx的配置热更新"><a href="#Nginx的配置热更新" class="headerlink" title="Nginx的配置热更新"></a>Nginx的配置热更新</h2><p>Nginx中有Master、Worker两种进程。</p>
+<p>Master进程负责加载配置、接收命令、监控子进程</p>
+<p>Worker进程负责处理网络请求  </p>
+<p><strong>Nginx如何做到配置文件热更新?</strong> </p>
+<ol>
+<li>master检查配置文件的正确性，若是错误则返回错误 信息，nginx继续用原配置文件进行工作</li>
+</ol>
+<p> 2. Nginx启动新的worker进程，采用新的配置文件</p>
+<ol start="3">
+<li>Nginx将新的请求分配新的workeri进程</li>
+</ol>
+<p> 4. Nginx等待以前的worker进程的全部请求已经都返回后， 关闭相关worker进程 </p>
+<ol start="5">
+<li>重复上面过程，直到全部旧的worker进程都被关闭掉</li>
+</ol>
+<p>  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost nginx]# ps -ef | grep nginx</span><br><span class="line">root      56240      1  0 15:15 ?        00:00:00 nginx: master process ./nginx -c conf/nginx_static.conf</span><br><span class="line">nobody    56241  56240  0 15:15 ?        00:00:00 nginx: worker process</span><br></pre></td></tr></table></figure>
+
+<h1 id="官方文档阅读"><a href="#官方文档阅读" class="headerlink" title="官方文档阅读"></a>官方文档阅读</h1><p>nginx官网：<a target="_blank" rel="noopener" href="https://nginx.org/">https://nginx.org/</a></p>
+<h2 id="Nginx官方文档整体结构"><a href="#Nginx官方文档整体结构" class="headerlink" title="Nginx官方文档整体结构"></a>Nginx官方文档整体结构</h2><p>文档主要有∶首页、关于、下载页面、安全、使用文档、faq、博客等部分  </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220605152529.png"></p>
+<p>作为开发人员，主要关注，下载页面、使用文档、博客这几个部分。其中使用文档和博客是最为重要的内容。 </p>
+<p><strong>博客</strong>中涉及一些高级的特性和商业支持。<strong>使用文档</strong>包含，Nginx常规操作介绍、功能场景操作、贡献提交源代码、Nginx模块参考。</p>
+<p> <strong>常规操作</strong> </p>
+<p>包含如何编译安装Nginx、初学者指南、管理员指南、Nginx操作、Nginx的连接处理事件类型、等信息。</p>
+<p> <strong>功能场景配置</strong></p>
+<p> 一般只有在对应的功能场景下使用配置，例如负载均衡反向代理、HTTPS服务   </p>
+<h2 id="Nginx模块"><a href="#Nginx模块" class="headerlink" title="Nginx模块"></a>Nginx模块</h2><p>Nginx整体设计采用∶<strong>微核心+插件形式</strong></p>
+<p> 很多优秀的开源组件都在采用这样的设计思想，为第三方扩展提供了强大的支撑。也是ngin受欢迎的原因之一。  </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220605172034.png"></p>
+<h2 id="核心模块常用指令"><a href="#核心模块常用指令" class="headerlink" title="核心模块常用指令"></a>核心模块常用指令</h2><p>核心功能指令</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>user</td>
+<td>指定用来运行nginx的用户名，跟linux权限系统相关</td>
+</tr>
+<tr>
+<td>use</td>
+<td>指定处理网络IO的事件模型：select、kqueue、poll、epool</td>
+</tr>
+<tr>
+<td>worker_processes</td>
+<td>指定运行多少个工作进程</td>
+</tr>
+<tr>
+<td>events</td>
+<td>指定连接处理相关的指令块：use、worker_connections等简单指令</td>
+</tr>
+<tr>
+<td>worker_connections</td>
+<td>Worker进程能够处理的最大连接数</td>
+</tr>
+</tbody></table>
+<p>http核心指令</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>http</td>
+<td>表示http模块的块指令</td>
+</tr>
+<tr>
+<td>server</td>
+<td>表示一个虚拟服务</td>
+</tr>
+<tr>
+<td>listen</td>
+<td>监听端口号，有大量可选项，ssl、http2等</td>
+</tr>
+<tr>
+<td>location</td>
+<td>设置访问的URL，7种玩法</td>
+</tr>
+</tbody></table>
+<h2 id="location7种玩法"><a href="#location7种玩法" class="headerlink" title="location7种玩法"></a>location7种玩法</h2><p>最常用又最容易弄错的location指令，它可以由前级字符串或正则表达式定义  </p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&#x3D;</td>
+<td>URI和位置的精确匹配，如找到完全匹配，则搜索终止，优先级最高</td>
+</tr>
+<tr>
+<td>&#x2F;xxx</td>
+<td>字符串前缀匹配，匹配到 ，记住，仍会继续匹配正则表达式</td>
+</tr>
+<tr>
+<td>^~</td>
+<td>字符串前缀匹配，有匹配，记住，但后继不再做正则表达式匹配，会使用最长前缀的匹配配置</td>
+</tr>
+<tr>
+<td>~*</td>
+<td>不区分大小写的匹配正则表达式</td>
+</tr>
+<tr>
+<td>~</td>
+<td>区分大小写的匹配正则表达式</td>
+</tr>
+<tr>
+<td>&#x2F;</td>
+<td>最后的接盘侠，所有指令都不匹配的时候则用它。相当于java中switch的default</td>
+</tr>
+<tr>
+<td>@</td>
+<td>非常规请求，用于请求重定向。自己不能嵌套，也不能嵌套location指令</td>
+</tr>
+</tbody></table>
+<h2 id="location匹配规则"><a href="#location匹配规则" class="headerlink" title="location匹配规则"></a>location匹配规则</h2><p>当一个请求过来时候，location怎么进行匹配? </p>
+<p>首先 nginx检查使用了前缀字符串定义的location指令块</p>
+<p>​	 选中并记住具有最长匹配前缀的location指令块</p>
+<p>​	 location如有^~匹配，则不查找正则表达式，使用该location</p>
+<p> 然后 按照它们在配置文件中的出现顺序检查正则表达式 </p>
+<p>​	正则表达式的搜索在第一次匹配时终止，并使用相应的配置 </p>
+<p>​	如果未找到与正则表达式的匹配，则使用先前记住的最长匹配前缀位置的配置 </p>
+<p>最后还没有找到?接盘侠&#x2F;  </p>
+<p><a target="_blank" rel="noopener" href="https://nginx.org/en/docs/http/ngx_http_core_module.html#http">官网描述</a>：</p>
+<p>在按名称搜索虚拟服务器期间，如果名称匹配多个指定变体（例如通配符名称和正则表达式匹配），将选择第一个匹配的变体，按以下优先级顺序：</p>
+<ol>
+<li>确切的名字</li>
+<li>以星号开头的最长通配符名称，例如“ <code>*.example.com</code>”</li>
+<li>以星号结尾的最长通配符名称，例如“ <code>mail.*</code>”</li>
+<li>第一个匹配的正则表达式（在配置文件中的出现顺序）</li>
+</ol>
+<h1 id="实现高并发分流"><a href="#实现高并发分流" class="headerlink" title="实现高并发分流"></a>实现高并发分流</h1><h2 id="单台服务的能力"><a href="#单台服务的能力" class="headerlink" title="单台服务的能力"></a>单台服务的能力</h2><p><strong>模拟一个耗时服务</strong></p>
+<p><code>http://hostname:port/bench/1000</code></p>
+<p><strong>使用压测工具压测</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">安装ab工具</span></span><br><span class="line">yum -y install httpd-tools</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">总共10w次请求，100的并发</span></span><br><span class="line">ab -n 100000 -c 1000 http://localhost:8080/bench/100</span><br></pre></td></tr></table></figure>
+
+<p><strong>测试结果</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">平均吞吐率（总请求数/总时间），括号中的mean表示这是一个平均值</span></span><br><span class="line">Requests per second:    1913.12 [#/sec] (mean)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Nginx复制均衡"><a href="#Nginx复制均衡" class="headerlink" title="Nginx复制均衡"></a>Nginx复制均衡</h2><p><strong>负载均衡涉及的模块</strong></p>
+<p><a target="_blank" rel="noopener" href="https://nginx.org/en/docs/http/ngx_http_upstream_module.html">Module ngx_http_upstream_module</a></p>
+<p><a target="_blank" rel="noopener" href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html">Module ngx_http_proxy_module</a></p>
+<h2 id="Nginx完成反向代理负载均衡"><a href="#Nginx完成反向代理负载均衡" class="headerlink" title="Nginx完成反向代理负载均衡"></a>Nginx完成反向代理负载均衡</h2><p><strong>upstream</strong></p>
+<p>http_upstream模块定义一组服务，能被proxy_pass指令引用。</p>
+<p> upstream name{…} 在http指令块中，定义一组可以进行负载均衡的上游服务器，并给取个组名。服务可以是不同的端口、TCP、Unix域名套接字。  </p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">upstream tomcatServer&#123;</span><br><span class="line">	server backend1.example.com weight=<span class="number">5</span>;</span><br><span class="line">	server <span class="number">127.0</span>.<span class="number">01</span>:<span class="number">8080</span> max_fails=<span class="number">3</span> fail_timeout=<span class="number">30</span>s;</span><br><span class="line">	server unix:<span class="regexp">/tmp/</span>backend3;</span><br><span class="line">	server backup1.example.com backup;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过upstream，就能为成千上百台的后端服务集群提供强有力的支撑</p>
+<p><strong>proxy_pass</strong></p>
+<p>表示将请求传递到另外一个服务</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># server在http的上下文中</span></span><br><span class="line">server&#123;</span><br><span class="line">	<span class="comment">#location在server上下文中</span></span><br><span class="line">	location / &#123;</span><br><span class="line">		proxy_pass http:<span class="regexp">//</span>tomcatServer;</span><br><span class="line">		health_check;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="再次压测"><a href="#再次压测" class="headerlink" title="再次压测"></a>再次压测</h2><p><strong>修改Nginx配置并启动</strong></p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">worker_processes <span class="number">2</span>;</span><br><span class="line">events&#123;</span><br><span class="line">    worker_connections <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line">http&#123;</span><br><span class="line">    upstream tomcatServer&#123;</span><br><span class="line">        server <span class="number">192.168</span>.<span class="number">254.174</span>:<span class="number">8080</span>;</span><br><span class="line">        server <span class="number">192.168</span>.<span class="number">254.174</span>:<span class="number">8081</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    server&#123;</span><br><span class="line">		<span class="keyword">listen</span> <span class="number">9000</span>;</span><br><span class="line">        location / &#123;</span><br><span class="line">            proxy_pass http:<span class="regexp">//</span>tomcatServer;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>.&#x2F;nginx -c &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;conf&#x2F;nginx_upstream01.conf</p>
+<p><strong>使用压测工具压测</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">安装ab工具</span></span><br><span class="line">yum -y install httpd-tools</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">总共10w次请求，100的并发</span></span><br><span class="line">ab -n 100000 -c 1000 http://localhost:9000/bench/100</span><br></pre></td></tr></table></figure>
+
+<p><strong>测试结果</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">平均吞吐率（总请求数/总时间），括号中的mean表示这是一个平均值</span></span><br><span class="line">Requests per second:    1953.74 [#/sec] (mean)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Nginx负载均衡策略"><a href="#Nginx负载均衡策略" class="headerlink" title="Nginx负载均衡策略"></a>Nginx负载均衡策略</h2><table>
+<thead>
+<tr>
+<th>策略</th>
+<th>均衡性</th>
+<th>一致性</th>
+<th>容灾性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>round-robin</td>
+<td>☆☆☆</td>
+<td>☆</td>
+<td>☆☆☆</td>
+<td>默认的处理反向代理服务的方法，还能根据加权值来传递请求。通用性强，无特殊需求的场景下均可</td>
+</tr>
+<tr>
+<td>hash</td>
+<td>☆☆☆</td>
+<td>☆☆☆</td>
+<td>☆☆</td>
+<td></td>
+</tr>
+<tr>
+<td>ip_hash</td>
+<td>☆☆</td>
+<td>☆☆☆</td>
+<td>☆☆☆</td>
+<td>根据客户端ip地址在服务间进行分发请求。要求ip一致性的场景</td>
+</tr>
+<tr>
+<td>random</td>
+<td>☆☆</td>
+<td>☆</td>
+<td>☆☆</td>
+<td>将请求传递给随机选择的服务器</td>
+</tr>
+<tr>
+<td>least_conn</td>
+<td>☆☆☆</td>
+<td>☆</td>
+<td>☆☆☆</td>
+<td>将请求传递到活动连接数量最少的服务器，同时考虑服务器的权重。自适应强，适合服务差异复杂的情况</td>
+</tr>
+<tr>
+<td>least_time</td>
+<td>☆☆</td>
+<td>☆</td>
+<td>☆☆☆</td>
+<td>将请求传递给具有最小平均响应时间和最少活动连接数的服务，同时考虑服务器权重。自适应强，适合网络环境复杂的情况</td>
+</tr>
+</tbody></table>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">worker_processes <span class="number">2</span>;</span><br><span class="line">events&#123;</span><br><span class="line">    worker_connections <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line">http&#123;</span><br><span class="line">    upstream tomcatServer&#123;</span><br><span class="line">    	<span class="comment"># 负载均衡策略，默认为round-robin</span></span><br><span class="line">	    random;</span><br><span class="line">        server <span class="number">192.168</span>.<span class="number">254.174</span>:<span class="number">8080</span>;</span><br><span class="line">        server <span class="number">192.168</span>.<span class="number">254.174</span>:<span class="number">8081</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    server&#123;</span><br><span class="line">		<span class="keyword">listen</span> <span class="number">9000</span>;</span><br><span class="line">        location / &#123;</span><br><span class="line">            proxy_pass http:<span class="regexp">//</span>tomcatServer;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/16-Nginx/01-Nginx%E5%85%A5%E9%97%A8/" data-id="clmcxecba002ju8wa2q2dgmcp" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/16-Nginx/02-00-Nginx%E7%9A%84WEB%E5%AE%89%E5%85%A8%E4%BD%93%E7%B3%BB/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/16-Nginx/00-Nginx%E5%AE%89%E8%A3%85/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="正则表达式在线测试工具：https:&#x2F;&#x2F;regex101.com&#x2F; 限定符?used? 表示 ? 前面这个字符需要出现0次或者1次，简单点就是 d 可有可无 可匹配：use、used *匹配0个或多个字符 ab*c 可匹配：ac、abc、abbbbc 没有匹配 adc，因为表达式中规定了 a 和 c 中间只能出现0个或者多个 b +和 * 不同的是它会匹配出现1次以上的字符 ab+c 可匹配：ab">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/01-Java%E5%9F%BA%E7%A1%80/05-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/01-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="正则表达式在线测试工具：https:&#x2F;&#x2F;regex101.com&#x2F; 限定符?used? 表示 ? 前面这个字符需要出现0次或者1次，简单点就是 d 可有可无 可匹配：use、used *匹配0个或多个字符 ab*c 可匹配：ac、abc、abbbbc 没有匹配 adc，因为表达式中规定了 a 和 c 中间只能出现0个或者多个 b +和 * 不同的是它会匹配出现1次以上的字符 ab+c 可匹配：ab">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20220315235724530.png">
+<meta property="article:published_time" content="2023-09-10T03:59:08.372Z">
+<meta property="article:modified_time" content="2022-09-25T09:24:17.462Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20220315235724530.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-01-Java基础/05-正则表达式/01-正则表达式入门" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/01-Java%E5%9F%BA%E7%A1%80/05-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/01-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%85%A5%E9%97%A8/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.372Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>正则表达式在线测试工具：<a target="_blank" rel="noopener" href="https://regex101.com/">https://regex101.com/</a></p>
+<h1 id="限定符"><a href="#限定符" class="headerlink" title="限定符"></a>限定符</h1><h2 id=""><a href="#" class="headerlink" title="?"></a>?</h2><p>used?</p>
+<p>表示 ? 前面这个字符需要出现0次或者1次，简单点就是 d 可有可无</p>
+<p>可匹配：use、used</p>
+<h2 id="-1"><a href="#-1" class="headerlink" title="*"></a>*</h2><p>匹配0个或<strong>多</strong>个字符</p>
+<p>ab*c</p>
+<p>可匹配：ac、abc、abbbbc</p>
+<p>没有匹配 adc，因为表达式中规定了 a 和 c 中间只能出现0个或者多个 b</p>
+<h2 id="-2"><a href="#-2" class="headerlink" title="+"></a>+</h2><p>和 * 不同的是它会匹配出现1次以上的字符</p>
+<p>ab+c</p>
+<p>可匹配：abc、abbbbc</p>
+<p>ac 则不会被匹配</p>
+<p>指定 b 出现的次数为6次：ab{6}c</p>
+<p>指定 b 出现的次数为2到6之间：ab{2,6}c</p>
+<p>指定 b 出现的次数为2以上：ab{2,}c</p>
+<p>比如在下面的例子中，我们想去匹配中间多次出现的这个 ab</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">abc</span><br><span class="line">abbc</span><br><span class="line">abababac</span><br></pre></td></tr></table></figure>
+
+<p>我们可以先将 ab 括起来，然后再在后面添加限定符：(ab)+</p>
+<h1 id="“或”运算"><a href="#“或”运算" class="headerlink" title="“或”运算"></a>“或”运算</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a cat</span><br><span class="line">a dog</span><br><span class="line">a bird</span><br></pre></td></tr></table></figure>
+
+<p>比如这里我们要去匹配 a cat 或者 a dog，我们可以将正则表达式写成这样：a (cat|dog)</p>
+<p>这里前面会先去匹配 “a”，后面括号中的内容代表要么是 cat 要么是 dog，中间以竖线分开，注意这里的括号是比不可少的，否则就变成了要么是 a cat 要么是 dog</p>
+<h1 id="字符类"><a href="#字符类" class="headerlink" title="字符类"></a>字符类</h1><p>比如我们想要匹配由 abc 这几个字母构成的单词</p>
+<p>我们可以写：[abc]+</p>
+<p>方括号里的内容代表要求匹配的字符只能取自于它们</p>
+<p>我们还可以在方括号指定字符的范围</p>
+<p>比如[a-z]+代表所有的小写英文字符，[a-zA-Z]+代表所有的英文字符，[a-zA-Z0-9]+代表所有的英文字符和数字</p>
+<p>如果在方括号的前面写一个尖号（^），则代表要求匹配除了尖号后面列出的<strong>以外</strong>的字符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">比如[^0-9]代表所有的非数字字符（包括换行符）</span><br></pre></td></tr></table></figure>
+
+<h1 id="元字符"><a href="#元字符" class="headerlink" title="元字符"></a>元字符</h1><p>正则表达式中的大多数元字符都以反斜杠开头</p>
+<p>\d 代表数字字符，\d+ 等同于 [0-9]+</p>
+<p>\w 代表”单词”字符，也就是所有的英文字符、数字加上下划线</p>
+<p>\s 代表空白符（包含 Tab 和换行符），它同时包含 Tab 字符以及换行符</p>
+<p>与 \d 相对应的 \D 代表非数字字符</p>
+<p>与 \w 相对应的 \W 代表非单词字符</p>
+<p>与 \s 相对应的 \S 代表非空白字符</p>
+<p>. 在正则表达式中也是一个特殊字符，它代表任意字符，但不包含换行符</p>
+<p>^ 会匹配行首，$ 会匹配行尾</p>
+<p>比如 ^a 只会去匹配行首的 a，a$ 只会去匹配行尾的 a</p>
+<h1 id="贪婪与懒惰匹配"><a href="#贪婪与懒惰匹配" class="headerlink" title="贪婪与懒惰匹配"></a>贪婪与懒惰匹配</h1><p>之前我们讲到的 * + {} 在匹配字符串的时候，默认会去匹配尽可能多的字符，比如在下面的例子中</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">span</span>&gt;</span><span class="tag">&lt;<span class="name">b</span>&gt;</span>This is a sample text<span class="tag">&lt;/<span class="name">b</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们想去匹配里面的 html 标签，比如 span 和 b</p>
+<p>我们会想到：&lt;.+&gt;</p>
+<p>但这个正则表达式会直接把整个字符串都全部匹配了</p>
+<p>原因是因为中间的这个 .+ 会匹配尽可能多的字符</p>
+<p>我们知道 . 能代表任意字符，自然也会匹配 &gt;，因此才会有这样的结果</p>
+<p>解决方法我们在 + 右边加一个 ? 就好了，它会将正则表达式中默认的贪婪匹配切换为懒惰匹配</p>
+<h1 id="实例-1-RGB-颜色值匹配"><a href="#实例-1-RGB-颜色值匹配" class="headerlink" title="实例 1 RGB 颜色值匹配"></a>实例 1 RGB 颜色值匹配</h1><p>匹配文本中所有出现的十六进制 RGB 值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#00</span><br><span class="line">#ffffff</span><br><span class="line">#ffaaff</span><br><span class="line">#00hh00</span><br><span class="line">#aabbcc</span><br><span class="line">#000000</span><br><span class="line">#ffffffff</span><br></pre></td></tr></table></figure>
+
+<p>我们可以首先去匹配前面的 # 号，接下来由于代表每一个颜色的字符都是十六进制，因此它们只能取自于 a-f 之间，或者大写的 A-F，或者0-9之间，并且字符一定要出现6次，最后我们在表达式末尾加入 \b 来代表单词字符的边界，这样可以避免这里 #ffffffff 的文本也被识别成 RGB 颜色值</p>
+<p>#[a-fA-F0-9]{6}\b</p>
+<h1 id="实例-2-IPv4-地址匹配"><a href="#实例-2-IPv4-地址匹配" class="headerlink" title="实例 2 IPv4 地址匹配"></a>实例 2 IPv4 地址匹配</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">123</span><br><span class="line">255.255.255.0</span><br><span class="line">192.168.0.1</span><br><span class="line">0.0.0.0</span><br><span class="line">256.1.1.1</span><br><span class="line">This is a string.</span><br><span class="line">123.123.0</span><br></pre></td></tr></table></figure>
+
+
+
+<p>IPv4 的地址实际上是由四段数字构成，数字之间由句点隔开，如果要在文本中提取所有出现的 IP 地址，我们可以直接使用下面这个正则表达式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\d+\.\d+\.\d+\.\d+</span><br></pre></td></tr></table></figure>
+
+
+
+<p>\d+ 会匹配任何长度大于1的数字</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\. 代表 . 这个字面量，因为 . 在正则表达式中是一个特殊符号，所以我们这里需要用反斜杠作转义</span><br></pre></td></tr></table></figure>
+
+<p>可以看到正则表达式也成功的帮我们匹配了这四个结果</p>
+<p>不过这里有一个问题，我们知道 IP 地址的每个部分都是8位的数字</p>
+<p>也就是说它的范围介于0-255之间，但这里 256.1.1.1 这个数字显然超出了范围，但是还是被正则表达式成功匹配了</p>
+<p>所以如果我们这里要做改良的话，我们可以使用下面这段逻辑</p>
+<p>我们先来看 IP 地址被句点隔开的每一部分，如果它的前俩位是25，那么最后一位只能取0-5之间的数字，如果它的第一位是2，第二位是0-4之间的数字，那么最后一位可以取0-9之间的任意值，这里用 \d 代替</p>
+<p>如果它的第一位是0或者1，那么最后俩位可以取00-99之间的任意数字，我们用 \d\d代替，但是我们也知道 IP 地址的每一部分也可以由两位数字构成，甚至是1位，这样都是合法的。因此我们可以直接将这里的第一个数字和第三个数字后面都加一个?，就可以表示这种情况了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(25[0-5]|2[0-4]\d|[01]?\d\d?)</span><br></pre></td></tr></table></figure>
+
+<p>数字的部分我们就匹配完了，接下来我们匹配后面的句点</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(25[0-5]|2[0-4]\d|[01]?\d\d?)\.</span><br></pre></td></tr></table></figure>
+
+<p>然后将全部表达式用括号括起来</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">((25[0-5]|2[0-4]\d|[01]?\d\d?)\.)</span><br></pre></td></tr></table></figure>
+
+<p>这一段我们要求重复匹配三次</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">((25[0-5]|2[0-4]\d|[01]?\d\d?)\.)&#123;3&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样正则表达式会去匹配 IP 地址的前三段，并且包含每一段后面的句点，至于最后一段数字，我们只需要将匹配第一段数字的这一部分复制过来即可，最后在尾部加入 \b 来匹配字符的边界</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">((25[0-5]|2[0-4]\d|[01]?\d\d?)\.)&#123;3&#125;((25[0-5]|2[0-4]\d|[01]?\d\d?)\.)\b</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，经过改良版的表达式可以成功的匹配上面的三个 IP 地址，并且把不符合要求的这一个排除在外了</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20220315235724530.png"></p>
+<p>其它教程</p>
+<ol>
+<li><p>正则表达式30分钟入门教程 作者: deerchao <a target="_blank" rel="noopener" href="https://deerchao.cn/tutorials/regex/regex.htm">https://deerchao.cn/tutorials/regex/regex.htm</a></p>
+</li>
+<li><p>Regex tutorial — A quick cheatsheet by examples (英文) 作者: Jonny Fox <a target="_blank" rel="noopener" href="https://medium.com/factory-mind/regex-tutorial-a-simple-cheatsheet-by-examples-649dc1c3f285">https://medium.com/factory-mind/regex-tutorial-a-simple-cheatsheet-by-examples-649dc1c3f285</a></p>
+</li>
+<li><p>Regular Expressions Tutorial (英文) <a target="_blank" rel="noopener" href="https://www.regular-expressions.info/tutorial.html">https://www.regular-expressions.info/tutorial.html</a></p>
+</li>
+</ol>
+<p>未讲到全部内容，比如捕获、断言、递归、平衡组等等</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/01-Java%E5%9F%BA%E7%A1%80/05-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/01-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%85%A5%E9%97%A8/" data-id="clmcxecrn006lu8wa6cwl9l9d" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/11-MySQL/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/01-MySQL%E5%AE%89%E8%A3%85/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/999-%E5%B7%A5%E5%85%B7/02-MyBatis%20Migrations/03-MyBatis%20Migrations%20Hooks/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

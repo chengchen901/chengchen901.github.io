@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>RabbitMQ-集群高可用 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="RabbitMQ-集群高可用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ-集群高可用">
+<meta property="og:url" content="http://example.com/2020/10/26/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/02-RabbitMQ/04-RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="RabbitMQ-集群高可用">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201114171424030.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201114171658942.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115103444446.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115104552246.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115105233473.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115105308750.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115105912406.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115145502470.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115112103554.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115113754502.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115114511382.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115114625803.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115172959458.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115173454877.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115214749879.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115222013917.png">
+<meta property="article:published_time" content="2020-10-26T14:59:43.000Z">
+<meta property="article:modified_time" content="2022-09-25T14:06:02.123Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="RabbitMQ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201114171424030.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-08-消息队列/02-RabbitMQ/04-RabbitMQ-集群高可用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/10/26/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/02-RabbitMQ/04-RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/" class="article-date">
+  <time class="dt-published" datetime="2020-10-26T14:59:43.000Z" itemprop="datePublished">2020-10-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/RabbitMQ/">RabbitMQ</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      RabbitMQ-集群高可用
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>RabbitMQ-集群高可用</p>
+<span id="more"></span>
+
+<h1 id="1-集群能解决什么问题"><a href="#1-集群能解决什么问题" class="headerlink" title="1 集群能解决什么问题"></a>1 集群能解决什么问题</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201114171424030.png" alt="image-20201114171424030"></p>
+<p>解决了单个RabbitMQ的不可靠，提高整个系统的可用性</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201114171658942.png" alt="image-20201114171658942"></p>
+<h1 id="2-常用管理命令"><a href="#2-常用管理命令" class="headerlink" title="2 常用管理命令"></a>2 常用管理命令</h1><p>rabbitmqctl命令官网文档地址：<a target="_blank" rel="noopener" href="https://www.rabbitmq.com/rabbitmqctl.8.html%EF%BC%8C%E5%8F%AF%E4%BB%A5%E9%80%9A%E8%BF%87%E6%9F%A5%E6%89%BE%E5%85%B3%E9%94%AE%E5%AD%97%E5%BF%AB%E9%80%9F%E6%89%BE%E5%88%B0%E8%87%AA%E5%B7%B1%E6%83%B3%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E5%91%BD%E4%BB%A4">https://www.rabbitmq.com/rabbitmqctl.8.html，可以通过查找关键字快速找到自己想要了解的命令</a></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115103444446.png" alt="image-20201115103444446"></p>
+<h2 id="2-1-应用管理"><a href="#2-1-应用管理" class="headerlink" title="2.1 应用管理"></a>2.1 应用管理</h2><p><strong>rabbitmqctl status</strong></p>
+<p>查看节点状态</p>
+<p><strong>rabbitmqctl stop [pid_file]</strong></p>
+<p>停止运行RabbitMQ的Erlang虚拟机和RabbitMQ服务应用</p>
+<p>如果指定了pid_file，还需要等待指定进程的结束。pid_file是通过调用rabbitmq-server命令启动RabbitMQ服务时创建的，默认情况下放于Mnesia目录中。</p>
+<p>如果使用rabbitmq-server -detach这个带有-detach后缀的命令来启动RabbitMQ服务则不会生成pid file文件</p>
+<p><strong>rabbitmqctl stop_app</strong></p>
+<p>停止RabbitMQ服务应用，但是Erlang虚拟机还是处于运行状态。</p>
+<p>此命令的执行优先于其他管理操作（这些管理操作需要先停止RabbitMQ应用），比如rabbitmqctl reset</p>
+<p><strong>rabbitmqctl start_app</strong></p>
+<p>启动RabbitMQ应用。此命令典型的用途是在执行了其他管理操作之后，重新启动之前停止的RabbitMQ应用，比如rabbitmqctl reset</p>
+<p><strong>rabbitmqctl reset</strong></p>
+<p>将RabbitMQ节点重置还原到最初状态</p>
+<p>包括从原来所在的集群中删除此节点，从管理数据库中删除所有的配置数据，如已配置的用户、vhost等，以及删除所有的持久化消息。</p>
+<p>执行rabbitmqctl restart命令前必须停止RabbitMQ应用（比如先执行rabbitmqctl stop_app）</p>
+<p><strong>rabbitmqctl force_reset</strong></p>
+<p>强制将RabbitMQ节点重置还原到最初状态。此命令不论当前管理数据库的状态和集群配置是什么，都会无条件地重置节点，只能在数据库或集群配置已损坏的情况下使用。</p>
+<h2 id="2-2-集群管理"><a href="#2-2-集群管理" class="headerlink" title="2.2 集群管理"></a>2.2 集群管理</h2><p><strong>rabbitmqctl [-n nodename] join_cluster {cluster_node} [–ram]</strong></p>
+<p>将节点加入指定集群中。在这个命令执行前需要停止RabbitMQ应用并重置节点。</p>
+<p>-n nodename：指定需要操作的目标节点，列如：rabbit@node1</p>
+<p>cluster_node：需要加入的集群节点名，格式同上</p>
+<p>–ram：集群节点类型，有俩种类型：ram|disc，默认为disc</p>
+<ul>
+<li>ram：内存节点，所有的元数据都存储在内存中</li>
+<li>disc：磁盘节点，所有的元数据都存储在磁盘中</li>
+</ul>
+<p><strong>rabbitmqctl cluster_status</strong></p>
+<p>查看集群状态</p>
+<p><strong>rabbitmqctl change_cluster_node_type {disc|ram}</strong></p>
+<p>修改集群节点的类型，使用此命令前要停止RabbitMQ应用</p>
+<p><strong>rabbitmqctl forget_cluster_node [–offiine]</strong></p>
+<p>将节点从集群中删除，允许离线执行</p>
+<p><strong>rabbitmqctl update_cluster_nodes {clusternode}</strong></p>
+<p>在集群中的节点应用启动前此咨询clusternode节点的最新信息，并更新相应的集群信息。这个和join_cluster不同，它不加入集群</p>
+<p><strong>rabbitmqctl force_boot</strong></p>
+<p>确保节点可以启动，即使它不是最后一个关闭的节点</p>
+<p><strong>rabbitmqctl set_cluster_name {name}</strong></p>
+<p>设置集群名称。集群名称在客户端连接时会通报给客户端</p>
+<p>集群名称默认是集群中第一个节点的名称，通过这个命令可以重新设置</p>
+<h1 id="3-RabbitMQ高可用集群管理方案"><a href="#3-RabbitMQ高可用集群管理方案" class="headerlink" title="3 RabbitMQ高可用集群管理方案"></a>3 RabbitMQ高可用集群管理方案</h1><h2 id="3-1-Cluster-模式"><a href="#3-1-Cluster-模式" class="headerlink" title="3.1 Cluster 模式"></a>3.1 Cluster 模式</h2><p>RabbitMQ的Cluster模式分为俩种：普通模式、镜像模式</p>
+<h3 id="3-1-1-Cluster-普通模式"><a href="#3-1-1-Cluster-普通模式" class="headerlink" title="3.1.1 Cluster 普通模式"></a>3.1.1 Cluster 普通模式</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115104552246.png" alt="image-20201115104552246"></p>
+<p>元数据包含以下内容：</p>
+<p><strong>队列元数据：</strong>队列的名称及属性</p>
+<p><strong>交换器：</strong>交换器的名称及属性</p>
+<p><strong>绑定关系元数据：</strong>交换器与队列或者交换器与交换器</p>
+<p><strong>vhost元数据：</strong>为vhost内的队列、交换器和绑定提供命名空间及安全属性之间的绑定关系</p>
+<p><strong>Cluster 多机多节点部署</strong></p>
+<p>推荐在可靠的、低延迟的内部局域网使用该集群模式，因为节点之前需要同步元信息不能有太大的网络延迟。</p>
+<p>多机多节点是指在每台机器中部署一个RabbitMQ服务节点，进而由多台机器组成一个RabbitMQ集群</p>
+<p><font color="red"><strong>注意：</strong></font >集群的第一个RabbitMQ服务可以直接启动，之后的每台机器都需要先执行命令<strong>rabbitmqctl reset</strong>将RabbitMQ节点重置还原到最初状态，这是因为如果之后的每个RabbitMQ服务都会有自己的元信息会发生冲突。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115105233473.png" alt="image-20201115105233473"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115105308750.png" alt="image-20201115105308750"></p>
+<h4 id="3-1-1-1-FAQ"><a href="#3-1-1-1-FAQ" class="headerlink" title="3.1.1.1 FAQ"></a>3.1.1.1 FAQ</h4><ol>
+<li>负载均衡能不能做到？ 高并发 大量链接<br>能 客户端建立连接时是从节点地址列表中随机选择一个。</li>
+<li>是分布式的吗？ 大量消息，是否是分布在不同的节点上进行存储处理的<br>是的，队列维度的分布式存储数据</li>
+</ol>
+<p>Cluster : 集群提升了可用性、队列消息数据安全性 、并发客户端连接数。</p>
+<h3 id="3-1-2-Cluster-镜像模式"><a href="#3-1-2-Cluster-镜像模式" class="headerlink" title="3.1.2 Cluster 镜像模式"></a>3.1.2 Cluster 镜像模式</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115105912406.png" alt="image-20201115105912406"></p>
+<p>镜像模式的集群是在普通模式的基础上，通过policy来实现，使用镜像可以实现RabbitMQ的高可用方案</p>
+<p>Name：policy的名称</p>
+<p>Pattern：匹配表达式</p>
+<p>Apply to：规则应用到哪个目标</p>
+<p>Priority：优先级</p>
+<p>Definition：规则的定义，对于镜像队列的配置来说，只需要包含3个部分：ha-mode、ha-params和ha-sync-mode。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115145502470.png" alt="image-20201115145502470"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115112103554.png" alt="image-20201115112103554"></p>
+<p><strong>ha-mode</strong></p>
+<p>指明镜像队列的模式，有效值为all、exatly、nodes，默认为all。</p>
+<table>
+<thead>
+<tr>
+<th>ha-mode</th>
+<th>ha-params</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>all</td>
+<td>(empty)</td>
+<td>队列镜像到集群内所有节点</td>
+</tr>
+<tr>
+<td>exactly</td>
+<td>count</td>
+<td>队列镜像到集群内指定数量的节点。如果集群内节点数少于此值，队列将会镜像到所有节点。如果大于此值，而且一个包含镜像的节点停止，则新的镜像会在其它节点创建。</td>
+</tr>
+<tr>
+<td>nodes</td>
+<td>nodename</td>
+<td>队列镜像到指定节点，指定的节点不在集群中不会报错。当队列申明时，如果指定的节点不在线，则队列会被创建在客户端所连接的节点上。</td>
+</tr>
+</tbody></table>
+<p><strong>ha-sync-mode</strong></p>
+<p>队列中消息的同步方式，有效值为automatic和manual，默认是automatic。</p>
+<h4 id="3-1-2-1-FAQ"><a href="#3-1-2-1-FAQ" class="headerlink" title="3.1.2.1 FAQ"></a>3.1.2.1 FAQ</h4><p>镜像 数量多少合适？ N &#x2F; 2 + 1 大多数 3</p>
+<p>高并发、海量数据（消息）推荐使用镜像模式来保证消息的可靠性</p>
+<p>CAP理论，一致性（Consistency）、可用性（Availability）、分区容错性（Partition tolerance）</p>
+<p>RabbitMQ保证了CP，A是可用性</p>
+<h3 id="3-1-3-FAQ"><a href="#3-1-3-FAQ" class="headerlink" title="3.1.3 FAQ"></a>3.1.3 FAQ</h3><p>如果整个集群都需要停止，需要记住最后停止的服务节点，再次启动的时候先启动最后停止的RabbitMQ服务节点。因为在停止RabbitMQ服务节点时客户端可能会新增或修改元信息，只有最后停止的RabbitMQ服务节点是最全的。</p>
+<h1 id="4-Federation（联合）"><a href="#4-Federation（联合）" class="headerlink" title="4 Federation（联合）"></a>4 Federation（联合）</h1><p>官网地址：<a target="_blank" rel="noopener" href="https://www.rabbitmq.com/federated-exchanges.html">https://www.rabbitmq.com/federated-exchanges.html</a></p>
+<p>基础业务系统架构</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115113754502.png" alt="image-20201115113754502"></p>
+<p>需要其它系统介入获取消息，通过Internet不可靠</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115114511382.png" alt="image-20201115114511382"></p>
+<p>只需要一次连接，连接次数大大减少，mq和mq进行联合保证了消息的可靠性</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115114625803.png" alt="image-20201115114625803"></p>
+<h2 id="4-1-Federation插件"><a href="#4-1-Federation插件" class="headerlink" title="4.1 Federation插件"></a>4.1 Federation插件</h2><p><strong>Federation插件</strong>的设计目标是使RabbitMQ在不同的Broker节点之间进行消息传递而无须建立集群，该功能在一下<strong>场景</strong>下非常有用：</p>
+<ul>
+<li>各个节点运行在不同版本的Erlang和RabbitMQ上。普通的Cluster需要每个RabbitMQ之间的AMQP协议版本一致。</li>
+<li>网络环境不稳定，比如在广域网当中。</li>
+</ul>
+<h2 id="4-2-Federation开启步骤"><a href="#4-2-Federation开启步骤" class="headerlink" title="4.2 Federation开启步骤"></a>4.2 Federation开启步骤</h2><ol>
+<li>开启插件支持 上游下游都得开。 cluster 和 cluster 之间也可连接 （cluster 中每个节点都必须开启</li>
+</ol>
+<p>联合支持）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-plugins enable rabbitmq_federation #开启 federation 插件 </span><br><span class="line">rabbitmq-plugins enable rabbitmq_federation_management #开启 federation 管理控制 台插件</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>在下游broker上定义上游</p>
+<p>命令行、http api 、管理控制台</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl set_parameter federation-upstream my-upstream \ &#x27;&#123;&quot;uri&quot;:&quot;amqp://admin:admin@192.168.254.155&quot;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>​	管理控制台</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115172959458.png" alt="image-20201115172959458"></p>
+<ol start="3">
+<li>定义一个policy 说明下游哪些交换器、队列需要建立联合</li>
+</ol>
+<p>federation-upstream-set &#x3D; all，表示和所有上游建立联合，也可以单独指定federation-upstream &#x3D; 上游名称</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115173454877.png" alt="image-20201115173454877"></p>
+<h1 id="5-Shovel（铲子）"><a href="#5-Shovel（铲子）" class="headerlink" title="5 Shovel（铲子）"></a>5 Shovel（铲子）</h1><h2 id="5-1-Shovel-插件"><a href="#5-1-Shovel-插件" class="headerlink" title="5.1 Shovel 插件"></a>5.1 Shovel 插件</h2><p>Shovel与Federation具备的数据转发功能类似<br>Shovel能够可靠、持续地从一个Broker中的队列（作为源端，即source）拉取数据并转发至另一个Broker中的交换器（作为目的端，即destination）。</p>
+<p>Shovel可以翻译为“铲子”，是一种比较形象的比喻。这个“铲子”可以将消息从一方“挖到”另一方</p>
+<h2 id="5-2-Shovel-的主要优势"><a href="#5-2-Shovel-的主要优势" class="headerlink" title="5.2 Shovel 的主要优势"></a>5.2 Shovel 的主要优势</h2><p><strong>松耦合</strong>，Shovel可以移动位于不同管理域中的Broker或者集群上的消息，这些Broker或者集群可以包含不同的用户和vhost，也可以使用不同的RabbitMQ和Erlang版本。</p>
+<p><strong>支持广域网</strong>，Shovel插件同样基于AMQP协议在Broker之间进行通信，被设计成可以容忍时断时续的连通情形，并且能够保证消息的可靠性。</p>
+<p><strong>高度定制</strong>，当Shovel成功连接后，可以对其进行配置以执行相关的AMQP命令。</p>
+<h2 id="5-3-Shovel-的作用"><a href="#5-3-Shovel-的作用" class="headerlink" title="5.3 Shovel 的作用"></a>5.3 Shovel 的作用</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115214749879.png" alt="image-20201115214749879"></p>
+<h2 id="5-4-Federation-Shovel-与-Cluster-的区别和联系"><a href="#5-4-Federation-Shovel-与-Cluster-的区别和联系" class="headerlink" title="5.4 Federation&#x2F;Shovel 与 Cluster 的区别和联系"></a>5.4 Federation&#x2F;Shovel 与 Cluster 的区别和联系</h2><table>
+<thead>
+<tr>
+<th>Federation&#x2F;Shovel</th>
+<th align="left">Cluster</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>各个Broker节点之间逻辑分离</td>
+<td align="left">逻辑上是一个Broker节点</td>
+</tr>
+<tr>
+<td>各个Broker节点之间可以运行不同版本的Erlang和RabbitMQ</td>
+<td align="left">各个Broker节点之间必须运行相同版本的Erlang和RabbitMQ</td>
+</tr>
+<tr>
+<td>各个Broker节点之间可以在广域网中相连，当然必须要授予适当的用户和权限</td>
+<td align="left">各个Broker节点之间必须在可信赖的局域网中相连，通过Erlang内部节点传递消息，但节点访问需要有相同的Erlang cookie</td>
+</tr>
+<tr>
+<td>各个Broker节点之间能以任何拓扑逻辑部署，连接可以是单向的或者是双向的</td>
+<td align="left">所有的Broker节点都双向连接所有其他节点</td>
+</tr>
+<tr>
+<td>从CAP理论中选择可用性和分区耐受性，即AP</td>
+<td align="left">从CAP理论中选择一致性和可用性，即CP</td>
+</tr>
+<tr>
+<td>一个Broker中的交换器可以是Federation生成的或者是本地的</td>
+<td align="left">集群中所有Broker节点中的交换器都是一样的，要么全有要么全无</td>
+</tr>
+<tr>
+<td>客户端所能看到它所连接的Broker节点上的队列</td>
+<td align="left">客户端连接到集群中的任何Broker节点都可以看到所有的队列</td>
+</tr>
+</tbody></table>
+<h2 id="5-5-使用方式"><a href="#5-5-使用方式" class="headerlink" title="5.5 使用方式"></a>5.5 使用方式</h2><p>在两个彼此独立的Broker之间建立消息的联通</p>
+<ol>
+<li>启用插件 在哪个broker上定义铲子就在哪里启用Shovel插件</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-plugins enable rabbitmq_shovel # 启动shovel插件 </span><br><span class="line">rabbitmq-plugins enable rabbitmq_shovel_management # 启用shovel管理插件</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>配置Shovel两种配置方式：</p>
+<p>静态配置： 在配置文件中配 &#x2F;etc&#x2F;rabbitmq&#x2F;advanced.conf</p>
+<p>动态配置：通过运行参数来配置 实时生效。</p>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201115222013917.png" alt="image-20201115222013917"></p>
+<p><strong>Shovel 的工作流程</strong></p>
+<ul>
+<li><p>建立到源到目标的连接 AMQP</p>
+</li>
+<li><p>消费源的消息</p>
+</li>
+<li><p>重发布到目标</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/10/26/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/02-RabbitMQ/04-RabbitMQ-%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8/" data-id="clmcxed1p00azu8wafc871z6i" data-title="RabbitMQ-集群高可用" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/11/15/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/02-RabbitMQ/05-MQ%E5%BA%94%E7%94%A8-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          MQ应用-分布式事务
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/10/25/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/02-RabbitMQ/03-RabbitMQ-%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">RabbitMQ-高级特性详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

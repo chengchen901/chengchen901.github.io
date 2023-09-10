@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>ZooKeeper入门 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Apache ZooKeeper是一种用于分布式应用程序的高性能协调服务。提供一种集中式信息存储服务。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZooKeeper入门">
+<meta property="og:url" content="http://example.com/2021/01/02/05-ZooKeeper/01-ZooKeeper%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Apache ZooKeeper是一种用于分布式应用程序的高性能协调服务。提供一种集中式信息存储服务。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/ZooKeeper%E5%AD%A6%E4%B9%A0%E7%9F%A5%E8%AF%86%E7%82%B9.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102143331288.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102143357901.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102143613589.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102143618213.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102145007966.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102145323899.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102151021867.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102151151877.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102151701244.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102152534692.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102152959783.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102153009547.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102153159670.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102162832143.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102163203748.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102163309293.png">
+<meta property="article:published_time" content="2021-01-02T06:28:13.000Z">
+<meta property="article:modified_time" content="2022-09-25T13:02:04.691Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="ZooKeeper">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/ZooKeeper%E5%AD%A6%E4%B9%A0%E7%9F%A5%E8%AF%86%E7%82%B9.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-05-ZooKeeper/01-ZooKeeper入门" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/02/05-ZooKeeper/01-ZooKeeper%E5%85%A5%E9%97%A8/" class="article-date">
+  <time class="dt-published" datetime="2021-01-02T06:28:13.000Z" itemprop="datePublished">2021-01-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Zookeeper/">Zookeeper</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      ZooKeeper入门
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Apache ZooKeeper是一种用于分布式应用程序的高性能协调服务。提供一种集中式信息存储服务。</p>
+<span id="more"></span>
+
+<p><strong>ZooKeeper学习知识点</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/ZooKeeper%E5%AD%A6%E4%B9%A0%E7%9F%A5%E8%AF%86%E7%82%B9.png" alt="ZooKeeper学习知识点"></p>
+<p><strong>ZooKeeper学习代码：</strong><a target="_blank" rel="noopener" href="https://github.com/chengchen901/zookeeper-study.git">https://github.com/chengchen901/zookeeper-study.git</a></p>
+<h1 id="1-生逢乱世"><a href="#1-生逢乱世" class="headerlink" title="1 生逢乱世"></a>1 生逢乱世</h1><h2 id="1-1-刚学多线程"><a href="#1-1-刚学多线程" class="headerlink" title="1.1 刚学多线程"></a>1.1 刚学多线程</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102143331288.png" alt="image-20210102143331288"></p>
+<h2 id="1-2-起飞于互联网"><a href="#1-2-起飞于互联网" class="headerlink" title="1.2 起飞于互联网"></a>1.2 起飞于互联网</h2><p>复杂的分布式环境</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102143357901.png" alt="image-20210102143357901"></p>
+<h2 id="1-3-领袖风范—ZooKeeper"><a href="#1-3-领袖风范—ZooKeeper" class="headerlink" title="1.3 领袖风范—ZooKeeper"></a>1.3 领袖风范—ZooKeeper</h2><p>简介：Apache ZooKeeper是一种用于分布式应用程序的高性能协调服务。提供一种集中式信息存储服务。</p>
+<p>特点：数据存在内存中，类似文件系统的树形结构(文件和目录)，高吞吐量和低延迟，集群高可靠。</p>
+<p>作用：基于zookeeper可以实现分布式统一配置中心、服务注册中心，分布式锁等功能的实现；</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102143613589.png" alt="image-20210102143613589.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102143618213.png" alt="image-20210102143618213.png"></p>
+<p>基于3.4.13版本进行讲解，官网地址： <a target="_blank" rel="noopener" href="https://zookeeper.apache.org/">https://zookeeper.apache.org/</a></p>
+<h2 id="1-4-安装Zookeeper"><a href="#1-4-安装Zookeeper" class="headerlink" title="1.4 安装Zookeeper"></a>1.4 安装Zookeeper</h2><ul>
+<li><p>安装1.6版本以上JDK，配置环境变量</p>
+</li>
+<li><p>下载： <a target="_blank" rel="noopener" href="https://archive.apache.org/dist/zookeeper/zookeeper-3.4.13/zookeeper-3.4.13.tar.gz">https://archive.apache.org/dist/zookeeper/zookeeper-3.4.13/zookeeper-3.4.13.tar.gz</a></p>
+</li>
+<li><p>解压后的conf目录，增加配置文件zoo.cfg</p>
+</li>
+<li><p>启动服务端 bin&#x2F;zkServer.sh start</p>
+</li>
+<li><p>测试，客户端连接： bin&#x2F;zkCli.sh -server 127.0.0.1:2181</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102145007966.png" alt="image-20210102145007966.png"></p>
+<h2 id="1-5-ZooKeeper特点-数据结构简单"><a href="#1-5-ZooKeeper特点-数据结构简单" class="headerlink" title="1.5 ZooKeeper特点-数据结构简单"></a>1.5 ZooKeeper特点-数据结构简单</h2><p>数据结构简单</p>
+<p>​	类似Unix文件系统树形结构，每个目录称为Znode节点，但是又不同于文件系统，既可以做目录拥有子节点，又可以做文件存放数据。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102145323899.png" alt="image-20210102145323899.png"></p>
+<ul>
+<li>同节点下的子节点名称不能相同</li>
+<li>命名有规范</li>
+<li>绝对路径</li>
+<li>存放的数据大小有限制（1M）</li>
+</ul>
+<h2 id="1-6-数据模型"><a href="#1-6-数据模型" class="headerlink" title="1.6 数据模型"></a>1.6 数据模型</h2><ul>
+<li><p><strong>层次名称空间</strong></p>
+<ul>
+<li><p>类似unix文件系统，以 &#x2F;  为根</p>
+</li>
+<li><p>区别：节点可以包含与之关联的数据以及子节点 (既是文件也是文件夹)</p>
+</li>
+<li><p>节点的路径总是表示为规范的、绝对的、斜杠分隔的路径。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>znode</strong></p>
+<ul>
+<li>名称唯一，命名规范</li>
+<li>节点类型：持久、顺序、临时、临时顺序</li>
+<li>节点数据构成</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-7-znode—命名规范"><a href="#1-7-znode—命名规范" class="headerlink" title="1.7 znode—命名规范"></a>1.7 znode—命名规范</h2><p><strong>节点名称除下列限制外，可以使用任何unicode字符：</strong></p>
+<ul>
+<li><p>null字符(\u0000)不能作为路径名的一部分；</p>
+</li>
+<li><p>以下字符不能使用，因为它们不能很好地显示，或者以令人困惑的方式呈现:</p>
+</li>
+</ul>
+<p> \u0001 - \u0019和\u007F - \u009F。</p>
+<ul>
+<li><p>不允许使用以下字符:\ud800 - uf8fff， \uFFF0 - uFFFF。</p>
+</li>
+<li><p>“.”字符可以用作另一个名称的一部分，但是“.”和“..”不能单独用于指示路径上的节点，因为ZooKeeper不使用相对路径。下列内容无效:<br>“&#x2F;a&#x2F;b&#x2F;. &#x2F; c”或“c &#x2F; a &#x2F; b &#x2F; . . &#x2F;”。</p>
+</li>
+<li><p>“zookeeper”是保留节点名。</p>
+</li>
+</ul>
+<h2 id="1-8-ZooKeeper特点-操作指令简单"><a href="#1-8-ZooKeeper特点-操作指令简单" class="headerlink" title="1.8 ZooKeeper特点-操作指令简单"></a>1.8 ZooKeeper特点-操作指令简单</h2><p>操作指令简单：[zk: localhost:2181(CONNECTED) 0] help</p>
+<table>
+<thead>
+<tr>
+<th><strong>指令</strong></th>
+<th><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ls</td>
+<td>获取子节点</td>
+</tr>
+<tr>
+<td>create</td>
+<td>在zookeeper中的某个位置创建一个节点</td>
+</tr>
+<tr>
+<td>delete</td>
+<td>删除节点</td>
+</tr>
+<tr>
+<td>exists</td>
+<td>测试节点是否存在</td>
+</tr>
+<tr>
+<td>get data</td>
+<td>从指定节点读取数据</td>
+</tr>
+<tr>
+<td>set data</td>
+<td>将数据存入指定节点</td>
+</tr>
+<tr>
+<td>get children</td>
+<td>查询指定节点之下所有的子节点</td>
+</tr>
+<tr>
+<td>sync</td>
+<td>等待数据进行同步</td>
+</tr>
+</tbody></table>
+<h2 id="1-9-ZooKeeper特点-有序"><a href="#1-9-ZooKeeper特点-有序" class="headerlink" title="1.9 ZooKeeper特点-有序"></a>1.9 ZooKeeper特点-有序</h2><p><strong>多种方式跟踪时间</strong></p>
+<ul>
+<li><p><strong>Zxid</strong><br>ZooKeeper中的每次更改操作都对应一个唯一的事务id，称为Zxid，它是一个全局有序的戳记，如果zxid1小于zxid2，则zxid1发生在zxid2之前。</p>
+</li>
+<li><p><strong>Version numbers</strong><br>版本号，对节点的每次更改都会导致该节点的版本号之一增加。这三个版本号是dataVersion(对znode数据的更改次数)、cversion(对znode子节点的更改次数)和aclVersion(对znode ACL的更改次数)。</p>
+</li>
+<li><p><strong>Ticks</strong><br>当使用多服务器ZooKeeper时，服务器使用“滴答”来定义事件的时间，如状态上传、会话超时、对等点之间的连接超时等。滴答时间仅通过最小会话超时(滴答时间的2倍)间接公开;如果客户端请求的会话超时小于最小会话超时，服务器将告诉客户端会话超时实际上是最小会话超时。</p>
+</li>
+<li><p><strong>Real time</strong><br>ZooKeeper除了在znode创建和修改时将时间戳放入stat结构之外，根本不使用Real time或时钟时间。</p>
+</li>
+</ul>
+<p><strong>节点上的元数据信息-Stat</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[zk: localhost:2181(CONNECTED) 5] get /zk</span><br><span class="line">123</span><br><span class="line">cZxid = 0x2</span><br><span class="line">ctime = Sat Jan 02 15:08:12 CST 2021</span><br><span class="line">mZxid = 0x2</span><br><span class="line">mtime = Sat Jan 02 15:08:12 CST 2021</span><br><span class="line">pZxid = 0x2</span><br><span class="line">cversion = 0</span><br><span class="line">dataVersion = 0</span><br><span class="line">aclVersion = 0</span><br><span class="line">ephemeralOwner = 0x0</span><br><span class="line">dataLength = 3</span><br><span class="line">numChildren = 0</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th><strong>属性</strong></th>
+<th><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>cZxid</td>
+<td>创建该节点的zxid</td>
+</tr>
+<tr>
+<td>ctime</td>
+<td>该节点的创建时间</td>
+</tr>
+<tr>
+<td>mZxid</td>
+<td>该节点的最后修改zxid</td>
+</tr>
+<tr>
+<td>mtime</td>
+<td>该节点的最后修改时间</td>
+</tr>
+<tr>
+<td>pZxid</td>
+<td>该节点的最后子节点修改zxid</td>
+</tr>
+<tr>
+<td>cversion</td>
+<td>该节点的子节点变更次数</td>
+</tr>
+<tr>
+<td>dataVersion</td>
+<td>该节点数据被修改的次数</td>
+</tr>
+<tr>
+<td>aclVersion</td>
+<td>该节点的ACL变更次数</td>
+</tr>
+<tr>
+<td>ephemeralOwner</td>
+<td>临时节点所有者会话ID，非临时节点为0</td>
+</tr>
+<tr>
+<td>dataLength</td>
+<td>该节点数据长度</td>
+</tr>
+<tr>
+<td>numChildren</td>
+<td>子节点数</td>
+</tr>
+</tbody></table>
+<p>除了ephemeralOwner、dataLength、numChildren，其他属性都体现了顺序</p>
+<h2 id="1-10-ZooKeeper特点-可复制"><a href="#1-10-ZooKeeper特点-可复制" class="headerlink" title="1.10 ZooKeeper特点-可复制"></a>1.10 ZooKeeper特点-可复制</h2><p>可以快速的搭建集群</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102151021867.png" alt="image-20210102151021867"></p>
+<p>集群特点，保证了服务的可靠性，可靠性使其不会成为单点故障</p>
+<h2 id="1-11-ZooKeeper特点-快速"><a href="#1-11-ZooKeeper特点-快速" class="headerlink" title="1.11 ZooKeeper特点-快速"></a>1.11 ZooKeeper特点-快速</h2><p>ZooKeeper特点-快速</p>
+<ul>
+<li><p>ZooKeeper数据加载在内存中，这意味着ZooKeeper可以获得高吞吐量和低延迟数。</p>
+</li>
+<li><p>以读取为主的工作负载中，它尤其快。</p>
+</li>
+<li><p>操作的Znode的数据大小限制1M。</p>
+</li>
+</ul>
+<p>ZooKeeper的性能方面意味着它可以用于大型分布式系统</p>
+<h1 id="2-领袖核心能力"><a href="#2-领袖核心能力" class="headerlink" title="2 领袖核心能力"></a>2 领袖核心能力</h1><h2 id="2-1-Zookeeper会话机制"><a href="#2-1-Zookeeper会话机制" class="headerlink" title="2.1 Zookeeper会话机制"></a>2.1 Zookeeper会话机制</h2><p><strong>Session会话</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102151151877.png" alt="image-20210102151151877"></p>
+<ul>
+<li><p>一个客户端连接一个会话，由zk分配唯一会话id；</p>
+</li>
+<li><p>客户端以特定的时间间隔发送<strong>心跳</strong>以保持会话有效； tickTime</p>
+</li>
+<li><p>超过会话超时时间未收到客户端的心跳，则判定客户端死了；(默认2倍tickTime)</p>
+</li>
+<li><p>会话中的请求按FIFO顺序执行。</p>
+</li>
+</ul>
+<h2 id="2-2-znode—数据构成"><a href="#2-2-znode—数据构成" class="headerlink" title="2.2 znode—数据构成"></a>2.2 znode—数据构成</h2><p><strong>数据构成</strong></p>
+<ul>
+<li><p>节点数据：存储的协调数据（状态信息、配置、位置信息等）</p>
+</li>
+<li><p>节点元数据（stat结构）</p>
+</li>
+<li><p>数据大小上限：1M</p>
+</li>
+</ul>
+<h2 id="2-3-znode—节点类型"><a href="#2-3-znode—节点类型" class="headerlink" title="2.3 znode—节点类型"></a>2.3 znode—节点类型</h2><p><strong>持久节点</strong>：create &#x2F;app1 666</p>
+<p><strong>临时节点</strong>：create -e &#x2F;app1 666</p>
+<p><strong>顺序节点</strong>：create -s &#x2F;app1&#x2F;cp 888 	cp0000000000</p>
+<p>​					create -s &#x2F;app1&#x2F; aa 		  0000000001</p>
+<p>10位十进制序号</p>
+<p>每个父节点一个计数器</p>
+<p>计数器是带符号int（4字节）到2147483647之后将溢出(导致名称“<path>-2147483648”)</p>
+<p><strong>临时顺序节点</strong>：create -e -s &#x2F;app1 666</p>
+<h2 id="2-4-znode-节点权限"><a href="#2-4-znode-节点权限" class="headerlink" title="2.4 znode-节点权限"></a>2.4 znode-节点权限</h2><p><strong>Znode的ACL访问控制列表</strong></p>
+<p>​	访问控制仅适用于特定的znode，不适用于子节点，也不是递归的。使用ACL由（scheme：expression，prems）对组成，expression表达式需要指定的ACL ID集合，即授权对象。</p>
+<p><strong>控制策略scheme</strong></p>
+<ul>
+<li>world只有一个ACL ID，anyone，代表任何人。默认的策略。</li>
+<li>auth不使用任何ACL ID，经过身份证验证的用户都可以，可通过addauth命令添加认证用户。</li>
+<li>digest zk服务使用明文串设置，客户端使用username：base64(md5(password))串访问。</li>
+<li>ip使用客户端主机IP，作为访问ACL ID。addr&#x2F;bit addr表示ip地址段，bit表示段后面的位数。ip：19.22.0.0&#x2F;16，READ表示所有ip地址以19.22开头的客户端具有读写权限</li>
+</ul>
+<p><strong>权限perms</strong></p>
+<ul>
+<li>CREATE：创建子节点，简写c</li>
+<li>READ：从节点获取数据并列出其子节点，简写r</li>
+<li>WRITE：为节点设置数据，简写w</li>
+<li>DELETE：删除子节点，简写d</li>
+<li>ADMIN：设置访问控制列表的权限，简写a</li>
+</ul>
+<p><strong>ZKCli ACL相关命令</strong></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>使用方式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>getAcl</td>
+<td>getAcl <path></td>
+<td>读取ACL权限</td>
+</tr>
+<tr>
+<td>setAcl</td>
+<td>setAcl <path> <acl></td>
+<td>设置ACL权限</td>
+</tr>
+<tr>
+<td>addauth</td>
+<td>addauth <scheme> <auth></td>
+<td>添加认证用户</td>
+</tr>
+</tbody></table>
+<p><strong>客户端提供的标准ACLs</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">org.apache.zookeeper.ZooDefs.lds</span><br><span class="line"><span class="type">ZkClient</span> <span class="variable">client</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ZkClient</span>(<span class="string">&quot;localhost:2181&quot;</span>);</span><br><span class="line">client.create(<span class="string">&quot;/zk/a&quot;</span>, <span class="string">&quot;123&quot;</span>, lds.OPEN_ACL_UNSASFE, CreateMode.PERSISTENT);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-5-Watch监听机制"><a href="#2-5-Watch监听机制" class="headerlink" title="2.5 Watch监听机制"></a>2.5 Watch监听机制</h2><p>客户端可以在znodes上设置watch ，监听znode的变化。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102151701244.png" alt="image-20210102151701244.png"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[zk: localhost:2181(CONNECTED) 17] <span class="built_in">help</span></span><br><span class="line">	<span class="built_in">stat</span> path [watch]</span><br><span class="line">        <span class="built_in">ls</span> path [watch]</span><br><span class="line">        ls2 path [watch]</span><br><span class="line">	get path [watch]</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="2-5-1-两类watch"><a href="#2-5-1-两类watch" class="headerlink" title="2.5.1 两类watch"></a>2.5.1 <strong>两类watch</strong></h3><ul>
+<li><strong>data watch</strong> <strong>监听 数据变更</strong></li>
+<li><strong>child watch</strong> <strong>监听子节点变化</strong></li>
+</ul>
+<p><strong>getData()</strong></p>
+<p><strong>getChildren()</strong></p>
+<p><strong>exists()</strong></p>
+<p><strong>触发watch事件</strong></p>
+<p><strong>Created event:</strong> </p>
+<p> Enabled with a call to exists.</p>
+<p><strong>Deleted event:</strong> </p>
+<p> Enabled with a call to exists, getData, and getChildren.</p>
+<p><strong>Changed event:</strong> </p>
+<p> Enabled with a call to exists and getData.</p>
+<p><strong>Child event:</strong> </p>
+<p> Enabled with a call to getChildren.</p>
+<h3 id="2-5-2-Watch重要特性"><a href="#2-5-2-Watch重要特性" class="headerlink" title="2.5.2 Watch重要特性"></a>2.5.2 <strong>Watch重要特性</strong></h3><ul>
+<li><p>一次性触发：watch触发后即被删除。要持续监控变化，则需要持续设置watch；</p>
+</li>
+<li><p>有序性：客户端先得到watch通知，后才会看到变化结果</p>
+</li>
+</ul>
+<h3 id="2-5-3-Watch注意事项"><a href="#2-5-3-Watch注意事项" class="headerlink" title="2.5.3 Watch注意事项"></a>2.5.3 <strong>Watch注意事项</strong></h3><ol>
+<li><p>watch是一次性触发器;如果您获得了一个watch事件，并且希望得到关于未来更改的通知，则必须设置另一个watch。</p>
+</li>
+<li><p>因为watch是一次性触发器，并且在获取事件和发送获取watch的新请求之间存在延迟，所以不能可靠地得到节点发生的每个更改。</p>
+</li>
+<li><p>一个watch对象只会被特定的通知触发一次。如果一个watch对象同时注册了exists、getData，当节点被删除时，删除事件对exists 、getData都有效，但只会调用watch一次。</p>
+</li>
+</ol>
+<h2 id="2-6-ZooKeeper特性"><a href="#2-6-ZooKeeper特性" class="headerlink" title="2.6 ZooKeeper特性"></a>2.6 ZooKeeper特性</h2><ol>
+<li><p>顺序一致性(Sequential Consistency)，保证客户端操作是按顺序生效的；</p>
+</li>
+<li><p>原子性(Atomicity)，更新成功或失败。没有部分结果。</p>
+</li>
+<li><p>单个系统映像，无论连接到哪个服务器，客户端都将看到相同的内容</p>
+</li>
+<li><p>可靠性，数据的变更不会丢失，除非被客户端覆盖修改。</p>
+</li>
+<li><p>及时性，保证系统的客户端当时读取到的数据是最新的。</p>
+</li>
+</ol>
+<h1 id="3-领袖风采-分布式锁"><a href="#3-领袖风采-分布式锁" class="headerlink" title="3 领袖风采-分布式锁"></a>3 领袖风采-分布式锁</h1><h2 id="3-1-分布式协调场景"><a href="#3-1-分布式协调场景" class="headerlink" title="3.1 分布式协调场景"></a>3.1 分布式协调场景</h2><p>集群的缓存失效，让一个请求更新缓存即可，怎么做？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102152534692.png" alt="image-20210102152534692"></p>
+<p>高并发下缓存过期，所有请求都从数据库读取数据更新缓存？</p>
+<h2 id="3-2-需要一把锁"><a href="#3-2-需要一把锁" class="headerlink" title="3.2 需要一把锁"></a>3.2 需要一把锁</h2><p>锁具有什么特点？</p>
+<ul>
+<li><p>排他性：只有一个线程能获取到</p>
+</li>
+<li><p>阻塞性：其他未抢到的线程阻塞，直到锁释放出来，再抢。</p>
+</li>
+<li><p>可重入性：线程获得锁后，后续是否可重复获取该锁。</p>
+</li>
+</ul>
+<p>具有排他性特点的其他技术</p>
+<ul>
+<li><p>文件系统</p>
+</li>
+<li><p>数据库：  主键 唯一约束  for update</p>
+</li>
+<li><p>缓存 redis：  setnx</p>
+</li>
+<li><p>zookeeper   类似文件系统</p>
+</li>
+</ul>
+<h2 id="3-3-领袖风采-分布式锁"><a href="#3-3-领袖风采-分布式锁" class="headerlink" title="3.3 领袖风采-分布式锁"></a>3.3 领袖风采-分布式锁</h2><p>Zookeeper具有做锁的特点</p>
+<ul>
+<li>阻塞性<br>可以通过JDK栅栏，来实现。</li>
+<li>可重入性<br>通过计数器来实现。</li>
+</ul>
+<h2 id="3-4-如何使用ZK进行开发？"><a href="#3-4-如何使用ZK进行开发？" class="headerlink" title="3.4 如何使用ZK进行开发？"></a>3.4 如何使用ZK进行开发？</h2><p><strong>创建客户端的核心类：</strong> <strong>Zookeeper</strong></p>
+<p><strong>org.apache.zookeeper</strong></p>
+<p><strong>org.apache.zookeeper.data</strong></p>
+<p><strong>connect</strong> - 连接到ZooKeeper集合</p>
+<p><strong>create</strong>- 创建znode</p>
+<p><strong>exists</strong>- 检查znode是否存在及其信息</p>
+<p><strong>getData</strong> - 从特定的znode获取数据</p>
+<p><strong>setData</strong> - 在特定的znode中设置数据</p>
+<p><strong>getChildren</strong> - 获取特定znode中的所有子节点</p>
+<p><strong>delete</strong> - 删除特定的znode及其所有子项</p>
+<p><strong>close</strong> - 关闭连接</p>
+<p><strong>接口难以使用</strong></p>
+<p>在连接zk超时，不支持自动重连</p>
+<p>Watch注册一次会失效，需要反复注册</p>
+<p>不支持递归创建节点</p>
+<p>需要手动序列化</p>
+<p><strong>第三方客户端，Zkclient，使用操作更方便</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102152959783.png" alt="image-20210102152959783.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102153009547.png" alt="image-20210102153009547.png"></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.101tec<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>zkclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.10<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>第三方客户端，Curator，功能更加丰富</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102153159670.png" alt="image-20210102153159670.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102162832143.png" alt="image-20210102162832143.png"></p>
+<p><a target="_blank" rel="noopener" href="http://curator.apache.org/">http://curator.apache.org/</a></p>
+<p>Curator Apache 的开源项目</p>
+<p>  解决Watch注册一次就会失效的问题</p>
+<p>  提供的 API 更加简单易用</p>
+<p>  提供更多解决方案并且实现简单，例如：分布式锁</p>
+<p>  提供常用的ZooKeeper工具类</p>
+<p>  编程风格更舒服</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.curator<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>curator-recipes<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="4-ZooKeeper分布式锁实现"><a href="#4-ZooKeeper分布式锁实现" class="headerlink" title="4 ZooKeeper分布式锁实现"></a>4 ZooKeeper分布式锁实现</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102163203748.png" alt="image-20210102163203748"></p>
+<p>github地址：<a target="_blank" rel="noopener" href="https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/ZkDistributeLock.java">https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/ZkDistributeLock.java</a></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210102163309293.png" alt="image-20210102163309293"></p>
+<p>github地址：<a target="_blank" rel="noopener" href="https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/ZkDistributeImproveLock.java">https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/ZkDistributeImproveLock.java</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/02/05-ZooKeeper/01-ZooKeeper%E5%85%A5%E9%97%A8/" data-id="clmcxecxc008eu8waha7nbf07" data-title="ZooKeeper入门" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/01/02/05-ZooKeeper/02-Zookeeper%E9%9B%86%E7%BE%A4/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Zookeeper集群
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/12/20/07-Redis/08-Redis%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E6%88%98%E5%BA%94%E7%94%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Redis分布式实战应用</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

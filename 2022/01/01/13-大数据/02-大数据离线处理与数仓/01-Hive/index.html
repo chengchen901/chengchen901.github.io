@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>HIVE | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="什么是Hive？MapReduce的局限性 学习曲线陡峭，不适合不懂Java的用户 开发效率不高 发布和更新比较麻烦，不适合业务快速变化的场景  开源数据仓库工具Facebook开源，贡献给社区，Apache顶级项目 开发目的是解决海量结构化的日志数据统计问题 声明式编程：告诉“框架”你想要的是什么**(what)，让框架想出如何去做(how)**。~ SQL Hive本质上就是一个Sql2Map">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HIVE">
+<meta property="og:url" content="http://example.com/2022/01/01/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/02-%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%A6%BB%E7%BA%BF%E5%A4%84%E7%90%86%E4%B8%8E%E6%95%B0%E4%BB%93/01-Hive/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="什么是Hive？MapReduce的局限性 学习曲线陡峭，不适合不懂Java的用户 开发效率不高 发布和更新比较麻烦，不适合业务快速变化的场景  开源数据仓库工具Facebook开源，贡献给社区，Apache顶级项目 开发目的是解决海量结构化的日志数据统计问题 声明式编程：告诉“框架”你想要的是什么**(what)，让框架想出如何去做(how)**。~ SQL Hive本质上就是一个Sql2Map">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219184814.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219191215.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219191529.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219191551.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219192438.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219192452.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219192536.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219192839.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219193024.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219193125.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219193155.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219193232.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219193435.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219193923.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219193932.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219194359.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219194409.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219194628.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219194744.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219194925.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/%E7%A6%BB%E7%BA%BF%E5%A4%84%E7%90%86Hive.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219200741.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219201005.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219201028.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219201038.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219201057.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219204557.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219204631.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219205113.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219205142.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219212814.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219212959.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213357.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213405.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213441.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213456.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213515.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213829.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213859.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213920.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214026.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214047.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214113.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214125.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214139.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214218.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214226.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214237.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214335.png">
+<meta property="article:published_time" content="2022-01-01T04:00:00.000Z">
+<meta property="article:modified_time" content="2022-04-25T12:39:23.416Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="YARN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219184814.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-13-大数据/02-大数据离线处理与数仓/01-Hive" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/01/01/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/02-%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%A6%BB%E7%BA%BF%E5%A4%84%E7%90%86%E4%B8%8E%E6%95%B0%E4%BB%93/01-Hive/" class="article-date">
+  <time class="dt-published" datetime="2022-01-01T04:00:00.000Z" itemprop="datePublished">2022-01-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      HIVE
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="什么是Hive？"><a href="#什么是Hive？" class="headerlink" title="什么是Hive？"></a>什么是Hive？</h1><h2 id="MapReduce的局限性"><a href="#MapReduce的局限性" class="headerlink" title="MapReduce的局限性"></a>MapReduce的局限性</h2><ol>
+<li>学习曲线陡峭，不适合不懂Java的用户</li>
+<li>开发效率不高</li>
+<li>发布和更新比较麻烦，不适合业务快速变化的场景</li>
+</ol>
+<h2 id="开源数据仓库工具"><a href="#开源数据仓库工具" class="headerlink" title="开源数据仓库工具"></a>开源数据仓库工具</h2><p>Facebook开源，贡献给社区，Apache顶级项目</p>
+<p><strong>开发目的</strong>是解决海量结构化的日志数据统计问题</p>
+<p><strong>声明式编程</strong>：告诉“框架”你想要的是什么**(what)，让框架想出<em>如何</em>去做(how)**。~ SQL</p>
+<p>Hive本质上就是一个Sql2MapReduce的框架</p>
+<p>2009.04.29 — 第一个官方稳定版0.3.0</p>
+<p>2017.07.17 — 最早的2.3版本 （支持Hadoop 2.x，目前主流）</p>
+<p>2018.05 — 最早的3.0版本 （支持Hadoop 3.x)</p>
+<p>目前经常使用的是CDH6打包后的版本2.1</p>
+<h2 id="Hive的优点"><a href="#Hive的优点" class="headerlink" title="Hive的优点"></a>Hive的优点</h2><p><strong>快速</strong></p>
+<p>Hive 所采用的数据可通过批处理快速处理 PB 级数据。</p>
+<p><strong>熟悉</strong></p>
+<p>Hive 提供非程序员可以使用的熟悉的类似于 SQL 的界面。语法类似于MySQL。</p>
+<p><strong>可扩展</strong></p>
+<p>Hive 可根据您的需求（数据量和效率）被轻松分发与扩展。</p>
+<h2 id="Hive在Hadoop生态里所处的角色"><a href="#Hive在Hadoop生态里所处的角色" class="headerlink" title="Hive在Hadoop生态里所处的角色"></a>Hive在Hadoop生态里所处的角色</h2><p>Hadoop生态的组件大致分为4大类：计算、存储、资源调度、集成工具</p>
+<p>红色是Hive</p>
+<p>蓝色是依赖的组件: Hive依赖于HDFS存储数据，依赖MR处理数据</p>
+<p>紫色是有交互的组件</p>
+<p>橙色是有竞争的组件</p>
+<p>Hive本质是一种计算引擎（组件），它可以和多种存储引擎（组件）交互</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219184814.png"></p>
+<h2 id="Hive环境选择"><a href="#Hive环境选择" class="headerlink" title="Hive环境选择"></a>Hive环境选择</h2><p>不同环境选择不同安装方法</p>
+<ul>
+<li>学习环境<ul>
+<li>使用Cloudera的QuickstartVM<sup>[1]</sup>（使用VirtualBox打开），推荐16G内存</li>
+<li>使用Docker初始化一个Hive环境<sup>[2]</sup><sup>[3]</sup>，推荐8G内存</li>
+</ul>
+</li>
+<li>生产环境（自建集群）<ul>
+<li>使用Cloudera Manager来安装CDH软件包</li>
+<li>不建议自己安装开源版Hadoop和Hive</li>
+</ul>
+</li>
+<li>生产环境（云托管集群）<ul>
+<li>阿里云E-MapReduce<sup>[4]</sup></li>
+<li>AWS EMR<sup>[5]</sup></li>
+<li>Azure hdinsight<sup>[6]</sup></li>
+<li>腾讯云EMR</li>
+<li>华为云</li>
+</ul>
+</li>
+</ul>
+<p>[1] 下载链接 <a target="_blank" rel="noopener" href="https://www.cloudera.com/downloads/quickstart_vms/5-13.html">https://www.cloudera.com/downloads/quickstart_vms/5-13.html</a></p>
+<p>[2] <a target="_blank" rel="noopener" href="https://github.com/big-data-europe/docker-hive">https://github.com/big-data-europe/docker-hive</a></p>
+<p>[3] 如果会用Docker Compose软件，更推荐Docker方式</p>
+<p>[4] <a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/28129.html">https://help.aliyun.com/document_detail/28129.html</a></p>
+<p>[5] <a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/emr/latest/ReleaseGuide/emr-hive.html">https://docs.aws.amazon.com/zh_cn/emr/latest/ReleaseGuide/emr-hive.html</a></p>
+<p>[6] <a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/azure/hdinsight/hadoop/hdinsight-use-hive">https://docs.microsoft.com/zh-cn/azure/hdinsight/hadoop/hdinsight-use-hive</a></p>
+<h1 id="Hive可以干什么？"><a href="#Hive可以干什么？" class="headerlink" title="Hive可以干什么？"></a>Hive可以干什么？</h1><h2 id="Hive的主要用途：各种适合离线计算的场景"><a href="#Hive的主要用途：各种适合离线计算的场景" class="headerlink" title="Hive的主要用途：各种适合离线计算的场景"></a>Hive的主要用途：各种适合离线计算的场景</h2><h3 id="适合的场景"><a href="#适合的场景" class="headerlink" title="适合的场景"></a>适合的场景</h3><p><strong>离线ETL</strong></p>
+<ul>
+<li>支持SQL编程</li>
+<li>可随数据量的大小来扩展</li>
+<li>丰富的函数和支持自定义函数</li>
+</ul>
+<p><strong>数据湖架构</strong></p>
+<ul>
+<li>海量存储</li>
+<li>支持结构化和半结构化数据</li>
+<li>支持多种文件格式和数据格式</li>
+</ul>
+<p><strong>数据分析</strong></p>
+<ul>
+<li>支持多种数据访问接口</li>
+<li>支持SQL查询</li>
+</ul>
+<h3 id="不适合的场景"><a href="#不适合的场景" class="headerlink" title="不适合的场景"></a>不适合的场景</h3><ul>
+<li>流式数据处理</li>
+<li>数据频繁刷新</li>
+<li>低延迟查询</li>
+</ul>
+<p>Hive的次要用途：<strong>元数据管理</strong></p>
+<h2 id="Hive数据生命周期"><a href="#Hive数据生命周期" class="headerlink" title="Hive数据生命周期"></a>Hive数据生命周期</h2><p><strong>数据导入</strong></p>
+<ul>
+<li>建表</li>
+<li>从HDFS导入</li>
+<li>从关系型DB导入</li>
+</ul>
+<p><strong>数据处理</strong></p>
+<ul>
+<li>数据清洗</li>
+<li>ETL</li>
+</ul>
+<p><strong>数据分析</strong></p>
+<ul>
+<li>即席查询</li>
+<li>报表工具查询</li>
+<li>Dashboard工具查询</li>
+</ul>
+<p><strong>数据导出</strong></p>
+<ul>
+<li>导出到HDFS</li>
+<li>导出到关系型DB</li>
+<li>导出到NoSQL DB</li>
+</ul>
+<h2 id="Hive的两种常用场景"><a href="#Hive的两种常用场景" class="headerlink" title="Hive的两种常用场景"></a>Hive的两种常用场景</h2><p><strong>偏数据分析</strong></p>
+<ul>
+<li>检索Schema，查看数据</li>
+<li>编写SQL语句生成结果</li>
+<li>将结果导出到Excel</li>
+</ul>
+<p><strong>偏数据开发</strong></p>
+<ul>
+<li>从其他系统导入数据到HDFS</li>
+<li>创建表来检索数据</li>
+<li>编写ETL来进行数据清洗</li>
+<li>数据导出到其他数据系统</li>
+</ul>
+<h1 id="用Hive做数据分析"><a href="#用Hive做数据分析" class="headerlink" title="用Hive做数据分析"></a>用Hive做数据分析</h1><h2 id="先了解访问Hive的几种方式"><a href="#先了解访问Hive的几种方式" class="headerlink" title="先了解访问Hive的几种方式"></a>先了解访问Hive的几种方式</h2><p>访问Hive一般分为：Web访问，CLI访问，工具访问三种方式</p>
+<p><strong>Web访问</strong></p>
+<ul>
+<li>Hue (Web)</li>
+</ul>
+<p><strong>工具访问</strong></p>
+<ul>
+<li>各种支持JDBC或ODBC协议的工具，如<ul>
+<li>squirrel-sql</li>
+<li>Tableau Desktop</li>
+</ul>
+</li>
+</ul>
+<p><strong>CLI访问</strong></p>
+<ul>
+<li>Beeline CLI</li>
+<li>Hive CLI（旧）</li>
+</ul>
+<p>CLI或工具访问的常见认证方式</p>
+<ul>
+<li>无认证</li>
+<li>LDAP (eg. Active Directory) – 企业里，适合给个人用户做认证</li>
+<li>Kerberos -企业里，适合给程序做认证，配置较复杂</li>
+</ul>
+<h2 id="重点说下Beeline-CLI"><a href="#重点说下Beeline-CLI" class="headerlink" title="重点说下Beeline CLI"></a>重点说下Beeline CLI</h2><ul>
+<li><p>本质上是一个JDBC Client</p>
+</li>
+<li><p>一般工作在远程模式下,可以和Hive Server 2不在同一台机器上</p>
+</li>
+<li><p>启动方式: </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">beeline –u jdbc:hive2://&lt;hive-server2&gt;:10000/default –n &lt;user&gt; -p &lt;<span class="built_in">pwd</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>前提是HiveServer2的认证方式是None(默认值)，user可以指定执行用户，不提供的话使用linux的登录用户</li>
+</ul>
+</li>
+<li><p>更多启动参数: </p>
+<ul>
+<li>-f: 执行SQL文件: beeline … -f xxx.hql</li>
+<li>-e: 执行SQL: beeline … -e ‘show tables’</li>
+<li>–hiveconf: 设置hiveconf变量: beeline … –hiveconf property&#x3D;value –hiveconf …</li>
+<li>–hivevar: 设置hivevar变量(可替换sql文件里的变量): beeline … –hivevar var1&#x3D;value1</li>
+</ul>
+</li>
+<li><p>退出: !quit (或!q)</p>
+</li>
+</ul>
+<h2 id="如何安装Beeline-CLI"><a href="#如何安装Beeline-CLI" class="headerlink" title="如何安装Beeline CLI"></a>如何安装Beeline CLI</h2><ul>
+<li><p>先确定Hadoop的版本和Hive的版本，这里以Hadoop2.8 Hive 2.3为例, 事先安装好JDK，确定JAVA_HOME已设置</p>
+</li>
+<li><p>下载Hadoop包： wget <a target="_blank" rel="noopener" href="http://mirror.bit.edu.cn/apache/hadoop/common/hadoop-2.8.5/hadoop-2.8.5.tar.gz">http://mirror.bit.edu.cn/apache/hadoop/common/hadoop-2.8.5/hadoop-2.8.5.tar.gz</a></p>
+</li>
+<li><p>解压后进入目录：export HADOOP_HOME&#x3D;$(pwd)</p>
+</li>
+<li><p>下载Hive包：wget <a target="_blank" rel="noopener" href="http://mirror.bit.edu.cn/apache/hive/hive-2.3.4/apache-hive-2.3.4-bin.tar.gz">http://mirror.bit.edu.cn/apache/hive/hive-2.3.4/apache-hive-2.3.4-bin.tar.gz</a></p>
+</li>
+<li><p>解压后进入目录: export HIVE_HOME&#x3D;$(pwd)</p>
+</li>
+<li><p>把hive bin目录下的文件加入PATH： export PATH&#x3D;$HIVE_HOME&#x2F;bin:$PATH</p>
+</li>
+<li><p>使用下面命令连接到Hive Server</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">beeline -u jdbc:hive2://&lt;hive-server-ip&gt;:10000 -n hive -p hive</span><br><span class="line"></span><br><span class="line">show databases;</span><br><span class="line">use &lt;database&gt;;</span><br><span class="line">show tables;</span><br><span class="line"></span><br><span class="line">desc &lt;database&gt;;</span><br><span class="line">desc &lt;talbe&gt;;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="Beeline-CLI成功登录"><a href="#Beeline-CLI成功登录" class="headerlink" title="Beeline CLI成功登录"></a>Beeline CLI成功登录</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219191215.png"></p>
+<p>更多可以尝试的命令：!help, show tables</p>
+<p>退出：!q</p>
+<h2 id="Beeline-CLI常见问题"><a href="#Beeline-CLI常见问题" class="headerlink" title="Beeline CLI常见问题"></a>Beeline CLI常见问题</h2><ul>
+<li><p>连不上HiveSer ver</p>
+<p>测试端口通不通：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnet &lt;hive-ser ver-ip&gt; 10000</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Hive Server服务没启动</p>
+<ul>
+<li><p>如何查日志？</p>
+<ul>
+<li><p>从CM看</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219191529.png"></p>
+</li>
+<li><p>从服务器上看</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219191551.png"></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="DESC指令"><a href="#DESC指令" class="headerlink" title="DESC指令"></a>DESC指令</h2><p>DESCRIBE DATABASE default;</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219192438.png"></p>
+<p>DESCRIBE [EXTENDED|FORMATTED] table_name;</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219192452.png"></p>
+<h2 id="SHOW-CREATE-TABLE命令"><a href="#SHOW-CREATE-TABLE命令" class="headerlink" title="SHOW CREATE TABLE命令"></a>SHOW CREATE TABLE命令</h2><p>SHOW CREATE TABLE table_name; – 查看表结构、存储格式和存储路径</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219192536.png"></p>
+<h2 id="Hive-QL"><a href="#Hive-QL" class="headerlink" title="Hive QL"></a>Hive QL</h2><ul>
+<li>查询<ul>
+<li>SELECT</li>
+</ul>
+</li>
+<li>过滤<ul>
+<li>WHERE</li>
+</ul>
+</li>
+<li>分组<ul>
+<li>GROUP BY</li>
+</ul>
+</li>
+<li>分组过滤<ul>
+<li>HAVING</li>
+</ul>
+</li>
+<li>TOP<ul>
+<li>LIMIT</li>
+</ul>
+</li>
+<li>排序<ul>
+<li>ORDER BY, SORT BY</li>
+</ul>
+</li>
+<li>聚合函数<ul>
+<li>SUM(), MIN(), AVG(), MAX()</li>
+</ul>
+</li>
+<li>条件语句<ul>
+<li>CASE WHEN，IF</li>
+</ul>
+</li>
+<li>分区函数<ul>
+<li>Partition By</li>
+</ul>
+</li>
+</ul>
+<h2 id="Hive-JOIN"><a href="#Hive-JOIN" class="headerlink" title="Hive JOIN"></a>Hive JOIN</h2><ul>
+<li>Inner join</li>
+<li>Left Outer Join</li>
+<li>Right Outer Join</li>
+<li>Full Outer Join</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> c.ID, c.NAME, o.AMOUNT, o.DATE</span><br><span class="line"><span class="keyword">FROM</span> CUSTOMERS c</span><br><span class="line"><span class="keyword">FULL</span> [<span class="keyword">OUTER</span>] <span class="keyword">JOIN</span> ORDERS o</span><br><span class="line"><span class="keyword">ON</span> (c.ID <span class="operator">=</span> o.CUSTOMER_ID);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219192839.png"></p>
+<h2 id="动手操作：Hive数据分析"><a href="#动手操作：Hive数据分析" class="headerlink" title="动手操作：Hive数据分析"></a>动手操作：Hive数据分析</h2><ul>
+<li>统计access log里访问最多的5个IP<ul>
+<li>注意观察Hive Job拆分成Map Reduce Job并执行</li>
+<li>如何查看Hive MR Job执行的日志(通过JobID到Yarn的Resource Manager里查看）</li>
+</ul>
+</li>
+</ul>
+<h2 id="查看Hive-Job的状态"><a href="#查看Hive-Job的状态" class="headerlink" title="查看Hive Job的状态"></a>查看Hive Job的状态</h2><ol>
+<li><p>获取Job的地址</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219193024.png"></p>
+</li>
+<li><p>查看AM的日志</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219193125.png"></p>
+</li>
+<li><p>查看MR的日志</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219193155.png"></p>
+</li>
+<li><p>查看Job的计数器（可选）</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219193232.png"></p>
+</li>
+</ol>
+<h2 id="Hive操作符"><a href="#Hive操作符" class="headerlink" title="Hive操作符"></a>Hive操作符</h2><p>内置操作符（Operators）</p>
+<p>&#x3D;, !&#x3D;, &lt;, &gt;, IS NULL, …关系型操作符</p>
+<p>+, -, *, &#x2F;, … 算术型操作符</p>
+<p>AND, OR, IN, … 逻辑型操作符</p>
+<p>不支持NOT IN</p>
+<h2 id="Hive函数分类"><a href="#Hive函数分类" class="headerlink" title="Hive函数分类"></a>Hive函数分类</h2><ul>
+<li><p>内置标准函数</p>
+<p>定义：org&#x2F;apache&#x2F;hadoop&#x2F;hive&#x2F;ql&#x2F;exec&#x2F;FunctionRegistry.java</p>
+</li>
+<li><p>数学函数</p>
+</li>
+<li><p>日期函数</p>
+</li>
+<li><p>类型转换函数</p>
+</li>
+<li><p>条件函数</p>
+</li>
+<li><p>字符函数</p>
+</li>
+<li><p>内置聚合函数</p>
+</li>
+<li><p>内置表生成函数</p>
+</li>
+<li><p>自定义函数</p>
+</li>
+</ul>
+<h2 id="Hive函数"><a href="#Hive函数" class="headerlink" title="Hive函数"></a>Hive函数</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219193435.png"></p>
+<ul>
+<li>内置函数（Functions）<ul>
+<li><em>math</em>: round, floor, ceil, exp, log, … </li>
+<li><em>date</em>: to_date, from_unixtimestamp, year, … </li>
+<li><em>conditional</em>: if, isnull, case, coalesce, … </li>
+<li><em>string</em>: char, concat, lower, trim, repeat, …</li>
+</ul>
+</li>
+<li>内置聚合函数（Aggregate Functions）<ul>
+<li>count, sum, min, max, corr, …</li>
+</ul>
+</li>
+<li>内置表生成函数（Table-generating functions）<ul>
+<li>explode, posexplode, parse_url_tuple, …</li>
+</ul>
+</li>
+</ul>
+<h2 id="各种函数的区别"><a href="#各种函数的区别" class="headerlink" title="各种函数的区别"></a>各种函数的区别</h2><table>
+<thead>
+<tr>
+<th>几对几</th>
+<th>函数</th>
+<th>阶段</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1:1</td>
+<td>标准函数Functions （UDFs &#x3D; User Defined Functions）</td>
+<td>Map阶段</td>
+</tr>
+<tr>
+<td>n:1</td>
+<td>聚合函数Aggregate Functions （UDAFs）</td>
+<td>Reduce阶段</td>
+</tr>
+<tr>
+<td>1:1</td>
+<td>表生成函数Table-generating Functions （UDTFs）</td>
+<td>都可以</td>
+</tr>
+<tr>
+<td>m:n</td>
+<td>窗口分析函数Windowing and Analytics Functions</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="表生成函数UDTF例子"><a href="#表生成函数UDTF例子" class="headerlink" title="表生成函数UDTF例子"></a>表生成函数UDTF例子</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219193923.png"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> Management ( </span><br><span class="line">    manager_name STRING, </span><br><span class="line">    direct_reports <span class="keyword">ARRAY</span><span class="operator">&lt;</span>STRING<span class="operator">&gt;</span>) </span><br><span class="line">STORED <span class="keyword">AS</span> PARQUET;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> OVERWRITE <span class="keyword">TABLE</span> Management </span><br><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">	<span class="string">&#x27;Harry&#x27;</span> manager_name,</span><br><span class="line">	<span class="keyword">array</span>(<span class="string">&#x27;James&#x27;</span>, <span class="string">&#x27;Lorren&#x27;</span>) direct_reports</span><br><span class="line">;</span><br></pre></td></tr></table></figure>
+
+
+
+<table>
+<thead>
+<tr>
+<th>manager_name</th>
+<th>direct_reports</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Harry</td>
+<td>James, Lorren</td>
+</tr>
+</tbody></table>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219193932.png"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> manager_name, employee</span><br><span class="line"><span class="keyword">from</span> Management</span><br><span class="line">	<span class="keyword">LATERAL</span> <span class="keyword">VIEW</span> explode(direct_reports) lateral_table <span class="keyword">as</span> employee;</span><br></pre></td></tr></table></figure>
+
+
+
+<table>
+<thead>
+<tr>
+<th>manager_name</th>
+<th>direct_reports</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Harry</td>
+<td>James</td>
+</tr>
+<tr>
+<td>Harry</td>
+<td>Lorren</td>
+</tr>
+</tbody></table>
+<h2 id="窗口分析函数-Windowing-and-Analytics-Functions"><a href="#窗口分析函数-Windowing-and-Analytics-Functions" class="headerlink" title="窗口分析函数(Windowing and Analytics Functions)"></a>窗口分析函数(Windowing and Analytics Functions)</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> column_A, <span class="built_in">ROW_NUMBER</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> column_C SORT <span class="keyword">BY</span> xxx) <span class="keyword">as</span> rn</span><br><span class="line"><span class="keyword">FROM</span> table_name; </span><br><span class="line"><span class="keyword">SELECT</span> column_A, <span class="built_in">RANK</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> column_C) <span class="keyword">FROM</span> table_name; </span><br><span class="line"><span class="keyword">SELECT</span> column_A, <span class="built_in">DENSE_RANK</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> column_C) <span class="keyword">FROM</span> table_name;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219194359.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219194409.png"></p>
+<h2 id="窗口分析函数解析"><a href="#窗口分析函数解析" class="headerlink" title="窗口分析函数解析"></a>窗口分析函数解析</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> column_A,</span><br><span class="line"><span class="built_in">ROW_NUMBER</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> column_C), </span><br><span class="line"><span class="built_in">RANK</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> column_D), </span><br><span class="line"><span class="built_in">DENSE_RANK</span>() <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> column_E) </span><br><span class="line"><span class="keyword">FROM</span> table_name;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219194628.png"></p>
+<h2 id="窗口分析函数举例"><a href="#窗口分析函数举例" class="headerlink" title="窗口分析函数举例"></a>窗口分析函数举例</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219194744.png"></p>
+<h2 id="动手操作-函数使用"><a href="#动手操作-函数使用" class="headerlink" title="动手操作: 函数使用"></a>动手操作: 函数使用</h2><ul>
+<li>普通函数应用：<ul>
+<li>关联IP国家列表统计出访问最多的5个国家</li>
+</ul>
+</li>
+<li>分区函数应用：<ul>
+<li>会话分析</li>
+<li>切分原则：同一个用户两次请求间隔时间超过20分钟</li>
+</ul>
+</li>
+</ul>
+<h2 id="最流行的区域"><a href="#最流行的区域" class="headerlink" title="最流行的区域"></a>最流行的区域</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219194925.png"></p>
+<p>CIDR, 国家</p>
+<p>1.0.0.0&#x2F;24,美国</p>
+<p>1.1.0.0&#x2F;24,美国</p>
+<p>1.0.0.0 – 1.0.0.255,美国</p>
+<p>1.1.0.0 – 1.1.0.255,美国</p>
+<p>IPv4：112.65.12.136</p>
+<p>地区：上海市徐汇区 联通漕河泾数据中心</p>
+<p>城市：上海市</p>
+<p>国家：中国</p>
+<h2 id="会话分析"><a href="#会话分析" class="headerlink" title="会话分析"></a>会话分析</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/%E7%A6%BB%E7%BA%BF%E5%A4%84%E7%90%86Hive.png"></p>
+<h2 id="会话分析逻辑"><a href="#会话分析逻辑" class="headerlink" title="会话分析逻辑"></a>会话分析逻辑</h2><table>
+<thead>
+<tr>
+<th>IP+UA</th>
+<th>timestamp</th>
+<th>Lag（timestamp，1，0）</th>
+<th>Session_boundary</th>
+<th>Session Number</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>UserA</td>
+<td>1402798399</td>
+<td>NULL</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>UserA</td>
+<td>1402798409</td>
+<td>1402798399</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>UserA</td>
+<td>1402798502</td>
+<td>1402798409</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>UserA</td>
+<td>1402799060</td>
+<td>1402798502</td>
+<td>1402799060-1402798502 &gt; 300 &#x3D;&gt; 1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>UserA</td>
+<td>1402799230</td>
+<td>1402799060</td>
+<td>1402799230-1402799060 &lt; 300 &#x3D;&gt; 0</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<h2 id="分析SQL创建中间表"><a href="#分析SQL创建中间表" class="headerlink" title="分析SQL创建中间表"></a>分析SQL创建中间表</h2><p>两种方式：</p>
+<ol>
+<li><p>使用CREATE TABLE语法，使用完需要DROP TABLE</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="operator">&lt;</span>NAME<span class="operator">&gt;</span> <span class="keyword">AS</span> 语法</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> tmp_a</span><br><span class="line"><span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> …;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用WITH语法</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WITH</span> <span class="operator">&lt;</span>NAME<span class="operator">&gt;</span> <span class="keyword">AS</span>语法</span><br><span class="line"></span><br><span class="line"><span class="keyword">WITH</span> tmp_a <span class="keyword">as</span> (</span><br><span class="line"><span class="keyword">SELECT</span> …</span><br><span class="line">), tmp_b <span class="keyword">as</span> (</span><br><span class="line"><span class="keyword">SELECT</span> … </span><br><span class="line">)</span><br><span class="line"><span class="keyword">SELECT</span> … <span class="keyword">FROM</span> tmp_a, tmp_b…</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="导出分析结果数据"><a href="#导出分析结果数据" class="headerlink" title="导出分析结果数据"></a>导出分析结果数据</h2><p>两种方式：</p>
+<ol>
+<li>Beeline直接导出到文件 – 结果不太大的时候</li>
+<li>先导出到Hive表，然后通过表所在HDFS路径获取文件</li>
+</ol>
+<p>先介绍第一种方式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">beeline -u jdbc:hive2://centos7-2:10000/default -n hive -p hive --outputformat=csv2 \</span><br><span class="line">-e <span class="string">&quot;select ip, count(*) cnt from pq_access_logs group by ip order by cnt desc limit 10&quot;</span> &gt; result.csv</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219200741.png"></p>
+<h1 id="用Hive做数据开发"><a href="#用Hive做数据开发" class="headerlink" title="用Hive做数据开发"></a>用Hive做数据开发</h1><h2 id="导入数据到Hive"><a href="#导入数据到Hive" class="headerlink" title="导入数据到Hive"></a>导入数据到Hive</h2><ul>
+<li>数据的分类<ul>
+<li>非结构化（文章，多媒体等）- 不支持</li>
+<li><strong>半结构化(CSV, JSON LINE, XML, LOG等）</strong></li>
+<li>结构化（数据库表）</li>
+</ul>
+</li>
+<li>两种场景<ol>
+<li>其他系统的半结构化文本数据文件导入到Hive</li>
+<li>数据库数据导入Hive</li>
+</ol>
+</li>
+<li>方案<ol>
+<li>先将文件上传HDFS，再通过Hive<strong>外部表</strong>来访问</li>
+<li>先通过Sqoop把表数据以TSV文件形式导入HDFS，再通过Hive<strong>外部表</strong>来访问</li>
+</ol>
+</li>
+</ul>
+<h2 id="使用Hive分析网站的访问日志"><a href="#使用Hive分析网站的访问日志" class="headerlink" title="使用Hive分析网站的访问日志"></a>使用Hive分析网站的访问日志</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219201005.png"></p>
+<ul>
+<li>可以帮助我们完成：</li>
+<li>访问最多的地区的分析</li>
+<li>分析用户会话</li>
+<li>各种关于用户属性的统计</li>
+</ul>
+<p><strong>数据源</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219201028.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219201038.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219201057.png"></p>
+<h2 id="Apache-HTTP服务器的访问日志"><a href="#Apache-HTTP服务器的访问日志" class="headerlink" title="Apache HTTP服务器的访问日志"></a>Apache HTTP服务器的访问日志</h2><p>有两种：</p>
+<p><strong>Common Log Format</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">格式</span><br><span class="line">&lt;IP&gt; - &lt;USER&gt; &lt;TIME&gt; &quot;&lt;VERB&gt; &lt;URL&gt; &lt;PR&gt;&quot; &lt;STATUS&gt; &lt;SIZE&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Combined Log Format （主要使用）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">格式</span><br><span class="line">Common Log Format + &lt;REFERER&gt; &lt;UA&gt; (额外两个属性) </span><br><span class="line">+ customized</span><br></pre></td></tr></table></figure>
+
+<p>+<span style="color:#6f309f">cookies</span>：</p>
+<p>83.0.11.22 - - [02&#x2F;Aug&#x2F;2009:12: 31: 30 +0200] “GET &#x2F;ct &#x2F; HTTP&#x2F;1.1” 200 - “-“ “Mozilla&#x2F;5.0 (Windows; U; Windows NT 5.1; pl; rv:1.9.1.1) Gecko&#x2F;2009071 5 Firefox&#x2F;3.5.1” “<span style="color:#6f309f">c1&#x3D;1; c2&#x3D;2; PHPSESSID&#x3D;6c4513f22852a235b8988da822f89d04</span>“</p>
+<p>参考：<a target="_blank" rel="noopener" href="http://httpd.apache.org/docs/current/logs.html">http://httpd.apache.org/docs/current/logs.html</a></p>
+<h2 id="访问日志示例"><a href="#访问日志示例" class="headerlink" title="访问日志示例"></a>访问日志示例</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 - frank [10/Oct/2000:13:55:36 -0700] &quot;GET /apache_pb.gif HTTP/1.0&quot; 200 2326 </span><br><span class="line">&quot;http://www.example.com/start.html&quot; &quot;Mozilla/4.08 [en] (Win98; I ;Nav)&quot; </span><br><span class="line">123.65.150.10 - - [23/Aug/2010:03:50:59 +0000] &quot;POST /wordpress3/wp-admin/admin-ajax.php</span><br><span class="line">HTTP/1.1&quot; 200 2 &quot;http://www.example.com/wordpress3/wp-admin/post-new.php&quot; </span><br><span class="line">&quot;Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-US) AppleWebKit/534.3 </span><br><span class="line">(KHTML, like Gecko) Chrome/6.0.472.25 Safari/534.3“</span><br><span class="line">83.0.11.22 - - [02/Aug/2009:12:31:30 +0200] &quot;GET /ct/ HTTP/1.1&quot; 200 - &quot;-&quot; </span><br><span class="line">&quot;Mozilla/5.0 (Windows; U; Windows NT 5.1; pl; rv:1.9.1.1) Gecko/20090715 </span><br><span class="line">Firefox/3.5.1&quot; &quot;c1=1; c2=2; PHPSESSID=6c4513f22852a235b8988da822f89d04&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>IPv4</strong>：194.0.2.235 </p>
+<p><strong>HTTP Verb</strong>：GET|POST</p>
+<p><strong>URL</strong>: &#x2F;apache_pb.gif </p>
+<p><strong>STATUS</strong>：200-500</p>
+<p><strong>Timestamp</strong>： 10&#x2F;Oct&#x2F;2000:13:55:36 -0700 </p>
+<p><strong>Cookie</strong>：c1&#x3D;1; c2&#x3D;2; PHPSESSID&#x3D;6c4513f22852a235b8988da822f89d04</p>
+<h2 id="动手操作-日志表创建和数据导入"><a href="#动手操作-日志表创建和数据导入" class="headerlink" title="动手操作: 日志表创建和数据导入"></a>动手操作: 日志表创建和数据导入</h2><ul>
+<li>将日志文件传到HDFS</li>
+<li>建立Hive外部表对应于日志文件</li>
+<li>将TEXT表转换为PARQUET表</li>
+</ul>
+<h2 id="Hive-DDL-创建表"><a href="#Hive-DDL-创建表" class="headerlink" title="Hive DDL: 创建表"></a>Hive DDL: 创建表</h2><p>创建表时指定Location路径</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">USE <span class="operator">&lt;</span>database_name<span class="operator">&gt;</span>; <span class="operator">/</span><span class="operator">/</span> 默认是<span class="keyword">default</span>库</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="operator">&lt;</span>table_name<span class="operator">&gt;</span> (</span><br><span class="line">	<span class="operator">&lt;</span>column_name<span class="operator">&gt;</span><span class="operator">&lt;</span>column_type<span class="operator">&gt;</span>, ...</span><br><span class="line">)</span><br><span class="line">LOCATION &quot;path/to/hdfs/location&quot;; <span class="operator">/</span><span class="operator">/</span> LOCATION可选参数，默认是<span class="operator">/</span><span class="keyword">user</span><span class="operator">/</span>hive<span class="operator">/</span>warehouse<span class="operator">/</span>$db<span class="operator">/</span>$<span class="keyword">table</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219204557.png"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">USE gp;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> tab_dataset (</span><br><span class="line">rst_column STRING,</span><br><span class="line">second_column STRING,</span><br><span class="line"><span class="keyword">value</span> <span class="type">INT</span>);</span><br><span class="line"></span><br><span class="line">删除表：<span class="keyword">DROP</span> <span class="keyword">TABLE</span> <span class="operator">&lt;</span>TableName<span class="operator">&gt;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219204631.png"></p>
+<h2 id="记录行格式：DELIMITED"><a href="#记录行格式：DELIMITED" class="headerlink" title="记录行格式：DELIMITED"></a>记录行格式：DELIMITED</h2><ul>
+<li><p>指定分隔符：字段和行</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> tab_dataset (</span><br><span class="line">rst_column STRING,</span><br><span class="line">second_column STRING,</span><br><span class="line">arr <span class="keyword">ARRAY</span><span class="operator">&lt;</span>STRING<span class="operator">&gt;</span>,</span><br><span class="line"><span class="keyword">value</span> <span class="type">INT</span>)</span><br><span class="line"><span class="type">ROW</span> FORMAT DELIMITED</span><br><span class="line">FIELDS TERMINATED <span class="keyword">BY</span> ‘\t’</span><br><span class="line">LINES TERMINATED <span class="keyword">BY</span> ‘\n’</span><br><span class="line">;</span><br><span class="line"></span><br><span class="line"><span class="type">ROW</span> FORMAT有两种值：DELIMITED和SERDE, 先看第一种</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>以上方式创建的是内部表 – 删除表时会连数据一起删除, LOCATION默认是在HDFS的&#x2F;user&#x2F;hive&#x2F;warehouse的目录下，为了管理方便内部表创建时不要指定LOCATION（使用默认值）</p>
+</li>
+<li><p>还有一种叫外部表</p>
+<ul>
+<li><p>表删除后，数据还在HDFS上</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">EXTERNAL</span> <span class="keyword">TABLE</span> tab_dataset() LOCATION ‘…’;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h2 id="记录行格式：自定义的SERDE（序列化和反序列化）"><a href="#记录行格式：自定义的SERDE（序列化和反序列化）" class="headerlink" title="记录行格式：自定义的SERDE（序列化和反序列化）"></a>记录行格式：自定义的SERDE（序列化和反序列化）</h2><p>序列化是对象转换为字节序列的过程。</p>
+<p>反序列化是字节序列恢复为对象的过程。</p>
+<p>使用正则表达式反序列化日志文件</p>
+<p>内置：Avro ORC RegEx Thrift Parquet CSV JsonSerDe</p>
+<p>日志文件存放在这个目录下：&#x2F;user&#x2F;hive&#x2F;warehouse&#x2F;original_access_logs</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">EXTERNAL</span> <span class="keyword">TABLE</span> intermediate_access_logs (</span><br><span class="line">ip STRING,</span><br><span class="line"><span class="type">date</span> STRING,</span><br><span class="line"><span class="keyword">method</span> STRING,</span><br><span class="line">url STRING,</span><br><span class="line">http_version STRING,</span><br><span class="line">code1 STRING,</span><br><span class="line">code2 STRING,</span><br><span class="line">dash STRING,</span><br><span class="line">user_agent STRING)</span><br><span class="line"><span class="type">ROW</span> FORMAT SERDE <span class="string">&#x27;org.apache.hadoop.hive.contrib.serde2.RegexSerDe&#x27;</span></span><br><span class="line"><span class="keyword">WITH</span> SERDEPROPERTIES (</span><br><span class="line"><span class="string">&#x27;input.regex&#x27;</span> <span class="operator">=</span> <span class="string">&#x27;([^ ]*) - - \\[([^\\]]*)\\] &quot;([^\ ]*) ([^\ ]*) ([^\ ]*)&quot; (\\d*) (\\d*) &quot;([^&quot;]*)&quot; &quot;([^&quot;]*)&quot;&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;output.format.string&#x27;</span> <span class="operator">=</span> &quot;%1$$s %2$$s %3$$s %4$$s %5$$s %6$$s %7$$s %8$$s %9$$s&quot;)</span><br><span class="line">LOCATION <span class="string">&#x27;/user/hive/warehouse/original_access_logs&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>RegexSerDe可以处理有规则的LOG类文本，还有个常用的JSON序列化类</p>
+<p>是org.openx.data.jsonserde.JsonSerDe，可以处理一行一个JSON串的文件</p>
+<h2 id="字段类型（基本）"><a href="#字段类型（基本）" class="headerlink" title="字段类型（基本）"></a>字段类型（基本）</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">EXTERNAL</span> <span class="keyword">TABLE</span> tab_dataset (</span><br><span class="line">rst_column STRING, second_column STRING, <span class="keyword">value</span> <span class="type">INT</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>特别注意：Hive表的Schema on read特性：</p>
+<ol>
+<li>文件和表结构不一致时，只会在读数据时报错</li>
+<li>改了字段数据类型，数据要重写入</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219205113.png"></p>
+<h2 id="字段类型（复杂）"><a href="#字段类型（复杂）" class="headerlink" title="字段类型（复杂）"></a>字段类型（复杂）</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219205142.png"></p>
+<h2 id="分区表"><a href="#分区表" class="headerlink" title="分区表"></a>分区表</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> partitioned_access_log ( ip STRING, </span><br><span class="line">) ... </span><br><span class="line">PARTITIONED <span class="keyword">BY</span> (request_date STRING) ...;</span><br><span class="line"></span><br><span class="line">hdfs:<span class="operator">/</span><span class="operator">/</span><span class="operator">/</span>access_logs<span class="operator">/</span> ... </span><br><span class="line"></span><br><span class="line">— <span class="number">2017</span>_01_20 </span><br><span class="line"></span><br><span class="line">— <span class="number">2017</span>_01_21 </span><br><span class="line"></span><br><span class="line">— <span class="number">2017</span>_01_22 ... </span><br><span class="line"></span><br><span class="line">— &quot;today&quot; </span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> partitioned_access_log ( ip STRING, </span><br><span class="line">) ... </span><br><span class="line">PARTITIONED <span class="keyword">BY</span> (<span class="keyword">year</span> STRING, <span class="keyword">month</span> STRING, <span class="keyword">day</span> STRING) ...;</span><br><span class="line"></span><br><span class="line">hdfs:<span class="operator">/</span><span class="operator">/</span><span class="operator">/</span>access_logs<span class="operator">/</span> ...</span><br><span class="line">— <span class="number">2017</span></span><br><span class="line">—— <span class="number">01</span> </span><br><span class="line">——— <span class="number">20</span> </span><br><span class="line">——— <span class="number">21</span> </span><br><span class="line">——— <span class="number">22</span> </span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">查看分区表的分区: <span class="keyword">SHOW</span> PARTITIONS <span class="operator">&lt;</span>TableName<span class="operator">&gt;</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="分区表作用"><a href="#分区表作用" class="headerlink" title="分区表作用"></a>分区表作用</h2><ul>
+<li>避免全表扫描</li>
+<li>提升查询性能</li>
+<li>方便数据按分区写入（覆盖）</li>
+<li>方便管理</li>
+</ul>
+<h2 id="数据写入分区表"><a href="#数据写入分区表" class="headerlink" title="数据写入分区表"></a>数据写入分区表</h2><p><strong>静态分区</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> raw_access_log</span><br><span class="line"><span class="keyword">INSERT</span> OVERWRITE <span class="keyword">TABLE</span> partitioned_access_log</span><br><span class="line"><span class="keyword">PARTITION</span> (<span class="keyword">year</span><span class="operator">=</span>&quot;2017&quot;, <span class="keyword">month</span><span class="operator">=</span>&quot;03&quot;, <span class="keyword">day</span><span class="operator">=</span>&quot;25&quot;) </span><br><span class="line"><span class="keyword">SELECT</span> ip, ...</span><br></pre></td></tr></table></figure>
+
+<p><strong>动态分区</strong>，分区字段要写在最后，字段的顺序很重要</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> raw_access_log</span><br><span class="line"><span class="keyword">INSERT</span> OVERWRITE <span class="keyword">TABLE</span> </span><br><span class="line">partitioned_access_log</span><br><span class="line"><span class="keyword">PARTITION</span> (<span class="keyword">year</span>, <span class="keyword">month</span>, <span class="keyword">day</span>)</span><br><span class="line"><span class="keyword">SELECT</span> ip, ..., <span class="keyword">year</span>, <span class="keyword">month</span>, <span class="keyword">day</span> </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>混合模式</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> raw_access_log</span><br><span class="line"><span class="keyword">INSERT</span> OVERWRITE <span class="keyword">TABLE</span> partitioned_access_log</span><br><span class="line"><span class="keyword">PARTITION</span> (<span class="keyword">year</span><span class="operator">=</span>&quot;2017&quot;, <span class="keyword">month</span>, <span class="keyword">day</span>)</span><br><span class="line"><span class="keyword">SELECT</span> ip, ..., <span class="keyword">month</span>, <span class="keyword">day</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="写分区表设置参数"><a href="#写分区表设置参数" class="headerlink" title="写分区表设置参数"></a>写分区表设置参数</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> hive.exec.max.dynamic.partitions<span class="operator">=</span><span class="number">2048</span>; </span><br><span class="line"><span class="keyword">SET</span> hive.exec.max.dynamic.partitions.pernode<span class="operator">=</span><span class="number">256</span>; </span><br><span class="line"><span class="keyword">SET</span> hive.exec.max.created.files<span class="operator">=</span><span class="number">10000</span>; </span><br><span class="line"><span class="comment">-- 防止空的分区产生</span></span><br><span class="line"><span class="keyword">SET</span> hive.error.on.empty.partition<span class="operator">=</span><span class="literal">true</span>; </span><br><span class="line"></span><br><span class="line"><span class="comment">-- 允许动态分区</span></span><br><span class="line"><span class="keyword">SET</span> hive.exec.dynamic.partition.mode<span class="operator">=</span>nonstrict;</span><br></pre></td></tr></table></figure>
+
+<h2 id="动手操作-分区表"><a href="#动手操作-分区表" class="headerlink" title="动手操作: 分区表"></a>动手操作: 分区表</h2><ol>
+<li>创建分区表</li>
+<li>往分区表写入数据</li>
+<li>观察分区表物理存储结构</li>
+</ol>
+<h2 id="分桶表"><a href="#分桶表" class="headerlink" title="分桶表"></a>分桶表</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> granular_access_log ( ip STRING, </span><br><span class="line">) ... </span><br><span class="line">PARTITIONED <span class="keyword">BY</span> (request_date STRING)</span><br><span class="line">CLUSTERED <span class="keyword">BY</span> (column_name, ...) </span><br><span class="line"><span class="keyword">INTO</span> <span class="number">200</span> BUCKETS ...;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219212814.png"></p>
+<p><strong>CLUSTERED BY</strong> (<strong>user_id</strong>) </p>
+<p>分桶函数底层是hash函数：INT字段是hash后取模，STRING字段hash后能保证平均分布</p>
+<p>整数字段的hash函数返回原值，string字段hash函数和Java String.hashCode类似，多个字段组合的hash函数和Java List.hashCode类似</p>
+<p>分桶可以让数据分布更加均匀</p>
+<h2 id="桶内Sort的用处"><a href="#桶内Sort的用处" class="headerlink" title="桶内Sort的用处"></a>桶内Sort的用处</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> granular_access_log ( ip STRING, </span><br><span class="line">) ... </span><br><span class="line">PARTITIONED <span class="keyword">BY</span> (request_date STRING) </span><br><span class="line">CLUSTERED <span class="keyword">BY</span> (user_id) </span><br><span class="line">SORTED <span class="keyword">BY</span> (user_id) </span><br><span class="line"><span class="keyword">INTO</span> <span class="number">200</span> BUCKETS ...;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Insert时需设置SET</strong> hive.enforce.sorting&#x3D;true; # 2.0后默认为true</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> user_id, <span class="built_in">COUNT</span>(<span class="number">1</span>) </span><br><span class="line"><span class="keyword">FROM</span> granular_access_log</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> user_id;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219212959.png"></p>
+<p>使执行计划更简单</p>
+<h2 id="分桶表写入需要注意的地方"><a href="#分桶表写入需要注意的地方" class="headerlink" title="分桶表写入需要注意的地方"></a>分桶表写入需要注意的地方</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> mapred.reduce.tasks <span class="operator">=</span> <span class="number">200</span>; </span><br><span class="line"><span class="keyword">FROM</span> raw_access_log</span><br><span class="line"><span class="keyword">INSERT</span> OVERWRITE <span class="keyword">TABLE</span> granular_access_log <span class="keyword">PARTITION</span> <span class="keyword">BY</span> (request_date)</span><br><span class="line"><span class="keyword">SELECT</span> ..., request_date</span><br><span class="line"><span class="keyword">WHERE</span> ... DISTRIBUTE <span class="keyword">BY</span> user_id</span><br><span class="line">[SORT <span class="keyword">BY</span> user_id]</span><br><span class="line">;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SET</span> hive.enforce.bucketing<span class="operator">=</span><span class="literal">true</span>; # <span class="number">2.0</span>后默认为<span class="literal">true</span></span><br><span class="line"><span class="keyword">FROM</span> raw_access_log</span><br><span class="line"><span class="keyword">INSERT</span> OVERWRITE <span class="keyword">TABLE</span> granular_access_log <span class="keyword">PARTITION</span> <span class="keyword">BY</span> (request_date)</span><br><span class="line"><span class="keyword">SELECT</span> ..., request_date</span><br><span class="line"><span class="keyword">WHERE</span> ...;</span><br></pre></td></tr></table></figure>
+
+<h2 id="动手操作-分桶表"><a href="#动手操作-分桶表" class="headerlink" title="动手操作: 分桶表"></a>动手操作: 分桶表</h2><ul>
+<li>创建日志分桶表<ul>
+<li>按IP地址的第一段分桶</li>
+<li>桶内按request_time排序</li>
+</ul>
+</li>
+<li>观察分桶表的物理存储结构</li>
+</ul>
+<h2 id="表的文件储存格式-File-Format"><a href="#表的文件储存格式-File-Format" class="headerlink" title="表的文件储存格式(File Format)"></a>表的文件储存格式(File Format)</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> tab_dataset (</span><br><span class="line">rst_column STRING,</span><br><span class="line">second_column STRING,</span><br><span class="line"><span class="keyword">value</span> <span class="type">INT</span></span><br><span class="line">)</span><br><span class="line"><span class="type">ROW</span> FORMAT DELIMITED</span><br><span class="line">FIELDS TERMINATED <span class="keyword">BY</span> <span class="string">&#x27;\t&#x27;</span></span><br><span class="line">LINES TERMINATED <span class="keyword">BY</span> <span class="string">&#x27;\n&#x27;</span></span><br><span class="line">STORED <span class="keyword">AS</span> file_format</span><br><span class="line">;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">CSV, TSV等格式：FIELDS TERMINATED <span class="keyword">BY</span> <span class="string">&#x27;\t&#x27;</span></span><br><span class="line">默认：Text File (文本)：LINES TERMINATED <span class="keyword">BY</span> <span class="string">&#x27;\n&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>常用的有：Parquet(列式)，Avro，ORC(列式)，Sequence File，INPUT FORMAT &amp; OUTPUT FORMAT (二进制)</p>
+<h2 id="Record-Columnar-File-RCFile-列式储存"><a href="#Record-Columnar-File-RCFile-列式储存" class="headerlink" title="Record Columnar File (RCFile, 列式储存)"></a>Record Columnar File (RCFile, 列式储存)</h2><ul>
+<li>设计目标<ul>
+<li>更快地加载, 文件体积更小</li>
+<li>更快速的查询</li>
+<li>更高效的储存空间利用</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213357.png"><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213405.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213441.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213456.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213515.png"></p>
+<h2 id="列式存储之压缩"><a href="#列式存储之压缩" class="headerlink" title="列式存储之压缩"></a>列式存储之压缩</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213829.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213859.png"></p>
+<p>时间字段压缩</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219213920.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214026.png"></p>
+<p>字符和数字类型的字段的压缩算法</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214047.png"></p>
+<h2 id="两种最常用列式存储格式"><a href="#两种最常用列式存储格式" class="headerlink" title="两种最常用列式存储格式"></a>两种最常用列式存储格式</h2><h3 id="orc"><a href="#orc" class="headerlink" title="orc"></a>orc</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214113.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214125.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214139.png"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> my_orc_table ( </span><br><span class="line">)... </span><br><span class="line">STORED <span class="keyword">AS</span> orc </span><br><span class="line">TBLPROPERTIES (&quot;orc.compress&quot;<span class="operator">=</span>&quot;NONE&quot;) ...;</span><br></pre></td></tr></table></figure>
+
+<h3 id="parquet"><a href="#parquet" class="headerlink" title="parquet"></a>parquet</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214218.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214226.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214237.png"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> my_parquet_table ( </span><br><span class="line">)... </span><br><span class="line">STORED <span class="keyword">AS</span> parquet;</span><br></pre></td></tr></table></figure>
+
+<h2 id="动手操作-ORC表"><a href="#动手操作-ORC表" class="headerlink" title="动手操作: ORC表"></a>动手操作: ORC表</h2><ul>
+<li>创建ORC表<ul>
+<li>启用压缩</li>
+</ul>
+</li>
+<li>经验<ul>
+<li>时间和空间的权衡</li>
+<li>依据实际测试</li>
+</ul>
+</li>
+</ul>
+<h2 id="Hive-DDL知识总结"><a href="#Hive-DDL知识总结" class="headerlink" title="Hive DDL知识总结"></a>Hive DDL知识总结</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211219214335.png"></p>
+<h2 id="Hive-DML"><a href="#Hive-DML" class="headerlink" title="Hive DML"></a>Hive DML</h2><ul>
+<li>数据导入进表<ul>
+<li>手工从HDFS导入</li>
+<li>Flume可以导入文件</li>
+<li>用工具从Relational DB导入<ul>
+<li>Sqoop Import</li>
+<li>StreamSets Data Collector</li>
+<li>Kettle</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数据从表里导出<ul>
+<li>导出到HDFS</li>
+<li>用工具导出到其他数据库<ul>
+<li>Sqoop Export</li>
+<li>Kettle</li>
+<li>第三方Storage Handler, 如ES, HBase</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数据导入策略<ul>
+<li>全量<ul>
+<li>覆盖</li>
+<li>追加分区(比如给表做快照)</li>
+</ul>
+</li>
+<li>增量<ul>
+<li>通过更新时间来同步数据</li>
+<li>需要使用数据合并逻辑来更新表的数据,需要注意的是Hive一般不支持Update和Delete语句<ul>
+<li>除非使用ACID和Transactions功能</li>
+</ul>
+</li>
+<li>或者使用Apache Kudu</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="动手操作：Sqoop数据导入Hive"><a href="#动手操作：Sqoop数据导入Hive" class="headerlink" title="动手操作：Sqoop数据导入Hive"></a>动手操作：Sqoop数据导入Hive</h2><ol>
+<li>MySQL数据表的数据导入HDFS</li>
+<li>创建外部分区表访问该数据</li>
+</ol>
+<h2 id="常用DML语法"><a href="#常用DML语法" class="headerlink" title="常用DML语法"></a>常用DML语法</h2><ol>
+<li><p><strong>写数据到HDFS</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> OVERWRITE DIRECTORY </span><br><span class="line">‘hdfs:<span class="operator">/</span><span class="operator">/</span><span class="operator">/</span>tmp<span class="operator">/</span>employees<span class="string">&#x27;</span></span><br><span class="line"><span class="string">SELECT name, salary, address</span></span><br><span class="line"><span class="string">FROM employees</span></span><br><span class="line"><span class="string">WHERE …;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>写数据到表</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> OVERWRITE <span class="keyword">TABLE</span> t_emp</span><br><span class="line"><span class="keyword">SELECT</span> name, salary, address</span><br><span class="line"><span class="keyword">FROM</span> employees</span><br><span class="line"><span class="keyword">WHERE</span> …;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>multiple-insert statement</strong></p>
+</li>
+</ol>
+   <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">	<span class="keyword">FROM</span> raw_table</span><br><span class="line"><span class="keyword">INSERT</span> OVERWRITE <span class="keyword">TABLE</span> us_employees</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">WHERE</span> country <span class="operator">=</span> <span class="string">&#x27;US&#x27;</span></span><br><span class="line"><span class="keyword">INSERT</span> OVERWRITE <span class="keyword">TABLE</span> uk_employees</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">WHERE</span> country <span class="operator">=</span> <span class="string">&#x27;UK&#x27;</span></span><br><span class="line">…;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li><p><strong>导出到表Create Table AS</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> us_employees</span><br><span class="line"><span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> raw_table</span><br><span class="line"><span class="keyword">WHERE</span> country <span class="operator">=</span> ‘US’</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="手动操作"><a href="#手动操作" class="headerlink" title="手动操作"></a>手动操作</h1><ul>
+<li>将网站的访问日志导入Hive，然后</li>
+</ul>
+<ol>
+<li>统计访问量最多的10个URL</li>
+<li>统计网站两天内每天的PV和UV（IP+UserAgent的组合可以确定一个唯一的用户）</li>
+<li>统计网站访问最多的5个落地页（每个会话的第一次访问称为落地页）</li>
+</ol>
+<h1 id="操作-Hive-Sql"><a href="#操作-Hive-Sql" class="headerlink" title="操作 Hive Sql"></a>操作 Hive Sql</h1><ol>
+<li><p>统计 access log ⾥访问最多的 5 个 IP</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> ip, <span class="built_in">count</span>(<span class="operator">*</span>) cnt </span><br><span class="line"><span class="keyword">from</span> pq_access_logs </span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> ip </span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> cnt <span class="keyword">desc</span> </span><br><span class="line">limit <span class="number">5</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>关联 IP 国家列表统计出访问最多的 5 个国家</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span></span><br><span class="line">	F.country_name, </span><br><span class="line">	<span class="built_in">count</span>(<span class="operator">*</span>) ip_cnt, </span><br><span class="line">	<span class="built_in">sum</span>(F.cnt) visits </span><br><span class="line"><span class="keyword">from</span> (</span><br><span class="line">    <span class="keyword">select</span></span><br><span class="line">    	A.ip, A.cnt, A.ip_to_int, C.country_name </span><br><span class="line">    <span class="keyword">from</span> (</span><br><span class="line">        <span class="keyword">select</span> </span><br><span class="line">        	ip, </span><br><span class="line">        	cnt, </span><br><span class="line">        	<span class="built_in">cast</span>(regexp_extract(ip,&quot;(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)&quot;,<span class="number">1</span>) <span class="keyword">as</span> <span class="type">bigint</span>) <span class="operator">*</span> <span class="number">16777216</span> <span class="operator">+</span> </span><br><span class="line">        	<span class="built_in">cast</span>(regexp_extract(ip,&quot;(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)&quot;,<span class="number">2</span>) <span class="keyword">as</span> <span class="type">bigint</span>) <span class="operator">*</span> <span class="number">65536</span> <span class="operator">+</span> </span><br><span class="line">        	<span class="built_in">cast</span>(regexp_extract(ip,&quot;(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)&quot;,<span class="number">3</span>) <span class="keyword">as</span> <span class="type">bigint</span>) <span class="operator">*</span> <span class="number">256</span> <span class="operator">+</span> </span><br><span class="line">        	<span class="built_in">cast</span>(regexp_extract(ip,&quot;(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)&quot;,<span class="number">4</span>) <span class="keyword">as</span> <span class="type">bigint</span>) <span class="keyword">as</span> ip_to_int, </span><br><span class="line">        	regexp_extract(ip,&quot;(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)&quot;,<span class="number">1</span>) first_no </span><br><span class="line">        <span class="keyword">from</span> (</span><br><span class="line">            <span class="keyword">select</span> ip, <span class="built_in">count</span>(<span class="operator">*</span>) cnt </span><br><span class="line">			<span class="keyword">from</span> pq_access_logs </span><br><span class="line">            <span class="keyword">group</span> <span class="keyword">by</span> ip </span><br><span class="line">        ) T </span><br><span class="line">    ) A </span><br><span class="line">    <span class="keyword">left</span> <span class="keyword">join</span> ip_country_block B </span><br><span class="line">    	<span class="keyword">on</span> (split(B.network, <span class="string">&#x27;\\.&#x27;</span>)[<span class="number">0</span>] <span class="operator">=</span> first_no) </span><br><span class="line">    <span class="keyword">left</span> <span class="keyword">join</span> ip_country_location C </span><br><span class="line">    	<span class="keyword">on</span> (B.geoname_id <span class="operator">=</span> C.geoname_id) </span><br><span class="line">    <span class="keyword">where</span> A.ip_to_int <span class="keyword">between</span> B.first_ip_no <span class="keyword">and</span> B.last_ip_no </span><br><span class="line">) F </span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> F.country_name </span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> visits <span class="keyword">desc</span> </span><br><span class="line">limit <span class="number">5</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>会话分析</p>
+<p>建⽴会话表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> IF <span class="keyword">EXISTS</span> mw_sessions; </span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> mw_sessions ( </span><br><span class="line">    session_id STRING, </span><br><span class="line">    session_number <span class="type">int</span>, </span><br><span class="line">    session_boundary <span class="type">int</span>, </span><br><span class="line">    request_time STRING, </span><br><span class="line">    <span class="type">timestamp</span> <span class="type">int</span>, </span><br><span class="line">    ip STRING, </span><br><span class="line">    user_agent STRING, </span><br><span class="line">    url STRING) </span><br><span class="line">STORED <span class="keyword">AS</span> PARQUET;</span><br></pre></td></tr></table></figure>
+
+<p>会话分析 SQL</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 找到会话的边界</span></span><br><span class="line"><span class="comment">-- 通过比较当前记录和前一条记录的timestamp字段, 如果间隔时间超过5分钟（假设），则赋值为1，否则为0 </span></span><br><span class="line"><span class="keyword">with</span> session_start <span class="keyword">as</span> ( </span><br><span class="line">	<span class="keyword">SELECT</span> </span><br><span class="line">		<span class="keyword">CASE</span></span><br><span class="line">			<span class="keyword">WHEN</span> `<span class="type">timestamp</span>` <span class="operator">-</span> <span class="built_in">lag</span>(`<span class="type">timestamp</span>`, <span class="number">1</span>, <span class="number">0</span>) <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> ip, user_agent <span class="keyword">ORDER</span> <span class="keyword">BY</span> `<span class="type">timestamp</span>`) <span class="operator">&gt;</span> <span class="number">300</span> </span><br><span class="line">				<span class="keyword">THEN</span> <span class="number">1</span> </span><br><span class="line">			<span class="keyword">ELSE</span> <span class="number">0</span> </span><br><span class="line">			<span class="keyword">END</span> <span class="keyword">as</span> session_boundary, </span><br><span class="line">		request_time, </span><br><span class="line">		`<span class="type">timestamp</span>`, </span><br><span class="line">		ip, </span><br><span class="line">		user_agent, </span><br><span class="line">		url </span><br><span class="line">	<span class="keyword">FROM</span> pq_access_logs </span><br><span class="line">),</span><br><span class="line"><span class="comment">-- 填充会话编号</span></span><br><span class="line"><span class="comment">-- 通过对会话边界的累加，每个会话会有一个自增长的会话编号</span></span><br><span class="line">sn <span class="keyword">as</span> ( </span><br><span class="line">	<span class="keyword">SELECT</span> </span><br><span class="line">		<span class="built_in">SUM</span>(session_boundary) <span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> ip, user_agent <span class="keyword">ORDER</span> <span class="keyword">BY</span> `<span class="type">timestamp</span>`) <span class="keyword">as</span> session_number, </span><br><span class="line">    <span class="operator">*</span> </span><br><span class="line">    <span class="keyword">FROM</span> session_start </span><br><span class="line">),</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 为每一个会话生成一个唯一的会话ID </span></span><br><span class="line">t_session_id <span class="keyword">as</span> ( </span><br><span class="line">    <span class="keyword">SELECT</span> </span><br><span class="line">    	reflect(<span class="string">&#x27;org.apache.commons.codec.digest.DigestUtils&#x27;</span>, <span class="string">&#x27;shaHex&#x27;</span>, </span><br><span class="line">			CONCAT( </span><br><span class="line">                <span class="built_in">FIRST_VALUE</span>(`<span class="type">timestamp</span>`) </span><br><span class="line">                	<span class="keyword">OVER</span> (<span class="keyword">PARTITION</span> <span class="keyword">BY</span> ip, user_agent, session_number <span class="keyword">ORDER</span> <span class="keyword">BY</span> `<span class="type">timestamp</span>`), </span><br><span class="line">                ip, user_agent) </span><br><span class="line">		)</span><br><span class="line">    	<span class="keyword">as</span> session_id, </span><br><span class="line">    	<span class="operator">*</span> </span><br><span class="line">    	<span class="keyword">FROM</span> sn </span><br><span class="line">)</span><br><span class="line"><span class="keyword">insert</span> overwrite <span class="keyword">table</span> mw_sessions <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t_session_id;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> session_id, ip, user_agent, request_time, url <span class="keyword">from</span> mw_sessions limit <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>⽇志表创建和数据导⼊</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 将日志文件传到HDFS </span><br><span class="line">hdfs dfs <span class="operator">-</span>mkdir <span class="operator">/</span><span class="keyword">user</span><span class="operator">/</span>hive<span class="operator">/</span>warehouse<span class="operator">/</span>original_access_logs</span><br><span class="line">hdfs dfs <span class="operator">-</span>put access.log <span class="operator">/</span><span class="keyword">user</span><span class="operator">/</span>hive<span class="operator">/</span>warehouse<span class="operator">/</span>original_access_logs</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">EXTERNAL</span> <span class="keyword">TABLE</span> original_access_logs ( </span><br><span class="line">    ip STRING, </span><br><span class="line">    request_time STRING, </span><br><span class="line">    <span class="keyword">method</span> STRING, </span><br><span class="line">    url STRING, </span><br><span class="line">    http_version STRING, </span><br><span class="line">    code1 STRING, </span><br><span class="line">    code2 STRING, </span><br><span class="line">    dash STRING, </span><br><span class="line">    user_agent STRING) </span><br><span class="line"><span class="type">ROW</span> FORMAT SERDE <span class="string">&#x27;org.apache.hadoop.hive.contrib.serde2.RegexSerDe&#x27;</span> </span><br><span class="line"><span class="keyword">WITH</span> SERDEPROPERTIES ( </span><br><span class="line">    <span class="string">&#x27;input.regex&#x27;</span> <span class="operator">=</span> <span class="string">&#x27;([^ ]*) - - \\[([^\\]]*)\\] &quot;([^\ ]*) ([^\ ]*) ([^\ ]*)&quot; (\\d*) (\\d*) &quot;([^&quot;]*)&quot; &quot;([^&quot;]*)&quot;&#x27;</span>, </span><br><span class="line">    <span class="string">&#x27;output.format.string&#x27;</span> <span class="operator">=</span> &quot;%1$$s %2$$s %3$$s %4$$s %5$$s %6$$s %7$$s %8$$s %9$$s&quot;) </span><br><span class="line">LOCATION <span class="string">&#x27;/user/hive/warehouse/original_access_logs&#x27;</span>; </span><br><span class="line"></span><br><span class="line"><span class="comment">-- SELECT遇到ClassNotFound的错误, 说明需要将contrib包引入，根据自己服务器路径的不同做修改</span></span><br><span class="line"><span class="comment">-- 注意：添加后执行sql还报错，执行：!q 退出重新连接，再执行 ADD JAR</span></span><br><span class="line"><span class="keyword">ADD</span> JAR <span class="operator">/</span>opt<span class="operator">/</span>cloudera<span class="operator">/</span>parcels<span class="operator">/</span>CDH<span class="operator">/</span>jars<span class="operator">/</span>hive<span class="operator">-</span>contrib<span class="number">-2.1</span><span class="number">.1</span><span class="operator">-</span>cdh6<span class="number">.2</span><span class="number">.0</span>.jar;</span><br></pre></td></tr></table></figure>
+
+<p>（可选）将 TEXT 表转换为 PARQUET 表 </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> pq_access_logs ( </span><br><span class="line">    ip STRING, </span><br><span class="line">    request_time STRING,</span><br><span class="line">    <span class="keyword">method</span> STRING, </span><br><span class="line">    url STRING,</span><br><span class="line">    http_version STRING, </span><br><span class="line">    code1 STRING, </span><br><span class="line">    code2 STRING, </span><br><span class="line">    dash STRING,</span><br><span class="line">    user_agent STRING, </span><br><span class="line">    `<span class="type">timestamp</span>` <span class="type">int</span>) </span><br><span class="line">STORED <span class="keyword">AS</span> PARQUET; </span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> OVERWRITE <span class="keyword">TABLE</span> pq_access_logs </span><br><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">	ip, </span><br><span class="line">	from_unixtime(unix_timestamp(request_time, <span class="string">&#x27;dd/MMM/yyyy:HH:mm:ss z&#x27;</span>), <span class="string">&#x27;yyyy-MM-dd HH:mm:ss z&#x27;</span>), </span><br><span class="line">	<span class="keyword">method</span>, </span><br><span class="line">	url, </span><br><span class="line">	http_version, </span><br><span class="line">	code1, </span><br><span class="line">	code2, </span><br><span class="line">	dash, </span><br><span class="line">	user_agent, </span><br><span class="line">	unix_timestamp(request_time, <span class="string">&#x27;dd/MMM/yyyy:HH:mm:ss z&#x27;</span>) </span><br><span class="line"><span class="keyword">FROM</span> original_access_logs ;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分区表</p>
+<p>创建分区表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> IF <span class="keyword">EXISTS</span> partitioned_access_logs;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> partitioned_access_logs ( </span><br><span class="line">    ip STRING, </span><br><span class="line">    request_time STRING, </span><br><span class="line">    <span class="keyword">method</span> STRING, url STRING, </span><br><span class="line">    http_version STRING, </span><br><span class="line">    code1 STRING, </span><br><span class="line">    code2 STRING, </span><br><span class="line">    dash STRING, </span><br><span class="line">    user_agent STRING, </span><br><span class="line">    `<span class="type">timestamp</span>` <span class="type">int</span>) </span><br><span class="line">PARTITIONED <span class="keyword">BY</span> (request_date STRING) </span><br><span class="line">STORED <span class="keyword">AS</span> PARQUET</span><br><span class="line">;</span><br></pre></td></tr></table></figure>
+
+<p>将日志表写⼊分区表，使⽤动态分区插⼊</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> hive.exec.dynamic.partition.mode<span class="operator">=</span>nonstrict; </span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> OVERWRITE <span class="keyword">TABLE</span> partitioned_access_logs </span><br><span class="line"><span class="keyword">PARTITION</span> (request_date) </span><br><span class="line"><span class="keyword">SELECT</span> ip, request_time, <span class="keyword">method</span>, url, http_version, code1, code2, dash, user_agent, `<span class="type">timestamp</span>`, to_date(request_time) a </span><br><span class="line"><span class="keyword">FROM</span> pq_access_logs</span><br><span class="line">;</span><br></pre></td></tr></table></figure>
+
+<p>观察分区表目录结构</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hdfs dfs <span class="operator">-</span>ls <span class="operator">/</span><span class="keyword">user</span><span class="operator">/</span>hive<span class="operator">/</span>warehouse<span class="operator">/</span>partitioned_access_logs</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 Sqoop 导入 Mysql 数据到 Hive</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># 模板</span><br><span class="line">sqoop import <span class="comment">--connect jdbc:mysql://&lt;dbhost&gt;:3306/&lt;dbname&gt; \ </span></span><br><span class="line"><span class="comment">--fields-terminated-by \\t \ </span></span><br><span class="line"><span class="comment">--username &lt;dbuser&gt; --password &lt;dbpwd&gt; \ </span></span><br><span class="line"><span class="comment">--query &#x27;SELECT &lt;columns&gt; FROM &lt;table&gt; WHERE 1=1 AND $CONDITIONS&#x27; \ </span></span><br><span class="line"><span class="comment">--target-dir hdfs:///user/hive/warehouse/stg_&lt;table&gt;/ds=&lt;current_date&gt; \ </span></span><br><span class="line"><span class="comment">--verbose -m 1 </span></span><br><span class="line"></span><br><span class="line"># Example </span><br><span class="line">hdfs dfs <span class="operator">-</span>rm <span class="operator">-</span>r <span class="operator">/</span><span class="keyword">user</span><span class="operator">/</span>hive<span class="operator">/</span>warehouse<span class="operator">/</span>stg_drift_table<span class="operator">/</span>ds<span class="operator">=</span><span class="number">20210508</span> </span><br><span class="line"></span><br><span class="line">sqoop import <span class="comment">--connect jdbc:mysql://192.168.1.109:3306/dev \ </span></span><br><span class="line"><span class="comment">--fields-terminated-by \\t \ </span></span><br><span class="line"><span class="comment">--username dev --password dev \ </span></span><br><span class="line"><span class="comment">--query &#x27;SELECT id,c1,c2,c3,updated_at FROM drift_table WHERE 1=1 AND $CONDITIONS&#x27; \ </span></span><br><span class="line"><span class="comment">--target-dir hdfs:///user/hive/warehouse/stg_drift_table/ds=20210508 \ </span></span><br><span class="line"><span class="comment">--verbose -m 1 </span></span><br><span class="line"></span><br><span class="line">hdfs dfs <span class="operator">-</span>cat <span class="operator">/</span><span class="keyword">user</span><span class="operator">/</span>hive<span class="operator">/</span>warehouse<span class="operator">/</span>stg_drift_table<span class="operator">/</span>ds<span class="operator">=</span><span class="number">20210508</span><span class="operator">/</span>part<span class="operator">-</span>m<span class="number">-00000</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 创建hive表 </span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">EXTERNAL</span> <span class="keyword">TABLE</span> stg_drift_table ( </span><br><span class="line">    id <span class="type">int</span>, </span><br><span class="line">    c1 string, </span><br><span class="line">    c2 <span class="type">int</span>, </span><br><span class="line">    c3 string, </span><br><span class="line">    updated_at string </span><br><span class="line">)</span><br><span class="line">PARTITIONED <span class="keyword">BY</span> (ds string) </span><br><span class="line"><span class="type">ROW</span> FORMAT DELIMITED </span><br><span class="line">FIELDS TERMINATED <span class="keyword">BY</span> <span class="string">&#x27;\t&#x27;</span> </span><br><span class="line">LOCATION <span class="string">&#x27;/user/hive/warehouse/stg_drift_table/&#x27;</span>; </span><br><span class="line"></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> stg_drift_table <span class="keyword">ADD</span> <span class="keyword">PARTITION</span>(ds<span class="operator">=</span><span class="string">&#x27;20210508&#x27;</span>);</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/01/01/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/02-%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%A6%BB%E7%BA%BF%E5%A4%84%E7%90%86%E4%B8%8E%E6%95%B0%E4%BB%93/01-Hive/" data-id="clmcxec6z000vu8waai68agq2" data-title="HIVE" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/09/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Hello World
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/01/01/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/03-Spark/01-Scala%E5%92%8CSpark%E5%9F%BA%E7%A1%80/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Spark</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

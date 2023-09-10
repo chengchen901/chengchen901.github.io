@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>手写SpringIOC容器 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="IOC分析 IOC是什么?IOC：Inversion of Control 控制反转，也称依赖倒置（反转 ）问题：如何理解控制反转？反转：依赖对象的获得被反转了。由自己创建，反转为从IOC容器中获取（和自动注入） IOC容器做什么工作？IOC容器的工作：负责创建、管理类实例，向使用者提供实例。 带来什么好处？ 代码更简洁，不需要去new要使用的对象了。 面向接口编程，使用者与具体类解耦，易扩展、替">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手写SpringIOC容器">
+<meta property="og:url" content="http://example.com/2021/05/07/02-Spring/02-%E6%89%8B%E5%86%99SpringIOC%E5%AE%B9%E5%99%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="IOC分析 IOC是什么?IOC：Inversion of Control 控制反转，也称依赖倒置（反转 ）问题：如何理解控制反转？反转：依赖对象的获得被反转了。由自己创建，反转为从IOC容器中获取（和自动注入） IOC容器做什么工作？IOC容器的工作：负责创建、管理类实例，向使用者提供实例。 带来什么好处？ 代码更简洁，不需要去new要使用的对象了。 面向接口编程，使用者与具体类解耦，易扩展、替">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731132459.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731133030.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731140444.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731140526.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731140614.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731140937.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731142025.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731175542.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731175652.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731180013.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731180558.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731212055.png">
+<meta property="article:published_time" content="2021-05-07T14:36:30.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:13:36.350Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Spring">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731132459.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-02-Spring/02-手写SpringIOC容器" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/02-Spring/02-%E6%89%8B%E5%86%99SpringIOC%E5%AE%B9%E5%99%A8/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spring/">Spring</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      手写SpringIOC容器
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="IOC分析"><a href="#IOC分析" class="headerlink" title="IOC分析"></a>IOC分析</h1><ul>
+<li><strong>IOC是什么?</strong><br><strong>IOC：Inversion of Control 控制反转，也称依赖倒置（反转 ）</strong><br>问题：如何理解控制反转？<br><strong>反转：依赖对象的获得被反转了。由自己创建，反转为从IOC容器中获取（和自动注入）</strong></li>
+<li><strong>IOC容器做什么工作？</strong><br>IOC容器的工作：负责创建、管理类实例，向使用者提供实例。</li>
+<li><strong>带来什么好处？</strong><ol>
+<li>代码更简洁，不需要去new要使用的对象了。</li>
+<li>面向接口编程，使用者与具体类解耦，易扩展、替换实现者。</li>
+<li>可以方便进行AOP增强。</li>
+</ol>
+</li>
+<li><strong>IOC容器是否是工厂模式的实例？</strong><br>是的。IOC容器负责来创建类实例对象，需要就从IOC容器中get。也称IOC容器为Bean工厂。IOC使用的是简单工厂模式。</li>
+</ul>
+<h1 id="IOC设计实现"><a href="#IOC设计实现" class="headerlink" title="IOC设计实现"></a>IOC设计实现</h1><h2 id="IOC容器设计-实现"><a href="#IOC容器设计-实现" class="headerlink" title="IOC容器设计&amp;实现"></a>IOC容器设计&amp;实现</h2><ul>
+<li><p>Bean工厂怎么知道该如何创建bean？<br><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731132459.png"></p>
+</li>
+<li><p>如何告诉它?</p>
+<p><strong>就是一个定义注册，我们可以给它定义一个定义注册接口</strong></p>
+</li>
+</ul>
+<h2 id="Bean定义注册接口"><a href="#Bean定义注册接口" class="headerlink" title="Bean定义注册接口"></a>Bean定义注册接口</h2><ul>
+<li><p>bean定义注册接口中应定义些什么方法？<br><strong>注册、获取bean定义…</strong></p>
+</li>
+<li><p>注册的bean定义信息如何区分？<br><strong>每个bean定义有一个唯一的名称</strong></p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731133030.png"></p>
+<h2 id="Bean定义"><a href="#Bean定义" class="headerlink" title="Bean定义"></a>Bean定义</h2><ul>
+<li><p>bean定义的用途是什么？<br><strong>告诉bean工厂该如何创建某类bean</strong></p>
+</li>
+<li><p>获得类的实例的方式有哪些？</p>
+<ul>
+<li><p>new 构造方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">User</span> <span class="variable">u</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>工厂方法</p>
+<ul>
+<li><p>静态的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserFactory</span> &#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> User <span class="title function_">getUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>成员方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserFactory</span> &#123;</span><br><span class="line">	<span class="keyword">public</span> User <span class="title function_">getUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Bean工厂帮我们创建bean时，它需要获知哪些信息？</p>
+<ul>
+<li><p>new 构造方法</p>
+<p><strong>类名</strong></p>
+</li>
+<li><p>静态工厂方法</p>
+<p><strong>工厂类名、工厂方法名（静态工厂创建不需要new创建对象，直接通过class调用方法即可）</strong></p>
+</li>
+<li><p>成员工厂方法</p>
+<p><strong>工厂类名？工厂bean名（成员工厂也当做一个bean注册到bean工厂）</strong><br><strong>工厂方法名</strong></p>
+</li>
+</ul>
+</li>
+<li><p>每次从bean工厂获取bean实例时，是否都需要创建一个新的？</p>
+<p><strong>否，有的只需单实例。</strong></p>
+</li>
+<li><p>bean定义是给bean工厂创建bean用的，那bean定义接口应向bean工厂提供哪些方法？</p>
+<ul>
+<li><strong>获取bean的类名：getBeanClass() :Class</strong></li>
+<li><strong>获取工厂方法名：getFactoryMethodName():String</strong></li>
+<li><strong>获取工厂bean名：getFactoryBeanName():String</strong></li>
+<li><strong>是否是单例等方法：getScope():String isSingleton() isPrototype()</strong></li>
+</ul>
+</li>
+<li><p>类对象交给IOC容器来管理， 类对象的生命周期中还可能有什么生命阶段事情要做吗？</p>
+<ul>
+<li><strong>比如创建对象后可能需要进行一些初始化</strong></li>
+<li><strong>还有有些对象在销毁时可能要进行一些特定的销毁逻辑（如释放资源）</strong></li>
+<li><strong>那就在Bean定义中提供让用户可指定初始化、销毁方法。</strong></li>
+<li><strong>对Bean工厂就需提供 getInitMethodName() getDestroyMethodName()</strong></li>
+</ul>
+</li>
+</ul>
+<h2 id="Bean定义接口"><a href="#Bean定义接口" class="headerlink" title="Bean定义接口"></a>Bean定义接口</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731140444.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731140526.png"></p>
+<p><strong>接口有了，来实现一个通用的bean定义GenericBeanDefinition</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731140614.png"></p>
+<h2 id="IOC容器设计与实现"><a href="#IOC容器设计与实现" class="headerlink" title="IOC容器设计与实现"></a>IOC容器设计与实现</h2><ul>
+<li>看看现在我们有些什么了…</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731140937.png"></p>
+<h2 id="BeanFactory实现"><a href="#BeanFactory实现" class="headerlink" title="BeanFactory实现"></a>BeanFactory实现</h2><ul>
+<li><p>来实现一个最基础的默认bean工厂： DefaultBeanFactory</p>
+<ul>
+<li><p>实现定义信息注册</p>
+<ol>
+<li><p>bean定义信息如何存放？<br><strong>Map</strong></p>
+</li>
+<li><p>bean定义是否可以重名？重名怎么办?</p>
+<p><strong>我们是设计者，规则我们来定</strong></p>
+</li>
+</ol>
+</li>
+<li><p>实现bean工厂</p>
+<ol>
+<li><p>创建的bean用什么存放，方便下次获取?<br><strong>Map</strong></p>
+</li>
+<li><p>在getBean方法中要做哪些事？</p>
+<p><strong>创建bean实例，进行初始化</strong></p>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="扩展DefaultBeanFactory"><a href="#扩展DefaultBeanFactory" class="headerlink" title="扩展DefaultBeanFactory"></a>扩展DefaultBeanFactory</h2><ul>
+<li>思考：对于单例bean，我们可否提前实例化？这样有什么好处？</li>
+<li>增加提前实例化单例Bean的功能</li>
+</ul>
+<p><strong>实现提前实例化单例Bean</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731142025.png"></p>
+<h1 id="DI分析"><a href="#DI分析" class="headerlink" title="DI分析"></a>DI分析</h1><h2 id="DI-Dependency-injection-依赖注入-分析"><a href="#DI-Dependency-injection-依赖注入-分析" class="headerlink" title="DI(Dependency injection)依赖注入-分析"></a>DI(Dependency injection)依赖注入-分析</h2><ul>
+<li>哪些地方会有依赖？<ul>
+<li><strong>构造参数依赖</strong></li>
+<li><strong>属性依赖</strong></li>
+</ul>
+</li>
+<li>依赖注入的本质是什么？<ul>
+<li><strong>给值：给入构造参数值，给属性赋值</strong></li>
+</ul>
+</li>
+<li>参数值、属性值可能是什么值？<ul>
+<li><strong>直接值、bean依赖</strong></li>
+</ul>
+</li>
+<li>值会有哪几种情形？<ul>
+<li><strong>基本数据类型值、String</strong></li>
+<li><strong>数组、集合</strong></li>
+<li><strong>Properties</strong></li>
+<li><strong>map</strong></li>
+</ul>
+</li>
+</ul>
+<p><strong>本质：参数值、属性值，都是值。bean工厂在进行依赖注入时，就是给入值。</strong></p>
+<p>如何告诉bean工厂该给入什么构造参数值？即如何来定义参数依赖？</p>
+<p>如何来定义属性依赖？</p>
+<h1 id="DI实现"><a href="#DI实现" class="headerlink" title="DI实现"></a>DI实现</h1><h2 id="DI依赖注入-构造参数依赖定义分析"><a href="#DI依赖注入-构造参数依赖定义分析" class="headerlink" title="DI依赖注入-构造参数依赖定义分析"></a>DI依赖注入-构造参数依赖定义分析</h2><p><strong>如何定义构造参数依赖？</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Girl</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Girl</span><span class="params">(String name,<span class="type">int</span> age,<span class="type">char</span> cup,Boy boyfriend)</span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>我们要创建一个Girl是如何创建的？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Boy</span> <span class="variable">lad</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Boy</span>(<span class="string">&quot;prettyBoy&quot;</span>);</span><br><span class="line"><span class="type">Girl</span> <span class="variable">beautGirl</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Girl</span>(<span class="string">&quot;小丽&quot;</span>,<span class="number">18</span>,<span class="string">&#x27;D&#x27;</span>,lad);</span><br></pre></td></tr></table></figure>
+
+<p>直接把值就给它了，就这么简单! </p>
+</li>
+<li><p>那我们可不可以这样来定义构造参数依赖？</p>
+<ul>
+<li><strong>第一个参数值是： “小丽”</strong></li>
+<li><strong>第二个参数值是：18</strong></li>
+<li><strong>第三个参数值是： ‘D’</strong></li>
+<li><strong>第四个参数值是：依赖一个Boy Bean</strong></li>
+</ul>
+</li>
+</ul>
+<h2 id="DI-构造参数依赖设计"><a href="#DI-构造参数依赖设计" class="headerlink" title="DI-构造参数依赖设计"></a>DI-构造参数依赖设计</h2><ul>
+<li><p>参数可以多个，用什么存储？<br><strong>集合：List</strong></p>
+</li>
+<li><p>参数有顺序，如何体现顺序？<br><strong>按参数顺序放入List</strong></p>
+</li>
+<li><p>参数值可以是直接值，也可以是bean依赖，如何表示：Object?</p>
+<p><strong>可以，也只能用Object了。</strong><br><strong>List<Object> constructorArgumentValues</strong></p>
+</li>
+<li><p>如果用Object来表示值，如何区分是Bean依赖？<br><strong>为Bean依赖定义一种数据类型（BeanReference），bean工厂在构造Bean实例时，遍历判断参数是否是BeanReference，如是则替换为依赖的bean实例。</strong></p>
+</li>
+<li><p>如果直接值是数组、集合等，它们的元素中有的是bean依赖，怎么处理？<br><strong>元素值还是用BeanReference，同样bean工厂在使用时需遍历替换。</strong></p>
+</li>
+</ul>
+<h2 id="DI实现-BeanReference"><a href="#DI实现-BeanReference" class="headerlink" title="DI实现-BeanReference"></a>DI实现-BeanReference</h2><ul>
+<li>BeanReference就是用来说明bean依赖的：依赖哪个Bean</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731175542.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731175652.png"></p>
+<h2 id="DI实现-构造参数依赖定义"><a href="#DI实现-构造参数依赖定义" class="headerlink" title="DI实现-构造参数依赖定义"></a>DI实现-构造参数依赖定义</h2><ul>
+<li>在BeanDefinition中增加获得构造参数值的接口</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731180013.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">setConstructorArgumentValues</span><span class="params">(List&lt;?&gt; constructorArgumentValues)</span>;</span><br><span class="line"></span><br><span class="line">List&lt;?&gt; getConstructorArgumentValues();</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在GenericBeanDefinition中增加对应的实现</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> List&lt;?&gt; constructorArgumentValues;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setConstructorArgumentValues</span><span class="params">(List&lt;?&gt; constructorArgumentValues)</span> &#123;</span><br><span class="line">	<span class="built_in">this</span>.constructorArgumentValues = constructorArgumentValues;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> List&lt;?&gt; getConstructorArgumentValues() &#123;</span><br><span class="line">	<span class="keyword">return</span> constructorArgumentValues;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="DI实现-BeanFactory中实现构造参数依赖注入"><a href="#DI实现-BeanFactory中实现构造参数依赖注入" class="headerlink" title="DI实现-BeanFactory中实现构造参数依赖注入"></a>DI实现-BeanFactory中实现构造参数依赖注入</h2><ul>
+<li>首先需要把bean定义中的构造参数引用转为真实的值，在DefaultBeanFactory中增加一个方法来干这事。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731180558.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Object[] getConstructorArgumentValues(BeanDefinition beanDefinition) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="keyword">final</span> List&lt;?&gt; args = beanDefinition.getConstructorArgumentValues();</span><br><span class="line">    <span class="keyword">return</span> getRealValues(args);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 参数值解析</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> Object[] getRealValues(List&lt;?&gt; args) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="keyword">if</span> (CollectionUtils.isEmpty(args)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Object[] values = <span class="keyword">new</span> <span class="title class_">Object</span>[args.size()];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; args.size(); i++) &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">rv</span> <span class="operator">=</span> args.get(i);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">v</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (rv == <span class="literal">null</span>) &#123;</span><br><span class="line">            v = <span class="literal">null</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (rv <span class="keyword">instanceof</span> BeanReference) &#123;</span><br><span class="line">            v = <span class="built_in">this</span>.doGetBean(((BeanReference) rv).getBeanName());</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (rv <span class="keyword">instanceof</span> Object[]) &#123;</span><br><span class="line">            <span class="comment">// TODO 处理集合中的bean引用</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (rv <span class="keyword">instanceof</span> Collection) &#123;</span><br><span class="line">            <span class="comment">// TODO 处理集合中的bean引用</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (rv <span class="keyword">instanceof</span> Properties) &#123;</span><br><span class="line">            <span class="comment">// TODO 处理properties中的bean引用</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (rv <span class="keyword">instanceof</span> Map) &#123;</span><br><span class="line">            <span class="comment">// TODO 处理Map中的bean引用</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            v = rv;</span><br><span class="line">        &#125;</span><br><span class="line">        values[i] = v;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> values;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>有参数了，如何断定是哪个构造方法、哪个工厂方法？</p>
+<ol>
+<li><p>方法是可以重载的</p>
+</li>
+<li><p>形参定义时可能是接口或父类，实参则是具体的子实现</p>
+</li>
+<li><p>反射提供的获取的构造方法、方法的API，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Constructor&lt;T&gt; <span class="title function_">getConstructor</span><span class="params">(Class&lt;?&gt;... parameterTypes)</span>;</span><br><span class="line">Constructor&lt;?&gt;[] getConstructors();</span><br><span class="line"></span><br><span class="line">Method <span class="title function_">getMethod</span><span class="params">(String name, Class&lt;?&gt;... parameterTypes)</span>;</span><br><span class="line">Method[] getMethods();</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><p>判断逻辑：</p>
+<ol>
+<li>先根据参数的类型进行精确匹配查找，如未找到，则进行第2步查找；</li>
+<li>获得所有的构造方法，遍历，通过参数数量过滤，再比对形参类型与实参类型。</li>
+</ol>
+</li>
+<li><p>当我们判断出构造方法或工厂方法后，对于原型Bean,下次获取Bean是否就可以省去判断了？<br><strong>也就是说，对于原型bean，我们可以缓存下这个构造方法或工厂方法。如何实现？</strong><br><strong>在BeanDefinition中增加缓存的方法：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">setConstructor</span><span class="params">(Constructor&lt;?&gt; constructor)</span>;</span><br><span class="line">  </span><br><span class="line">Constructor&lt;?&gt; getConstructor();</span><br><span class="line">  </span><br><span class="line"><span class="keyword">void</span> <span class="title function_">setFactoryMethod</span><span class="params">(Method method)</span>;</span><br><span class="line">  </span><br><span class="line">Method <span class="title function_">getFactoryMethod</span><span class="params">()</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>在GenericBeanDefinition中增加对应的实现：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">private</span> Constructor&lt;?&gt; constructor;</span><br><span class="line">   <span class="keyword">private</span> Method method;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setConstructor</span><span class="params">(Constructor&lt;?&gt; constructor)</span> &#123;</span><br><span class="line">       <span class="built_in">this</span>.constructor = constructor;</span><br><span class="line">   &#125;</span><br><span class="line">  </span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">public</span> Constructor&lt;?&gt; getConstructor() &#123;</span><br><span class="line">       <span class="keyword">return</span> constructor;</span><br><span class="line">   &#125;</span><br><span class="line">  </span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setFactoryMethod</span><span class="params">(Method method)</span> &#123;</span><br><span class="line">       <span class="built_in">this</span>.method = method;</span><br><span class="line">   &#125;</span><br><span class="line">  </span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">public</span> Method <span class="title function_">getFactoryMethod</span><span class="params">()</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> method;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在DefaultBeanFactory中增加查找构造方法的方法<br>看代码：private Constructor&lt;?&gt; determineConstructor(BeanDefinition bd, Object[] args)</p>
+</li>
+<li><p>修改DefaultBeanFactory中用构造方法方式创建实例的方法代码<br>看代码：private Object createBeanByConstructor(BeanDefinition bd)</p>
+</li>
+<li><p>依照上面的方式修改静态工厂方法、工厂方法方式的参数依赖<br>看代码：Method determineFactoryMethod(BeanDefinition bd, Object[] args, Class&lt;?&gt; type)<br>private Object createBeanByStaticFactory(BeanDefinition bd) </p>
+<p>private Object createBeanByBeanFactory(BeanDefinition bd) </p>
+</li>
+<li><p>循环依赖如何处理？</p>
+<ul>
+<li>构造对象时可以循环依赖吗？</li>
+<li>构造实例对象时的循环依赖，会陷入僵死局面，是不允许构造实例时的循环依赖的。如何发现循环依赖？</li>
+<li><strong>方式：加入一个正在构造的bean的记录，每个bean开始构造时加入到该记录中，构造完成后从记录中移除。如果有依赖，先看依赖的bean是否在构造中，如是就构成了循环依赖，抛出异常。</strong></li>
+</ul>
+</li>
+</ul>
+<h2 id="DI实现-属性依赖设计-实现"><a href="#DI实现-属性依赖设计-实现" class="headerlink" title="DI实现-属性依赖设计&amp;实现"></a>DI实现-属性依赖设计&amp;实现</h2><p><strong>属性依赖</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Girl</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">char</span> cup;</span><br><span class="line">    <span class="keyword">private</span> Boy boyfriend;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>属性依赖是什么？<br><strong>某个属性依赖某个值</strong></p>
+</li>
+<li><p>该如何来描述一个属性依赖？<br><strong>属性名、值，定义一个类来表示这两个值</strong></p>
+</li>
+<li><p>会有多个属性依赖，怎么存放？<br><strong>List</strong></p>
+</li>
+<li><p>属性值的情况和构造参数值一样吗？<br><strong>一样的</strong></p>
+</li>
+<li><p>定义属性依赖描述实体类PropertyValue</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210731212055.png"></p>
+<ul>
+<li><p>在BeanDefinition中增加获得属性依赖定义的接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">setPropertyValues</span><span class="params">(List&lt;PropertyValue&gt; propertyValues)</span>;</span><br><span class="line">  </span><br><span class="line">List&lt;PropertyValue&gt; <span class="title function_">getPropertyValues</span><span class="params">()</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在GenericBeanDefinition中增加对应的实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">private</span> List&lt;PropertyValue&gt; propertyValues;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setPropertyValues</span><span class="params">(List&lt;PropertyValue&gt; propertyValues)</span> &#123;</span><br><span class="line">       <span class="built_in">this</span>.propertyValues = propertyValues;</span><br><span class="line">   &#125;</span><br><span class="line">  </span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">public</span> List&lt;PropertyValue&gt; <span class="title function_">getPropertyValues</span><span class="params">()</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> propertyValues;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在DefaultBeanFactory中实现属性依赖<br>看代码： private void setPropertyDIValues(BeanDefinition bd, Object instance)<br>在doGetBean(String beanName)中增加对设置属性依赖的调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建好实例后，移除创建中记录</span></span><br><span class="line">ingBeans.remove(beanName);</span><br><span class="line"><span class="comment">// 给入属性依赖</span></span><br><span class="line"><span class="built_in">this</span>.setPropertyDIValues(bd, instance);</span><br><span class="line"><span class="comment">// 执行初始化方法</span></span><br><span class="line"><span class="built_in">this</span>.doInit(bd, instance);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="拓展—加需求"><a href="#拓展—加需求" class="headerlink" title="拓展—加需求"></a>拓展—加需求</h1><ul>
+<li><p>Bean增加别名支持</p>
+<p>Bean除了标识唯一的名称外，还可以有任意个别名，别名也是唯一的。</p>
+</li>
+<li><p>beanFactory增加可按Class来获取Bean对象的功能</p>
+</li>
+<li><p>加入配置参数加载、注入给Bean的功能</p>
+</li>
+<li><p>加入Bean配置的条件依赖生效支持</p>
+<p>在bean定义配置中可以指定它条件依赖某些bean或类，当这些bean和类存在时，这个bean配置才有效。</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/02-Spring/02-%E6%89%8B%E5%86%99SpringIOC%E5%AE%B9%E5%99%A8/" data-id="clmcxecs7006mu8wagi097287" data-title="手写SpringIOC容器" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/04-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/02-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%BA%8C%EF%BC%89/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          设计模式（二）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/05/07/02-Spring/03-%E6%89%8B%E5%86%99SpringAOP/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">手写SpringAOP</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

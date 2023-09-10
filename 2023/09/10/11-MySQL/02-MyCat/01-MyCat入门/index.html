@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="海量数据分片之分库分表大数据处理-分区应对大数据的处理，在分库分表之前，我们可以用分区，提升数据库的性能  大数据处理-分片理解随着业务的发展，业务越来越复杂，应用的模块越来越多，总的数据量很大，高并发读写操作均超过单个数据库服务器的处理能力怎么办？  对于读压力，我们可以想什么办法？集群，多个从库 对于写压力呢？能集群，多个主库吗？不能多个相同的主库  那到底怎么办？ 数据分片指按照某个维度将存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/11-MySQL/02-MyCat/01-MyCat%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="海量数据分片之分库分表大数据处理-分区应对大数据的处理，在分库分表之前，我们可以用分区，提升数据库的性能  大数据处理-分片理解随着业务的发展，业务越来越复杂，应用的模块越来越多，总的数据量很大，高并发读写操作均超过单个数据库服务器的处理能力怎么办？  对于读压力，我们可以想什么办法？集群，多个从库 对于写压力呢？能集群，多个主库吗？不能多个相同的主库  那到底怎么办？ 数据分片指按照某个维度将存">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224145018.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224145313.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224145523.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224145712.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224150018.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224150040.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224152247.png">
+<meta property="article:published_time" content="2023-09-10T03:59:08.868Z">
+<meta property="article:modified_time" content="2022-12-24T11:29:29.441Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224145018.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-11-MySQL/02-MyCat/01-MyCat入门" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/11-MySQL/02-MyCat/01-MyCat%E5%85%A5%E9%97%A8/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.868Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="海量数据分片之分库分表"><a href="#海量数据分片之分库分表" class="headerlink" title="海量数据分片之分库分表"></a>海量数据分片之分库分表</h1><h2 id="大数据处理-分区"><a href="#大数据处理-分区" class="headerlink" title="大数据处理-分区"></a>大数据处理-分区</h2><p>应对大数据的处理，在分库分表之前，我们可以用分区，提升数据库的性能</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224145018.png"></p>
+<h2 id="大数据处理-分片理解"><a href="#大数据处理-分片理解" class="headerlink" title="大数据处理-分片理解"></a><strong>大数据处理-分片理解</strong></h2><p>随着业务的发展，业务越来越复杂，应用的模块越来越多，总的数据量很大，高并发读写操作均超过单个数据库服务器的处理能力怎么办？</p>
+<ol>
+<li>对于读压力，我们可以想什么办法？<br>集群，多个从库</li>
+<li>对于写压力呢？<br>能集群，多个主库吗？<br>不能多个相同的主库</li>
+</ol>
+<p><strong>那到底怎么办？</strong></p>
+<p>数据分片指按照某个维度将存放在单一数据库中的数据分散地存放至多个数据库或表中<br>数据分片的有效手段是对关系型数据库进行分库和分表</p>
+<ul>
+<li>垂直拆分</li>
+<li>水平拆分</li>
+</ul>
+<h2 id="大数据处理-分库理解"><a href="#大数据处理-分库理解" class="headerlink" title="大数据处理-分库理解"></a>大数据处理-分库理解</h2><p>分库又叫垂直拆分，或者纵向拆分，指的是按照业务模块将数据分散到不同的数据库服务器</p>
+<p>就是把原本存储于一个库的表拆分存储到多个库上，通常是将表按照功能模块、关系密切程度划分出来，部署到不同的库上。</p>
+<p>如果数据库是因为表太多而造成海量数据，并且项目的各项业务逻辑划分清晰、低耦合，那么规则简单明了、容易实施的首选就是分库。</p>
+<h2 id="大数据处理-分库图例"><a href="#大数据处理-分库图例" class="headerlink" title="大数据处理-分库图例"></a>大数据处理-分库图例</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224145313.png"></p>
+<p>优点</p>
+<ul>
+<li>拆分后业务清晰，拆分规则明确；</li>
+<li>系统之间整合或扩展容易；</li>
+<li>数据维护简单。</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>部分业务表无法join，只能通过接口方式解决，提高了系统复杂度；</li>
+<li>受每种业务不同的限制存在单库性能瓶颈，不易数据扩展跟性能提高；</li>
+<li>事务处理复杂。</li>
+</ul>
+<h2 id="大数据处理-分表理解"><a href="#大数据处理-分表理解" class="headerlink" title="大数据处理-分表理解"></a>大数据处理-分表理解</h2><p>垂直拆分可以缓冲数据量和访问量带来的问题，但无法根治。<br>如果单个表的数量很大，超出了单表的存储上限，如电商网站的商品表、订单表等该怎么办？<br>如果垂直拆分之后，表中的数据量依然超过单节点所能承载的阈值，则需要水平分片来进一步处理。 </p>
+<p>分表又叫水平切分，它不再将数据根据业务逻辑分类，而是通过某个字段（或某几个字段），根据某种规则或逻辑，将一个表的数据拆分成多份，分别存储在多个表结构一样的表中，这多个表可以存在一到多个库中，每个分片仅包含数据的一部分。</p>
+<h2 id="大数据处理-分表类型"><a href="#大数据处理-分表类型" class="headerlink" title="大数据处理-分表类型"></a>大数据处理-分表类型</h2><p>分表又分成垂直分表和水平分表：</p>
+<ul>
+<li><p>垂直分表：将本来可以在同一个表的内容，划分为多个表。（按照关系型数据库的第三范式要求，是应该在同一个表的。）</p>
+</li>
+<li><p>水平分表：是把一个表复制成同样表结构的不同表，然后把数据按照一定的规则划分，分别存储到这些表中，从而保证单表的容量不会太大，提升性能；当然这些结构一样的表，可以放在一个或多个数据库中。</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224145523.png"></p>
+<h2 id="大数据处理-分表图例"><a href="#大数据处理-分表图例" class="headerlink" title="大数据处理-分表图例"></a>大数据处理-分表图例</h2><p>对海量数据的表进行分表分库存储-水平拆分</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224145712.png"></p>
+<p><strong>优点</strong></p>
+<ul>
+<li>拆分规则抽象好，join 操作基本可以数据库做；</li>
+<li>不存在单库大数据，高并发的性能瓶颈；</li>
+<li>应用端改造较少；</li>
+<li>提高了系统的稳定性跟负载能力。</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>拆分规则难以抽象；</li>
+<li>分片事务一致性难以解决；</li>
+<li>数据多次扩展难度跟维护量极大；</li>
+<li>跨库join 性能较差。</li>
+</ul>
+<h2 id="水平拆分—分片规则"><a href="#水平拆分—分片规则" class="headerlink" title="水平拆分—分片规则"></a>水平拆分—分片规则</h2><p>水平对数据进行拆分最重要的是分片规则—拆分规则</p>
+<p>可以如何来拆分？</p>
+<ul>
+<li>范围：时间、数值；</li>
+<li>列表：按地域、按组织、分类；</li>
+<li>散列：hash(某个字段) % 分片数、一致性hash； </li>
+<li>复合多种方式。</li>
+</ul>
+<h1 id="分库分表会带来的挑战"><a href="#分库分表会带来的挑战" class="headerlink" title="分库分表会带来的挑战"></a>分库分表会带来的挑战</h1><h2 id="分库分表的技术难点"><a href="#分库分表的技术难点" class="headerlink" title="分库分表的技术难点"></a>分库分表的技术难点</h2><p>无论垂直拆分、水平拆分，都有共同的<strong>技术难点:</strong> </p>
+<ul>
+<li>分布式事务的问题；</li>
+<li>跨节点Join的问题；</li>
+<li>跨节点合并排序分页问题；</li>
+<li>多数据源管理问题。</li>
+</ul>
+<h2 id="需要一个这样的东西"><a href="#需要一个这样的东西" class="headerlink" title="需要一个这样的东西"></a>需要一个这样的东西</h2><ol>
+<li>要能解析SQL</li>
+<li>能支持读写分离</li>
+<li>能支持从库读的负载均衡</li>
+<li>支持分库操作</li>
+<li>支持分表操作</li>
+<li>支持跨库关联查询</li>
+<li>对事务处理的支持</li>
+<li>主键ID生成</li>
+<li>数据源管理</li>
+</ol>
+<h2 id="数据库中间件的分类和分库分表实战"><a href="#数据库中间件的分类和分库分表实战" class="headerlink" title="数据库中间件的分类和分库分表实战"></a>数据库中间件的分类和分库分表实战</h2><h2 id="数据库中间件的两种实现模式"><a href="#数据库中间件的两种实现模式" class="headerlink" title="数据库中间件的两种实现模式"></a>数据库中间件的两种实现模式</h2><p><strong>客户端模式</strong>，在应用程序中集成数据库中间件模块，通过该模块来配置管理应用需要的一个（或者多个）数据源，以及访问各个数据源，在模块内完成数据的整合。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224150018.png"></p>
+<p><strong>服务端（代理）模式</strong>，通过中间代理层来统一管理所有的数据源，后端数据库集群对前端应用程序透明，同时易于数据库扩展。独立的服务能提供更强的处理能力。适用于大型复杂系统。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224150040.png"></p>
+<h2 id="常用数据库中间件简介"><a href="#常用数据库中间件简介" class="headerlink" title="常用数据库中间件简介"></a>常用数据库中间件简介</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>客户端模式</th>
+<th></th>
+<th>proxy</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>当当</td>
+<td>sharding-jdbc</td>
+<td>社区</td>
+<td>Mycat - cobar</td>
+</tr>
+<tr>
+<td>阿里</td>
+<td>TDDL</td>
+<td>数字</td>
+<td>Atlas</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>百度</td>
+<td>heinsberge</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>youtube</td>
+<td>vitess</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>金山</td>
+<td>kingshard</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>商业版</td>
+<td>Oneproxy</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Cobar</th>
+<th>TDDL</th>
+<th>ShardingJDBC</th>
+<th>MyCat</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>分库支持</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>分表支持</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>类型</td>
+<td>Proxy</td>
+<td>客户端集成</td>
+<td>客户端集成</td>
+<td>Proxy</td>
+</tr>
+<tr>
+<td>中间层</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>ORM支持</td>
+<td>任意</td>
+<td>多种</td>
+<td>多种</td>
+<td>多种</td>
+</tr>
+<tr>
+<td>数据库支持</td>
+<td>mysql</td>
+<td>多种</td>
+<td>多种</td>
+<td>多种</td>
+</tr>
+<tr>
+<td>外部依赖</td>
+<td>No</td>
+<td>Diamond</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>社区活跃度</td>
+<td>停滞</td>
+<td>停滞</td>
+<td>较活跃</td>
+<td>活跃</td>
+</tr>
+<tr>
+<td>文档丰富</td>
+<td>Yes</td>
+<td>N&#x2F;A</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>持续更新</td>
+<td>No</td>
+<td>N&#x2F;A</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+<h2 id="Mycat是什么"><a href="#Mycat是什么" class="headerlink" title="Mycat是什么"></a>Mycat是什么</h2><p>MyCat数据库分库分表中间件：国内最活跃的、性能最好的开源数据库中间件</p>
+<ul>
+<li>一个彻底开源的，面向企业应用开发的大数据库集群</li>
+<li>支持事务、ACID、可以替代MySQL的加强版数据库</li>
+<li>一个可以视为MySQL集群的企业级数据库，用来替代昂贵的Oracle集群</li>
+<li>一个融合内存缓存技术、NoSQL技术、HDFS大数据的新型SQL Server</li>
+<li>结合传统数据库和新型分布式数据仓库的新一代企业级数据库产品</li>
+<li>一个新颖的数据库中间件产品。</li>
+</ul>
+<p>官网地址： <a target="_blank" rel="noopener" href="http://www.mycat.io、http//www.mycat.org.cn/">http://www.mycat.io、http://www.mycat.org.cn/</a><br>Github地址： <a target="_blank" rel="noopener" href="https://github.com/MyCATApache">https://github.com/MyCATApache</a><br>Github上文档地址： <a target="_blank" rel="noopener" href="https://github.com/MyCATApache/Mycat-doc">https://github.com/MyCATApache/Mycat-doc</a></p>
+<h2 id="Mycat-由来"><a href="#Mycat-由来" class="headerlink" title="Mycat 由来"></a>Mycat 由来</h2><p>2013年阿里的Cobar在社区使用过程中发现存在一些比较严重的问题，及其使用限制，经过Mycat发起人第一次改良，第一代改良版——Mycat诞生。 Mycat开源以后，一些Cobar的用户参与了Mycat的开发，最终Mycat发展成为一个由众多软件公司的实力派架构师和资深开发人员维护的社区型开源软件。</p>
+<h2 id="Mycat-安装"><a href="#Mycat-安装" class="headerlink" title="Mycat 安装"></a>Mycat 安装</h2><p>环境准备</p>
+<ul>
+<li>JDK1.7+	 Mycat是用java开发</li>
+<li>MySQL统一5.7 镜像地址： <a target="_blank" rel="noopener" href="http://mirrors.163.com/mysql/Downloads/MySQL-5.7/mysql-5.7.24-1.el7.x86_64.rpm-bundle.tar%E3%80%81">http://mirrors.163.com/mysql/Downloads/MySQL-5.7/mysql-5.7.24-1.el7.x86_64.rpm-bundle.tar、</a></li>
+<li>Mycat安装包 下载地址： <a target="_blank" rel="noopener" href="http://dl.mycat.io/">http://dl.mycat.io</a> 当前最新版本：1.6.6.1</li>
+</ul>
+<p>Mycat使用说明</p>
+<ul>
+<li>源码方式导入到IDE，源码地址： <a target="_blank" rel="noopener" href="https://github.com/MyCATApache/Mycat-Server.git">https://github.com/MyCATApache/Mycat-Server.git</a></li>
+<li>安装包方式安装，下载地址： <a target="_blank" rel="noopener" href="http://dl.mycat.io/">http://dl.mycat.io</a></li>
+</ul>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><p><strong>数据库中间件</strong>：对应用，mycat就是数据库服务，mycat是后端数据库集群的代理</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221224152247.png"></p>
+<p><strong>逻辑概念:</strong> </p>
+<ul>
+<li>逻辑库：mycat数据库服务中定义、管理的数据库</li>
+<li>逻辑表：逻辑库中包含的需分库分表存储的表</li>
+<li>dataNode：数据节点（分片节点），逻辑表分片的存放节点。</li>
+<li>dataHost: 数据主机（节点主机），数据节点所在的主机。</li>
+</ul>
+<p><strong>schema.xml</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mycat:schema</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">schema</span> <span class="attr">name</span>=<span class="string">&quot;testdb&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;orders&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;ID&quot;</span> </span></span><br><span class="line"><span class="tag">               <span class="attr">type</span>=<span class="string">&quot;global&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1,dn2&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">schema</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dataNode</span> <span class="attr">name</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">dataHost</span>=<span class="string">&quot;dhost1&quot;</span> <span class="attr">database</span>=<span class="string">&quot;db1&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dataHost</span> <span class="attr">name</span>=<span class="string">&quot;dhost1&quot;</span> <span class="attr">...</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">heartbeat</span>&gt;</span>select user()<span class="tag">&lt;/<span class="name">heartbeat</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">writeHost</span> <span class="attr">host</span>=<span class="string">&quot;hostM1&quot;</span> <span class="attr">url</span>=<span class="string">&quot;localhost:3306&quot;</span><span class="attr">...</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">readHost</span> <span class="attr">host</span>=<span class="string">&quot;hostS2&quot;</span> <span class="attr">url</span>=<span class="string">&quot;192.168.1.2:3306&quot;</span><span class="attr">...</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">writeHost</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dataHost</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mycat:schema</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>物理概念</strong></p>
+<ul>
+<li>writeHost：写主机，真实的数据库服务主机描述</li>
+<li>readHost：读主机，真实的数据库服务主机描述</li>
+</ul>
+<h1 id="分库分表的优缺点和原则"><a href="#分库分表的优缺点和原则" class="headerlink" title="分库分表的优缺点和原则"></a>分库分表的优缺点和原则</h1><h2 id="大数据处理-分片优点"><a href="#大数据处理-分片优点" class="headerlink" title="大数据处理-分片优点"></a>大数据处理-分片优点</h2><ul>
+<li>解决磁盘系统最大文件限制，比如常见的有：<br>FAT16(最大分区2GB,最大文件2GB)<br>FAT32(最大分区32GB，最大容量2TB，最大文件32G)<br>NTFS(最大分区2TB，最大容量，最大文件2TB)<br>EXT3(最大文件大小: 2TB，最大文件极限: 仅受文件系统大小限制，最大分区&#x2F;文件系统大小: 4TB，最大文件名长度: 255 字符) </li>
+<li>减少增量数据写入时的锁对查询的影响，减少长时间查询造成的表锁，影响写入操作等锁竞争的情况，节省排队的时间开支，增加呑吐量。 </li>
+<li>由于单表数量下降，常见的查询操作由于减少了需要扫描的记录，使得单表单次查询所需的检索行数变少，减少了磁盘IO，时延变短。</li>
+</ul>
+<h2 id="大数据处理-分库原则"><a href="#大数据处理-分库原则" class="headerlink" title="大数据处理-分库原则"></a>大数据处理-分库原则</h2><p>基本的思路就是分析业务功能，以及表间的聚合关系，把关系紧密的表放在一起。</p>
+<p>分库的粒度指的是在做切分时允许几级的关联表放在一起，这个问题对应用程序实现有着很大的影响。关联打 断的越多，则受影响的join操作越多。</p>
+<p>实际的粒度掌控需要结合“业务紧密程度”和“表的数据量”两个因素综合考虑</p>
+<ul>
+<li>若划归到一起的表关系紧密，且数据量并不大，增速也非常缓慢，则适宜放在一起，不需要再进行水平切分；</li>
+<li>若划归到一起的表的数据量巨大且增速迅猛，则势必要在分库的基础上再进行分表，这就意味着原单一的库还可能会被拆分成多个库，这会导致更多的复杂性，一开始最好就要考虑进去</li>
+</ul>
+<h2 id="大数据处理-分表原则"><a href="#大数据处理-分表原则" class="headerlink" title="大数据处理-分表原则"></a>大数据处理-分表原则</h2><p>对于垂直分表，通常是按照业务功能的使用频次，把主要的、热门的字段放在一起做为主要表；然后把不常用的，按照各自的业务属性进行聚集，拆分到不同的次要表中；主要表和次要表的关系一般都是一对一的。</p>
+<p>对于水平分表，通常是按照具体的业务规则和数据的格式，选择能够把数据进行合理拆分的业务数据做为拆分标准，以此来对数据进行拆分。</p>
+<p><strong>水平对数据进行拆分最重要的是分片规则—拆分规则</strong></p>
+<p>可以如何来拆分？</p>
+<ul>
+<li>范围：时间、数值；</li>
+<li>列表：按地域、按组织、分类；</li>
+<li>散列：hash(某个字段) % 分片数、一致性hash； </li>
+<li>复合多种方式。</li>
+</ul>
+<h2 id="数据库拆分原则"><a href="#数据库拆分原则" class="headerlink" title="数据库拆分原则"></a>数据库拆分原则</h2><ul>
+<li>第一原则：能不切分尽量不要切分</li>
+<li>第二原则：如果要切分一定要选择合适的切分规则，提前规划好。</li>
+<li>第三原则：数据切分尽量通过数据冗余或表分组（Table Group）来降低跨库Join 的可能。</li>
+<li>第四原则：由于数据库中间件对数据Join实现的优劣难以把握，而且实现高性能难度极大，业务读取尽量少使用多表Join。</li>
+</ul>
+<h1 id="分库分表配置文件示例"><a href="#分库分表配置文件示例" class="headerlink" title="分库分表配置文件示例"></a>分库分表配置文件示例</h1><h2 id="server-xml"><a href="#server-xml" class="headerlink" title="server.xml"></a>server.xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- - - Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); </span></span><br><span class="line"><span class="comment">	- you may not use this file except in compliance with the License. - You </span></span><br><span class="line"><span class="comment">	may obtain a copy of the License at - - http://www.apache.org/licenses/LICENSE-2.0 </span></span><br><span class="line"><span class="comment">	- - Unless required by applicable law or agreed to in writing, software - </span></span><br><span class="line"><span class="comment">	distributed under the License is distributed on an &quot;AS IS&quot; BASIS, - WITHOUT </span></span><br><span class="line"><span class="comment">	WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. - See the </span></span><br><span class="line"><span class="comment">	License for the specific language governing permissions and - limitations </span></span><br><span class="line"><span class="comment">	under the License. --&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">mycat</span>:server <span class="keyword">SYSTEM</span> <span class="string">&quot;server.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mycat:server</span> <span class="attr">xmlns:mycat</span>=<span class="string">&quot;http://io.mycat/&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">user</span> <span class="attr">name</span>=<span class="string">&quot;user&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span>&gt;</span>user<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;schemas&quot;</span>&gt;</span>mydb1<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;readOnly&quot;</span>&gt;</span>false<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mycat:server</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="schema-xml"><a href="#schema-xml" class="headerlink" title="schema.xml"></a>schema.xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">mycat</span>:schema <span class="keyword">SYSTEM</span> <span class="string">&quot;schema.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mycat:schema</span> <span class="attr">xmlns:mycat</span>=<span class="string">&quot;http://io.mycat/&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">schema</span> <span class="attr">name</span>=<span class="string">&quot;mydb1&quot;</span> <span class="attr">checkSQLschema</span>=<span class="string">&quot;true&quot;</span> <span class="attr">sqlMaxLimit</span>=<span class="string">&quot;100&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;t_order&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;uuid&quot;</span> <span class="attr">autoIncrement</span>=<span class="string">&quot;true&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;t_user&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;uuid&quot;</span> <span class="attr">autoIncrement</span>=<span class="string">&quot;true&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn2,dn3&quot;</span> <span class="attr">rule</span>=<span class="string">&quot;mod-long&quot;</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">schema</span>&gt;</span></span><br><span class="line">	</span><br><span class="line">	<span class="tag">&lt;<span class="name">dataNode</span> <span class="attr">name</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">dataHost</span>=<span class="string">&quot;dhost1&quot;</span> <span class="attr">database</span>=<span class="string">&quot;orderdb&quot;</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dataNode</span> <span class="attr">name</span>=<span class="string">&quot;dn2&quot;</span> <span class="attr">dataHost</span>=<span class="string">&quot;dhost1&quot;</span> <span class="attr">database</span>=<span class="string">&quot;userdb&quot;</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dataNode</span> <span class="attr">name</span>=<span class="string">&quot;dn3&quot;</span> <span class="attr">dataHost</span>=<span class="string">&quot;dhost2&quot;</span> <span class="attr">database</span>=<span class="string">&quot;userdb&quot;</span> /&gt;</span></span><br><span class="line">	</span><br><span class="line">	<span class="tag">&lt;<span class="name">dataHost</span> <span class="attr">name</span>=<span class="string">&quot;dhost1&quot;</span> <span class="attr">maxCon</span>=<span class="string">&quot;1000&quot;</span> <span class="attr">minCon</span>=<span class="string">&quot;10&quot;</span> <span class="attr">balance</span>=<span class="string">&quot;1&quot;</span> <span class="attr">writeType</span>=<span class="string">&quot;0&quot;</span> <span class="attr">dbType</span>=<span class="string">&quot;mysql&quot;</span> <span class="attr">dbDriver</span>=<span class="string">&quot;native&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">heartbeat</span>&gt;</span>select user()<span class="tag">&lt;/<span class="name">heartbeat</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">writeHost</span> <span class="attr">host</span>=<span class="string">&quot;myhostM1&quot;</span> <span class="attr">url</span>=<span class="string">&quot;192.168.100.201:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;5462837zhu&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">writeHost</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dataHost</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dataHost</span> <span class="attr">name</span>=<span class="string">&quot;dhost2&quot;</span> <span class="attr">maxCon</span>=<span class="string">&quot;1000&quot;</span> <span class="attr">minCon</span>=<span class="string">&quot;10&quot;</span> <span class="attr">balance</span>=<span class="string">&quot;1&quot;</span> <span class="attr">writeType</span>=<span class="string">&quot;0&quot;</span> <span class="attr">dbType</span>=<span class="string">&quot;mysql&quot;</span> <span class="attr">dbDriver</span>=<span class="string">&quot;native&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">heartbeat</span>&gt;</span>select user()<span class="tag">&lt;/<span class="name">heartbeat</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">writeHost</span> <span class="attr">host</span>=<span class="string">&quot;myhostM2&quot;</span> <span class="attr">url</span>=<span class="string">&quot;192.168.100.202:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span>	<span class="attr">password</span>=<span class="string">&quot;5462837zhu&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">writeHost</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dataHost</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mycat:schema</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="rule-xml"><a href="#rule-xml" class="headerlink" title="rule.xml"></a>rule.xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- - - Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); </span></span><br><span class="line"><span class="comment">	- you may not use this file except in compliance with the License. - You </span></span><br><span class="line"><span class="comment">	may obtain a copy of the License at - - http://www.apache.org/licenses/LICENSE-2.0 </span></span><br><span class="line"><span class="comment">	- - Unless required by applicable law or agreed to in writing, software - </span></span><br><span class="line"><span class="comment">	distributed under the License is distributed on an &quot;AS IS&quot; BASIS, - WITHOUT </span></span><br><span class="line"><span class="comment">	WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. - See the </span></span><br><span class="line"><span class="comment">	License for the specific language governing permissions and - limitations </span></span><br><span class="line"><span class="comment">	under the License. --&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">mycat</span>:rule <span class="keyword">SYSTEM</span> <span class="string">&quot;rule.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mycat:rule</span> <span class="attr">xmlns:mycat</span>=<span class="string">&quot;http://io.mycat/&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">tableRule</span> <span class="attr">name</span>=<span class="string">&quot;rule1&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">rule</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">columns</span>&gt;</span>id<span class="tag">&lt;/<span class="name">columns</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">algorithm</span>&gt;</span>func1<span class="tag">&lt;/<span class="name">algorithm</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tableRule</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">tableRule</span> <span class="attr">name</span>=<span class="string">&quot;rule2&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">rule</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">columns</span>&gt;</span>user_id<span class="tag">&lt;/<span class="name">columns</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">algorithm</span>&gt;</span>func1<span class="tag">&lt;/<span class="name">algorithm</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tableRule</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">tableRule</span> <span class="attr">name</span>=<span class="string">&quot;sharding-by-intfile&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">rule</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">columns</span>&gt;</span>sharding_id<span class="tag">&lt;/<span class="name">columns</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">algorithm</span>&gt;</span>hash-int<span class="tag">&lt;/<span class="name">algorithm</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tableRule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">tableRule</span> <span class="attr">name</span>=<span class="string">&quot;auto-sharding-long&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">rule</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">columns</span>&gt;</span>id<span class="tag">&lt;/<span class="name">columns</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">algorithm</span>&gt;</span>rang-long<span class="tag">&lt;/<span class="name">algorithm</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tableRule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">tableRule</span> <span class="attr">name</span>=<span class="string">&quot;mod-long&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">rule</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">columns</span>&gt;</span>uuid<span class="tag">&lt;/<span class="name">columns</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">algorithm</span>&gt;</span>mod-long<span class="tag">&lt;/<span class="name">algorithm</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tableRule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">tableRule</span> <span class="attr">name</span>=<span class="string">&quot;sharding-by-murmur&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">rule</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">columns</span>&gt;</span>id<span class="tag">&lt;/<span class="name">columns</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">algorithm</span>&gt;</span>murmur<span class="tag">&lt;/<span class="name">algorithm</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tableRule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">tableRule</span> <span class="attr">name</span>=<span class="string">&quot;crc32slot&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">rule</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">columns</span>&gt;</span>id<span class="tag">&lt;/<span class="name">columns</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">algorithm</span>&gt;</span>crc32slot<span class="tag">&lt;/<span class="name">algorithm</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tableRule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">tableRule</span> <span class="attr">name</span>=<span class="string">&quot;sharding-by-month&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">rule</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">columns</span>&gt;</span>create_time<span class="tag">&lt;/<span class="name">columns</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">algorithm</span>&gt;</span>partbymonth<span class="tag">&lt;/<span class="name">algorithm</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tableRule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">tableRule</span> <span class="attr">name</span>=<span class="string">&quot;latest-month-calldate&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">rule</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">columns</span>&gt;</span>calldate<span class="tag">&lt;/<span class="name">columns</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">algorithm</span>&gt;</span>latestMonth<span class="tag">&lt;/<span class="name">algorithm</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tableRule</span>&gt;</span></span><br><span class="line">	</span><br><span class="line">	<span class="tag">&lt;<span class="name">tableRule</span> <span class="attr">name</span>=<span class="string">&quot;auto-sharding-rang-mod&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">rule</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">columns</span>&gt;</span>id<span class="tag">&lt;/<span class="name">columns</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">algorithm</span>&gt;</span>rang-mod<span class="tag">&lt;/<span class="name">algorithm</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tableRule</span>&gt;</span></span><br><span class="line">	</span><br><span class="line">	<span class="tag">&lt;<span class="name">tableRule</span> <span class="attr">name</span>=<span class="string">&quot;jch&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">rule</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">columns</span>&gt;</span>id<span class="tag">&lt;/<span class="name">columns</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">algorithm</span>&gt;</span>jump-consistent-hash<span class="tag">&lt;/<span class="name">algorithm</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">rule</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">tableRule</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">function</span> <span class="attr">name</span>=<span class="string">&quot;murmur&quot;</span></span></span><br><span class="line"><span class="tag">		<span class="attr">class</span>=<span class="string">&quot;io.mycat.route.function.PartitionByMurmurHash&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;seed&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;count&quot;</span>&gt;</span>2<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;virtualBucketTimes&quot;</span>&gt;</span>160<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">function</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">function</span> <span class="attr">name</span>=<span class="string">&quot;crc32slot&quot;</span></span></span><br><span class="line"><span class="tag">			  <span class="attr">class</span>=<span class="string">&quot;io.mycat.route.function.PartitionByCRC32PreSlot&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">function</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">function</span> <span class="attr">name</span>=<span class="string">&quot;hash-int&quot;</span></span></span><br><span class="line"><span class="tag">		<span class="attr">class</span>=<span class="string">&quot;io.mycat.route.function.PartitionByFileMap&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;mapFile&quot;</span>&gt;</span>partition-hash-int.txt<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">function</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">function</span> <span class="attr">name</span>=<span class="string">&quot;rang-long&quot;</span></span></span><br><span class="line"><span class="tag">		<span class="attr">class</span>=<span class="string">&quot;io.mycat.route.function.AutoPartitionByLong&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;mapFile&quot;</span>&gt;</span>autopartition-long.txt<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">function</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">function</span> <span class="attr">name</span>=<span class="string">&quot;mod-long&quot;</span> <span class="attr">class</span>=<span class="string">&quot;io.mycat.route.function.PartitionByMod&quot;</span>&gt;</span></span><br><span class="line">		<span class="comment">&lt;!-- how many data nodes --&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;count&quot;</span>&gt;</span>2<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">function</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">function</span> <span class="attr">name</span>=<span class="string">&quot;func1&quot;</span> <span class="attr">class</span>=<span class="string">&quot;io.mycat.route.function.PartitionByLong&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;partitionCount&quot;</span>&gt;</span>8<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;partitionLength&quot;</span>&gt;</span>128<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">function</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">function</span> <span class="attr">name</span>=<span class="string">&quot;latestMonth&quot;</span></span></span><br><span class="line"><span class="tag">		<span class="attr">class</span>=<span class="string">&quot;io.mycat.route.function.LatestMonthPartion&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;splitOneDay&quot;</span>&gt;</span>24<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">function</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">function</span> <span class="attr">name</span>=<span class="string">&quot;partbymonth&quot;</span></span></span><br><span class="line"><span class="tag">		<span class="attr">class</span>=<span class="string">&quot;io.mycat.route.function.PartitionByMonth&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;dateFormat&quot;</span>&gt;</span>yyyy-MM-dd<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;sBeginDate&quot;</span>&gt;</span>2015-01-01<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">function</span>&gt;</span></span><br><span class="line">	</span><br><span class="line">	<span class="tag">&lt;<span class="name">function</span> <span class="attr">name</span>=<span class="string">&quot;rang-mod&quot;</span> <span class="attr">class</span>=<span class="string">&quot;io.mycat.route.function.PartitionByRangeMod&quot;</span>&gt;</span></span><br><span class="line">        	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;mapFile&quot;</span>&gt;</span>partition-range-mod.txt<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">function</span>&gt;</span></span><br><span class="line">	</span><br><span class="line">	<span class="tag">&lt;<span class="name">function</span> <span class="attr">name</span>=<span class="string">&quot;jump-consistent-hash&quot;</span> <span class="attr">class</span>=<span class="string">&quot;io.mycat.route.function.PartitionByJumpConsistentHash&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;totalBuckets&quot;</span>&gt;</span>3<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">function</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mycat:rule</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>备注：mycat1.6.6版本使用主键生成自己测试一直失败，使用1.6版本可以</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/11-MySQL/02-MyCat/01-MyCat%E5%85%A5%E9%97%A8/" data-id="clmcxed5k00cju8wag0pa773w" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/11-MySQL/02-MyCat/02-MyCat%E5%AE%89%E8%A3%85/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/11-MySQL/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/03-MySQL%E5%88%86%E5%8C%BA%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

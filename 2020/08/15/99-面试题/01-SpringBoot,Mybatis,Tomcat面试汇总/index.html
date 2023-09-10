@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>SpringBoot,Mybatis,Tomcat面试汇总 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="SpringBoot面试Spring已经很完善了，为什么还要有SpringBoot？Spring Framework旨在简化J2EE企业应用程序开发。Spring Boot Framework旨在更进一步简化Spring开发，5分钟就能快速搭建完成一个SSM Web框架，通过CLI Groovy能在一分钟就能写出一个Web应用。大量减少模板代码、XML配置，主要目标在于提高开发效率。 Spring">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot,Mybatis,Tomcat面试汇总">
+<meta property="og:url" content="http://example.com/2020/08/15/99-%E9%9D%A2%E8%AF%95%E9%A2%98/01-SpringBoot,Mybatis,Tomcat%E9%9D%A2%E8%AF%95%E6%B1%87%E6%80%BB/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="SpringBoot面试Spring已经很完善了，为什么还要有SpringBoot？Spring Framework旨在简化J2EE企业应用程序开发。Spring Boot Framework旨在更进一步简化Spring开发，5分钟就能快速搭建完成一个SSM Web框架，通过CLI Groovy能在一分钟就能写出一个Web应用。大量减少模板代码、XML配置，主要目标在于提高开发效率。 Spring">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211001223401.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211001224018.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211001224040.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2022-09-25T15:30:10.368Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="面试题">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211001223401.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-99-面试题/01-SpringBoot,Mybatis,Tomcat面试汇总" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/99-%E9%9D%A2%E8%AF%95%E9%A2%98/01-SpringBoot,Mybatis,Tomcat%E9%9D%A2%E8%AF%95%E6%B1%87%E6%80%BB/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      SpringBoot,Mybatis,Tomcat面试汇总
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="SpringBoot面试"><a href="#SpringBoot面试" class="headerlink" title="SpringBoot面试"></a>SpringBoot面试</h1><h2 id="Spring已经很完善了，为什么还要有SpringBoot？"><a href="#Spring已经很完善了，为什么还要有SpringBoot？" class="headerlink" title="Spring已经很完善了，为什么还要有SpringBoot？"></a>Spring已经很完善了，为什么还要有SpringBoot？</h2><p>Spring Framework旨在简化J2EE企业应用程序开发。Spring Boot Framework旨在更进一步简化Spring开发，5分钟就能快速搭建完成一个SSM Web框架，通过CLI Groovy能在一分钟就能写出一个Web应用。大量减少模板代码、XML配置，主要目标在于提高开发效率。</p>
+<h2 id="SpringBoot的主要优点有哪些？"><a href="#SpringBoot的主要优点有哪些？" class="headerlink" title="SpringBoot的主要优点有哪些？"></a>SpringBoot的主要优点有哪些？</h2><ol>
+<li>开发基于 Spring 的应用程序很容易。</li>
+<li>Spring Boot 项目所需的开发或工程时间明显减少，通常会提高整体生产力。</li>
+<li>Spring Boot不需要编写大量样板代码、XML配置和注释。</li>
+<li>Spring引导应用程序可以很容易地与Spring生态系统集成，如Spring JDBC、Spring ORM、SpringData、SprSecurity等。</li>
+<li>Spring Boot遵循“固执己见的默认配置”，以减少开发工作（默认配置可以修改）。</li>
+<li>Spring Boot 应用程序提供嵌入式HTTP服务器，如Tomcat和Jetty，可以轻松地开发和测试web应用程序。（这点很赞行Java程序的方式就能运行基于Spring Boot web 项目，省事很多）</li>
+<li>Spring Boot提供命令行接口(CLI)工具，用于开发和测试Spring Boot应用程序，如Java或Groovy。 </li>
+<li>Spring Boot提供了多种插件，可以使用内置工具(如Maven和Gradle)开发和测试Spring Boot应用程序。</li>
+</ol>
+<h2 id="SpringBoot中的是如何做到自动化配置的？"><a href="#SpringBoot中的是如何做到自动化配置的？" class="headerlink" title="SpringBoot中的是如何做到自动化配置的？"></a>SpringBoot中的是如何做到自动化配置的？</h2><ol>
+<li>@SpringBootApplication注解是@Configuration、@Configuration、@ComponentScan注解的集合。<br>@EnableAutoConfiguration，启用 SpringBoot 的自动配置机制<br>@Configuration，允许在上下文中注册额外的bean或导入其他配置类</li>
+<li>SpringBoot中，每个集成到SpringBoot中的组件都有一个对应的starter，starter解决了两个问题，自动根据组件需要的配置文件生成对应的bean对象、通过Maven来管理所需jar包的依赖和版本冲突。<br>自动化配置，涉及到的注解有：@Configuration、@Bean、@ConditionalOnxxx、<br>@EnableConfigurationProperties注解。这些注解实质上是通过检查ClassPath下的Jar包中是否存在对应的Class、项目配置文件是否有配置对应的属性、当前容器中是否存在相应的Bean，基于Java的Bean配置来自动实现配置对象的生成。</li>
+</ol>
+<h2 id="SpringBoot中的内嵌Tomcat是如何启动的？"><a href="#SpringBoot中的内嵌Tomcat是如何启动的？" class="headerlink" title="SpringBoot中的内嵌Tomcat是如何启动的？"></a>SpringBoot中的内嵌Tomcat是如何启动的？</h2><ol>
+<li>从创建ApplicationContext处开始，在ServletWebServerApplicationContext的onRefresh方法中完成初始化的，但是处于暂停状态，不接受请求。</li>
+<li>在WebServerStartStopLifecycle.start中启动Tomcat，开始接受请求。</li>
+<li>WebServerStartStopLifecycle.stop中关闭Tomcat。</li>
+</ol>
+<h2 id="SpringMVC中为什么要用父子容器？"><a href="#SpringMVC中为什么要用父子容器？" class="headerlink" title="SpringMVC中为什么要用父子容器？"></a>SpringMVC中为什么要用父子容器？</h2><p>父子容器的特点：</p>
+<ol>
+<li>父容器和子容器是相互隔离的，他们内部可以存在名称相同的bean</li>
+<li>子容器可以访问父容器中的bean，而父容器不能访问子容器中的bean</li>
+<li>调用子容器的getBean方法获取bean的时候，会沿着当前容器开始向上面的容器进行查找，直到找到对应的bean为止</li>
+<li>子容器中可以通过任何注入方式注入父容器中的bean，而父容器中是无法注入子容器中的bean</li>
+</ol>
+<p>使用springmvc的时候，采用3层结构，controller层，service层，dao层；父容器中会包含dao层和service层，而子容器中包含的只有controller层；这2个容器组成了父子容器的关系，controller层通常会注入service层的bean。</p>
+<p>采用父子容器可以避免有些人在service层去注入controller层的bean，导致整个依赖层次是比较混乱的。父容器和子容器的需求也是不一样的，比如父容器中需要有事务的支持，会注入一些支持事务的扩展组件，而子容器中controller完全用不到这些，对这些并不关心，子容器中需要注入一下springmvc相关的bean，而这些bean父容器中同样是不会用到的，也是不关心一些东西，将这些相互不关心的东西隔开，可以有效的避免一些不必要的错误，而父子容器加载的速度也会快一些。</p>
+<h1 id="Mybatis面试"><a href="#Mybatis面试" class="headerlink" title="Mybatis面试"></a>Mybatis面试</h1><h2 id="Mybatis是什么？与Hibernate有什么区别？"><a href="#Mybatis是什么？与Hibernate有什么区别？" class="headerlink" title="Mybatis是什么？与Hibernate有什么区别？"></a>Mybatis是什么？与Hibernate有什么区别？</h2><p>一个半自动化的ORM框架（Object Relation Mapping)。与其他ORM框架对比，它对SQL的控制更加灵活，可以写复杂的SQL语句。Hibernate、JPA无法灵活方便的做到SQL灵活控制，特别是动态SQL语句。</p>
+<h2 id="为什么说-MyBatis-是半自动-ORM-映射框架？"><a href="#为什么说-MyBatis-是半自动-ORM-映射框架？" class="headerlink" title="为什么说 MyBatis 是半自动 ORM 映射框架？"></a>为什么说 MyBatis 是半自动 ORM 映射框架？</h2><p>需要自己写SQL语句，某些情况下还需要自己实现关系结果的映射。Hibernate 属于全自动 ORM 映射工具，使用 Hibernate 查询关联对象或者关联集合对象时，可以根据对象关系模型直接获取，所以它是全自动的。而 MyBatis 在查询关联对象或关联集合对象时，需要手动编写 sql 来完成，所以，称之为半自动 ORM 映射工具。</p>
+<h2 id="Mybatis的执行流程是怎么样的？"><a href="#Mybatis的执行流程是怎么样的？" class="headerlink" title="Mybatis的执行流程是怎么样的？"></a>Mybatis的执行流程是怎么样的？</h2><p>核心组件以及它们间的协作</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211001223401.png"></p>
+<h2 id="Mybatis中-和-的区别是什么？"><a href="#Mybatis中-和-的区别是什么？" class="headerlink" title="Mybatis中#{}和${}的区别是什么？"></a>Mybatis中#{}和${}的区别是什么？</h2><p>${} 是 Properties 文件中的变量占位符，它可以用于标签属性值和 sql 内部，属于静态文本替换，比如${driver}会被静态替换为 com.mysql.jdbc.Driver 。 </p>
+<p>#{} 是 sql 的参数占位符，MyBatis 会将 sql 中的 #{} 替换为?号，在 sql 执行前会使用PreparedStatement 的参数设置方法，按序给 sql 的?号占位符设置参数值，比如 ps.setInt(0,parameterValue)， #{item.name} 的取值方式为使用反射从参数对象中获取 item 对象的 name 属性值，相当于 param.getItem().getName() 。</p>
+<h2 id="MyBatis-是如何进行分页的？有什么问题？怎么解决？"><a href="#MyBatis-是如何进行分页的？有什么问题？怎么解决？" class="headerlink" title="MyBatis 是如何进行分页的？有什么问题？怎么解决？"></a>MyBatis 是如何进行分页的？有什么问题？怎么解决？</h2><p>MyBatis 使用 RowBounds 对象进行分页，它是针对 ResultSet 结果集执行的内存分页，而非物理分页。</p>
+<p>内存分页占用大量内存，可以在 sql 内直接书写带有物理分页的参数来完成物理分页功能，也可以使用分页插件来完成物理分页。</p>
+<p>分页插件的基本原理是使用 MyBatis 提供的插件接口，实现自定义插件，在插件的拦截方法内拦截待执行的 sql，然后重写 sql，根据 dialect 方言，添加对应的物理分页语句和物理分页参数。</p>
+<h2 id="简述一下Mybatis的动态-sql-的执行原理？"><a href="#简述一下Mybatis的动态-sql-的执行原理？" class="headerlink" title="简述一下Mybatis的动态 sql 的执行原理？"></a>简述一下Mybatis的动态 sql 的执行原理？</h2><p>MyBatis 动态 sql 可以让我们在 Xml 映射文件内，以标签的形式编写动态 sql，完成逻辑判断和动态拼接 sql 的功能，MyBatis 提供了 9 种动态 sql 标签trim|where|set|foreach|if|choose|when|otherwise|bind 。</p>
+<p>其执行原理为，使用 OGNL 从 sql 参数对象中计算表达式的值，根据表达式的值动态拼接 sql，以此来完成动态 sql 的功能。</p>
+<h1 id="Tomcat面试"><a href="#Tomcat面试" class="headerlink" title="Tomcat面试"></a>Tomcat面试</h1><h2 id="Tomcat是什么？"><a href="#Tomcat是什么？" class="headerlink" title="Tomcat是什么？"></a>Tomcat是什么？</h2><p>Tomcat是一个Servlet容器的实现。</p>
+<p>全面回答：Tomcat是一个Java中的Servlet、JSP、EL、WebSocket技术的开源实现。</p>
+<h2 id="说说Servlet、Tomcat、SpringMVC各自是什么，以及它们之间的关系？"><a href="#说说Servlet、Tomcat、SpringMVC各自是什么，以及它们之间的关系？" class="headerlink" title="说说Servlet、Tomcat、SpringMVC各自是什么，以及它们之间的关系？"></a>说说Servlet、Tomcat、SpringMVC各自是什么，以及它们之间的关系？</h2><p>广义的Servlet，狭义的Servlet。</p>
+<p>Tomcat中实现了Servlet的事情</p>
+<p>SpringMVC的DispatcherServlet，本质就是一个狭义的Servlet实现，用来处理Http请求。</p>
+<h2 id="Tomcat有哪些核心组件？具有一个什么样的结构？"><a href="#Tomcat有哪些核心组件？具有一个什么样的结构？" class="headerlink" title="Tomcat有哪些核心组件？具有一个什么样的结构？"></a>Tomcat有哪些核心组件？具有一个什么样的结构？</h2><p><strong>Server</strong><br>在Tomcat中，Server代表整个容器。</p>
+<p><strong>Service</strong><br>服务是一个中间组件，它在服务器内部，将一个或多个连接器连接到一个引擎。</p>
+<p><strong>Engine</strong><br>Engine也就是以前版本中的Container。引擎表示特定服务的请求处理管道。 服务可能有多个连接器，引擎接收并处理来自这些连接器的所有请求，将响应返回到适当的连接器以传输到客户端。 引擎接口可以实现，以提供自定义引擎，尽管这是不常见的。引擎可以通过jvm路由参数用于Tomcat服务器集群。Engine包含：Host、Context、Wrapper这几个容器，他们都是Container子类型。</p>
+<p><strong>Connerctor</strong><br>Connector负责把接收到的请求解析出来然后封装成request和response对象然后交给Container处理。目前Connector支持http和ajp协议。<br>连接器处理与客户端的通信。 Tomcat有多个可用的连接器。 其中包括HTTP连接器、AJP连接器。当将Tomcat作为独立服务器运行时使用HTTP协议的HTTP连接器；当将Tomcat连接到Apache HTTPD服务器等Web服务器时使用的AJP协议的AJP连接器。 还可以创建自定义连接器。</p>
+<p><strong>Host</strong></p>
+<p>主机是网络名称的关联。 例如：<a target="_blank" rel="noopener" href="http://www.yourcompany.com能访问到tomcat服务器.引擎可能包含多个主机,主机元素还支持网络别名,如yourcompany.com和abc.yourcompany.com./">www.yourcompany.com能访问到Tomcat服务器。引擎可能包含多个主机，主机元素还支持网络别名，如yourcompany.com和abc.yourcompany.com。</a> 用户很少创建自定义主机，因为标准主机实现提供了重要的附加功能。</p>
+<p>Host说白了就是我们所理解的虚拟主机。</p>
+<p><strong>Context</strong><br>上下文表示Web应用程序。 主机可能包含多个上下文，每个上下文具有唯一的路径。 上下文接口可以实现创建自定义上下文，但这种情况很少，因为标准上下文提供了重要的附加功能。Context就是我们所部属的具体Web应用的上下文，每个请求都在是相应的上下文里处理的。</p>
+<p><strong>Wrapper</strong><br>Wrapper是针对每个Servlet的Container，每个Servlet都有相应的Wrapper来管理。</p>
+<h2 id="Tomcat是如何处理一次请求的？"><a href="#Tomcat是如何处理一次请求的？" class="headerlink" title="Tomcat是如何处理一次请求的？"></a>Tomcat是如何处理一次请求的？</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211001224018.png"></p>
+<h2 id="Tomcat中都有哪些类加载器？遵循JVM双亲委派机制吗？为什么？"><a href="#Tomcat中都有哪些类加载器？遵循JVM双亲委派机制吗？为什么？" class="headerlink" title="Tomcat中都有哪些类加载器？遵循JVM双亲委派机制吗？为什么？"></a>Tomcat中都有哪些类加载器？遵循JVM双亲委派机制吗？为什么？</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211001224040.png"></p>
+<h2 id="Tomcat-有哪几种Connector-运行模式？"><a href="#Tomcat-有哪几种Connector-运行模式？" class="headerlink" title="Tomcat 有哪几种Connector 运行模式？"></a>Tomcat 有哪几种Connector 运行模式？</h2><ol>
+<li>BIO：传统的Java I&#x2F;O操作，同步且阻塞IO，Tomcat 8以前的版本采用BIO模式。</li>
+<li>NIO：JDK1.4开始支持，同步阻塞或同步非阻塞IO。Tomcat 8以后摒弃了BIO。 </li>
+<li>APR：Tomcat将以JNI的形式调用Apache HTTP服务器的核心动态链接库来处理文件读取或网络传输操作，从而大大地 提高Tomcat对静态文件的处理性能。</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- protocol 启用 nio模式，(tomcat8默认使用的是nio)(apr模式利用系统级异步io) - -&gt; &lt;!-- minProcessors最小空闲连接线程数--&gt;</span> <span class="comment">&lt;!-- maxProcessors最大连接线程数--&gt;</span> <span class="comment">&lt;!-- acceptCount允许的最大连接数，应大于等于maxProcessors--&gt;</span> <span class="comment">&lt;!-- enableLookups 如果为true,requst.getRemoteHost会执行DNS查找，反向解析ip对 应域名或主机名--&gt;</span> <span class="tag">&lt;<span class="name">Connector</span> <span class="attr">port</span>=<span class="string">&quot;8080&quot;</span> <span class="attr">protocol</span>=<span class="string">&quot;org.apache.coyote.http11.Http11NioProtocol&quot;</span></span></span><br><span class="line"><span class="tag"><span class="attr">connectionTimeout</span>=<span class="string">&quot;20000&quot;</span> <span class="attr">redirectPort</span>=<span class="string">&quot;8443 maxThreads=“500” minSpareThreads=“100” maxSpareThreads=“200” acceptCount=&quot;</span><span class="attr">200</span>&quot; <span class="attr">enableLookups</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Tomcat线程参数理解问题"><a href="#Tomcat线程参数理解问题" class="headerlink" title="Tomcat线程参数理解问题"></a>Tomcat线程参数理解问题</h2><p>Tomcat有如下的参数配置，有5000个并发请求，会有（300）个线程处理请求？（2000）个请求正在被处理？（2100）个请求在等待？（2900）个请求被拒绝？</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Connector</span> <span class="attr">connectionTimeout</span>=<span class="string">&quot;20000&quot;</span> <span class="attr">port</span>=<span class="string">&quot;8080&quot;</span> <span class="attr">acceptCount</span>=<span class="string">&quot;100&quot;</span> <span class="attr">maxThreads</span>=<span class="string">&quot;300&quot;</span> <span class="attr">minSpareThreads</span>=<span class="string">&quot;30&quot;</span> <span class="attr">maxConnections</span>=<span class="string">&quot;2000&quot;</span> <span class="attr">protocol</span>=<span class="string">&quot;HTTP/1.1&quot;</span> <span class="attr">redirectPort</span>=<span class="string">&quot;8443&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Tomcat容器是如何创建servlet类实例？用到了什么原理？"><a href="#Tomcat容器是如何创建servlet类实例？用到了什么原理？" class="headerlink" title="Tomcat容器是如何创建servlet类实例？用到了什么原理？"></a>Tomcat容器是如何创建servlet类实例？用到了什么原理？</h2><p>当容器启动时，会读取在webapps目录下所有的web应用中的web.xml文件，然后对xml文件进行解析，并读取servlet注册信息。然后，将每个应用中注册的servlet类都进行加载，并通过反射的方式实例化。（有时候也是在第一次请求时实例化）在servlet注册时加上如果为正数，则在一开始就实例化，如果不写或为负数，则第一次请求实例化。</p>
+<h2 id="Tomcat-如何优化？"><a href="#Tomcat-如何优化？" class="headerlink" title="Tomcat 如何优化？"></a>Tomcat 如何优化？</h2><ol>
+<li>优化思路：JVM调优、Tomcat自己本身</li>
+<li>JVM调优策略<br>合适的GC算法<br>根据业务对不同的区域分片不同的内存空间</li>
+<li>Tomcat Connector<br>maxThreads，设置合适的最大线程数<br>acceptCount，设置合适的等待队列大小<br>maxConnections，设置合适的最大连接数<br>compression，打开压缩功能<br>Executor，采用合适的线程池</li>
+<li>工具<br>压测工具，Jmeter、ab等，用来模拟压测用户并发<br>监控工具，JConsole、JProfile、arthas、psi-probe等，用来监控系统资源，观察各项参数是否到了合适的值。<br>linxu系统，top、jstack、jps等命令</li>
+</ol>
+<h2 id="Tomcat工作模式？"><a href="#Tomcat工作模式？" class="headerlink" title="Tomcat工作模式？"></a>Tomcat工作模式？</h2><p>独立的Servlet容器、进程内的（内嵌）Servlet容器、进程外的Servlet容器。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/99-%E9%9D%A2%E8%AF%95%E9%A2%98/01-SpringBoot,Mybatis,Tomcat%E9%9D%A2%E8%AF%95%E6%B1%87%E6%80%BB/" data-id="clmcxecgu003su8wa4stw17md" data-title="SpringBoot,Mybatis,Tomcat面试汇总" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/15-K8s/01-K8S%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%B8%B8%E7%94%A8%E7%BB%84%E4%BB%B6/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          K8s核心概念及常用组件
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/10-Mybatis/01-Mybatis%E8%BF%9B%E9%98%B6/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Mybatis简介</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

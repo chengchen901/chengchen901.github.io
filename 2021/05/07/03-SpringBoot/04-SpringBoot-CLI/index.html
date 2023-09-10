@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>SpringBoot-CLI | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="CLI简介Spring Boot CLI是一个命令行工具，如果想快速开发Spring应用程序，可以使用它。它可以运行Groovy脚本，这意味着您具有类似Java的熟悉语法，而没有太多样板代码。还可以引导一个新项目或为其编写自己的命令。 下载安装针对window环境  下载地址： https:&#x2F;&#x2F;repo.spring.io&#x2F;release&#x2F;org&#x2F;springframework&#x2F;boot&#x2F;spri">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot-CLI">
+<meta property="og:url" content="http://example.com/2021/05/07/03-SpringBoot/04-SpringBoot-CLI/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="CLI简介Spring Boot CLI是一个命令行工具，如果想快速开发Spring应用程序，可以使用它。它可以运行Groovy脚本，这意味着您具有类似Java的熟悉语法，而没有太多样板代码。还可以引导一个新项目或为其编写自己的命令。 下载安装针对window环境  下载地址： https:&#x2F;&#x2F;repo.spring.io&#x2F;release&#x2F;org&#x2F;springframework&#x2F;boot&#x2F;spri">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-05-07T14:36:30.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:26:29.491Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="SpringBoot">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-03-SpringBoot/04-SpringBoot-CLI" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/03-SpringBoot/04-SpringBoot-CLI/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/SpringBoot/">SpringBoot</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      SpringBoot-CLI
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="CLI"><a href="#CLI" class="headerlink" title="CLI"></a>CLI</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Spring Boot CLI是一个命令行工具，如果想快速开发Spring应用程序，可以使用它。它可以运行Groovy脚本，这意味着您具有类似Java的熟悉语法，而没有太多样板代码。还可以引导一个新项目或为其编写自己的命令。</p>
+<h2 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h2><p>针对window环境</p>
+<ul>
+<li><p>下载地址：</p>
+<p><a target="_blank" rel="noopener" href="https://repo.spring.io/release/org/springframework/boot/spring-boot-cli/2.3.5.RELEASE/spring-boot-cli-2.3.5.RELEASE-bin.zip">https://repo.spring.io/release/org/springframework/boot/spring-boot-cli/2.3.5.RELEASE/spring-boot-cli-2.3.5.RELEASE-bin.zip</a></p>
+<p>Spring Boot CLI需要Java JDK v1.8或更高版本才能运行。Groovy已经在发行版包中，无需安装。</p>
+</li>
+<li><p>解压zip包</p>
+<p>本示例解压在D:\Program Files\CLI目录下</p>
+</li>
+<li><p>设置环境SPRING_HOME变量</p>
+<p>D:\Program Files\CLI\spring-2.3.5.RELEASE\bin</p>
+</li>
+<li><p>安装检查</p>
+<p>运行一个cmd窗口，输入下面命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">  spring --version</span><br><span class="line">  Spring CLI v2.3.5.RELEASE</span><br><span class="line"></span><br><span class="line">## 使用帮助</span><br><span class="line"></span><br><span class="line">**查看帮助命令**</span><br><span class="line"></span><br><span class="line">````shell</span><br><span class="line">C:\Users\chen cheng&gt;spring help</span><br><span class="line">usage: spring [--help] [--version]</span><br><span class="line">       &lt;command&gt; [&lt;args&gt;]</span><br><span class="line"></span><br><span class="line">Available commands are:</span><br><span class="line">  # 运行groovy脚本</span><br><span class="line">  run [options] &lt;files&gt; [--] [args]</span><br><span class="line">    Run a spring groovy script</span><br><span class="line"></span><br><span class="line">  grab</span><br><span class="line">    Download a spring groovy script&#x27;s dependencies to ./repository</span><br><span class="line">  # 通过spring groovy脚本，创建可执行的jar应用</span><br><span class="line">  jar [options] &lt;jar-name&gt; &lt;files&gt;</span><br><span class="line">    Create a self-contained executable jar file from a Spring Groovy script</span><br><span class="line">  # 通过spring groovy脚本，创建包含内嵌容器可执行的war应用</span><br><span class="line">  war [options] &lt;war-name&gt; &lt;files&gt;</span><br><span class="line">    Create a self-contained executable war file from a Spring Groovy script</span><br><span class="line"></span><br><span class="line">  install [options] &lt;coordinates&gt;</span><br><span class="line">    Install dependencies to the lib/ext directory</span><br><span class="line"></span><br><span class="line">  uninstall [options] &lt;coordinates&gt;</span><br><span class="line">    Uninstall dependencies from the lib/ext directory</span><br><span class="line">  # 通过init命令可以创建并初始化一个springboot项目</span><br><span class="line">  init [options] [location]</span><br><span class="line">    Initialize a new project using Spring Initializr (start.spring.io)</span><br><span class="line"></span><br><span class="line">  encodepassword [options] &lt;password to encode&gt;</span><br><span class="line">    Encode a password for use with Spring Security</span><br><span class="line"></span><br><span class="line">  shell</span><br><span class="line">    Start a nested shell</span><br><span class="line"></span><br><span class="line">Common options:</span><br><span class="line"></span><br><span class="line">  --debug Verbose mode</span><br><span class="line">    Print additional status information for the command you are running</span><br><span class="line"></span><br><span class="line"># 使用spring help &lt;command&gt;针对指定的命令获得帮助信息</span><br><span class="line">See &#x27;spring help &lt;command&gt;&#x27; for more information on a specific command.</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="创建应用"><a href="#创建应用" class="headerlink" title="创建应用"></a>创建应用</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\chen cheng&gt;spring help init</span><br><span class="line">spring init - Initialize a new project using Spring Initializr (start.spring.io)</span><br><span class="line"></span><br><span class="line">usage: spring init [options] [location]</span><br><span class="line"></span><br><span class="line">Option                       Description</span><br><span class="line">------                       -----------</span><br><span class="line">-a, --artifactId &lt;String&gt;    Project coordinates; infer archive name (for</span><br><span class="line">                               example &#x27;test&#x27;)</span><br><span class="line">-b, --boot-version &lt;String&gt;  Spring Boot version (for example &#x27;1.2.0.RELEASE&#x27;)</span><br><span class="line">--build &lt;String&gt;             Build system to use (for example &#x27;maven&#x27; or</span><br><span class="line">                               &#x27;gradle&#x27;) (default: maven)</span><br><span class="line">-d, --dependencies &lt;String&gt;  Comma-separated list of dependency identifiers to</span><br><span class="line">                               include in the generated project</span><br><span class="line">--description &lt;String&gt;       Project description</span><br><span class="line">-f, --force                  Force overwrite of existing files</span><br><span class="line">--format &lt;String&gt;            Format of the generated content (for example</span><br><span class="line">                               &#x27;build&#x27; for a build file, &#x27;project&#x27; for a</span><br><span class="line">                               project archive) (default: project)</span><br><span class="line">-g, --groupId &lt;String&gt;       Project coordinates (for example &#x27;org.test&#x27;)</span><br><span class="line">-j, --java-version &lt;String&gt;  Language level (for example &#x27;1.8&#x27;)</span><br><span class="line">-l, --language &lt;String&gt;      Programming language  (for example &#x27;java&#x27;)</span><br><span class="line">--list                       List the capabilities of the service. Use it to</span><br><span class="line">                               discover the dependencies and the types that are</span><br><span class="line">                               available</span><br><span class="line">-n, --name &lt;String&gt;          Project name; infer application name</span><br><span class="line">-p, --packaging &lt;String&gt;     Project packaging (for example &#x27;jar&#x27;)</span><br><span class="line">--package-name &lt;String&gt;      Package name</span><br><span class="line">-t, --type &lt;String&gt;          Project type. Not normally needed if you use --</span><br><span class="line">                               build and/or --format. Check the capabilities of</span><br><span class="line">                               the service (--list) for more details</span><br><span class="line">--target &lt;String&gt;            URL of the service to use (default: https://start.</span><br><span class="line">                               spring.io)</span><br><span class="line">-v, --version &lt;String&gt;       Project version (for example &#x27;0.0.1-SNAPSHOT&#x27;)</span><br><span class="line">-x, --extract                Extract the project archive. Inferred if a</span><br><span class="line">                               location is specified without an extension</span><br><span class="line"></span><br><span class="line">examples:</span><br><span class="line"><span class="meta prompt_">	# </span><span class="language-bash">展示springboot 生态圈组件</span></span><br><span class="line">    To list all the capabilities of the service:</span><br><span class="line">        $ spring init --list</span><br><span class="line"><span class="meta prompt_">	# </span><span class="language-bash">创建一个默认的工程</span></span><br><span class="line">    To creates a default project:</span><br><span class="line">        $ spring init</span><br><span class="line"><span class="meta prompt_">	# </span><span class="language-bash">创建一个web工程zip包</span></span><br><span class="line">    To create a web my-app.zip:</span><br><span class="line">        $ spring init -d=web my-app.zip</span><br><span class="line"><span class="meta prompt_">	# </span><span class="language-bash">创建一个带有jpa的gradle管理的web应用,放在my-dir目录下</span></span><br><span class="line">    To create a web/data-jpa gradle project unpacked:</span><br><span class="line">        $ spring init -d=web,jpa --build=gradle my-dir</span><br></pre></td></tr></table></figure>
+
+<p>示例创建SSM项目</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring init -d=web,mybatis,mysql,actuator -a=ssm-demo -g=com.study.springboot --build=maven ssm-demo</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="运行groovy脚本"><a href="#运行groovy脚本" class="headerlink" title="运行groovy脚本"></a>运行groovy脚本</h2><p>groovy官网：<a target="_blank" rel="noopener" href="http://www.groovy-lang.org/">http://www.groovy-lang.org/</a></p>
+<p>快速入门：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e8dec95c4326">https://www.jianshu.com/p/e8dec95c4326</a></p>
+<p>Groovy 是 Apache 旗下的一门基于 JVM 平台的动态&#x2F;敏捷编程语言，在语言的设计上它吸纳了Python、Ruby 和 Smalltalk 语言的优秀特性，语法非常简练和优美，开发效率也非常高（编程语言的开发效率和性能是相互矛盾的，越高级的编程语言性能越差，因为意味着更多底层的封装，不过开发效率会更高，需结合使用场景做取舍）。并且，Groovy 可以与 Java 语言无缝对接，在写 Groovy 的时候如果忘记了语法可以直接按Java的语法继续写，也可以在 Java 中调用 Groovy 脚本，都可以很好的工作，这有效的降低了 Java 开发者学习 Groovy 的成本。Groovy 也并不会替代 Java，而是相辅相成、互补的关系，具体使用哪门语言这取决于要解决的问题和使用的场景。</p>
+<p>Groovy和Spring与Spring Boot CLI结合在一起，可以在单个Groovy文件部署中快速编写功能强大，高性能的微服务。</p>
+<p>准备groovy脚本</p>
+<ol>
+<li>创建app.groovy文件，写入下面内容</li>
+</ol>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span> </span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Example</span> &#123; </span><br><span class="line">    <span class="meta">@Autowired</span> </span><br><span class="line">    <span class="keyword">private</span> MyService myService; </span><br><span class="line">    <span class="meta">@GetMapping(&quot;/&quot;)</span> </span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">helloWorld</span><span class="params">()</span> &#123; </span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello &quot;</span>+myService.sayWorld(); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span> </span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyService</span> &#123; </span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayWorld</span><span class="params">()</span> &#123; </span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Server World!&quot;</span>; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>运行app.groovy</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring run app.groovy</span><br></pre></td></tr></table></figure>
+
+<p>第一运行需要下载依赖项非常慢，第二次运行就很快了。</p>
+</li>
+<li><p>访问验证</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8080/ </span><br><span class="line">Hello Server World!</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>工程目录组织</p>
+<p>Spring Boot会自动在&#x2F;config目录中搜索application.yml或application.properties</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">├── app </span><br><span class="line">	├── app.groovy </span><br><span class="line">	├── config </span><br><span class="line">		├── application.yml </span><br><span class="line">	...</span><br></pre></td></tr></table></figure>
+
+<p>根据之前学习的内容还可以在工作目录放置配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">├── app </span><br><span class="line">	├── app.groovy </span><br><span class="line">    ├── application.yml </span><br><span class="line">	...</span><br></pre></td></tr></table></figure>
+
+<p>还可以在groovy脚本中通过@Grab注解在类中，来引用依赖和导入包。例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package org.test</span><br><span class="line"></span><br><span class="line">@Grab(&quot;spring-boot-starter-actuator&quot;)</span><br><span class="line"></span><br><span class="line">@RestController</span><br><span class="line">class ExampleRestController&#123;</span><br><span class="line">	// ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>引用actuator依赖和import相关类</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/03-SpringBoot/04-SpringBoot-CLI/" data-id="clmcxecw60083u8wa2soucmqa" data-title="SpringBoot-CLI" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/05/07/03-SpringBoot/03-SpringBoot-AutoConfiguration/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          SpringBoot-AutoConfiguration
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/05/07/03-SpringBoot/05-SpringBoot-%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">SpringBoot-源码解读</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

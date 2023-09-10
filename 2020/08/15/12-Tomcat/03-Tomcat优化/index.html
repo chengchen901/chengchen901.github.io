@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Tomcat优化 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="性能优化性能优化的三个指标 降低响应时间 提高系统吞吐量(QPS) 提高服务的可用性  性能优化的原则 具体情况具体分析 积少成多  Tomcat性能优化中使用的工具命令工具使用命令查看相关指标，在linux系统常用 1234567891011# 01 查看tomcat进程pid ps -ef | grep tomcat # 02 查看进程的信息 cat &#x2F;pro&#x2F;pid&#x2F;status # 03">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tomcat优化">
+<meta property="og:url" content="http://example.com/2020/08/15/12-Tomcat/03-Tomcat%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="性能优化性能优化的三个指标 降低响应时间 提高系统吞吐量(QPS) 提高服务的可用性  性能优化的原则 具体情况具体分析 积少成多  Tomcat性能优化中使用的工具命令工具使用命令查看相关指标，在linux系统常用 1234567891011# 01 查看tomcat进程pid ps -ef | grep tomcat # 02 查看进程的信息 cat &#x2F;pro&#x2F;pid&#x2F;status # 03">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210927132247.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210927132603.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:56:22.211Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Tomcat">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210927132247.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-12-Tomcat/03-Tomcat优化" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/12-Tomcat/03-Tomcat%E4%BC%98%E5%8C%96/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Tomcat/">Tomcat</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Tomcat优化
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h1><h2 id="性能优化的三个指标"><a href="#性能优化的三个指标" class="headerlink" title="性能优化的三个指标"></a>性能优化的三个指标</h2><ul>
+<li>降低响应时间</li>
+<li>提高系统吞吐量(QPS)</li>
+<li>提高服务的可用性</li>
+</ul>
+<h2 id="性能优化的原则"><a href="#性能优化的原则" class="headerlink" title="性能优化的原则"></a>性能优化的原则</h2><ul>
+<li>具体情况具体分析</li>
+<li>积少成多</li>
+</ul>
+<h1 id="Tomcat性能优化中使用的工具"><a href="#Tomcat性能优化中使用的工具" class="headerlink" title="Tomcat性能优化中使用的工具"></a>Tomcat性能优化中使用的工具</h1><h2 id="命令工具"><a href="#命令工具" class="headerlink" title="命令工具"></a>命令工具</h2><p>使用命令查看相关指标，在linux系统常用</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">01 查看tomcat进程pid</span> </span><br><span class="line">ps -ef | grep tomcat </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">02 查看进程的信息</span> </span><br><span class="line">cat /pro/pid/status </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">03 查看进程的cpu和内存</span> </span><br><span class="line">top -p pid </span><br><span class="line"></span><br><span class="line">jstack 进程| grep 8908 </span><br><span class="line">jps/jmap</span><br></pre></td></tr></table></figure>
+
+<h2 id="界面工具"><a href="#界面工具" class="headerlink" title="界面工具"></a>界面工具</h2><p>JConsole：一个内置 Java性能分析器</p>
+<p>JMeter：一个Apache组织开发的基于Java的压力测试工具</p>
+<p>下载地址：<a target="_blank" rel="noopener" href="http://jmeter.apache.org/download_jmeter.cgi">http://jmeter.apache.org/download_jmeter.cgi</a></p>
+<p>其他工具：JProfile、jvisualvm、arthas、psi-probe等</p>
+<h2 id="性能优化测试原则"><a href="#性能优化测试原则" class="headerlink" title="性能优化测试原则"></a>性能优化测试原则</h2><p>指标：正确率、CPU占有率、QPS、JVM</p>
+<p>程序分类：I&#x2F;0密集型(网络，文件读写),CPU密集型(加密&#x2F;解密算法)</p>
+<h1 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h1><h2 id="server-xml核心组件"><a href="#server-xml核心组件" class="headerlink" title="server.xml核心组件"></a>server.xml核心组件</h2><p>通过官网的描述信息来观察</p>
+<ul>
+<li><strong>Server</strong><br>Server interface which is rarely customized by users.</li>
+<li><strong>Service</strong><br>The Service element is rarely customized by users.</li>
+<li>Connector<br><strong>Creating a customized connector is a significant effort.</strong></li>
+<li><strong>Engine</strong><br>The Engine interface may be implemented to supply custom Engines, though this is uncommon.</li>
+<li><strong>Host</strong><br>Users rarely create custom Hosts because the StandardHost implementation provides significant additional functionality.</li>
+<li><strong>Context</strong><br>The Context interface may be implemented to create custom Contexts, but this is rarely the case because the StandardContext provides significant additional functionality.</li>
+</ul>
+<p>Context代表的是web应用，是和我们比较接近的，这块我们考虑对其适当的优化</p>
+<p><strong>结论</strong>：Connector and Context两个层面可以进行着手</p>
+<p>一般根据自己场景调整对应参数，常调整的参数如下：</p>
+<p><strong>acceptCount</strong>：超过maxConnections配置之后的连接存储队列长度大小，默认100<br><strong>maxConnections</strong>：最大连接数，默认8192<br><strong>maxThreads</strong>：处理Connection最大线程数，默认200<br><strong>minSpareThreads</strong>：处理Connection最小线程数，默认10<br><strong>connectionTimeout</strong>：接受连接后等待的超时时间，默认60秒</p>
+<p>把tomcat比作餐厅，maxThreads为服务人员的数量，maxConnections为餐厅内的桌子，acceptCount为排队号长度</p>
+<h2 id="server-xml非核心组件"><a href="#server-xml非核心组件" class="headerlink" title="server.xml非核心组件"></a>server.xml非核心组件</h2><p>官网相关介绍：<a target="_blank" rel="noopener" href="https://tomcat.apache.org/tomcat-9.0-doc/config/index.html">https://tomcat.apache.org/tomcat-9.0-doc/config/index.html</a></p>
+<ul>
+<li><p>Listener</p>
+<p>Listener(即监听器)定义的组件，可以在特定事件发生时执行特定的操作；被监听的事件通常是Tomcat的启动和停止。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Listener</span> <span class="attr">className</span>=<span class="string">&quot;org.apache.catalina.core.AprLifecycleListener&quot;</span> <span class="attr">SSLEngine</span>=<span class="string">&quot;on&quot;</span> /&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- -监听内存溢出--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Listener</span> <span class="attr">className</span>=<span class="string">&quot;org.apache.catalina.core.JreMemoryLeakPreventionListener&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Listener</span> <span class="attr">className</span>=<span class="string">&quot;org.apache.catalina.mbeans.GlobalResourcesLifecycleListener&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Listener</span> <span class="attr">className</span>=<span class="string">&quot;org.apache.catalina.core.ThreadLocalLeakPreventionListener&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Global Resources</p>
+<p>GlobalNamingResources元素定义了全局资源，通过配置可以看出，该配置是通过读取$TOMCAT_HOME&#x2F; conf&#x2F;tomcat-users.xml实现的。</p>
+<p><code>The GlobalNamingResources element defines the global JNDI resources for the [Server]</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">GlobalNamingResources</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">Resource</span> <span class="attr">name</span>=<span class="string">&quot;UserDatabase&quot;</span> <span class="attr">auth</span>=<span class="string">&quot;Container&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">type</span>=<span class="string">&quot;org.apache.catalina.UserDatabase&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">description</span>=<span class="string">&quot;User database that can be updated and saved&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">factory</span>=<span class="string">&quot;org.apache.catalina.users.MemoryUserDatabaseFactory&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">pathname</span>=<span class="string">&quot;conf/tomcat-users.xml&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">GlobalNamingResources</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Valve</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Valve</span> <span class="attr">className</span>=<span class="string">&quot;org.apache.catalina.valves.AccessLogValve&quot;</span> <span class="attr">directory</span>=<span class="string">&quot;logs&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">prefix</span>=<span class="string">&quot;localhost_access_log&quot;</span> <span class="attr">suffix</span>=<span class="string">&quot;.txt&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">pattern</span>=<span class="string">&quot;%h %l %u %t <span class="symbol">&amp;quot;</span>%r<span class="symbol">&amp;quot;</span> %s %b&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Realm</p>
+<p>Realm，可以把它理解成“域”；Realm提供了一种用户密码与web应用的映射关系，从而达到角色安全管理的作用。在本例中，Realm的配置使用name为UserDatabase的资源实现。而该资源在Server元素中使用GlobalNamingResources配置</p>
+<p><code>A Realm element represents a &quot;database&quot; of usernames, passwords, and roles (similar to Unix groups) assigned to those users.</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Realm</span> <span class="attr">className</span>=<span class="string">&quot;org.apache.catalina.realm.LockOutRealm&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- This Realm uses the UserDatabase configured in the global JNDI</span></span><br><span class="line"><span class="comment">             resources under the key &quot;UserDatabase&quot;.  Any edits</span></span><br><span class="line"><span class="comment">             that are performed against this UserDatabase are immediately</span></span><br><span class="line"><span class="comment">             available for use by the Realm.  --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Realm</span> <span class="attr">className</span>=<span class="string">&quot;org.apache.catalina.realm.UserDatabaseRealm&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">resourceName</span>=<span class="string">&quot;UserDatabase&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Realm</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="web-xml"><a href="#web-xml" class="headerlink" title="web.xml"></a>web.xml</h2><p>全局的web.xml文件有些标签用不到的，可以删除掉。</p>
+<h2 id="JVM层面"><a href="#JVM层面" class="headerlink" title="JVM层面"></a>JVM层面</h2><p>Tomcat运行起来本身就是一个Java进程，所以这块可以参照JVM部分的优化思路。</p>
+<h1 id="Tomcat中server-xml优化"><a href="#Tomcat中server-xml优化" class="headerlink" title="Tomcat中server.xml优化"></a>Tomcat中server.xml优化</h1><h2 id="Connector-连接器的-I-O"><a href="#Connector-连接器的-I-O" class="headerlink" title="Connector 连接器的 I&#x2F;O"></a>Connector 连接器的 I&#x2F;O</h2><p>连接器模式改为NIO模式</p>
+<p>NIO模式最大化压榨了CPU，把时间片更好利用起来</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210927132247.png"></p>
+<p>NIO适合大量长连接</p>
+<h2 id="关闭自动重载"><a href="#关闭自动重载" class="headerlink" title="关闭自动重载"></a>关闭自动重载</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Context</span> <span class="attr">docBase</span>=<span class="string">&quot;&quot;</span> <span class="attr">reloadable</span>=<span class="string">&quot;false&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>关闭自动重载，默认是true(不同版本中有差异)</p>
+<p>自动加载增加运行开销并且很容易内存溢出</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210927132603.png"></p>
+<h2 id="配置线程池"><a href="#配置线程池" class="headerlink" title="配置线程池"></a>配置线程池</h2><p>Executor标签中属性</p>
+<p>【namePrefix】线程命名前缀</p>
+<p>【maxThreads】最大允许线程数</p>
+<p>【minSpareThreads】最少空闲线程，相当于初始化的线程，线程池中的线程 Connector标签中的属性</p>
+<p>【executor】对上面Executor标签标签的引用</p>
+<h1 id="Tomcat中-web-xml优化"><a href="#Tomcat中-web-xml优化" class="headerlink" title="Tomcat中 web.xml优化"></a>Tomcat中 web.xml优化</h1><p>应用程序运行时最终会加载 conf&#x2F;web.xml 和应用的 web.xml 的合集</p>
+<h2 id="servlet-优化"><a href="#servlet-优化" class="headerlink" title="servlet 优化"></a>servlet 优化</h2><p>当前应用是REST应用(微服务)</p>
+<ol>
+<li>去掉不必要的资源：JspServlet</li>
+<li>seesion也可以移除</li>
+</ol>
+<h2 id="valve-优化"><a href="#valve-优化" class="headerlink" title="valve 优化"></a>valve 优化</h2><p>移除掉AccessLogValve</p>
+<p>valve实现都需要消耗java应用的计算时间，一般我们可以使用nginx来记录日志</p>
+<h2 id="JSP-预编译优化"><a href="#JSP-预编译优化" class="headerlink" title="JSP 预编译优化"></a>JSP 预编译优化</h2><p>JSP -&gt; JAVA -&gt; CLASS</p>
+<p>可使用ant先编译jsp</p>
+<p>Jspservlet开发模式(development)设置为false</p>
+<h1 id="SpringBoot中Tomcat优化"><a href="#SpringBoot中Tomcat优化" class="headerlink" title="SpringBoot中Tomcat优化"></a>SpringBoot中Tomcat优化</h1><h2 id="Maven-中-Springboot-引入"><a href="#Maven-中-Springboot-引入" class="headerlink" title="Maven 中 Springboot 引入"></a>Maven 中 Springboot 引入</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-tomcat<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="设置线程池"><a href="#设置线程池" class="headerlink" title="设置线程池"></a>设置线程池</h2><p>server.tomcat.max-threads&#x3D;1000</p>
+<h2 id="关闭Accesslog日志"><a href="#关闭Accesslog日志" class="headerlink" title="关闭Accesslog日志"></a>关闭Accesslog日志</h2><p>server.tomcat.accesslog&#x3D;false</p>
+<h1 id="常见问题排查"><a href="#常见问题排查" class="headerlink" title="常见问题排查"></a>常见问题排查</h1><h2 id="CPU使用率过高"><a href="#CPU使用率过高" class="headerlink" title="CPU使用率过高"></a>CPU使用率过高</h2><p><strong>可能的原因</strong></p>
+<p>GC频繁或者创建了很多业务线程</p>
+<p><strong>排查</strong></p>
+<p>哪些线程比较消耗CPU，或者多线程上下文频繁切换</p>
+<p><strong>解决思路</strong></p>
+<p>top -H -p pid 查看某个Java进程各个线程使用CPU的情况，找到哪个线程占用CPU比较高 jstack pid 打印出线程信息，定位到上述的线程名称</p>
+<h2 id="拒绝连接"><a href="#拒绝连接" class="headerlink" title="拒绝连接"></a>拒绝连接</h2><ul>
+<li>java.net.BindException: Address already in use: JVM_Bind<br>端口被占用，可以使用netstat -an 查看端口占用情况，关闭对应的进程或者tomcat换端口</li>
+<li>java.net.ConnectException: Connection refused: connect<br>ping一下服务端的IP，可能服务端机器有问题</li>
+<li>java.net.SocketException: Too many open files<br>可能在高并发的情况下，创建的Socket过多，文件句柄不够用了，可以关闭无用的句柄，如果都有用，可以增加文件句柄数：ulimit -n 10000，另外还可以参考Netty中的服务器优化参数。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/12-Tomcat/03-Tomcat%E4%BC%98%E5%8C%96/" data-id="clmcxec5s0008u8wadz1e989o" data-title="Tomcat优化" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/12-Tomcat/02-Tomcat%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%902/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Tomcat源码分析2
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/12-Tomcat/04-%E6%89%8B%E5%86%99Tomcat/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">手写Tomcat</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Sharding-JDBC分库分表Sharding-JDBC分库分表概念垂直拆分 水平拆分 逻辑表水平拆分的数据库（表）的相同逻辑和数据结构表的总称。例：订单数据根据主键%2拆分为2张表，分别是t_order0、t_order1，他们的逻辑表名为t_order。  配置示例123456789101112shardingRule:	tables: 		t_order: 			actualDataNo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/11-MySQL/03-ShardingSphere/04-Sharding-JDBC%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Sharding-JDBC分库分表Sharding-JDBC分库分表概念垂直拆分 水平拆分 逻辑表水平拆分的数据库（表）的相同逻辑和数据结构表的总称。例：订单数据根据主键%2拆分为2张表，分别是t_order0、t_order1，他们的逻辑表名为t_order。  配置示例123456789101112shardingRule:	tables: 		t_order: 			actualDataNo">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227172714.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227172755.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227173110.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227173254.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227173358.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227173643.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227195955.png">
+<meta property="article:published_time" content="2023-09-10T03:59:08.930Z">
+<meta property="article:modified_time" content="2022-12-27T12:57:46.662Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227172714.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-11-MySQL/03-ShardingSphere/04-Sharding-JDBC分库分表" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/11-MySQL/03-ShardingSphere/04-Sharding-JDBC%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.930Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Sharding-JDBC分库分表"><a href="#Sharding-JDBC分库分表" class="headerlink" title="Sharding-JDBC分库分表"></a>Sharding-JDBC分库分表</h1><h2 id="Sharding-JDBC分库分表概念"><a href="#Sharding-JDBC分库分表概念" class="headerlink" title="Sharding-JDBC分库分表概念"></a>Sharding-JDBC分库分表概念</h2><h3 id="垂直拆分"><a href="#垂直拆分" class="headerlink" title="垂直拆分"></a>垂直拆分</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227172714.png"></p>
+<h3 id="水平拆分"><a href="#水平拆分" class="headerlink" title="水平拆分"></a>水平拆分</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227172755.png"></p>
+<h3 id="逻辑表"><a href="#逻辑表" class="headerlink" title="逻辑表"></a>逻辑表</h3><p>水平拆分的数据库（表）的相同逻辑和数据结构表的总称。例：订单数据根据主键%2拆分为2张表，分别是t_order0、t_order1，他们的逻辑表名为t_order。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227173110.png"></p>
+<h4 id="配置示例"><a href="#配置示例" class="headerlink" title="配置示例"></a>配置示例</h4><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">shardingRule:</span></span><br><span class="line">	<span class="attr">tables:</span> </span><br><span class="line">		<span class="attr">t_order:</span> </span><br><span class="line">			<span class="attr">actualDataNodes:</span> <span class="string">ds$&#123;0..1&#125;.t_order$&#123;0..1&#125;</span> </span><br><span class="line">			<span class="attr">databaseStrategy:</span> </span><br><span class="line">				<span class="attr">inline:</span> </span><br><span class="line">					<span class="attr">shardingColumn:</span> <span class="string">user_id</span> </span><br><span class="line">					<span class="attr">algorithmInlineExpression:</span> <span class="string">ds$&#123;user_id</span> <span class="string">%</span> <span class="number">2</span><span class="string">&#125;</span> </span><br><span class="line">				<span class="attr">tableStrategy:</span> </span><br><span class="line">					<span class="attr">inline:</span> </span><br><span class="line">						<span class="attr">shardingColumn:</span> <span class="string">order_id</span> </span><br><span class="line">						<span class="attr">algorithmInlineExpression:</span> <span class="string">t_order$&#123;order_id</span> <span class="string">%</span> <span class="number">2</span><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="真实表"><a href="#真实表" class="headerlink" title="真实表"></a>真实表</h3><p>在分片的数据库中真实存在的物理表。即上个示例中的t_order0到t_order1</p>
+<p><strong>数据节点</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">tables:</span></span><br><span class="line">	<span class="attr">t_order:</span> </span><br><span class="line">		<span class="attr">actualDataNodes:</span> <span class="string">ds$-&gt;&#123;0..1&#125;.t_order$-&gt;&#123;0..1&#125;</span> <span class="comment">#数据节点</span></span><br></pre></td></tr></table></figure>
+
+<p>数据分片的最小单元。由数据源名称和数据表组成，例：ds0.t_order0。可分为均匀分布和自定义分布两种形式。</p>
+<p><strong>数据节点分布说明</strong></p>
+<p>均匀分布：数据源能力均衡</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227173254.png"></p>
+<p>配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db0.t_order0,db0.t_order1,db1.t_order0,db1.t_order1</span><br><span class="line">或</span><br><span class="line">db$-&gt;&#123;0..1&#125;.t_order$-&gt;&#123;0..1&#125;</span><br></pre></td></tr></table></figure>
+
+<p>自定义分布：数据源能力不均</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227173358.png"></p>
+<p>配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db0.t_order0,db0.t_order1,db1.t_order2,db1.t_order3,db1.t_order4</span><br><span class="line">或</span><br><span class="line">db0.t_order$-&gt;&#123;0..1&#125;,db1.t_order$-&gt;&#123;2..4&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="分片策略"><a href="#分片策略" class="headerlink" title="分片策略"></a>分片策略</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227173643.png"></p>
+<p><strong>数据源分片</strong>、<strong>表分片</strong>仅是两个不同维度的分片，它们能用的分片策略规则是一样的。<br>Sharding-JDBC中提供了常用的分片策略实现。分片策略由两部分构成：</p>
+<ul>
+<li>分片键</li>
+<li>分片算法</li>
+</ul>
+<h3 id="5种分片策略"><a href="#5种分片策略" class="headerlink" title="5种分片策略"></a>5种分片策略</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">defaultDatabaseShardingStrategy:</span> <span class="comment"># 默认库级别sharidng规则,对应代码中 ShardingStrategy接口的实现类,目前支持none,inline,hint,complex,standard五种配置 注意此处默认配置仅可以配置五个中的一个</span></span><br><span class="line"><span class="comment"># 规则配置同样适合表sharding配置,同样是在这些算法中选择 </span></span><br><span class="line"><span class="attr">none:</span> <span class="comment"># 不配置任何规则,SQL会被发给所有节点去执行,这个规则没有子项目可以配置 </span></span><br><span class="line"><span class="attr">inline:</span> <span class="comment"># 行表达式分片 </span></span><br><span class="line">	<span class="attr">shardingColumn:</span> <span class="string">test_id</span> <span class="comment"># 分片列名称 </span></span><br><span class="line">	<span class="attr">algorithmExpression:</span> <span class="string">master_test_$&#123;test_id</span> <span class="string">%</span> <span class="number">2</span><span class="string">&#125;</span> <span class="comment"># 分片表达式,根据指定的 表达式计算得到需要路由到的数据源名称 需要是合法的groovy表达式,示例配置中,取余为0则语句 路由到master_test_0,取余为1则路由到master_test_1 </span></span><br><span class="line"><span class="attr">hint:</span> <span class="comment">#基于标记的sharding分片 </span></span><br><span class="line">	<span class="attr">shardingAlgorithm:</span> <span class="comment"># 需要是HintShardingAlgorithm接口的实现,目前代码中,有 为测试目的实现的OrderDatabaseHintShardingAlgorithm可参考 </span></span><br><span class="line"><span class="attr">complex:</span> <span class="comment"># 支持多列的shariding,目前无生产可用实现 </span></span><br><span class="line">	<span class="attr">shardingColumns:</span> <span class="comment"># 逗号切割的列 </span></span><br><span class="line">	<span class="attr">shardingAlgorithm:</span> <span class="comment"># ComplexKeysShardingAlgorithm接口的实现类 </span></span><br><span class="line"><span class="attr">standard:</span> <span class="comment"># 单列sharidng算法,需要配合对应的 preciseShardingAlgorithm,rangeShardingAlgorithm接口的实现使用</span></span><br><span class="line">	<span class="attr">shardingColumn:</span> <span class="comment"># 列名,允许单列 </span></span><br><span class="line">	<span class="attr">preciseShardingAlgorithm:</span> <span class="comment"># preciseShardingAlgorithm接口的实现类 </span></span><br><span class="line">	<span class="attr">rangeShardingAlgorithm:</span> <span class="comment"># rangeShardingAlgorithm接口的实现类</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="none-不分片策略"><a href="#none-不分片策略" class="headerlink" title="none 不分片策略"></a>none 不分片策略</h3><p>对应NoneShardingStrategy ，不分片策略 ,SQL会被发给所有节点去执行,这个规则没有子项目可以配置。</p>
+<h3 id="inline-行表达式分片策略"><a href="#inline-行表达式分片策略" class="headerlink" title="inline 行表达式分片策略"></a>inline 行表达式分片策略</h3><p>对应InlineShardingStrategy。使用Groovy的表达式，提供对SQL语句中的&#x3D;和IN的分片操作支持，只支持单分片键。对于简单的分片算法，可以通过简单的配置使用，从而避免繁琐的Java代码开发，如:t_user_$-&gt;{u_id % 8} 表示t_user表根据u_id模8，而分成8张表，表名称为t_user_0到t_user_7。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">databaseStrategy:</span> </span><br><span class="line">	<span class="attr">inline:</span></span><br><span class="line">		<span class="attr">shardingColumn:</span> <span class="string">user_id</span></span><br><span class="line">		<span class="attr">algorithmInlineExpression:</span> <span class="string">ds$&#123;user_id</span> <span class="string">%</span> <span class="number">2</span><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="行表达式语法"><a href="#行表达式语法" class="headerlink" title="行表达式语法"></a>行表达式语法</h3><p>行表达式的使用非常直观，只需要在配置中使用 ${ expression } 或 $-&gt;{ expression } 标识行表达式即可。 目前支持数据节点和分片算法这两个部分的配置。行表达式的内容使用的是Groovy的语法，Groovy能够支持的所有操作，行表达式均能够支持。例如：</p>
+<ul>
+<li>${begin..end}表示范围区间</li>
+<li>${[unit1, unit2, unit_x]}表示枚举值</li>
+<li>行表达式中如果出现连续多个${ expression }或$-&gt;{ expression }表达式，整个表达式最终的结果将会根据每个子表达式的结果进行笛卡尔组合。</li>
+</ul>
+<h3 id="standard-标准分片策略"><a href="#standard-标准分片策略" class="headerlink" title="standard 标准分片策略"></a>standard 标准分片策略</h3><ul>
+<li><p>对应StandardShardingStrategy。提供对SQL语句中的&#x3D;, IN和BETWEEN AND的分片操作支持。</p>
+</li>
+<li><p>StandardShardingStrategy只支持单分片键，提供PreciseShardingAlgorithm和RangeShardingAlgorithm两个分片算法。</p>
+</li>
+<li><p>PreciseShardingAlgorithm是必选的，用于处理&#x3D;和IN的分片。</p>
+</li>
+<li><p>RangeShardingAlgorithm是可选的，用于处理BETWEEN AND分片，如果不配置RangeShardingAlgorithm，SQL中的BETWEEN AND将按照全库路由处理。</p>
+</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">databaseStrategy:</span> </span><br><span class="line">	<span class="attr">standard:</span> <span class="comment">#单列sharidng算法,需要配合对应的preciseShardingAlgorithm,rangeShardingAlgorithm接口的实现使用</span></span><br><span class="line">	<span class="attr">shardingColumn:</span> <span class="comment"># 列名,允许单列</span></span><br><span class="line">	<span class="attr">preciseShardingAlgorithm:</span> <span class="comment"># preciseShardingAlgorithm接口的实现类</span></span><br><span class="line">	<span class="attr">rangeShardingAlgorithm:</span> <span class="comment"># rangeShardingAlgorithm接口的实现类</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="complex-复合分片策略"><a href="#complex-复合分片策略" class="headerlink" title="complex 复合分片策略"></a>complex 复合分片策略</h3><ul>
+<li>对应ComplexShardingStrategy。复合分片策略提供对SQL语句中的&#x3D;, IN和BETWEEN AND的分片操作支持。 </li>
+<li>ComplexShardingStrategy支持多分片键，由于多分片键之间的关系复杂，因此并未进行过多的封装，而是直接将分片键值组合以及分片操作符透传至分片算法，完全由应用开发者实现，提供最大的灵活度。</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">databaseStrategy:</span> </span><br><span class="line">	<span class="attr">complex:</span> <span class="comment"># 支持多列的shariding</span></span><br><span class="line">		<span class="attr">shardingColumns:</span> <span class="comment"># 逗号切割的列</span></span><br><span class="line">		<span class="attr">shardingAlgorithm:</span> <span class="comment"># ComplexKeysShardingAlgorithm接口的实现类</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="hint分片策略"><a href="#hint分片策略" class="headerlink" title="hint分片策略"></a>hint分片策略</h3><ul>
+<li>对应HintShardingStrategy。通过Hint而非SQL解析的方式分片的策略。 </li>
+<li>对于分片字段非SQL决定，而由其他外置条件决定的场景，可使用SQL Hint灵活的注入分片字段。例：内 部系统，按照员工登录主键分库，而数据库中并无此字段。SQL Hint支持通过Java API和SQL注释(待实现)两种方式使用。</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">databaseStrategy:</span> </span><br><span class="line">	<span class="attr">hint:</span> <span class="comment">#基于标记的sharding分片</span></span><br><span class="line">	<span class="attr">shardingAlgorithm:</span> <span class="comment"># 需要是HintShardingAlgorithm接口的实现,目前代码中,有为测试目的实现的OrderDatabaseHintShardingAlgorithm可参考</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="spring-boot-分片示例"><a href="#spring-boot-分片示例" class="headerlink" title="spring boot 分片示例"></a>spring boot 分片示例</h3><h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">sharding:</span> </span><br><span class="line">	<span class="attr">jdbc:</span> </span><br><span class="line">		<span class="attr">datasource:</span> </span><br><span class="line">			<span class="attr">names:</span> <span class="string">ds0,ds1</span> </span><br><span class="line">			<span class="attr">ds0:</span></span><br><span class="line">				<span class="attr">type:</span> <span class="string">com.alibaba.druid.pool.DruidDataSource</span> </span><br><span class="line">				<span class="attr">driver-class:</span> <span class="string">com.mysql.jdbc.Driver</span> </span><br><span class="line">				<span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/db1?</span> <span class="string">useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=UTC</span> </span><br><span class="line">				<span class="attr">username:</span> <span class="string">root</span> </span><br><span class="line">				<span class="attr">password:</span> <span class="number">123456</span> </span><br><span class="line">				<span class="attr">maxPoolSize:</span> <span class="number">50</span> </span><br><span class="line">				<span class="attr">minPoolSize:</span> <span class="number">1</span> </span><br><span class="line">			<span class="attr">ds1:</span></span><br><span class="line">				<span class="attr">type:</span> <span class="string">com.alibaba.druid.pool.DruidDataSource</span> </span><br><span class="line">				<span class="attr">driver-class:</span> <span class="string">com.mysql.jdbc.Driver</span> </span><br><span class="line">				<span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/db2?</span> <span class="string">useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=UTC</span> </span><br><span class="line">				<span class="attr">username:</span> <span class="string">root</span> </span><br><span class="line">				<span class="attr">password:</span> <span class="number">123456</span> </span><br><span class="line">				<span class="attr">maxPoolSize:</span> <span class="number">50</span> </span><br><span class="line">				<span class="attr">minPoolSize:</span> <span class="number">1</span> </span><br><span class="line">			<span class="attr">config:</span> </span><br><span class="line">				<span class="attr">sharding:</span> </span><br><span class="line">					<span class="attr">tables:</span> </span><br><span class="line">						<span class="attr">t_order:</span> </span><br><span class="line">							<span class="attr">actual-data-nodes:</span> <span class="string">ds$-&gt;&#123;0..1&#125;.t_order$-&gt;&#123;0..1&#125;</span> </span><br><span class="line">							<span class="attr">database-strategy:</span> </span><br><span class="line">								<span class="attr">standard:</span> </span><br><span class="line">									<span class="attr">sharding-column:</span> <span class="string">order_time</span> </span><br><span class="line">									<span class="attr">preciseAlgorithmClassName:</span> <span class="string">com.study.sharding.jdbc.sharding.OrderTimePreciseShardingAlgorithm</span> </span><br><span class="line">								<span class="comment">#inline: </span></span><br><span class="line">									<span class="comment">#sharding-column: customer_id </span></span><br><span class="line">									<span class="comment">#algorithm-expression: ds$-&gt;&#123;customer_id % 2&#125; </span></span><br><span class="line">								<span class="attr">table-strategy:</span> </span><br><span class="line">									<span class="attr">inline:</span> </span><br><span class="line">										<span class="attr">sharding-column:</span> <span class="string">order_id</span> </span><br><span class="line">										<span class="attr">algorithm-expression:</span> <span class="string">t_order$-&gt;&#123;order_id</span> <span class="string">%</span> <span class="number">2</span><span class="string">&#125;</span> </span><br><span class="line">					<span class="attr">default-data-source-name:</span> <span class="string">ds0</span> </span><br><span class="line">				<span class="attr">props:</span> </span><br><span class="line">					<span class="attr">sql.show:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>算法实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Calendar;</span><br><span class="line"><span class="keyword">import</span> java.util.Collection;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br><span class="line"><span class="keyword">import</span> io.shardingsphere.api.algorithm.sharding.PreciseShardingValue;</span><br><span class="line"><span class="keyword">import</span> io.shardingsphere.api.algorithm.sharding.standard.PreciseShardingAlgorithm;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderTimePreciseShardingAlgorithm</span> <span class="keyword">implements</span> <span class="title class_">PreciseShardingAlgorithm</span> &lt; Date &gt; &#123;</span><br><span class="line">    Date[] dateRanges = <span class="keyword">new</span> <span class="title class_">Date</span>[<span class="number">2</span>]; &#123;</span><br><span class="line">        <span class="type">Calendar</span> <span class="variable">cal</span> <span class="operator">=</span> Calendar.getInstance();</span><br><span class="line">        cal.set(<span class="number">2019</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">        dateRanges[<span class="number">0</span>] = cal.getTime();</span><br><span class="line">        cal.set(<span class="number">2020</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">        dateRanges[<span class="number">1</span>] = cal.getTime();</span><br><span class="line">    &#125;@</span><br><span class="line">    Override <span class="keyword">public</span> String <span class="title function_">doSharding</span><span class="params">(Collection &lt; String &gt; availableTargetNames, PreciseShardingValue &lt; Date &gt; shardingValue)</span> &#123;</span><br><span class="line">        <span class="type">Date</span> <span class="variable">d</span> <span class="operator">=</span> shardingValue.getValue();</span><br><span class="line">        Iterator &lt; String &gt; ite = availableTargetNames.iterator();</span><br><span class="line">        <span class="type">String</span> <span class="variable">target</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">for</span> (Date s: dateRanges) &#123;</span><br><span class="line">            target = ite.next();</span><br><span class="line">            <span class="keyword">if</span> (d.before(s)) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> target;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="建表SQL"><a href="#建表SQL" class="headerlink" title="建表SQL"></a>建表SQL</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> t_order0 (</span><br><span class="line">    order_id <span class="type">BIGINT</span> <span class="keyword">PRIMARY</span> KEY, </span><br><span class="line">    order_time DATETIME, </span><br><span class="line">    customer_id <span class="type">BIGINT</span>,</span><br><span class="line">    order_amount <span class="type">DECIMAL</span>(<span class="number">8</span>,<span class="number">2</span>) </span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> t_order1 (</span><br><span class="line">    order_id <span class="type">BIGINT</span> <span class="keyword">PRIMARY</span> KEY, </span><br><span class="line">    order_time DATETIME, </span><br><span class="line">    customer_id <span class="type">BIGINT</span>, </span><br><span class="line">    order_amount <span class="type">DECIMAL</span>(<span class="number">8</span>,<span class="number">2</span>) </span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h3 id="默认配置（yaml格式）"><a href="#默认配置（yaml格式）" class="headerlink" title="默认配置（yaml格式）"></a>默认配置（yaml格式）</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">shardingRule:</span> <span class="comment"># sharding的配置 </span></span><br><span class="line">	<span class="comment"># 配置主要分两类,一类是对整个sharding规则所有表生效的默认配置,一个是sharing具体某张 表时候的配置 </span></span><br><span class="line">	<span class="comment"># 首先说默认配置 </span></span><br><span class="line">	<span class="attr">masterSlaveRules:</span> <span class="comment"># 在shardingRule中也可以配置shardingRule,对分片生效,具体内 容与全局masterSlaveRule一致,但语法为: </span></span><br><span class="line">		<span class="attr">master_test_0:</span> </span><br><span class="line">			<span class="attr">masterDataSourceName:</span> <span class="string">master_ds_0</span> </span><br><span class="line">			<span class="attr">slaveDataSourceNames:</span> </span><br><span class="line">				<span class="bullet">-</span> <span class="string">slave_ds_0</span> </span><br><span class="line">			<span class="attr">master_test_1:</span> </span><br><span class="line">				<span class="attr">masterDataSourceName:</span> <span class="string">master_ds_1</span> </span><br><span class="line">				<span class="attr">slaveDataSourceNames:</span> </span><br><span class="line">					<span class="bullet">-</span> <span class="string">slave_ds_1</span> </span><br><span class="line">					<span class="bullet">-</span> <span class="string">slave_ds_1_slave2</span> </span><br><span class="line">	<span class="attr">defaultDataSourceName:</span> <span class="string">master_test_0</span> <span class="comment"># 这里的数据源允许是dataSources的配置项 目或者masterSlaveRules配置的名称,配置为masterSlaveRule的话相当于就是配置读写分离了</span></span><br><span class="line"></span><br><span class="line">	<span class="attr">broadcastTables:</span> <span class="comment"># 广播表 这里配置的表列表,对于发生的所有数据变更,都会不经 sharidng处理,而是直接发送到所有数据节点,注意此处为列表,每个项目为一个表名称 </span></span><br><span class="line">		<span class="bullet">-</span> <span class="string">broad_1</span> </span><br><span class="line">		<span class="bullet">-</span> <span class="string">broad_2</span></span><br><span class="line">	<span class="attr">bindingTables:</span> <span class="comment"># 绑定表,也就是实际上哪些配置的sharidng表规则需要实际生效的列表,配 置为yaml列表,并且允许单个条目中以逗号切割,所配置表必须已经配置为逻辑表 </span></span><br><span class="line">		<span class="bullet">-</span> <span class="string">sharding_t1</span> </span><br><span class="line">		<span class="bullet">-</span> <span class="string">sharding_t2,sharding_t3</span> </span><br><span class="line">	<span class="attr">defaultDatabaseShardingStrategy:</span> <span class="comment"># 默认库级别sharidng规则,对应代码中 ShardingStrategy接口的实现类,目前支持none,inline,hint,complex,standard五种配置 注意此处默认配置仅可以配置五个中的一个 # 规则配置同样适合表sharding配置,同样是在这些算法中选择 </span></span><br><span class="line">		<span class="attr">none:</span> <span class="comment"># 不配置任何规则,SQL会被发给所有节点去执行,这个规则没有子项目可以配置 </span></span><br><span class="line">		<span class="attr">inline:</span> <span class="comment"># 行表达式分片 </span></span><br><span class="line">			<span class="attr">shardingColumn:</span> <span class="string">test_id</span> <span class="comment"># 分片列名称 </span></span><br><span class="line">			<span class="attr">algorithmExpression:</span> <span class="string">master_test_$&#123;test_id</span> <span class="string">%</span> <span class="number">2</span><span class="string">&#125;</span> <span class="comment"># 分片表达式,根据指定的 表达式计算得到需要路由到的数据源名称 需要是合法的groovy表达式,示例配置中,取余为0则语句 路由到master_test_0,取余为1则路由到master_test_1 </span></span><br><span class="line">		<span class="attr">hint:</span> <span class="comment">#基于标记的sharding分片 </span></span><br><span class="line">			<span class="attr">shardingAlgorithm:</span> <span class="comment"># 需要是HintShardingAlgorithm接口的实现,目前代码中,仅 有为测试目的实现的OrderDatabaseHintShardingAlgorithm,没有生产环境可用的实现 </span></span><br><span class="line">		<span class="attr">complex:</span> <span class="comment"># 支持多列的shariding,目前无生产可用实现 </span></span><br><span class="line">			<span class="attr">shardingColumns:</span> <span class="comment"># 逗号切割的列 </span></span><br><span class="line">			<span class="attr">shardingAlgorithm:</span> <span class="comment"># ComplexKeysShardingAlgorithm接口的实现类 </span></span><br><span class="line">		<span class="attr">standard:</span> <span class="comment"># 单列sharidng算法,需要配合对应的 preciseShardingAlgorithm,rangeShardingAlgorithm接口的实现使用,目前无生产可用实 现 </span></span><br><span class="line">		<span class="attr">shardingColumn:</span> <span class="comment"># 列名,允许单列 </span></span><br><span class="line">		<span class="attr">preciseShardingAlgorithm:</span> <span class="comment"># preciseShardingAlgorithm接口的实现类 </span></span><br><span class="line">		<span class="attr">rangeShardingAlgorithm:</span> <span class="comment"># rangeShardingAlgorithm接口的实现类 </span></span><br><span class="line">	<span class="attr">defaultTableStrategy:</span> <span class="comment">#配置参考defaultDatabaseShardingStrategy,区别在 于,inline算法的配置中,algorithmExpression的配置算法结果需要是实际的物理表名称,而非 数据源名称 </span></span><br><span class="line">	<span class="attr">defaultKeyGenerator:</span> <span class="comment">#默认的主键生成算法 如果没有设置,默认为SNOWFLAKE算法 </span></span><br><span class="line">		<span class="attr">column:</span> <span class="comment"># 自增键对应的列名称 </span></span><br><span class="line">		<span class="attr">type:</span> <span class="comment">#自增键的类型,主要用于调用内置的主键生成算法有三个可用值:SNOWFLAKE(时间戳 +worker id+自增id),UUID(java.util.UUID类生成的随机UUID),LEAF,其中Snowflake算法 与UUID算法已经实现,LEAF目前(2018-01-14)尚未实现 </span></span><br><span class="line">		<span class="attr">props:</span> <span class="comment"># 定制算法需要设置的参数,比如SNOWFLAKE算法的worker.id与 max.tolerate.time.difference.milliseconds</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="分布式主键"><a href="#分布式主键" class="headerlink" title="分布式主键"></a>分布式主键</h3><p>传统数据库软件开发中，主键自动生成技术是基本需求。而各个数据库对于该需求也提供了相应的支持，比如MySQL的自增键，Oracle的自增序列等。 数据分片后，不同数据节点生成全局唯一主键是非常棘手的问题。同一个逻辑表内的不同实际表之间的自增键由于无法互相感知而产生重复主键。 虽然可通过约束自增主键初始值和步长的方式避免碰撞，但需引入额外的运维规则，使解决方案缺乏完整性和可扩展性。</p>
+<p>目前有许多第三方解决方案可以完美解决这个问题，如UUID等依靠特定算法自生成不重复键，或者通过引入主键生成服务等。为了方便用户使用、满足不同用户不同使用场景的需求，ShardingSphere不仅提供了内置的分布式主键生成器，例如UUID、SNOWFLAKE、LEAF(进行中)，还抽离出分布式主键生成器的接口，方便用户自行实现自定义的自增主键生成器。</p>
+<h4 id="内置的主键生成器"><a href="#内置的主键生成器" class="headerlink" title="内置的主键生成器"></a>内置的主键生成器</h4><p><strong>UUID</strong></p>
+<p>采用UUID.randomUUID()的方式产生分布式主键。</p>
+<p><strong>SNOWFLAKE</strong></p>
+<p>ShardingSphere提供灵活的配置分布式主键生成策略方式。 在分片规则配置模块可配置每个表的主键生成策略，默认使用雪花算法（snowflflake）生成64bit的长整型数据。</p>
+<p>雪花算法是由Twitter公布的分布式主键生成算法，它能够保证不同进程主键的不重复性，以及相同进程主键的有序性。</p>
+<p>在同一个进程中，它首先是通过时间位保证不重复，如果时间相同则是通过序列位保证。 同时由于时间位是单调递增的，且各个服务器如果大体做了时间同步，那么生成的主键在分布式环境可以认为是总体有序的，这就保证了对索引字段的插入的高效性。例如MySQL的Innodb存储引擎的主键。</p>
+<p>使用雪花算法生成的主键，二进制表示形式包含4部分，从高位到低位分表为：1bit符号位、41bit时间戳位、10bit工作进程位以及12bit序列号位。</p>
+<ul>
+<li><p>符号位(1bit)<br>预留的符号位，恒为零。</p>
+</li>
+<li><p>时间戳位(41bit)<br>41位的时间戳可以容纳的毫秒数是2的41次幂，一年所使用的毫秒数是： 365 * 24 * 60 * 60 * 1000 。通过计算可知：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Math.pow(<span class="number">2</span>, <span class="number">41</span>) / (<span class="number">365</span> * <span class="number">24</span> * <span class="number">60</span> * <span class="number">60</span> * <span class="number">1000L</span>);</span><br></pre></td></tr></table></figure>
+
+<p>结果约等于69.73年。ShardingSphere的雪花算法的时间纪元从2016年11月1日零点开始，可以使用到2086年，相信能满足绝大部分系统的要求。</p>
+</li>
+<li><p>工作进程位(10bit)<br>该标志在Java进程内是唯一的，如果是分布式应用部署应保证每个工作进程的id是不同的。该值默认为0，可通过调用静态方法 DefaultKeyGenerator.setWorkerId() 设置。</p>
+</li>
+<li><p>序列号位(12bit)<br>该序列是用来在同一个毫秒内生成不同的ID。如果在这个毫秒内生成的数量超过4096(2的12次 幂)，那么生成器会等待到下个毫秒继续生成。</p>
+</li>
+</ul>
+<p><strong>时钟回拨</strong></p>
+<p>服务器时钟回拨会导致产生重复序列，因此默认分布式主键生成器提供了一个最大容忍的时钟回拨毫秒数。 如果时钟回拨的时间超过最大容忍的毫秒数阈值，则程序报错；如果在可容忍的范围内，默认分布式主键生成器会等待时钟同步到最后一次主键生成的时间后再继续工作。 最大容忍的时钟回拨毫秒数的默认值为0，可通过调用静态方法DefaultKeyGenerator.setMaxTolerateTimeDifferenceMilliseconds() 设置。</p>
+<p>雪花算法主键的详细结构见下图。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221227195955.png"></p>
+<p><strong>LEAF</strong></p>
+<p>借鉴美团点评分布式ID生成系统<a target="_blank" rel="noopener" href="https://tech.meituan.com/2017/04/21/mt-leaf.html">Leaf</a>, 借助注册中心生成分布式自增主键。该内置分布式主键算法正在进行中。</p>
+<h4 id="配置示例-1"><a href="#配置示例-1" class="headerlink" title="配置示例"></a>配置示例</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">shardingRule:</span> </span><br><span class="line">	<span class="attr">tables:</span> </span><br><span class="line">		<span class="attr">t_order:</span> </span><br><span class="line">			<span class="attr">actualDataNodes:</span> <span class="string">ms_ds$&#123;0..1&#125;.t_order$&#123;0..1&#125;</span> </span><br><span class="line">			<span class="attr">tableStrategy:</span> </span><br><span class="line">				<span class="attr">inline:</span> </span><br><span class="line">					<span class="attr">shardingColumn:</span> <span class="string">order_id</span> </span><br><span class="line">					<span class="attr">algorithmExpression:</span> <span class="string">t_order$&#123;order_id</span> <span class="string">%</span> <span class="number">2</span><span class="string">&#125;</span> </span><br><span class="line">			<span class="attr">keyGeneratorColumnName:</span> <span class="string">order_id</span> </span><br><span class="line">			<span class="comment">#keyGeneratorClassName: xxx.xxx.XXclass </span></span><br><span class="line">	<span class="comment">#defaultKeyGenerator: </span></span><br><span class="line">		<span class="comment">#type: SNOWFLAKE</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="配置说明"><a href="#配置说明" class="headerlink" title="配置说明"></a>配置说明</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">defaultKeyGenerator:</span> <span class="comment">#默认的主键生成算法 如果没有设置,默认为SNOWFLAKE算法 </span></span><br><span class="line">	<span class="attr">column:</span> <span class="comment"># 自增键对应的列名称 </span></span><br><span class="line">	<span class="attr">type:</span> <span class="comment">#自增键的类型,主要用于调用内置的主键生成算法有三个可用值:SNOWFLAKE(时间戳 +worker id+自增id),UUID(java.util.UUID类生成的随机UUID),LEAF,其中Snowflake算法 与UUID算法已经实现,LEAF目前(2018-01-14)尚未实现 </span></span><br><span class="line">	<span class="attr">props:</span> <span class="comment"># 定制算法需要设置的参数,比如SNOWFLAKE算法的worker.id与 max.tolerate.time.difference.milliseconds </span></span><br><span class="line"><span class="attr">tables:</span> <span class="comment">#配置表sharding的主要位置 </span></span><br><span class="line">	<span class="attr">sharding_t1:</span> </span><br><span class="line">		<span class="attr">actualDataNodes:</span> <span class="string">master_test_$&#123;0..1&#125;.t_order$&#123;0..1&#125;</span> <span class="comment"># sharidng 表对应 的数据源以及物理名称,需要用表达式处理,表示表实际上在哪些数据源存在,配置示例中,意思是总共 存在4个分片 master_test_0.t_order0,master_test_0.t_order1,master_test_1.t_order0,maste r_test_1.t_order1 </span></span><br><span class="line">		<span class="comment"># 需要注意的是,必须保证设置databaseStrategy可以路由到唯一的 dataSource,tableStrategy可以路由到dataSource中唯一的物理表上,否则可能导致错误:一 个insert语句被插入到多个实际物理表中 </span></span><br><span class="line">		<span class="attr">databaseStrategy:</span> <span class="comment"># 局部设置会覆盖全局设置,参考 defaultDatabaseShardingStrategy </span></span><br><span class="line">		<span class="attr">tableStrategy:</span> <span class="comment"># 局部设置会覆盖全局设置,参考defaultTableStrategy </span></span><br><span class="line">		<span class="attr">keyGenerator:</span> <span class="comment"># 局部设置会覆盖全局设置,参考defaultKeyGenerator </span></span><br><span class="line">		<span class="attr">logicIndex:</span> <span class="comment"># 逻辑索引名称 由于Oracle,PG这种数据库中,索引与表共用命名空间,如 果接受到drop index语句,执行之前,会通过这个名称配置的确定对应的实际物理表名称</span></span><br></pre></td></tr></table></figure>
+
+<p>dao SQL语句</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert(&quot;insert into t_order(order_time,customer_id) values(#&#123;orderTime&#125;,# &#123;customerId&#125;)&quot;)</span> </span><br><span class="line"><span class="keyword">void</span> <span class="title function_">addOrder</span><span class="params">(Order o)</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="绑定表"><a href="#绑定表" class="headerlink" title="绑定表"></a>绑定表</h3><p>指分片规则一致的主表和子表。例如：t_order表和t_order_item表，均按照order_id分片，则此两张表互为绑定表关系。绑定表之间的多表关联查询不会出现笛卡尔积关联，关联查询效率将大大提升。</p>
+<p>如果SQL为</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> i.<span class="operator">*</span> <span class="keyword">FROM</span> t_order o <span class="keyword">JOIN</span> t_order_item i <span class="keyword">ON</span> o.order_id<span class="operator">=</span>i.order_id <span class="keyword">WHERE</span> o.order_id <span class="keyword">in</span> (<span class="number">10</span>, <span class="number">11</span>);</span><br></pre></td></tr></table></figure>
+
+<p>在不配置绑定表关系时，假设分片键order_id将数值10路由至第0片，将数值11路由至第1片，那么路由后的SQL应该为4条，它们呈现为笛卡尔积：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> i.<span class="operator">*</span> <span class="keyword">FROM</span> t_order_0 o <span class="keyword">JOIN</span> t_order_item_0 i <span class="keyword">ON</span> o.order_id<span class="operator">=</span>i.order_id <span class="keyword">WHERE</span> o.order_id <span class="keyword">in</span> (<span class="number">10</span>, <span class="number">11</span>);</span><br><span class="line"> <span class="keyword">SELECT</span> i.<span class="operator">*</span> <span class="keyword">FROM</span> t_order_0 o <span class="keyword">JOIN</span> t_order_item_1 i <span class="keyword">ON</span> o.order_id<span class="operator">=</span>i.order_id <span class="keyword">WHERE</span> o.order_id <span class="keyword">in</span> (<span class="number">10</span>, <span class="number">11</span>);</span><br><span class="line"> <span class="keyword">SELECT</span> i.<span class="operator">*</span> <span class="keyword">FROM</span> t_order_1 o <span class="keyword">JOIN</span> t_order_item_0 i <span class="keyword">ON</span> o.order_id<span class="operator">=</span>i.order_id <span class="keyword">WHERE</span> o.order_id <span class="keyword">in</span> (<span class="number">10</span>, <span class="number">11</span>);</span><br><span class="line"> <span class="keyword">SELECT</span> i.<span class="operator">*</span> <span class="keyword">FROM</span> t_order_1 o <span class="keyword">JOIN</span> t_order_item_1 i <span class="keyword">ON</span> o.order_id<span class="operator">=</span>i.order_id <span class="keyword">WHERE</span> o.order_id <span class="keyword">in</span> (<span class="number">10</span>, <span class="number">11</span>);</span><br></pre></td></tr></table></figure>
+
+<p>在配置绑定表关系后，路由的SQL应该为2条：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> i.<span class="operator">*</span> <span class="keyword">FROM</span> t_order_0 o <span class="keyword">JOIN</span> t_order_item_0 i <span class="keyword">ON</span> o.order_id<span class="operator">=</span>i.order_id <span class="keyword">WHERE</span> o.order_id <span class="keyword">in</span> (<span class="number">10</span>, <span class="number">11</span>);</span><br><span class="line"><span class="keyword">SELECT</span> i.<span class="operator">*</span> <span class="keyword">FROM</span> t_order_1 o <span class="keyword">JOIN</span> t_order_item_1 i <span class="keyword">ON</span> o.order_id<span class="operator">=</span>i.order_id <span class="keyword">WHERE</span> o.order_id <span class="keyword">in</span> (<span class="number">10</span>, <span class="number">11</span>);</span><br></pre></td></tr></table></figure>
+
+<p>其中t_order在FROM的最左侧，ShardingSphere将会以它作为整个绑定表的主表。 所有路由计算将会只使用主表的策略，那么t_order_item表的分片计算将会使用t_order的条件。故绑定表之间的分区键要完全相同。</p>
+<h4 id="绑定表配置示例"><a href="#绑定表配置示例" class="headerlink" title="绑定表配置示例"></a>绑定表配置示例</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">shardingRule:</span> </span><br><span class="line">	<span class="attr">tables:</span></span><br><span class="line">	<span class="attr">t_order:</span> </span><br><span class="line">		<span class="attr">actualDataNodes:</span> <span class="string">ds$&#123;0..1&#125;.t_order$&#123;0..1&#125;</span></span><br><span class="line">		<span class="attr">tableStrategy:</span> </span><br><span class="line">			<span class="attr">inline:</span></span><br><span class="line">				<span class="attr">shardingColumn:</span> <span class="string">order_id</span></span><br><span class="line">				<span class="attr">algorithmExpression:</span> <span class="string">t_order$&#123;order_id</span> <span class="string">%</span> <span class="number">2</span><span class="string">&#125;</span></span><br><span class="line">		<span class="attr">keyGenerator:</span></span><br><span class="line">			<span class="attr">column:</span> <span class="string">order_id</span></span><br><span class="line">	<span class="attr">t_order_item:</span></span><br><span class="line">		<span class="attr">actualDataNodes:</span> <span class="string">ds$&#123;0..1&#125;.t_order_item$&#123;0..1&#125;</span></span><br><span class="line">		<span class="attr">tableStrategy:</span></span><br><span class="line">			<span class="attr">inline:</span></span><br><span class="line">				<span class="attr">shardingColumn:</span> <span class="string">order_id</span></span><br><span class="line">				<span class="attr">algorithmExpression:</span> <span class="string">t_order_item$&#123;order_id</span> <span class="string">%</span> <span class="number">2</span><span class="string">&#125;</span> </span><br><span class="line">	<span class="attr">bindingTables:</span> <span class="bullet">-</span> <span class="string">t_order,t_order_item</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="绑定表配置说明"><a href="#绑定表配置说明" class="headerlink" title="绑定表配置说明"></a>绑定表配置说明</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">bindingTables:</span> <span class="comment"># 绑定表,也就是实际上哪些配置的sharidng表规则需要实际生效的列表,配 置为yaml列表,并且允许单个条目中以逗号切割,所配置表必须已经配置为逻辑表 </span></span><br><span class="line">	<span class="bullet">-</span> <span class="string">sharding_t1</span> </span><br><span class="line">	<span class="bullet">-</span> <span class="string">sharding_t2,sharding_t3</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="广播表"><a href="#广播表" class="headerlink" title="广播表"></a>广播表</h3><p>指所有的分片数据源中都存在的表，表结构和表中的数据在每个数据库中均完全一致。适用于数据量不大且需要与海量数据的表进行关联查询的场景，例如：字典表。</p>
+<h4 id="配置示例-2"><a href="#配置示例-2" class="headerlink" title="配置示例"></a>配置示例</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">shardingRule:</span> </span><br><span class="line">	<span class="attr">bindingTables:</span> </span><br><span class="line">		<span class="bullet">-</span> <span class="string">t_order,t_order_item</span> </span><br><span class="line">	<span class="attr">broadcastTables:</span> </span><br><span class="line">		<span class="bullet">-</span> <span class="string">t_config</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="配置说明-1"><a href="#配置说明-1" class="headerlink" title="配置说明"></a>配置说明</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">broadcastTables:</span> <span class="comment"># 广播表 这里配置的表列表,对于发生的所有数据变更,都会不经 sharidng处理,而是直接发送到所有数据节点,注意此处为列表,每个项目为一个表名称 </span></span><br><span class="line">	<span class="bullet">-</span> <span class="string">broad_1</span> </span><br><span class="line">	<span class="bullet">-</span> <span class="string">broad_2</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="逻辑索引"><a href="#逻辑索引" class="headerlink" title="逻辑索引"></a>逻辑索引</h3><p>某些数据库（如：PostgreSQL）不允许同一个库存在名称相同索引，某些数据库（如：MySQL）则允许只要同一个表中不存在名称相同的索引即可。 逻辑索引用于同一个库不允许出现相同索引名称的分表场景，需要将同库不同表的索引名称改写为 索引名 + 表名 ，改写之前的索引名称成为逻辑索引。</p>
+<h2 id="数据分片-读写分离"><a href="#数据分片-读写分离" class="headerlink" title="数据分片+读写分离"></a>数据分片+读写分离</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">dataSources:</span> </span><br><span class="line">	<span class="attr">ds0:</span> <span class="type">!!org.apache.commons.dbcp.BasicDataSource</span> </span><br><span class="line">		<span class="attr">driverClassName:</span> <span class="string">com.mysql.jdbc.Driver</span></span><br><span class="line">        <span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/ds0</span> </span><br><span class="line">        <span class="attr">username:</span> <span class="string">root</span> </span><br><span class="line">        <span class="attr">password:</span></span><br><span class="line">	<span class="attr">ds0_slave0:</span> <span class="type">!!org.apache.commons.dbcp.BasicDataSource</span> </span><br><span class="line">		<span class="attr">driverClassName:</span> <span class="string">com.mysql.jdbc.Driver</span> </span><br><span class="line">		<span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/ds0_slave0</span> </span><br><span class="line">		<span class="attr">username:</span> <span class="string">root</span> </span><br><span class="line">		<span class="attr">password:</span> </span><br><span class="line">	<span class="attr">ds0_slave1:</span> <span class="type">!!org.apache.commons.dbcp.BasicDataSource</span> </span><br><span class="line">		<span class="attr">driverClassName:</span> <span class="string">com.mysql.jdbc.Driver</span> </span><br><span class="line">		<span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/ds0_slave1</span> </span><br><span class="line">		<span class="attr">username:</span> <span class="string">root</span> </span><br><span class="line">		<span class="attr">password:</span> </span><br><span class="line">	<span class="attr">ds1:</span> <span class="type">!!org.apache.commons.dbcp.BasicDataSource</span> </span><br><span class="line">		<span class="attr">driverClassName:</span> <span class="string">com.mysql.jdbc.Driver</span> </span><br><span class="line">		<span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/ds1</span> </span><br><span class="line">		<span class="attr">username:</span> <span class="string">root</span> </span><br><span class="line">		<span class="attr">password:</span> </span><br><span class="line">	<span class="attr">ds1_slave0:</span> <span class="type">!!org.apache.commons.dbcp.BasicDataSource</span> </span><br><span class="line">		<span class="attr">driverClassName:</span> <span class="string">com.mysql.jdbc.Driver</span> </span><br><span class="line">		<span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/ds1_slave0</span> </span><br><span class="line">		<span class="attr">username:</span> <span class="string">root</span> </span><br><span class="line">		<span class="attr">password:</span> </span><br><span class="line">	<span class="attr">ds1_slave1:</span> <span class="type">!!org.apache.commons.dbcp.BasicDataSource</span> </span><br><span class="line">		<span class="attr">driverClassName:</span> <span class="string">com.mysql.jdbc.Driver</span> </span><br><span class="line">		<span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/ds1_slave1</span> </span><br><span class="line">		<span class="attr">username:</span> <span class="string">root</span> </span><br><span class="line">		<span class="attr">password:</span> </span><br><span class="line"><span class="attr">shardingRule:</span> </span><br><span class="line">	<span class="attr">tables:</span> </span><br><span class="line">		<span class="attr">t_order:</span> </span><br><span class="line">			<span class="attr">actualDataNodes:</span> <span class="string">ms_ds$&#123;0..1&#125;.t_order$&#123;0..1&#125;</span> </span><br><span class="line">			<span class="attr">tableStrategy:</span> </span><br><span class="line">				<span class="attr">inline:</span></span><br><span class="line">                	<span class="attr">shardingColumn:</span> <span class="string">order_id</span> </span><br><span class="line">                	<span class="attr">algorithmExpression:</span> <span class="string">t_order$&#123;order_id</span> <span class="string">%</span> <span class="number">2</span><span class="string">&#125;</span> </span><br><span class="line">			<span class="attr">keyGenerator:</span> </span><br><span class="line">				<span class="attr">Column:</span> <span class="string">order_id</span> </span><br><span class="line">		<span class="attr">t_order_item:</span> </span><br><span class="line">			<span class="attr">actualDataNodes:</span> <span class="string">ms_ds$&#123;0..1&#125;.t_order_item$&#123;0..1&#125;</span> </span><br><span class="line">			<span class="attr">tableStrategy:</span> </span><br><span class="line">				<span class="attr">inline:</span> </span><br><span class="line">					<span class="attr">shardingColumn:</span> <span class="string">order_id</span> </span><br><span class="line">					<span class="attr">algorithmExpression:</span> <span class="string">t_order_item$&#123;order_id</span> <span class="string">%</span> <span class="number">2</span><span class="string">&#125;</span></span><br><span class="line">	<span class="attr">bindingTables:</span> </span><br><span class="line">		<span class="bullet">-</span> <span class="string">t_order,t_order_item</span> </span><br><span class="line">	<span class="attr">broadcastTables:</span> </span><br><span class="line">		<span class="bullet">-</span> <span class="string">t_config</span> </span><br><span class="line"></span><br><span class="line">	<span class="attr">defaultDataSourceName:</span> <span class="string">ds_0</span> </span><br><span class="line">	<span class="attr">defaultDatabaseStrategy:</span> </span><br><span class="line">		<span class="attr">inline:</span> </span><br><span class="line">			<span class="attr">shardingColumn:</span> <span class="string">user_id</span> </span><br><span class="line">			<span class="attr">algorithmExpression:</span> <span class="string">ms_ds$&#123;user_id</span> <span class="string">%</span> <span class="number">2</span><span class="string">&#125;</span> </span><br><span class="line">	<span class="attr">defaultTableStrategy:</span> </span><br><span class="line">		<span class="attr">none:</span> </span><br><span class="line">	<span class="attr">defaultKeyGenerator:</span> </span><br><span class="line">		<span class="attr">type:</span> <span class="string">SNOWFLAKE</span> </span><br><span class="line"></span><br><span class="line">	<span class="attr">masterSlaveRules:</span> </span><br><span class="line">		<span class="attr">ms_ds0:</span> </span><br><span class="line">			<span class="attr">masterDataSourceName:</span> <span class="string">ds0</span> </span><br><span class="line">			<span class="attr">slaveDataSourceNames:</span> </span><br><span class="line">				<span class="bullet">-</span> <span class="string">ds0_slave0</span> </span><br><span class="line">				<span class="bullet">-</span> <span class="string">ds0_slave1</span> </span><br><span class="line">			<span class="attr">loadBalanceAlgorithmType:</span> <span class="string">ROUND_ROBIN</span> </span><br><span class="line">			<span class="attr">configMap:</span> </span><br><span class="line">				<span class="attr">master-slave-key0:</span> <span class="string">master-slave-value0</span> </span><br><span class="line">		<span class="attr">ms_ds1:</span> </span><br><span class="line">			<span class="attr">masterDataSourceName:</span> <span class="string">ds1</span> </span><br><span class="line">			<span class="attr">slaveDataSourceNames:</span> </span><br><span class="line">				<span class="bullet">-</span> <span class="string">ds1_slave0</span> </span><br><span class="line">				<span class="bullet">-</span> <span class="string">ds1_slave1</span> </span><br><span class="line">			<span class="attr">loadBalanceAlgorithmType:</span> <span class="string">ROUND_ROBIN</span></span><br><span class="line">			<span class="attr">configMap:</span> </span><br><span class="line">				<span class="attr">master-slave-key1:</span> <span class="string">master-slave-value1</span> </span><br><span class="line"><span class="attr">props:</span> </span><br><span class="line">	<span class="attr">sql.show:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>分片时的数据源是读写分离中定义的集群名。</strong></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/11-MySQL/03-ShardingSphere/04-Sharding-JDBC%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/" data-id="clmcxed7900cpu8wa6i402f1t" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/11-MySQL/03-ShardingSphere/05-Sharding-JDBC%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%BA%94%E7%94%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/11-MySQL/03-ShardingSphere/03-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

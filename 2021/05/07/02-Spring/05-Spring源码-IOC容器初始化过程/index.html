@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Spring源码-IOC容器初始化过程 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="探索框架源码学习为什么要学习源码？为扩展、调优：掌握框架的工作流程、原理。 为提升自己的编程技能：学习他人的设计思想、编程技巧、涨薪升职。 学习源码技巧思路思路一 掌握问题域理论和核心概念：搞明白做什么，如何做。 从整体到部分 找到入口，先理清主干流程，再细节 多折腾、勤折腾  思路二 掌握问题域理论和核心概念：搞明白做什么，如何做。 动手自己尝试实现。 对比看源码的实现思路，总结优劣，学习他人之">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring源码-IOC容器初始化过程">
+<meta property="og:url" content="http://example.com/2021/05/07/02-Spring/05-Spring%E6%BA%90%E7%A0%81-IOC%E5%AE%B9%E5%99%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="探索框架源码学习为什么要学习源码？为扩展、调优：掌握框架的工作流程、原理。 为提升自己的编程技能：学习他人的设计思想、编程技巧、涨薪升职。 学习源码技巧思路思路一 掌握问题域理论和核心概念：搞明白做什么，如何做。 从整体到部分 找到入口，先理清主干流程，再细节 多折腾、勤折腾  思路二 掌握问题域理论和核心概念：搞明白做什么，如何做。 动手自己尝试实现。 对比看源码的实现思路，总结优劣，学习他人之">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818145336.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818161541.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818163208.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818163929.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818164301.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818174709.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818175259.png">
+<meta property="article:published_time" content="2021-05-07T14:36:30.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:15:48.297Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Spring">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818145336.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-02-Spring/05-Spring源码-IOC容器初始化过程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/02-Spring/05-Spring%E6%BA%90%E7%A0%81-IOC%E5%AE%B9%E5%99%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spring/">Spring</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Spring源码-IOC容器初始化过程
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="探索框架源码学习"><a href="#探索框架源码学习" class="headerlink" title="探索框架源码学习"></a>探索框架源码学习</h1><h2 id="为什么要学习源码？"><a href="#为什么要学习源码？" class="headerlink" title="为什么要学习源码？"></a>为什么要学习源码？</h2><p>为扩展、调优：掌握框架的工作流程、原理。</p>
+<p>为提升自己的编程技能：学习他人的设计思想、编程技巧、涨薪升职。</p>
+<h2 id="学习源码技巧"><a href="#学习源码技巧" class="headerlink" title="学习源码技巧"></a>学习源码技巧</h2><h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><h4 id="思路一"><a href="#思路一" class="headerlink" title="思路一"></a>思路一</h4><ol>
+<li>掌握问题域理论和核心概念：搞明白做什么，如何做。</li>
+<li>从整体到部分</li>
+<li>找到入口，先理清主干流程，再细节</li>
+<li>多折腾、勤折腾</li>
+</ol>
+<h4 id="思路二"><a href="#思路二" class="headerlink" title="思路二"></a>思路二</h4><ol>
+<li>掌握问题域理论和核心概念：搞明白做什么，如何做。</li>
+<li>动手自己尝试实现。</li>
+<li>对比看源码的实现思路，总结优劣，学习他人之长。</li>
+</ol>
+<h3 id="方法技巧"><a href="#方法技巧" class="headerlink" title="方法技巧"></a>方法技巧</h3><ol>
+<li><p>建立干净的项目环境</p>
+</li>
+<li><p>会使用基本的用例</p>
+</li>
+<li><p>猜测了解整个流程</p>
+</li>
+<li><p>抓住整个流程关键点</p>
+</li>
+<li><p>设置断点，分析断点调用栈</p>
+<ol>
+<li><p>分析类名、包名、方法名、输入输出</p>
+</li>
+<li><p>拆分出实现的关键块</p>
+</li>
+<li><p>拆分出实现的关键方法</p>
+</li>
+<li><p>进入该方法</p>
+</li>
+<li><p>逐步调试动态分析，F7、F8、F9 快捷键的使用</p>
+</li>
+<li><p>对于陌生类，养成查看官方注释的习惯</p>
+</li>
+<li><p>巧用IDE进行静态分析<br>快捷键以IDEA为IDE</p>
+<ol>
+<li>断点的使用技巧<br>找到关键方法点设置断点条件断点，同一个断点被多次调用，但只关心某个值的情况下进行拦截</li>
+<li>定位搜索相关类<br>Ctrl+N 匹配类名<br>Ctrl+F12或Alt+7 类中查找方法</li>
+<li>查看方法调用关系链<br>Ctrl+Alt+H打开方法调用链层级Open Call Hierarchy 被地方调用的调用层级，调用其他方法的层</li>
+<li>查找被使用的地方<br>Ctrl+B或Ctrl+Alt+B 查看被其他方法调用的地方</li>
+<li>利用生成UML类图分析复杂关系</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h1 id="IOC容器源码解读"><a href="#IOC容器源码解读" class="headerlink" title="IOC容器源码解读"></a>IOC容器源码解读</h1><h2 id="IOC容器初始化过程"><a href="#IOC容器初始化过程" class="headerlink" title="IOC容器初始化过程"></a>IOC容器初始化过程</h2><h3 id="ApplicationContext用法及工作流程"><a href="#ApplicationContext用法及工作流程" class="headerlink" title="ApplicationContext用法及工作流程"></a>ApplicationContext用法及工作流程</h3><ul>
+<li><p>回顾IOC容器<br>IOC容器，为用户提供创建、管理、获取它们的类实例的容器。让用户在需要类对象时，只需向IOC容器要，进而达到与具体类解耦。为其他的高级功能提供基础。<br>IOC需要完成下列工作，才能被使用：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818145336.png"></p>
+</li>
+<li><p>Spring的用法</p>
+<p>源码项目准备</p>
+<p>新建一个普通的java maven 工程，引入spring ioc 的jar，排除其他依赖，只需要一个干净纯粹的环境</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-context<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.2.8.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>使用spring的三种方式：xml配置、注解、bean配置。</p>
+<ul>
+<li><p>XML</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;chinaUser&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.study.spring.bean.ChinaUser&quot;</span></span></span><br><span class="line"><span class="tag">          <span class="attr">init-method</span>=<span class="string">&quot;init&quot;</span> <span class="attr">destroy-method</span>=<span class="string">&quot;destroy&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">type</span>=<span class="string">&quot;java.lang.String&quot;</span> <span class="attr">value</span>=<span class="string">&quot;张三&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;cat&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;garfieldCat&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;garfieldCat&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.study.spring.bean.GarfieldCat&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">type</span>=<span class="string">&quot;java.lang.String&quot;</span> <span class="attr">value</span>=<span class="string">&quot;罐头&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">&quot;chinaUser&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ApplicationContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ClassPathXmlApplicationContext</span>(<span class="string">&quot;services.xml&quot;</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注解</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component(&quot;hash&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ChinaUser</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value(&quot;hash&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ChinaUser</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>XML方式指定扫描包范围</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">&quot;com.study.spring&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>注解方式指定扫描的基础包</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ComponentScan(&quot;com.study.spring&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Application</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码中通过API直接指定</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ApplicationContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AnnotationConfigApplicationContext</span>(<span class="string">&quot;com.study.spring.bean&quot;</span>);</span><br><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> (User) context.getBean(<span class="string">&quot;hash&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">AnnotationConfigApplicationContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AnnotationConfigApplicationContext</span>();</span><br><span class="line">context.scan(<span class="string">&quot;com.study.spring.bean&quot;</span>);</span><br><span class="line">context.refresh();</span><br><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> context.getBean(User.class);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Java Bean配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppConfig</span> &#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> MyService <span class="title function_">myService</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">MyServiceImpl</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="type">ApplicationContext</span> <span class="variable">ctx</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AnnotationConfigApplicationContext</span>(AppConfig.class);</span><br><span class="line">    <span class="type">MyService</span> <span class="variable">myService</span> <span class="operator">=</span> context.getBean(MyService.class);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="type">ApplicationContext</span> <span class="variable">ctx</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AnnotationConfigApplicationContext</span>(MyServiceImpl.class, Dependency1.class, Dependency2.class);</span><br><span class="line">    <span class="type">MyService</span> <span class="variable">myService</span> <span class="operator">=</span> context.getBean(MyService.class);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="type">AnnotationConfigApplicationContext</span> <span class="variable">ctx</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AnnotationConfigApplicationContext</span>();</span><br><span class="line">    context.register(AppConfig.class, OtherConfig.class);</span><br><span class="line">    context.register(AdditionalConfig.class);</span><br><span class="line">    context.refresh();</span><br><span class="line">    <span class="type">MyService</span> <span class="variable">myService</span> <span class="operator">=</span> context.getBean(MyService.class);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从上面的使用示例，很清楚地看到，我们使用Spring ，只需要使用spring提供的ApplicationContext这个API。ApplicationContext 就是IOC容器。源码的学习就从它开始！</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="ApplicationContext继承体系"><a href="#ApplicationContext继承体系" class="headerlink" title="ApplicationContext继承体系"></a>ApplicationContext继承体系</h3><h4 id="带着问题学习ApplicationContext"><a href="#带着问题学习ApplicationContext" class="headerlink" title="带着问题学习ApplicationContext"></a>带着问题学习ApplicationContext</h4><ol>
+<li><p>它是什么？它有什么？</p>
+</li>
+<li><p>怎么使用它？它都有什么实现类？区别是什么？</p>
+</li>
+<li><p>它是的初始化过程是怎样的？</p>
+</li>
+<li><p>如何加载解析bean定义的？</p>
+<ol>
+<li>xml的解析过程是怎样的？</li>
+<li>注解的扫描过程是怎样的？</li>
+</ol>
+</li>
+<li><p>还想了解什么？</p>
+</li>
+</ol>
+<h4 id="ApplicationContext是什么？"><a href="#ApplicationContext是什么？" class="headerlink" title="ApplicationContext是什么？"></a>ApplicationContext是什么？</h4><p>IOC容器，提供IOC容器应用配置的普通接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">ApplicationContext</span> <span class="keyword">extends</span> <span class="title class_">EnvironmentCapable</span>, ListableBeanFactory, HierarchicalBeanFactory,</span><br><span class="line">		MessageSource, ApplicationEventPublisher, ResourcePatternResolver &#123;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ApplicationContext的继承体系"><a href="#ApplicationContext的继承体系" class="headerlink" title="ApplicationContext的继承体系"></a>ApplicationContext的继承体系</h4><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818161541.png"></p>
+<table>
+<thead>
+<tr>
+<th><strong>父接口</strong></th>
+<th><strong>作用</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>EnvironmentCapable</td>
+<td>具有取环境相关参数的功能，propertiess文件</td>
+</tr>
+<tr>
+<td>ListableBeanFactory</td>
+<td>提供Bean迭代功能的BeanFactory</td>
+</tr>
+<tr>
+<td>HierarchicalBeanFactory</td>
+<td>提供父容器的访问功能的BeanFactory</td>
+</tr>
+<tr>
+<td>MessageSource</td>
+<td>对国际化文件支持的基础接口</td>
+</tr>
+<tr>
+<td>ApplicationEventPublisher</td>
+<td>应用事件发布接口</td>
+</tr>
+<tr>
+<td>ResourcePatternResolver</td>
+<td>资源解析加载接口</td>
+</tr>
+</tbody></table>
+<p>每个角色的职责和方法都有哪些？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818163208.png"></p>
+<ul>
+<li><p>Environment接口</p>
+<p>用来表示整个应用运行时的环境，为了更形象地理解Environment，你可以把Spring应用的运行时简单地想象成两个部分：一个是Spring应用本身，一个是Spring应用所处的环境。除了外部的各种各方面配置文件，还有一个profile配置，定义bean逻辑组。</p>
+</li>
+<li><p>HierarchicalBeanFactory接口</p>
+<p>工厂分层接口，getParentBeanFactory获得父工厂，只能子读父工厂。containsLocalBean本工厂是否包含某个bean。</p>
+</li>
+<li><p>ApplicationContext提供的方法</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818163929.png"></p>
+<table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>getId</td>
+<td>IOC容器的唯一id名</td>
+</tr>
+<tr>
+<td>getApplicationName</td>
+<td>返回应用名</td>
+</tr>
+<tr>
+<td>getDisplayName</td>
+<td>易于理解的说明用的，展示名</td>
+</tr>
+<tr>
+<td>getStartupDate</td>
+<td>容器启动时间</td>
+</tr>
+<tr>
+<td>getParent</td>
+<td>获得父容器，类似父子工厂</td>
+</tr>
+<tr>
+<td>getAutowireCapableBeanFactory</td>
+<td>获得自动装配的Bean工厂</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<h4 id="ApplicationContext的实现体系"><a href="#ApplicationContext的实现体系" class="headerlink" title="ApplicationContext的实现体系"></a>ApplicationContext的实现体系</h4><ul>
+<li><p>体系图</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818164301.png"></p>
+<p>从AbstarctApplicationContext之后分为两类：xml配置方式的实现和通用实现。</p>
+<p><strong>Xml这条线往，了解具体实现的构造方法、构造方法的源码是怎样的？</strong></p>
+<p>可以打开每个子类去了解它们分别加入了什么、分别提供了哪些基本实现。</p>
+</li>
+<li><p>ConfigurableApplicationContext子接口</p>
+<p>可配置的ApplicationContext接口，提供了父容器、环境、BeanFactory后置处理器、监听器等配置方法。</p>
+<p>提供可获得ConfigurableListableBeanFactory接口的方法</p>
+<p>实现了Lifecycle、Closeable接口，意味着能够进行生命周期的控制和关闭操作。</p>
+</li>
+<li><p>AbstractApplicationContext抽象实现类</p>
+<p>进行了大量通用的接口方法实现，包括ApplicationContext、ConfigurableApplicationContext、BeanFactory、ListableBeanFactory、HierarchicalBeanFactory、MessageSource、ResourcePatternResolver、Lifecycle 8个父接口的方法实现。为子类的实现进行了大量减负，遗留refreshBeanFactory、closeBeanFactory、getBeanFactory方法给子类实现。</p>
+<p>最重要的方法：refresh，ApplicationContext初始化加载过程的呈现</p>
+<p><strong>AbstractRefreshableApplicationContext、GenericApplicationContext子类实现是两个重要的分支。</strong></p>
+</li>
+<li><p>AbstractRefreshableApplicationContext</p>
+<ul>
+<li>自1.1.3版本提供的抽象实现，提供bean工厂刷新方法的实现，可以配置是否允许重写bean定义以及循环依赖。AbstractRefreshableConfigApplicationContext子类则增加了资源配置入口，通过Environment解析出配置的真实资源路径字符串。</li>
+<li>它的子类实现是指定了资源的加载方式，比如XML资源方式的子类实现：ClassPathXmlApplicationContext、FileSystemXmlApplicationContext。</li>
+</ul>
+</li>
+<li><p>GenericApplicationContext</p>
+<ul>
+<li>它实现了BeanDefinitionRegistry接口，该接口定义了bean定义信息的注册行为。即我们可以直接往GenericApplicationContext中注册bean定义。</li>
+<li>GenericApplicationContext 中是不是持有DefaultListableBeanFactory?是的<br>GenericApplicationContext的bean定义注册是不是委托给了持有的DefaultListableBeanFactory？是的</li>
+<li>相关实现有：AnnotationConfigApplicationContext 注解配置、GenericGroovyApplicationContext groovy方式配置、GenericXmlApplicationContext 通用的xml配置、StaticApplicationContext 静态资源配置方式。</li>
+<li>AnnotationConfigApplicationContex 了解它的构造方法、register方法。看它的源码。</li>
+<li>GenericXmlApplicationContext 了解它的构造方法、load方法，看源码</li>
+<li>它的子类是通用的资源加载方式，通过资源的reader接口和bean资源扫描接口，外包任务，来实现统一通用的方式。</li>
+</ul>
+</li>
+</ul>
+<p>可以看出AbstractRefreshableApplicationContext是继承式逐步扩展，</p>
+<p>GenericApplicationContext则是组合式扩展。</p>
+<ul>
+<li><p>实现类有什么区别？如何使用？</p>
+<p>ApplicationContext接口一共有6个实现类</p>
+<ul>
+<li>两种XML指定加载方式实现：<ul>
+<li>ClassPathXmlApplicationContext 项目下配置文件</li>
+<li>FileSystemXmlApplicationContext 文件系统配置文件</li>
+</ul>
+</li>
+<li>四种通用加载方式实现：<ul>
+<li>AnnotationConfigApplicationContext 注解配置</li>
+<li>GenericGroovyApplicationContext groovy方式配置</li>
+<li>GenericXmlApplicationContext 通用的xml配置</li>
+<li>StaticApplicationContext 编程方式进行方式配置资源，常用于配置场景</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>ApplicationContext实现类的基本使用方式见示例，示例可以看出他们的之间的区别。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="type">ApplicationContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ClassPathXmlApplicationContext</span>(<span class="string">&quot;application.xml&quot;</span>);</span><br><span class="line">    <span class="type">Cat</span> <span class="variable">cat</span> <span class="operator">=</span> (Cat) context.getBean(<span class="string">&quot;garfieldCat&quot;</span>);</span><br><span class="line">    System.out.println(cat.getName());</span><br><span class="line"></span><br><span class="line">    context = <span class="keyword">new</span> <span class="title class_">FileSystemXmlApplicationContext</span>(<span class="string">&quot;D:\\CodingStudy\\spring-source-code\\src\\main\\resources\\application.xml&quot;</span>);</span><br><span class="line">    <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> (User) context.getBean(<span class="string">&quot;chinaUser&quot;</span>);</span><br><span class="line">    System.out.println(user.getName());</span><br><span class="line"></span><br><span class="line">    context = <span class="keyword">new</span> <span class="title class_">GenericXmlApplicationContext</span>(<span class="string">&quot;file:D:\\CodingStudy\\spring-source-code\\src\\main\\resources\\application.xml&quot;</span>);</span><br><span class="line">    cat = (Cat) context.getBean(<span class="string">&quot;garfieldCat&quot;</span>);</span><br><span class="line">    System.out.println(cat.getName());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    context = <span class="keyword">new</span> <span class="title class_">AnnotationConfigApplicationContext</span>(Application.class);</span><br><span class="line">    user = (User) context.getBean(<span class="string">&quot;hash&quot;</span>);</span><br><span class="line">    System.out.println(user.getName());</span><br><span class="line"></span><br><span class="line">    System.out.println(<span class="string">&quot;--------------------------------------------------------&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">GenericApplicationContext</span> <span class="variable">cac</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GenericApplicationContext</span>();</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">XmlBeanDefinitionReader</span>(cac).loadBeanDefinitions(<span class="string">&quot;classpath:application.xml&quot;</span>);</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">ClassPathBeanDefinitionScanner</span>(cac).scan(<span class="string">&quot;com.study.spring&quot;</span>);</span><br><span class="line">    <span class="comment">// 一定要刷新</span></span><br><span class="line">    cac.refresh();</span><br><span class="line"></span><br><span class="line">    user = cac.getBean(<span class="string">&quot;hash&quot;</span>, User.class);</span><br><span class="line">    System.out.println(user.getName());</span><br><span class="line"></span><br><span class="line">    cat = cac.getBean(Cat.class);</span><br><span class="line">    System.out.println(cat.getName());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 用法跟GenericApplicationContext一样</span></span><br><span class="line">    <span class="type">StaticApplicationContext</span> <span class="variable">sac</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StaticApplicationContext</span>();</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">XmlBeanDefinitionReader</span>(sac).loadBeanDefinitions(<span class="string">&quot;classpath:application.xml&quot;</span>);</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">ClassPathBeanDefinitionScanner</span>(sac).scan(<span class="string">&quot;com.study.spring&quot;</span>);</span><br><span class="line">    <span class="comment">// 一定要刷新</span></span><br><span class="line">    sac.refresh();</span><br><span class="line"></span><br><span class="line">    user = sac.getBean(<span class="string">&quot;hash&quot;</span>, User.class);</span><br><span class="line">    System.out.println(user.getName());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="BeanFactory继承体系"><a href="#BeanFactory继承体系" class="headerlink" title="BeanFactory继承体系"></a>BeanFactory继承体系</h3><ul>
+<li><p>BeanFacotry和ApplicationContext的关系</p>
+<p>从前面的源码中分析中得到BeanFactory接口在ApplicationContext容器中继承体系中，在实现体系中的AbstractRefreshableConfigApplicationContext、GenericApplicationContext 实现类则持有BeanFactory接口的DefaultListableBeanFactory实例。<br>关系如图：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818174709.png"></p>
+<p>ApplicationContext与BeanFactory的关系非常简单，持有组合关系，但是BeanFactory与DefaultListableBeanFactory的关系就错综复杂了，这里有三条路径从DefaultListableBeanFactory到BeanFactory。</p>
+</li>
+<li><p>BeanFactory的继承体系是怎么样的？</p>
+<p>将类图简化</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210818175259.png"></p>
+</li>
+<li><p>有哪些实现类？</p>
+<p>BeanFactory实现体系图</p>
+<p>![image-20210818212520867](C:\Users\chen cheng\AppData\Roaming\Typora\typora-user-images\image-20210818212520867.png)</p>
+<ul>
+<li><p>关键实现类：DefaultListableBeanFactory</p>
+<p>整个BeanFactory接口实现体系验证了软件界《三国演义》，开篇结尾的话：“天下大势合久必分，分久必合”。</p>
+<p>直接的子接口下分了三条路，呈现出三国鼎立之势，各有各的特点：ListableBeanFactory可迭代、AutowireCapableBeanFactory可自动注入、HierarchicalBeanFactory具有父子关系。</p>
+<p>经过一列演变，最终归而为一，ConfigurableListableBeanFactory接口继承了三个接口特点，自成一体。</p>
+<p>DefaultListableBeanFactory类就是ConfigurableListableBeanFactory接口最终的实现，XmlBeanFactory则在Spring 3.1中废除。</p>
+</li>
+<li><p>其他的实现类<br>StaticListableBeanFactory 用于编程遍历的实现<br>SimpleJndiBeanFactory 用于JNDI，简单的实现自BeanFactory接口</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="ApplicationContext的初始化过程"><a href="#ApplicationContext的初始化过程" class="headerlink" title="ApplicationContext的初始化过程"></a>ApplicationContext的初始化过程</h3><p>学习完IOC容器的基本结构，我们再来分析分析IOC容器的初始化过程。</p>
+<ul>
+<li><p>如何分析？<br>断点，跟代码，同时画调用图。<br>我们在示例代码中设置断点，一步一步调试进去，看看整个过程是怎么样的。</p>
+</li>
+<li><p>ClassPathXmlApplicationContext为例跟踪初始化过程</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">com.study.Application#main org.springframework.context.support.ClassPathXmlApplicationContext#ClassPath <span class="title function_">XmlApplicationContext</span><span class="params">(java.lang.String)</span> org.springframework.context.support.ClassPathXmlApplicationContext#ClassPath <span class="title function_">XmlApplicationContext</span><span class="params">(java.lang.String[], <span class="type">boolean</span>, org.springframework.context.ApplicationContext)</span> org.springframework.context.support.AbstractApplicationContext#refresh</span><br></pre></td></tr></table></figure>
+
+<p>将目光往回调到AbstractApplicationContext.refresh方法，设置断点，运行示例代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span> (<span class="built_in">this</span>.startupShutdownMonitor) &#123;</span><br><span class="line">    <span class="comment">// Prepare this context for refreshing.</span></span><br><span class="line">    <span class="comment">// 为刷新做准备，初始化各种状态，启动时间、关闭激活状态、配置文件信息等</span></span><br><span class="line">    prepareRefresh();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Tell the subclass to refresh the internal bean factory.</span></span><br><span class="line">    <span class="comment">// 通知子类刷新内部BeanFactory，并返回刷新后的BeanFactory</span></span><br><span class="line">    <span class="comment">// 关注方法中的refreshBeanFactory方法，两个子类对它重写的差异</span></span><br><span class="line">    <span class="comment">//  AbstractRefreshableApplicationContext#refreshBeanFactory中重新构建，完成BeanDefinition的解析构建</span></span><br><span class="line">    <span class="comment">// GenericApplicationContext#refreshBeanFactory则是设置ID，并且只能刷新一次</span></span><br><span class="line">    <span class="type">ConfigurableListableBeanFactory</span> <span class="variable">beanFactory</span> <span class="operator">=</span> obtainFreshBeanFactory();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Prepare the bean factory for use in this context.</span></span><br><span class="line">    <span class="comment">// 给容器准备BeanFactory，配置相关的属性</span></span><br><span class="line">    prepareBeanFactory(beanFactory);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// Allows post-processing of the bean factory in context subclasses.</span></span><br><span class="line">        <span class="comment">// 允许子类处理后置beanFactory</span></span><br><span class="line">        postProcessBeanFactory(beanFactory);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Invoke factory processors registered as beans in the context.</span></span><br><span class="line">        <span class="comment">//  调用注册了beanFactory后置处理器接口实例bean对应的方法</span></span><br><span class="line">        invokeBeanFactoryPostProcessors(beanFactory);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Register bean processors that intercept bean creation.</span></span><br><span class="line">        <span class="comment">// 注册bean后置处理器接口的实例bean</span></span><br><span class="line">        registerBeanPostProcessors(beanFactory);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Initialize message source for this context.</span></span><br><span class="line">        <span class="comment">// 初始化国际化资源</span></span><br><span class="line">        initMessageSource();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Initialize event multicaster for this context.</span></span><br><span class="line">        <span class="comment">// 初始化事件传播者</span></span><br><span class="line">        initApplicationEventMulticaster();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Initialize other special beans in specific context subclasses.</span></span><br><span class="line">        <span class="comment">// refresh事件，初始化一些指定的bean</span></span><br><span class="line">        onRefresh();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Check for listener beans and register them.</span></span><br><span class="line">        <span class="comment">// 注册监听器bean</span></span><br><span class="line">        registerListeners();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Instantiate all remaining (non-lazy-init) singletons.</span></span><br><span class="line">        <span class="comment">// 完成bean工厂的初始化，初始化所有非懒加载的单例bean</span></span><br><span class="line">        finishBeanFactoryInitialization(beanFactory);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Last step: publish corresponding event.</span></span><br><span class="line">        <span class="comment">// 最后，发布finishRefresh事件</span></span><br><span class="line">        finishRefresh();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">catch</span> (BeansException ex) &#123;</span><br><span class="line">        <span class="keyword">if</span> (logger.isWarnEnabled()) &#123;</span><br><span class="line">            logger.warn(<span class="string">&quot;Exception encountered during context initialization - &quot;</span> +</span><br><span class="line">                        <span class="string">&quot;cancelling refresh attempt: &quot;</span> + ex);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Destroy already created singletons to avoid dangling resources.</span></span><br><span class="line">        <span class="comment">// 销毁了所有已经创建了的单例bean</span></span><br><span class="line">        destroyBeans();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Reset &#x27;active&#x27; flag.</span></span><br><span class="line">        <span class="comment">// 重置active标记</span></span><br><span class="line">        cancelRefresh(ex);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Propagate exception to caller.</span></span><br><span class="line">        <span class="keyword">throw</span> ex;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">// Reset common introspection caches in Spring&#x27;s core, since we</span></span><br><span class="line">        <span class="comment">// might not ever need metadata for singleton beans anymore...</span></span><br><span class="line">        resetCommonCaches();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>refresh方法，里面的每一个方法都是一个重要的步骤，里面的每个步骤，我们目前还不进行深入分析，等后面会有专门的内容来深入。</p>
+</li>
+<li><p>GenericXmlApplicationContext类</p>
+<p>发现最终都会到org.springframework.context.support.AbstractApplicationContext#refresh方法上整个容器的初始化过程。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">com.study.Application#main org.springframework.context.support.GenericXmlApplicationContext#GenericXmlA <span class="title function_">pplicationContext</span><span class="params">(java.lang.String...)</span> org.springframework.context.support.GenericXmlApplicationContext#load(java.l ang.String...) org.springframework.beans.factory.support.AbstractBeanDefinitionReader#loadB <span class="title function_">eanDefinitions</span><span class="params">(java.lang.String...)</span> org.springframework.context.support.AbstractApplicationContext#refresh</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/02-Spring/05-Spring%E6%BA%90%E7%A0%81-IOC%E5%AE%B9%E5%99%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/" data-id="clmcxecsw006vu8wa2rxo52pd" data-title="Spring源码-IOC容器初始化过程" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/05/07/02-Spring/04-%E6%89%8B%E5%86%99Spring%E9%85%8D%E7%BD%AE/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          手写Spring配置
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/05/07/02-Spring/06-Spring%E6%BA%90%E7%A0%81-Bean%E5%AE%9A%E4%B9%89%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Spring源码-Bean定义加载过程</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

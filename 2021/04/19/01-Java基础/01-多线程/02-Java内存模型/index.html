@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Java内存模型 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Java内存模型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java内存模型">
+<meta property="og:url" content="http://example.com/2021/04/19/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/02-Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Java内存模型">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210419214620464.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210422224513267.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210422225856308.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210422230026428.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210422230112458.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210422230752943.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210422233846837.png">
+<meta property="article:published_time" content="2021-04-19T13:33:48.000Z">
+<meta property="article:modified_time" content="2022-09-25T09:16:28.179Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="多线程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210419214620464.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-01-Java基础/01-多线程/02-Java内存模型" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/04/19/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/02-Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" class="article-date">
+  <time class="dt-published" datetime="2021-04-19T13:33:48.000Z" itemprop="datePublished">2021-04-19</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Java内存模型
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Java内存模型</p>
+<span id="more"></span>
+
+<h1 id="1-基本含义"><a href="#1-基本含义" class="headerlink" title="1 基本含义"></a>1 基本含义</h1><h2 id="1-1-JVM运行时数据区"><a href="#1-1-JVM运行时数据区" class="headerlink" title="1.1 JVM运行时数据区"></a>1.1 JVM运行时数据区</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210419214620464.png" alt="image-20210419214620464"></p>
+<p><strong>线程共享∶</strong>所有线程能访问这块内存数据，随虚拟机或者GC而创建和销毁</p>
+<p><strong>线程独占∶</strong> 每个线程都会有它独立的空间，随线程生命周期而创建和销毁  </p>
+<h2 id="1-2-Java内存模型-VS-JVM运行时数据区"><a href="#1-2-Java内存模型-VS-JVM运行时数据区" class="headerlink" title="1.2 Java内存模型 VS JVM运行时数据区"></a>1.2 Java内存模型 VS JVM运行时数据区</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210422224513267.png" alt="image-20210422224513267"></p>
+<h2 id="1-3-初看Java内存模型"><a href="#1-3-初看Java内存模型" class="headerlink" title="1.3 初看Java内存模型"></a>1.3 初看Java内存模型</h2><p>​	前面章节中的大部分讨论仅涉及代码的行为，即一次执行单个语句或表达式，即通过<strong>单个线程</strong>来执 行。<strong>Java虚拟机</strong>可以同时支持多个执行线程，若未正确同步，线程的行为可能会出现混淆和违反直觉。</p>
+<p>​	本章描述了<strong>多线程程序的语义</strong>;它包含了，<strong>当多个线程修改了共享内存中的值时，应该读取到哪个值的规则</strong>。由于这部分规范类似于不同硬件体系结构的内存模型，因此这些语义称为Java编程语言内存模型。</p>
+<p>这些语义<strong>没有规定如何</strong>执行多线程程序。相反，它们描述了允许多线程程序的<strong>合法行为</strong>。</p>
+<h1 id="2-提出JMM的原因"><a href="#2-提出JMM的原因" class="headerlink" title="2 提出JMM的原因"></a>2 提出JMM的原因</h1><h2 id="2-1-多线程中的问题"><a href="#2-1-多线程中的问题" class="headerlink" title="2.1 多线程中的问题"></a>2.1 多线程中的问题</h2><ol>
+<li>所见非所得</li>
+<li>无法肉眼去检测程序的准确性</li>
+<li>不同的运行平台有不同的表现</li>
+<li>错误很难重现</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Demo1Visibility</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="type">boolean</span> <span class="variable">isRunning</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String args[])</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        <span class="type">Demo1Visibility</span> <span class="variable">demo</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Demo1Visibility</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(<span class="keyword">new</span> <span class="title class_">Runnable</span>() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;here i am...&quot;</span>);</span><br><span class="line">                <span class="keyword">while</span>(demo.isRunning)&#123;</span><br><span class="line">                    demo.i++;</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(<span class="string">&quot;i=&quot;</span> + demo.i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line"></span><br><span class="line">        Thread.sleep(<span class="number">3000L</span>);</span><br><span class="line">        demo.isRunning = <span class="literal">false</span>;</span><br><span class="line">        System.out.println(<span class="string">&quot;shutdown...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>32位JDK</th>
+<th>64位JDK</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-server</td>
+<td>不打印i的值</td>
+<td>不打印i的值</td>
+</tr>
+<tr>
+<td>-client</td>
+<td>打印i的值</td>
+<td>不打印i的值</td>
+</tr>
+</tbody></table>
+<h2 id="2-2-从内存区域到内存模型"><a href="#2-2-从内存区域到内存模型" class="headerlink" title="2.2 从内存区域到内存模型"></a>2.2 从内存区域到内存模型</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210422225856308.png" alt="image-20210422225856308"></p>
+<p>因为这种内存结构，在多线程下数据交互会有各种情况出现</p>
+<h2 id="2-3-CPU高速缓存"><a href="#2-3-CPU高速缓存" class="headerlink" title="2.3 CPU高速缓存"></a>2.3 CPU高速缓存</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210422230026428.png" alt="image-20210422230026428"></p>
+<h2 id="2-4-CPU指令重排"><a href="#2-4-CPU指令重排" class="headerlink" title="2.4 CPU指令重排"></a>2.4 CPU指令重排</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210422230112458.png" alt="image-20210422230112458"></p>
+<p>Java编程语言的语义允许<strong>Java编译器</strong>和微处理器进行执行优化，这些优化导致了与其交互的代码不再同步，从而导致看似矛盾的行为。</p>
+<h2 id="2-5-JIT编译器（Just-In-Time-Complier）"><a href="#2-5-JIT编译器（Just-In-Time-Complier）" class="headerlink" title="2.5 JIT编译器（Just In Time Complier）"></a>2.5 JIT编译器（Just In Time Complier）</h2><p><strong>脚本语言 与 编译语言的区别？</strong></p>
+<p><strong>解释执行</strong>：即咱们说的脚本，在执行时，由语言的解释器将其<strong>一条条翻译</strong>成机器可识别的指令。</p>
+<p><strong>编译执行</strong>：将我们编写的程序，直接编译成机器可以识别的指令码。</p>
+<p><strong>Java是脚本语言还是编译语言？</strong> </p>
+<p><strong>Java</strong>介于<strong>脚本语言</strong>与<strong>编译语言</strong>之间</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210422230752943.png" alt="image-20210422230752943"></p>
+<h2 id="2-5-volatile关键字"><a href="#2-5-volatile关键字" class="headerlink" title="2.5 volatile关键字"></a>2.5 volatile关键字</h2><p><strong>可见性：</strong>让一个线程对共享变量的修改，能够及时的被其他线程看到 。</p>
+<p>Java内存模型中规定：</p>
+<ul>
+<li>对某个 volatile 字段的写操作 happens-before 每个后续对该 volatile 字段的读操作。</li>
+<li>对 volatile 变量 v 的写入，与所有其他线程后续对 v 的读同步</li>
+</ul>
+<p>Volatile如何实现它的语义：</p>
+<ul>
+<li>禁止缓存；<br>volatile变量的访问控制符会加个ACC_VOLATILE<br><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.5">https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.5</a></li>
+</ul>
+<h1 id="3-开启JMM之旅"><a href="#3-开启JMM之旅" class="headerlink" title="3 开启JMM之旅"></a>3 开启JMM之旅</h1><h2 id="3-1-Shared-Variables定义"><a href="#3-1-Shared-Variables定义" class="headerlink" title="3.1 Shared Variables定义"></a>3.1 Shared Variables定义</h2><p>可以在线程之间共享的内存称为共享内存或堆内存。</p>
+<p>所有<strong>实例字段</strong>、<strong>静态字段</strong>和<strong>数组元素</strong>都存储在堆内存中，这些字段和数组都是标题中提到的<strong>共享变量。</strong></p>
+<p><strong>冲突</strong>：如果<strong>至少有一个访问是写操作</strong>，那么对同一个变量的两次访问是冲突的。</p>
+<p>这些能被多个线程访问的<strong>共享变量</strong>是内存模型规范的对象</p>
+<h2 id="3-2-线程操作的定义"><a href="#3-2-线程操作的定义" class="headerlink" title="3.2 线程操作的定义"></a>3.2 线程操作的定义</h2><ol>
+<li>线程间操作指：一个程序执行的操作可被其他线程<strong>感知</strong>或被其他线程<strong>直接影响</strong>。</li>
+<li>Java内存模型只描述<strong>线程间操作</strong>，不描述线程内操作，线程内操作按照线程内语义执行。</li>
+</ol>
+<p><strong>操作间操作有：</strong></p>
+<ul>
+<li>read操作 (一般读，即 非volatile读)</li>
+<li>write操作(一般写，即 非volatile写)</li>
+<li>volatile read</li>
+<li>volatile write</li>
+<li>Lock. (锁monitor)、Unlock</li>
+<li>线程的第一个和最后一个操作（线程State状态发生变更应该被其它线程感知）</li>
+<li>外部操作（俩个线程访问DB可能会被另一个线程操作影响）</li>
+</ul>
+<p>所有线程间操作，都存在可见性问题，JMM需要对其进行规范</p>
+<h2 id="3-3-对于同步的规则定义"><a href="#3-3-对于同步的规则定义" class="headerlink" title="3.3 对于同步的规则定义"></a>3.3 对于同步的规则定义</h2><ul>
+<li>对 <strong>volatile</strong> 变量 v 的写入，与所有其他线程后续对 v 的读<strong>同步</strong></li>
+<li>对于监视器 m 的<strong>解锁</strong>与所有后续操作对于 m 的<strong>加锁</strong>同步</li>
+<li>对于每个属性写入<strong>默认值</strong>（0， false，null）与每个线程对其进行的操作同步</li>
+<li><strong>启动线程</strong>的操作与线程中的第一个操作同步</li>
+<li>线程 T2的<strong>最后操作</strong>与线程 T1 发现线程 T2 已经结束同步。（ isAlive ,join可以判断线程是否终结）</li>
+<li>如果线程 T1 <strong>中断</strong>了 T2，那么线程 T1 的中断操作与其他所有线程发现 T2 被中断了同步<br>通过抛出 InterruptedException 异常，或者调用 Thread.interrupted 或 Thread.isInterrupted</li>
+</ul>
+<h2 id="3-4-Happens-before-先行发生原则"><a href="#3-4-Happens-before-先行发生原则" class="headerlink" title="3.4 Happens-before 先行发生原则"></a>3.4 Happens-before 先行发生原则</h2><p>happens-before 关系用于描述两个有冲突的动作之间的顺序，如果一个action happends before 另一个</p>
+<p>action，则第一个操作被第二个操作可见，JVM需要实现如下happens-before规则：</p>
+<ul>
+<li><strong>某个线程中的每个动作都 happens-before 该线程中该动作后面的动作。</strong></li>
+<li>某个进程上的 unlock 动作 happens-before 同一个管程上后续的 lock 动作</li>
+<li>对某个 volatile 字段的写操作 happens-before 每个后续对该 volatile 字段的读操作</li>
+<li>在某个线程对象上调用 start()方法 happens-before 被启动线程中的任意动作</li>
+<li><strong>如果在线程t1中成功执行了t2.join()，则t2中的所有操作对t1可见</strong></li>
+<li><strong>如果某个动作 a happens-before 动作 b，且 b happens-before 动作 c，则有 a happens-before c</strong></li>
+</ul>
+<p>当程序包含两个没有被 happens-before 关系排序的冲突访问时，就称存在<strong>数据竞争</strong>。</p>
+<p><strong>遵守了这个原则，也就意味着有些代码不能进行重排序，有些数据不能缓存！</strong></p>
+<h2 id="3-5-final在JMM中的处理"><a href="#3-5-final在JMM中的处理" class="headerlink" title="3.5 final在JMM中的处理"></a>3.5 final在JMM中的处理</h2><p>final在该对象的构造函数中设置对象的字段，当线程看到该对象时，将始终看到该对象的final字段的正确构造版本。伪代码示例：f &#x3D; new finalDemo(); 读取到的 f.x 一定最新，x为final字段。</p>
+<p>如果在构造函数中设置字段后发生读取，则会看到该final字段分配的值，否则它将看到默认值；伪代码示例：public finalDemo(){ x &#x3D; 1; y &#x3D; x; }; y会等于1；</p>
+<p>读取该共享对象的final成员变量之前，先要读取共享对象。<br>伪代码示例: r &#x3D; new ReferenceObj(); k &#x3D; r.f ; 这两个操作不能重排序</p>
+<p>通常被static final修饰的字段，<strong>不能被修改</strong> 。然而System.in、System.out、System.err被static final修饰，却可以修改，遗留问题，必须允许通过set方法改变，我们将这些字段称为写保护，以区别于普通final字段；</p>
+<h2 id="3-6-Word-Tearing"><a href="#3-6-Word-Tearing" class="headerlink" title="3.6 Word Tearing"></a>3.6 Word Tearing</h2><p>有些处理器（尤其是早期的 Alphas 处理器）没有提供写单个字节的功能。在这样的处理器上更新 byte 数组，若只是简单地读取整个内容，更新对应的字节，然后将整个内容再写回内存，将是不合法的。</p>
+<p>这个问题有时候被称为“字节分裂(word tearing)”，更新单个字节有难度的处理器，就需要寻求其它方式来解决问题。</p>
+<p>因此，<strong>编程人员需要注意</strong>，尽量不要对byte[]中的元素进行重新赋值，更不要在多线程程序中这样做。</p>
+<h2 id="3-7-double和long的特殊处理"><a href="#3-7-double和long的特殊处理" class="headerlink" title="3.7 double和long的特殊处理"></a>3.7 double和long的特殊处理</h2><ul>
+<li>由于《Java语言规范》的原因，对非 volatile 的 double、long 的单次写操作是分两次来进行的，每次操作其中32位，这可能导致第一次写入后，读取的值是脏数据，第二次写完成后，才能读到正确值。</li>
+<li>读写volatile 修饰的 long、double是原子性的。</li>
+<li>商业JVM不会存在这个问题，虽然规范没要求实现原子性，但是考虑到实际应用，大部分都实现了原子性。</li>
+<li><strong>《Java语言规范》中说道</strong>：建议程序员将共享的64位值（long、double）用volatile修饰或正确同步其程序以避免可能的复杂的情况。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210422233846837.png" alt="image-20210422233846837"></p>
+<h2 id="3-8-再看Java内存模型"><a href="#3-8-再看Java内存模型" class="headerlink" title="3.8 再看Java内存模型"></a>3.8 再看Java内存模型</h2><p>​	前面章节中的大部分讨论仅涉及代码的行为，即一次执行单个语句或表达式，即通过<strong>单个线程</strong>来执 行。<strong>Java虚拟机</strong>可以同时支持多个执行线程，若未正确同步，线程的行为可能会出现混淆和违反直觉。</p>
+<p>​	本章描述了<strong>多线程程序的语义</strong>;它包含了，<strong>当多个线程修改了共享内存中的值时，应该读取到哪个值的规则</strong>。由于这部分规范类似于不同硬件体系结构的内存模型，因此这些语义称为Java编程语言内存模型。</p>
+<p>这些语义<strong>没有规定如何</strong>执行多线程程序。相反，它们描述了允许多线程程序的<strong>合法行为</strong>。</p>
+<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4 总结"></a>4 总结</h1><ol>
+<li><p>可见性问题，导致可见性问题的原因（cpu告速缓存、指令重排）</p>
+</li>
+<li><p>Java内存模型的含义（提出一些规则，在多线程下的可见性问题）</p>
+</li>
+<li><p>JMM中给出的规则</p>
+<ul>
+<li>同步规则、Happends-before规则</li>
+<li>&gt; final、Word Tearing、Double&#x2F;long</li>
+</ul>
+</li>
+<li><p>深刻理解数据争用与冲突</p>
+</li>
+<li><p>深刻理解volatile关键字</p>
+</li>
+<li><p>final在多线程中的使用 (为了保证线程始终看到对象字段的正确构造版本，需用final修饰该字段) </p>
+</li>
+<li><p>不要对线程共享的byte[]中的元素重新赋值，会带来数据一致性问题</p>
+</li>
+<li><p>最好用volatile修饰共享的64位值（long、double）</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/19/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/02-Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" data-id="clmcxecnx005fu8wadf9m5pvm" data-title="Java内存模型" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/04/19/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%9F%BA%E7%A1%80/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          多线程基础
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/04/19/01-Java%E5%9F%BA%E7%A1%80/01-%E5%A4%9A%E7%BA%BF%E7%A8%8B/05-synchronized%E5%8E%9F%E7%90%86/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">synchronized原理</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

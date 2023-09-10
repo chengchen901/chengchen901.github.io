@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Netty高性能ByteBuf | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Netty自己的ByteBufByteBuf 是为解决 ByteBuffer 的问题和满足网络应用程序开发人员的日常需求而设计的。 JDK ByteBuffer 的缺点： 无法动态扩容 长度是固定，不能动态扩展和收缩，当数据大于 ByteBuffer 容量时，会发生索引越界异常。 API 使用复杂 读写的时候需要手工调用flip()和rewind()等方法，使用时需要非常谨慎的使用这些api，否则">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty高性能ByteBuf">
+<meta property="og:url" content="http://example.com/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/04-Netty%E9%AB%98%E6%80%A7%E8%83%BDByteBuf/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Netty自己的ByteBufByteBuf 是为解决 ByteBuffer 的问题和满足网络应用程序开发人员的日常需求而设计的。 JDK ByteBuffer 的缺点： 无法动态扩容 长度是固定，不能动态扩展和收缩，当数据大于 ByteBuffer 容量时，会发生索引越界异常。 API 使用复杂 读写的时候需要手工调用flip()和rewind()等方法，使用时需要非常谨慎的使用这些api，否则">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/ByteBuf%E7%BC%93%E5%AD%98%E5%8C%BA%E5%88%92%E5%88%86%E5%9B%BE.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/PooledByteBuf%E5%AF%B9%E8%B1%A1%E3%80%81%E5%86%85%E5%AD%98%E5%A4%8D%E7%94%A8.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/%E9%9B%B6%E6%8B%B7%E8%B4%9D%E6%9C%BA%E5%88%B6-CompositeByteBuf.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/%E9%9B%B6%E6%8B%B7%E8%B4%9D%E6%9C%BA%E5%88%B6-wrapedBuffer.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/%E9%9B%B6%E6%8B%B7%E8%B4%9D%E6%9C%BA%E5%88%B6-slice.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:44:53.334Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Netty">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/ByteBuf%E7%BC%93%E5%AD%98%E5%8C%BA%E5%88%92%E5%88%86%E5%9B%BE.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-09-网络编程/04-Netty高性能ByteBuf" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/04-Netty%E9%AB%98%E6%80%A7%E8%83%BDByteBuf/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Netty/">Netty</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Netty高性能ByteBuf
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Netty自己的ByteBuf"><a href="#Netty自己的ByteBuf" class="headerlink" title="Netty自己的ByteBuf"></a>Netty自己的ByteBuf</h1><p>ByteBuf 是为解决 ByteBuffer 的问题和满足网络应用程序开发人员的日常需求而设计的。</p>
+<p>JDK ByteBuffer 的缺点：</p>
+<p><strong>无法动态扩容</strong></p>
+<p>长度是固定，不能动态扩展和收缩，当数据大于 ByteBuffer 容量时，会发生索引越界异常。</p>
+<p><strong>API 使用复杂</strong></p>
+<p>读写的时候需要手工调用flip()和rewind()等方法，使用时需要非常谨慎的使用这些api，否则很容出现错误</p>
+<h1 id="ByteBuf-做了哪些增强"><a href="#ByteBuf-做了哪些增强" class="headerlink" title="ByteBuf 做了哪些增强"></a>ByteBuf 做了哪些增强</h1><ul>
+<li>API操作便捷性</li>
+<li>动态扩容</li>
+<li>多种 ByteBuf 实现</li>
+<li>高效的零拷贝机制</li>
+</ul>
+<h1 id="ByteBuf-操作"><a href="#ByteBuf-操作" class="headerlink" title="ByteBuf 操作"></a>ByteBuf 操作</h1><p>ByteBuf三个重要属性：capacity 容量、readerIndex 读取位置、writerIndex 写入位置。</p>
+<p>提供了两个指针变量来支持顺序读和写操作，分别是readerIndex和写操作writerIndex</p>
+<p><strong>常用方法定义</strong></p>
+<ul>
+<li>随机访问索引 getByte</li>
+<li>顺序读 read*</li>
+<li>顺序写 write*</li>
+<li>清除已读内容 discardReadBytes</li>
+<li>清除缓冲区 clear</li>
+<li>搜索操作</li>
+<li>标记和重置</li>
+<li>引用计数和释放</li>
+</ul>
+<p>下图显示了一个缓冲区是如何被两个指针分割成三个区域的:</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/ByteBuf%E7%BC%93%E5%AD%98%E5%8C%BA%E5%88%92%E5%88%86%E5%9B%BE.png" alt="ByteBuf缓存区划分图"></p>
+<h1 id="ByteBuf-动态扩容"><a href="#ByteBuf-动态扩容" class="headerlink" title="ByteBuf 动态扩容"></a>ByteBuf 动态扩容</h1><p>capacity默认值：256字节 、 最大值：Integer.MAX_VALUE（ 2GB）</p>
+<p>write*方法调用时，通过AbstractByteBuf.ensureWritable0进行检查。<br>容量计算方法：AbstractByteBufAllocator. calculateNewCapacity (新capacity的最小要求， capacity最大值)</p>
+<p>根据新capacity的最小值要求，对应有两套计算方法：<br>没超过4兆：从64字节开始，每次增加一倍，直至计算出来的newCapacity满足新容量最小要求。<br>示例： 当前大小256，已写250，继续写10字节数据，需要的容量最小要求是261，则新容量是64 * 2 * 2 * 2&#x3D;512</p>
+<p>超过4兆：新容量 &#x3D; 新容量最小要求&#x2F;4兆 * 4兆 + 4兆<br>示例：当前大小3兆，已写3兆，继续写2兆数据，需要的容量最小要求是5兆，则新容量是8兆（不能超过最大值）。</p>
+<p>4兆的来源： 一个固定的阈值AbstractByteBufAllocator. CALCULATE_THRESHOLD</p>
+<h1 id="选择合适的ByteBuf-实现"><a href="#选择合适的ByteBuf-实现" class="headerlink" title="选择合适的ByteBuf 实现"></a>选择合适的ByteBuf 实现</h1><p>了解核心的：3个维度的划分方式，8种具体实现</p>
+<table>
+<thead>
+<tr>
+<th><strong>堆内&#x2F;堆外</strong></th>
+<th><strong>是否池化</strong></th>
+<th><strong>访问方式</strong></th>
+<th><strong>具体实现类</strong></th>
+<th><strong>备注</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>heap堆内</td>
+<td>unpool</td>
+<td>safe</td>
+<td>UnpooledHeapByteBuf</td>
+<td>数组实现</td>
+</tr>
+<tr>
+<td>heap堆内</td>
+<td>unpool</td>
+<td>unsafe</td>
+<td>UnpooledUnsafeHeapByteBuf</td>
+<td>Unsafe类直接操作内存</td>
+</tr>
+<tr>
+<td>heap堆内</td>
+<td>pool</td>
+<td>safe</td>
+<td>PooledHeapByteBuf</td>
+<td></td>
+</tr>
+<tr>
+<td>heap堆内</td>
+<td>pool</td>
+<td>unsafe</td>
+<td>PooledUnsafeHeapByteBuf</td>
+<td>~</td>
+</tr>
+<tr>
+<td>direct堆外</td>
+<td>unpool</td>
+<td>safe</td>
+<td>UnpooledDirectByteBuf</td>
+<td>NIO DirectByteBuffer</td>
+</tr>
+<tr>
+<td>direct堆外</td>
+<td>unpool</td>
+<td>unsafe</td>
+<td>UnpooledUnsafeDirectByteBuf</td>
+<td>~</td>
+</tr>
+<tr>
+<td>direct堆外</td>
+<td>pool</td>
+<td>safe</td>
+<td>PooledDirectByteBuf</td>
+<td>~</td>
+</tr>
+<tr>
+<td>direct堆外</td>
+<td>pool</td>
+<td>unsafe</td>
+<td>PooledUnsafeDirectByteBuf</td>
+<td>~</td>
+</tr>
+</tbody></table>
+<p>在使用中，都是通过ByteBufAllocator分配器进行申请，同时分配器具备有内存管理的功能</p>
+<h1 id="Unsafe的实现"><a href="#Unsafe的实现" class="headerlink" title="Unsafe的实现"></a>Unsafe的实现</h1><p>unsafe意味着不安全的操作。但是更底层的操作会带来性能提升和特殊功能，Netty中会尽力使用unsafe。</p>
+<p>Java语言很重要的特性是“一次编写到处运行”，所以它针对底层的内存或者其他操作，做了很多封装。</p>
+<p>而unsafe提供了一系列我们操作底层的方法，可能会导致不兼容或者不可知的异常。</p>
+<p><strong>Info</strong>.仅返回一些低级的内存信息<br>addressSize、pageSize</p>
+<p><strong>Objects</strong>.提供用于操作对象及其字段的方法<br>allocateInstance、objectFieldOffset</p>
+<p><strong>Classes</strong>.提供用于操作类及其静态字段的方法<br>staticFieldOffset、defineClass、defineAnonymousClass、ensureClassInitialized</p>
+<p><strong>Synchronization</strong>.低级的同步原语<br>monitorEnter、tryMonitorEnter、monitorExit、compareAndSwapInt、putOrderedInt</p>
+<p><strong>Memory</strong>.直接访问内存方法<br>allocateMemory、copyMemory、freeMemory、getAddress、getInt、putInt</p>
+<p><strong>Arrays</strong>.操作数组<br>arrayBaseOffset、arrayIndexScale</p>
+<h1 id="PooledByteBuf对象、内存复用"><a href="#PooledByteBuf对象、内存复用" class="headerlink" title="PooledByteBuf对象、内存复用"></a>PooledByteBuf对象、内存复用</h1><p><strong>PoolThreadCache</strong> ：PooledByteBufAllocator 实例维护的一个线程变量。</p>
+<p>多种分类的MemoryRegionCache数组用作内存缓存，MemoryRegionCache内部是链表，队列里面存Chunk。</p>
+<p>PoolChunk里面维护了内存引用，内存复用的做法就是把buf的memory指向chunk的memory。</p>
+<p>PooledByteBufAllocator.ioBuffer运作过程梳理：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/PooledByteBuf%E5%AF%B9%E8%B1%A1%E3%80%81%E5%86%85%E5%AD%98%E5%A4%8D%E7%94%A8.png" alt="PooledByteBuf对象、内存复用"></p>
+<p>其它扩展：内存复用机制（jemalloc）</p>
+<h1 id="零拷贝机制"><a href="#零拷贝机制" class="headerlink" title="零拷贝机制"></a>零拷贝机制</h1><p>Netty的零拷贝机制，是一种应用层的实现。和底层JVM、操作系统内存机制并无过多关联。</p>
+<p>1、 CompositeByteBuf，将多个ByteBuf合并为一个逻辑上的ByteBuf，避免了各个ByteBuf之间的拷贝。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">CompositeByteBuf</span> <span class="variable">compositeByteBuf</span> <span class="operator">=</span> Unpooled.compositeBuffer(); </span><br><span class="line"><span class="type">ByteBuf</span> <span class="variable">newBuffer</span> <span class="operator">=</span> compositeByteBuf.addComponents(<span class="literal">true</span>, buffer1, buffer2);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/%E9%9B%B6%E6%8B%B7%E8%B4%9D%E6%9C%BA%E5%88%B6-CompositeByteBuf.png" alt="零拷贝机制-CompositeByteBuf"></p>
+<p>2、 wrapedBuffer()方法，将byte[]数组包装成ByteBuf对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ByteBuf</span> <span class="variable">newBuffer</span> <span class="operator">=</span> Unpooled.wrappedBuffer(<span class="keyword">new</span> <span class="title class_">byte</span>[]&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/%E9%9B%B6%E6%8B%B7%E8%B4%9D%E6%9C%BA%E5%88%B6-wrapedBuffer.png" alt="零拷贝机制-wrapedBuffer"></p>
+<p>3、 slice()方法。将一个ByteBuf对象切分成多个ByteBuf对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ByteBuf</span> <span class="variable">buffer1</span> <span class="operator">=</span> Unpooled.wrappedBuffer(<span class="string">&quot;hello&quot;</span>.getBytes()); </span><br><span class="line"><span class="type">ByteBuf</span> <span class="variable">newBuffer</span> <span class="operator">=</span> buffer1.slice(<span class="number">1</span>, <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/%E9%9B%B6%E6%8B%B7%E8%B4%9D%E6%9C%BA%E5%88%B6-slice.png" alt="零拷贝机制-slice"></p>
+<p>使用ByteBuf是Netty高性能很重要的一个原因！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/04-Netty%E9%AB%98%E6%80%A7%E8%83%BDByteBuf/" data-id="clmcxed2y00bqu8wahyhp2zlo" data-title="Netty高性能ByteBuf" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/03-Netty%E8%B4%A3%E4%BB%BB%E9%93%BE/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Netty责任链
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/05-Netty%E5%AE%9E%E6%88%98/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Netty实战</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

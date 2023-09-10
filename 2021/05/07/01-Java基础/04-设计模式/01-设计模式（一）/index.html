@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>设计模式（一） | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="设计思想 天天加班编程，编程到底都做的是什么?撸代码，加班撸代码，写接口、写类、写方法   用设计模式或做设计的作用是什么? 指导、规定该如何撸代码，如何来写接口、写类、写方法   为什么要做设计、用设计模式? 代码会变，为应对变化，为了以后方便扩展。做到以不变应万变，做一个会偷懒的程序员! 不变的是变化! 软件界永恒的真理  理清现实  区分变与不变  搞清楚会如何变  使用者如何隔绝这种变化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式（一）">
+<meta property="og:url" content="http://example.com/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/04-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B8%80%EF%BC%89/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="设计思想 天天加班编程，编程到底都做的是什么?撸代码，加班撸代码，写接口、写类、写方法   用设计模式或做设计的作用是什么? 指导、规定该如何撸代码，如何来写接口、写类、写方法   为什么要做设计、用设计模式? 代码会变，为应对变化，为了以后方便扩展。做到以不变应万变，做一个会偷懒的程序员! 不变的是变化! 软件界永恒的真理  理清现实  区分变与不变  搞清楚会如何变  使用者如何隔绝这种变化">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210730202857.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720210946.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720210741.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720211138.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720211436.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720213202.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720213601.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720213738.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720213848.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720214723.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720215841.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720220006.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720220232.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720222212.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720222326.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720222414.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720222741.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720222833.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720222900.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720230650.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720232430.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720232531.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720232641.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720232707.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720232801.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720232831.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722205609.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722210429.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211156.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211228.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211253.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211320.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211347.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211418.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211444.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211859.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722214608.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722214650.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722214720.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722214824.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722214851.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722214919.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722223956.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722231717.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722231810.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722231840.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724173649.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724174024.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724173910.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724173938.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724173959.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724174058.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724174127.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724174155.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724175902.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724175927.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724180456.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724181307.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724181357.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724182323.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724183628.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724183709.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724183751.png">
+<meta property="article:published_time" content="2021-05-07T14:36:30.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:06:59.403Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210730202857.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-01-Java基础/04-设计模式/01-设计模式（一）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/04-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B8%80%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      设计模式（一）
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="设计思想"><a href="#设计思想" class="headerlink" title="设计思想"></a>设计思想</h1><ul>
+<li><p>天天加班编程，编程到底都做的是什么?<br>撸代码，加班撸代码，写接口、写类、写方法</p>
+</li>
+<li><p> 用设计模式或做设计的作用是什么? <br>指导、规定该如何撸代码，如何来写接口、写类、写方法</p>
+</li>
+<li><p> 为什么要做设计、用设计模式? <br>代码会变，为应对变化，为了以后方便扩展。做到以不变应万变，做一个会偷懒的程序员!</p>
+<p><span style="color:red">不变的是变化!</span> 软件界永恒的真理</p>
+</li>
+<li><p>理清现实</p>
+</li>
+<li><p>区分变与不变</p>
+</li>
+<li><p>搞清楚会如何变</p>
+</li>
+<li><p>使用者如何隔绝这种变化</p>
+</li>
+</ul>
+<p>设计的体现：如何来定义类、接口、方法，不同的变化方式对应不同的设计模式</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210730202857.png"></p>
+<h1 id="设计思想-OOP回顾"><a href="#设计思想-OOP回顾" class="headerlink" title="设计思想-OOP回顾"></a>设计思想-OOP回顾</h1><ul>
+<li>OOP中的东东</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720210946.png"></p>
+<ul>
+<li>类是做什么用的? <ul>
+<li>模拟现实，封装数据与代码、</li>
+</ul>
+</li>
+<li>接口是做什么用的? <ul>
+<li>定义相接的口子</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720210741.png"></p>
+<ul>
+<li><p>定义功能使用者和功能提供者间的接口</p>
+</li>
+<li><p>为什么要有接口?</p>
+<ul>
+<li>隔离变化</li>
+</ul>
+</li>
+<li><p>抽象类是做什么用的?</p>
+<ul>
+<li>包容不变与变的</li>
+</ul>
+</li>
+<li><p>OOP的三大特性</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720211138.png"></p>
+<ul>
+<li><p>多态为我们提供了什么</p>
+<ul>
+<li>一种实现变化的方式</li>
+</ul>
+</li>
+<li><p>类与类之间的关系有哪些？</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720211436.png"></p>
+<h1 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h1><ul>
+<li><p>找出变化，分开变化和不变的</p>
+<p> 隔离，封装变化的部分，让其他部分不受它的影响。 </p>
+</li>
+<li><p>面向接口编程（隔离变化的方式）</p>
+<p>使用者使用接口，提供者实现接口。 “接口”可以是超类!</p>
+</li>
+<li><p>依赖倒置原则 （隔离变化的方式）</p>
+<p> 依赖抽象，不要依赖具体类!</p>
+</li>
+<li><p> 对修改闭合，对扩展开放（隔离变化的方式）</p>
+</li>
+<li><p>多用组合，少用继承（ 灵活变化的方式）</p>
+<p> “有一个”可能比”是一个”更好。</p>
+</li>
+<li><p>单一职责原则（方法设计的原则）</p>
+</li>
+</ul>
+<h1 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h1><ul>
+<li>再次强调：应用设计模式的目的<ul>
+<li>易扩展、易维护</li>
+<li>少改代码，不改代码</li>
+</ul>
+</li>
+</ul>
+<h2 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a>策略模式</h2><ul>
+<li><p>示例</p>
+<p>京东、天猫双十一促销，各种商品有多种不同的促销活动∶ </p>
+<ul>
+<li>满减∶ 满400减50</li>
+<li>每满减∶ 每满100减20</li>
+<li>数量折扣∶ 买两件8折、三件7折</li>
+<li>数量减∶ 满三件减最低价的一件</li>
+<li>……</li>
+</ul>
+</li>
+</ul>
+<p>顾客下单时可选择多种其中一种来下单</p>
+<p>后端代码中如何来灵活应对订单金额的计算?</p>
+<p>以后还会有很多的促销活动出现!</p>
+<ul>
+<li>该如何来实现订单金额的计算?</li>
+</ul>
+<p> </p>
+<p><strong>OrderController</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720213202.png"></p>
+<p><strong>OrderService</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720213601.png"></p>
+<p>这样可以吗？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720213738.png"></p>
+<p>营销活动有很多，这个switch会不会很庞大? 生怕出错!!!</p>
+<ul>
+<li>改进一下，这样是不是好些了？</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720213848.png"></p>
+<p><strong>方法设计原则∶单一职责原则</strong></p>
+<p> 营销活动经常变，这个switch就得经常改，还得不断加促销的算法方法…….</p>
+<p>改代码是bug的源泉</p>
+<p> 我们希望少改动OrderService!!!</p>
+<p><strong>分析∶ 这里变的是什么?</strong> </p>
+<p>​	促销的金额的算法!同一行为的不同算法!</p>
+<p>​	我们不希望OrderService被算法代码爆炸!</p>
+<p><strong>再次改进</strong></p>
+<p>​	同一行为的不同算法实现，我们可以用接口来定义行为，不同的算法分别去实现接口。</p>
+<p>​	设计原则∶对修改关闭，对扩展开放!</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720214723.png"></p>
+<p>​	这就是策略模式的应用! </p>
+<p>定义∶策略模式定义了一系列的算法，并将每一个算法封装起来，而且使他们可以相互替换，让算法独立于使用它的用户而独立变化。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720215841.png"></p>
+<ul>
+<li>再次改进后的OrderService</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720220006.png"></p>
+<p>但是switch中的代码还是会不断变!!!</p>
+<p>switch中需要知道所有的实现!</p>
+<p>如何让OrderService的代码不要改变?</p>
+<p>把变的部分移出去!</p>
+<p>如何移?</p>
+<h2 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h2><ul>
+<li>通过一个工厂来专门负责创建各种促销计算实现，就把变化移出来了!</li>
+</ul>
+<p>![image-20210720220219344](C:\Users\chen cheng\AppData\Roaming\Typora\typora-user-images\image-20210720220219344.png)</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720220232.png"></p>
+<p>想要工厂中的代码也不要随促销的变化而变化，你觉得该怎么办? </p>
+<ul>
+<li>方式一∶ promotion &#x3D; beanName （通过spring管理促销算法类）</li>
+<li>方式二∶配置promotion与实现类的对应关系 （map，key：促销算法，value：促销算法类全限定名，通过反射获取促销算法类）</li>
+<li>…（扫描包等等）</li>
+</ul>
+<p><strong>简单工厂模式</strong></p>
+<p>​	一个工厂负责创建所有实例</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720222212.png"></p>
+<p><strong>工厂方法模式</strong></p>
+<p>​	父类中定义工厂方法，各子类实现具体的实例创建</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720222326.png"></p>
+<p><strong>抽象工厂模式</strong> </p>
+<p>​	定义一个工厂接口，所有具体工厂实现接口</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720222414.png"></p>
+<h2 id="装饰者模式"><a href="#装饰者模式" class="headerlink" title="装饰者模式"></a>装饰者模式</h2><p>示例∶ 促销活动可多重叠加，该如何灵活实现订单金额计算?</p>
+<p><strong>OrderController</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720222741.png"></p>
+<p><strong>OrderService</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720222833.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720222900.png"></p>
+<ul>
+<li>定义∶ 以装饰的方式，动态地将责任附加到对象上。</li>
+</ul>
+<p> </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720230650.jpg"></p>
+<p>不改变具体类代码，动态叠加增强行为功能。 </p>
+<p>若要扩展功能，装饰者提供了比继承更有弹性的替代方案</p>
+<p>相较于前面的for循环，有何区别?</p>
+<p>考虑∶当需要对一个类的多个方法进行增强，使用者会随意使用被增强方法时，for循环就不够灵活了。</p>
+<p> 责任链和装饰者模式完成的是相同的事情。 </p>
+<p>提示：IO流中使用的就是装饰者模式</p>
+<p><strong>代码示例</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720232430.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720232531.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720232641.jpg"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720232707.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720232801.jpg"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210720232831.png"></p>
+<h2 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h2><p><strong>定义：</strong>为其他对象提供一种代理以控制对这个对象的访问。</p>
+<p> 在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722205609.png"></p>
+<p>作用∶不改变原类的代码，而增强原类对象的功能</p>
+<p>可选择前置、后置、环绕、异常处理增强</p>
+<p><strong>类图：</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722210429.png"></p>
+<p><strong>类图与装饰者模式一样</strong></p>
+<p><strong>与装饰者模式的区别</strong> </p>
+<p>​	意图的不同∶代理模式意在在代理中控制使用者对目标对象的访问，以及进行功能增强。 </p>
+<h2 id="代理模式-实现方式"><a href="#代理模式-实现方式" class="headerlink" title="代理模式-实现方式"></a>代理模式-实现方式</h2><p><strong>静态代理∶</strong>由程序员创建或由特定工具自动生成代理类源代码，再对其编译。在程序运行前，代理类的.class文件就已经存在了。 </p>
+<p><strong>动态代理∶</strong>代理类在程序运行时，运用反射机制动态创建而成。 静态代理事先知道要代理的是什么，而动态代理不知道要代理什么东西，只有在运行时才知道。</p>
+<h2 id="代理模式-静态代理示例"><a href="#代理模式-静态代理示例" class="headerlink" title="代理模式-静态代理示例"></a>代理模式-静态代理示例</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211156.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211228.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211253.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211320.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211347.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211418.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211444.png"></p>
+<h2 id="代理模式-静态代理缺点"><a href="#代理模式-静态代理缺点" class="headerlink" title="代理模式-静态代理缺点"></a>代理模式-静态代理缺点</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722211859.png"></p>
+<ul>
+<li><strong>扩展能力差</strong><ul>
+<li>横向扩展：代理更多的类</li>
+<li>纵向扩展：增强更多的方法</li>
+</ul>
+</li>
+<li><strong>可维护性差</strong></li>
+</ul>
+<h2 id="代理模式-动态代理"><a href="#代理模式-动态代理" class="headerlink" title="代理模式-动态代理"></a>代理模式-动态代理</h2><ul>
+<li><p><strong>在运行时，动态为不同类的对象创建代理，增强功能。灵活扩展，易维护!</strong></p>
+</li>
+<li><p><strong>实现方式：</strong></p>
+<ul>
+<li> JDK动态代理∶ 只可对接口创建代理</li>
+<li>CGLIB动态代理∶ 可对接口、类创建代理</li>
+</ul>
+</li>
+</ul>
+<h2 id="代理模式-JDK动态代理"><a href="#代理模式-JDK动态代理" class="headerlink" title="代理模式-JDK动态代理"></a>代理模式-JDK动态代理</h2><ul>
+<li>在运行时，对接口创建代理对象</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722214608.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722214650.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722214720.png"></p>
+<h2 id="代理模式-JDK动态代理-代码示例"><a href="#代理模式-JDK动态代理-代码示例" class="headerlink" title="代理模式-JDK动态代理-代码示例"></a>代理模式-JDK动态代理-代码示例</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722214824.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722214851.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722214919.png"></p>
+<h2 id="代理模式-cglib动态代理"><a href="#代理模式-cglib动态代理" class="headerlink" title="代理模式-cglib动态代理"></a>代理模式-cglib动态代理</h2><ul>
+<li><p><strong>cglib是什么?</strong>		 Byte Code Generation Library </p>
+<p>A powerful, high performance and quality Code Generation Library, It is used to extend JAVA classes and implements interfaces at runtime.</p>
+<p>一个高层次的java字节码生成和转换的api库 .</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722223956.png"></p>
+<p>ASM：一个低层次的字节码操作库</p>
+<ul>
+<li><p><strong>它的主要用途</strong> </p>
+<p>在运行期为类、接口生成动态代理对象。</p>
+<p>以达到不改动原类代码而实现功能增强的目的</p>
+</li>
+<li><p><strong>常在哪里用它?</strong> </p>
+<p>常在 AOP、test、orm框架中用来生成动态代理对象、拦截属性访问 </p>
+</li>
+<li><p><strong>在哪里可详细了解学习它?</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/cglib/cglib/wiki">https://github.com/cglib/cglib/wiki</a></p>
+</li>
+<li><p><strong>如何使用它?</strong> </p>
+<ul>
+<li><p>引入它的jar</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- https://mvnrepository.com/artifact/cglib/cglib --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>cglib<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>cglib<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.2.6<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>学习它的API</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>  </p>
+<h2 id="代理模式-cglib动态代理-类图-API"><a href="#代理模式-cglib动态代理-类图-API" class="headerlink" title="代理模式-cglib动态代理-类图&amp;API"></a>代理模式-cglib动态代理-类图&amp;API</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722231717.png"></p>
+<h2 id="代理模式-cglib动态代理-代码示例"><a href="#代理模式-cglib动态代理-代码示例" class="headerlink" title="代理模式-cglib动态代理-代码示例"></a>代理模式-cglib动态代理-代码示例</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722231810.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210722231840.png"></p>
+<h2 id="责任链模式"><a href="#责任链模式" class="headerlink" title="责任链模式"></a>责任链模式</h2><p><strong>应用场景：</strong></p>
+<p>http web请求处理，请求过来后将经过转码、解析、参数封装、鉴权…—系列的处理（责任），而且要经过多少处理是可以灵活调整的。</p>
+<p>将所有的处理都写在一个类中可否</p>
+<p>分成多个类如何灵活组合在一起?</p>
+<p><strong>责任链∶ 所有的处理者，都加入到这个链式，一个处理完后，转给下一个。</strong> </p>
+<ol>
+<li>抽象出责任接口，具体责任逻辑实现接口。 </li>
+<li>根据处理过程需要，将具体实现组合成链。 </li>
+<li>使用者使用链。</li>
+</ol>
+<p>典型代表∶Filter、Interceptor</p>
+<h2 id="责任链模式-类图"><a href="#责任链模式-类图" class="headerlink" title="责任链模式-类图"></a>责任链模式-类图</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724173649.png"></p>
+<ul>
+<li><p><strong>和装饰的区别在哪里?</strong> </p>
+<p>装饰者是装饰对象持有被装饰对象，责任链是所有的增强都交给了一个链</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724174024.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724173910.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724173938.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724173959.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724174058.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724174127.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724174155.png"></p>
+<p><strong>在ResponsibilityChain循环调用责任链与在Responsibility调用责任链区别</strong></p>
+<ul>
+<li>在ResponsibilityChain循环调用责任链</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724175902.png"></p>
+<ul>
+<li>在Responsibility调用责任链</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724175927.png"></p>
+<h2 id="适配器模式"><a href="#适配器模式" class="headerlink" title="适配器模式"></a>适配器模式</h2><ul>
+<li><p><strong>应用场景∶</strong></p>
+<p> 使用者依赖的接口与提供者的接口不匹配时，就加一层适配，而不改两端的代码</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724180456.png"></p>
+<ul>
+<li><p><strong>和代理、装饰的区别在哪里?</strong>  </p>
+<p>用途不一样，使用场景不同</p>
+</li>
+</ul>
+<h2 id="外观（门面）模式"><a href="#外观（门面）模式" class="headerlink" title="外观（门面）模式"></a>外观（门面）模式</h2><ul>
+<li><p><strong>应用场景∶</strong></p>
+<p> 使用方要完成一个功能，需要调用提供方的多个接口、方法，调用过程复杂时，我们可以再提供一个高层接口（新的外观），将复杂的调用过程向使用方隐藏。适配器模式的变种。 </p>
+</li>
+<li><p><strong>需要熟悉很多接口</strong></p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724181307.png"></p>
+<ul>
+<li><strong>只需要熟悉门面接口</strong></li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724181357.png"></p>
+<p><strong>设计原则∶最少知道原则  （迪米特法则）</strong></p>
+<h2 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a>观察者模式</h2><ul>
+<li><p><strong>示例∶</strong> 微信公众号，关注就可以收到推送的消息，取消关注，就不会再收到。 </p>
+<p><strong>面向接口编程注册、回调机制</strong></p>
+</li>
+</ul>
+<p> </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724182323.png"></p>
+<p><strong>变化之处∶观察者会变，观察者的数量会变。</strong></p>
+<p><strong>不变∶主题的代码要不受观察者变化的影响。</strong> </p>
+<ul>
+<li><p><strong>定义：</strong> 定义了对象之间一对多的依赖关系，当一端对象改变状态时，它的所有依 赖者都会收到通知并自动更新（被调用更新方法）。 </p>
+<p><strong>也称为∶监听模式、发布订阅模式。提供一种对象之间松耦合的设计方式。</strong></p>
+<p><strong>设计原则∶ 为了交互对象之间的松耦合设计而努力!</strong></p>
+</li>
+<li><p><strong>Java中为我们提供了观察者模式的通用实现</strong> </p>
+<p>Java.util.Observable	可被观察的（主题），具体主题扩展它。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724183628.png"></p>
+<p>java.util.Observer      观察者接口，具体观察者实现该接口。 </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724183709.png"></p>
+</li>
+<li><p><strong>使用示例</strong></p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724183751.png"></p>
+<h1 id="代码地址"><a href="#代码地址" class="headerlink" title="代码地址"></a>代码地址</h1><p><a target="_blank" rel="noopener" href="https://github.com/chengchen901/design-mode-study.git">https://github.com/chengchen901/design-mode-study.git</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/01-Java%E5%9F%BA%E7%A1%80/04-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/01-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B8%80%EF%BC%89/" data-id="clmcxecu3007du8wac6193m9c" data-title="设计模式（一）" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/05/07/02-Spring/09-Spring%E6%BA%90%E7%A0%81-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5DI/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Spring源码-依赖注入DI
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/05/07/02-Spring/11-Spring%E6%BA%90%E7%A0%81-AOP%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Spring源码-AOP源码解读</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Redis分布式实战应用 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Redis分布式实战应用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis分布式实战应用">
+<meta property="og:url" content="http://example.com/2020/12/20/07-Redis/08-Redis%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E6%88%98%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Redis分布式实战应用">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201220172914249.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201220215530339.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201220221713560.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201220221728424.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201220222450009.png">
+<meta property="article:published_time" content="2020-12-20T06:57:53.000Z">
+<meta property="article:modified_time" content="2022-09-25T13:46:25.275Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201220172914249.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-07-Redis/08-Redis分布式实战应用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/12/20/07-Redis/08-Redis%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E6%88%98%E5%BA%94%E7%94%A8/" class="article-date">
+  <time class="dt-published" datetime="2020-12-20T06:57:53.000Z" itemprop="datePublished">2020-12-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Redis/">Redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Redis分布式实战应用
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Redis分布式实战应用</p>
+<span id="more"></span>
+
+<p>分布式下Redis实战场景</p>
+<ol>
+<li>高性能分布式缓存</li>
+<li>定时消息通知（key事件 + pub&#x2F;sub）</li>
+<li>高速队列的 实现与应用（list、stream）</li>
+<li>实现去幂等性</li>
+<li>数据计算和订单号生成（自增 Incr）</li>
+<li>高并发限流、令牌桶</li>
+<li>基于Redis实现的分布式锁</li>
+</ol>
+<h1 id="1-实现去重幂等性"><a href="#1-实现去重幂等性" class="headerlink" title="1 实现去重幂等性"></a>1 实现去重幂等性</h1><p>有一张房屋信息表，地址、房间号、房间其他字段… 在添加时候判断是重复？ 这表里</p>
+<p>面数据达到100W+，用表查询exists md5、hash() set， 用布隆过滤器，省空间</p>
+<p>避免：缓存穿透、不精确去重</p>
+<h2 id="1-1-布隆过滤器"><a href="#1-1-布隆过滤器" class="headerlink" title="1.1 布隆过滤器"></a>1.1 布隆过滤器</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201220172914249.png" alt="image-20201220172914249"></p>
+<h2 id="1-2-Redis布隆过滤器插件安装"><a href="#1-2-Redis布隆过滤器插件安装" class="headerlink" title="1.2 Redis布隆过滤器插件安装"></a>1.2 Redis布隆过滤器插件安装</h2><p>前提：准备Redis</p>
+<p>默认已经安装了Redis4.0以上的版本，4.0以上才支持插件模块</p>
+<h3 id="1-2-1-下载布隆过滤器插件"><a href="#1-2-1-下载布隆过滤器插件" class="headerlink" title="1.2.1 下载布隆过滤器插件"></a>1.2.1 下载布隆过滤器插件</h3><p>gitHub下载最新版本：<a target="_blank" rel="noopener" href="https://github.com/RedisBloom/RedisBloom/releases">https://github.com/RedisBloom/RedisBloom/releases</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/RedisBloom/RedisBloom/archive/v2.0.0.tar.gz</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-2-2-编译安装"><a href="#1-2-2-编译安装" class="headerlink" title="1.2.2 编译安装"></a>1.2.2 编译安装</h3><p>解压并安装，生成.so文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# cp RedisBloom-2.0.0.tar.gz /usr/local/redis-5.0.5/modlues/</span><br><span class="line">[root@localhost modlues]# cd /usr/local/redis-5.0.5/modlues/</span><br><span class="line">[root@localhost modlues]# tar -zxvf RedisBloom-2.0.0.tar.gz</span><br><span class="line">[root@localhost RedisBloom-2.0.0]# cd RedisBloom-2.0.0/</span><br><span class="line">[root@localhost RedisBloom-2.0.0]# make</span><br><span class="line">[root@localhost RedisBloom-2.0.0]# ll</span><br><span class="line">总用量 336</span><br><span class="line">drwxrwxr-x. 2 root root     99 12月 20 17:38 contrib</span><br><span class="line">-rw-rw-r--. 1 root root    405 6月  25 2019 Dockerfile</span><br><span class="line">drwxrwxr-x. 3 root root    241 6月  25 2019 docs</span><br><span class="line">-rw-rw-r--. 1 root root   5794 6月  25 2019 LICENSE</span><br><span class="line">-rw-rw-r--. 1 root root   2608 6月  25 2019 Makefile</span><br><span class="line">-rw-rw-r--. 1 root root    946 6月  25 2019 mkdocs.yml</span><br><span class="line">-rw-rw-r--. 1 root root    511 6月  25 2019 ramp.yml</span><br><span class="line">-rw-rw-r--. 1 root root   2467 6月  25 2019 README.md</span><br><span class="line">-rwxr-xr-x. 1 root root 308856 12月 20 17:38 redisbloom.so</span><br><span class="line">drwxrwxr-x. 2 root root     48 12月 20 17:38 rmutil</span><br><span class="line">drwxrwxr-x. 2 root root   4096 12月 20 17:38 src</span><br><span class="line">drwxrwxr-x. 2 root root    217 6月  25 2019 tests</span><br></pre></td></tr></table></figure>
+
+<p><strong>安装</strong></p>
+<p>在redis配置文件(redis.conf)中加入该模块即可</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost modlues]$ cd /usr/local/redis-5.0.5/</span><br><span class="line">[root@localhost redis-5.0.5]$ sudo vim conf/redis-6379.conf</span><br><span class="line"><span class="meta prompt_"> </span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">####################MODULES####################                                                                                                                      # Load modules at startup. If the server is not able to load modules</span></span></span><br><span class="line"><span class="meta prompt_"> </span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">it will abort. It is possible to use multiple loadmodule directives.</span></span><br><span class="line"> </span><br><span class="line">loadmodule /usr/local/redis-5.0.5/modlues/RedisBloom-2.0.0/redisbloom.so</span><br></pre></td></tr></table></figure>
+
+<p><strong>启动</strong></p>
+<p>正常的启动Redis即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost redis-5.0.5]$ sudo src/redis-server conf/redis-6379.conf </span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="2-高并发限流"><a href="#2-高并发限流" class="headerlink" title="2 高并发限流"></a>2 高并发限流</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201220215530339.png" alt="image-20201220215530339"></p>
+<h2 id="2-1-令牌桶算法"><a href="#2-1-令牌桶算法" class="headerlink" title="2.1 令牌桶算法"></a>2.1 令牌桶算法</h2><p>有限的数量资源，进行桶装，消费完就没有了。</p>
+<p><strong>场景</strong></p>
+<p>分布式下，多个秒杀服务，防止超卖的场景。</p>
+<p>并发问题？Redis 单线程</p>
+<h2 id="2-2-漏斗算法"><a href="#2-2-漏斗算法" class="headerlink" title="2.2 漏斗算法"></a>2.2 漏斗算法</h2><p><strong>限流场景</strong></p>
+<p>针对同一个用户，同一个功能要求10分钟，只能访60次。</p>
+<p>list</p>
+<p>10分钟过期key，每次操作，新key</p>
+<p>zset score key value， 通过score进行排序</p>
+<p>时间 K V</p>
+<p>一次操作就是一条Zset记录，获取十分钟内数据，十分钟外的数据删除，并且整个Key进行10分钟过</p>
+<p>期。</p>
+<h1 id="3-基于redis的分布式锁"><a href="#3-基于redis的分布式锁" class="headerlink" title="3 基于redis的分布式锁"></a>3 基于redis的分布式锁</h1><p><strong>场景</strong></p>
+<p>受保护的公共资源，需要协调。</p>
+<p>多个服务节点请求更新同一个库存数，数据库压力，如何转移压力。需要一把分布式锁。</p>
+<p>缓存Key，失效以后，多个请求更新，只需要一个请求更新就可以了，需要一把分布式锁。</p>
+<p><strong>锁的原理—排他性</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201220221713560.png" alt="image-20201220221713560"></p>
+<p><strong>原子问题</strong></p>
+<p>Redis 实现锁</p>
+<p>Redis2.8前，setNx + expire , set ex nx这是两个命令，两个命令间存在原子操作的问题</p>
+<p>Redis2.8以后，set ex nx</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">set lock true ex 5 nx </span><br><span class="line">OK</span><br><span class="line">... do something critical ... # 10秒 </span><br><span class="line">del lock</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>超时问题</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201220221728424.png" alt="image-20201220221728424"></p>
+<ol>
+<li><p>程序控制，业务逻辑时间确定的情况下，使用，程序能够控制执行时间的。</p>
+</li>
+<li><p>Value，一个随机数，解锁去比较，类似版本号，只能删除自己的Key-value</p>
+</li>
+</ol>
+<p><strong>集群下主从切换，Key转移的问题</strong></p>
+<p>用到大多数来解决这个问题，第三方库实现，比如Redlock</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20201220222450009.png" alt="image-20201220222450009"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/12/20/07-Redis/08-Redis%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E6%88%98%E5%BA%94%E7%94%A8/" data-id="clmcxed0d00a8u8waf5288j5a" data-title="Redis分布式实战应用" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/01/02/05-ZooKeeper/01-ZooKeeper%E5%85%A5%E9%97%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          ZooKeeper入门
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/12/20/07-Redis/07-Redis%E9%AB%98%E6%80%A7%E8%83%BD%E5%BA%95%E5%B1%82%E6%8E%A2%E7%A7%98-%E5%A6%82%E4%BD%95%E6%94%AF%E6%92%9150ws%E8%AF%B7%E6%B1%82/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Redis高性能底层探秘-如何支撑50ws请求</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

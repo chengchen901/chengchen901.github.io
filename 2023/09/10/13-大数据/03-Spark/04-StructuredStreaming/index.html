@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="什么是 Structured Streaming？什么是“流式计算”？批量计算：Hadoop、Spark  有限的数据 离线：T+1  流式计算：Storm、SparkStreaming、Flink  无限的数据 实时：T+s&#x2F;T+m  Spark中的流式计算解决方案Spark Streaming(已停更)-&gt;  Structured Streaming  Structured S">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/03-Spark/04-StructuredStreaming/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="什么是 Structured Streaming？什么是“流式计算”？批量计算：Hadoop、Spark  有限的数据 离线：T+1  流式计算：Storm、SparkStreaming、Flink  无限的数据 实时：T+s&#x2F;T+m  Spark中的流式计算解决方案Spark Streaming(已停更)-&gt;  Structured Streaming  Structured S">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404173049.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404173207.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404173526.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404173846.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404185548.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404190143.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404211930.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404212012.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404212107.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404222459.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404222511.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404222633.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404224251.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404224556.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404224653.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404224822.png">
+<meta property="article:published_time" content="2023-09-10T03:59:07.652Z">
+<meta property="article:modified_time" content="2022-09-25T16:04:00.844Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404173049.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-13-大数据/03-Spark/04-StructuredStreaming" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/03-Spark/04-StructuredStreaming/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:07.652Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="什么是-Structured-Streaming？"><a href="#什么是-Structured-Streaming？" class="headerlink" title="什么是 Structured Streaming？"></a>什么是 Structured Streaming？</h1><h2 id="什么是“流式计算”？"><a href="#什么是“流式计算”？" class="headerlink" title="什么是“流式计算”？"></a>什么是“流式计算”？</h2><p>批量计算：Hadoop、Spark</p>
+<ul>
+<li>有限的数据</li>
+<li>离线：T+1</li>
+</ul>
+<p>流式计算：Storm、SparkStreaming、Flink</p>
+<ul>
+<li>无限的数据</li>
+<li>实时：T+s&#x2F;T+m</li>
+</ul>
+<h2 id="Spark中的流式计算解决方案"><a href="#Spark中的流式计算解决方案" class="headerlink" title="Spark中的流式计算解决方案"></a>Spark中的流式计算解决方案</h2><p>Spark Streaming(已停更)-&gt;  Structured Streaming</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404173049.png"></p>
+<h2 id="Structured-Streaming-vs-Spark-Streaming"><a href="#Structured-Streaming-vs-Spark-Streaming" class="headerlink" title="Structured Streaming vs Spark Streaming"></a>Structured Streaming vs Spark Streaming</h2><ol>
+<li>支持event-time，提供处理迟到数据的机制</li>
+<li>基于Dataset&#x2F;DataFrame，和批处理API统一</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404173207.png"></p>
+<h2 id="初识Structured-Streaming"><a href="#初识Structured-Streaming" class="headerlink" title="初识Structured Streaming"></a>初识Structured Streaming</h2><h3 id="实时版的WordCount程序"><a href="#实时版的WordCount程序" class="headerlink" title="实时版的WordCount程序"></a>实时版的WordCount程序</h3><p><a target="_blank" rel="noopener" href="http://spark.incubator.apache.org/docs/latest/structured-streaming-programming-guide.html">官网文档</a></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.functions._</span><br><span class="line"><span class="keyword">import</span> org.apache.spark.sql.<span class="type">SparkSession</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> spark = <span class="type">SparkSession</span></span><br><span class="line">  .builder</span><br><span class="line">  .appName(<span class="string">&quot;StructuredNetworkWordCount&quot;</span>)</span><br><span class="line">  .getOrCreate()</span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> spark.implicits._</span><br><span class="line"></span><br><span class="line"><span class="comment">// Create DataFrame representing the stream of input lines from connection to localhost:9999</span></span><br><span class="line"><span class="keyword">val</span> lines = spark.readStream</span><br><span class="line">  .format(<span class="string">&quot;socket&quot;</span>)</span><br><span class="line">  .option(<span class="string">&quot;host&quot;</span>, <span class="string">&quot;localhost&quot;</span>)</span><br><span class="line">  .option(<span class="string">&quot;port&quot;</span>, <span class="number">9999</span>)</span><br><span class="line">  .load()</span><br><span class="line"></span><br><span class="line"><span class="comment">// Split the lines into words</span></span><br><span class="line"><span class="keyword">val</span> words = lines.as[<span class="type">String</span>].flatMap(_.split(<span class="string">&quot; &quot;</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">// Generate running word count</span></span><br><span class="line"><span class="keyword">val</span> wordCounts = words.groupBy(<span class="string">&quot;value&quot;</span>).count()</span><br><span class="line"></span><br><span class="line"><span class="comment">// Start running the query that prints the running counts to the console</span></span><br><span class="line"><span class="keyword">val</span> query = wordCounts.writeStream</span><br><span class="line">  .outputMode(<span class="string">&quot;complete&quot;</span>)</span><br><span class="line">  .format(<span class="string">&quot;console&quot;</span>)</span><br><span class="line">  .start()</span><br><span class="line"></span><br><span class="line">query.awaitTermination()</span><br></pre></td></tr></table></figure>
+
+<h3 id="图解WordCount的计算过程"><a href="#图解WordCount的计算过程" class="headerlink" title="图解WordCount的计算过程"></a>图解WordCount的计算过程</h3><p>数据源-&gt;数据切分点-&gt;输入表-&gt;查询-&gt;结果表-&gt;输出</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404173526.png"></p>
+<h1 id="如何编写Streaming程序？"><a href="#如何编写Streaming程序？" class="headerlink" title="如何编写Streaming程序？"></a>如何编写Streaming程序？</h1><h2 id="一个完整的Streaming程序"><a href="#一个完整的Streaming程序" class="headerlink" title="一个完整的Streaming程序"></a>一个完整的Streaming程序</h2><p>官网代码：<a target="_blank" rel="noopener" href="https://github.com/apache/spark/blob/v3.2.1/examples/src/main/scala/org/apache/spark/examples/sql/streaming/StructuredNetworkWordCount.scala">https://github.com/apache/spark/blob/v3.2.1/examples/src/main/scala/org/apache/spark/examples/sql/streaming/StructuredNetworkWordCount.scala</a></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404173846.png"></p>
+<h2 id="真实的使用场景"><a href="#真实的使用场景" class="headerlink" title="真实的使用场景"></a>真实的使用场景</h2><ul>
+<li>实时监控</li>
+<li>实时风控</li>
+<li>实时营销&#x2F;推荐</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404185548.png"></p>
+<h2 id="Input"><a href="#Input" class="headerlink" title="Input"></a>Input</h2><h3 id="数据源有哪些？"><a href="#数据源有哪些？" class="headerlink" title="数据源有哪些？"></a>数据源有哪些？</h3><table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Options</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>File</td>
+<td>path：文件目录<br />maxFilesPerTrigger：每次计算多少个文件<br />latestFirst：是否先处理最新的新文件<br />fileNameOnly：判断新文件时只基于文件名称（不同路径下同名文件会去重），而不是全路径</td>
+</tr>
+<tr>
+<td>Socket</td>
+<td>host：IP&#x2F;域名<br />port：端口</td>
+</tr>
+<tr>
+<td>Rate</td>
+<td>rowsPerSecond：每秒产生多少条记录<br />rampUpTime：达到速率rowsPerSecond所用时间<br />numPartitions：分区数</td>
+</tr>
+<tr>
+<td>Kafka</td>
+<td>参考“Kafka集成”</td>
+</tr>
+</tbody></table>
+<p>org.apache.spark.sql.execution.streaming.Source</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404190143.png"></p>
+<h2 id="算子"><a href="#算子" class="headerlink" title="算子"></a>算子</h2><h3 id="可以对数据进行哪些计算？"><a href="#可以对数据进行哪些计算？" class="headerlink" title="可以对数据进行哪些计算？"></a>可以对数据进行哪些计算？</h3><table>
+<thead>
+<tr>
+<th>计算类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>基础操作</td>
+<td>Selection（筛选过滤），Projection（多对一聚合、一对多发散）</td>
+</tr>
+<tr>
+<td><strong>窗口操作</strong></td>
+<td>基于EventTime和Watermark</td>
+</tr>
+<tr>
+<td>Join操作</td>
+<td>Stream - Static<br />Stream - Stream<br />Static - Stream</td>
+</tr>
+<tr>
+<td>聚合操作</td>
+<td>agg、count、sum、avg</td>
+</tr>
+<tr>
+<td><strong>状态操作</strong></td>
+<td>mapGroupsWithState<br />flatMapGroupsWithState</td>
+</tr>
+</tbody></table>
+<p>org.apache.spark.sql.Dataset</p>
+<p>在流式计算中比较特殊的有<strong>窗口操作、状态操作</strong></p>
+<p>根据<strong>状态操作</strong>进行<strong>持续计算</strong><br>    计算效率上来说，流式计算比批量计算效率更高，持续在算，每次计算数据量小，对于集群压力是比较小的，提高集群利用率，不需要大量资源</p>
+<p>批量计算PV：T+1计算+实时T<br>流式计算PV：SUM（每分钟计算）</p>
+<p>实际工作场景中，流式计算需要保证每分钟计算是正确的，需要做到这一点也是有代价的，所以通常我们还是以批量计算这种方式，基于数据可靠性和成本之间来做选择</p>
+<h3 id="哪些操作类型不支持？"><a href="#哪些操作类型不支持？" class="headerlink" title="哪些操作类型不支持？"></a>哪些操作类型不支持？</h3><p><a target="_blank" rel="noopener" href="http://spark.incubator.apache.org/docs/latest/structured-streaming-programming-guide.html#unsupported-operations">官网文档</a></p>
+<p>There are a few DataFrame&#x2F;Dataset operations that are not supported with streaming DataFrames&#x2F;Datasets. Some of them are as follows.</p>
+<ul>
+<li>Multiple streaming aggregations (i.e. a chain of aggregations on a streaming DF) are not yet supported on streaming Datasets.</li>
+<li>Limit and take the first N rows are not supported on streaming Datasets.</li>
+<li>Distinct operations on streaming Datasets are not supported.</li>
+<li>Deduplication operation is not supported after aggregation on a streaming Datasets.</li>
+<li>Sorting operations are supported on streaming Datasets only after an aggregation and in Complete Output Mode.</li>
+<li>Few types of outer joins on streaming Datasets are not supported. See the <a target="_blank" rel="noopener" href="http://spark.incubator.apache.org/docs/latest/structured-streaming-programming-guide.html#support-matrix-for-joins-in-streaming-queries">support matrix in the Join Operations section</a> for more details.</li>
+</ul>
+<p>In addition, there are some Dataset methods that will not work on streaming Datasets. They are actions that will immediately run queries and return results, which does not make sense on a streaming Dataset. Rather, those functionalities can be done by explicitly starting a streaming query (see the next section regarding that).</p>
+<ul>
+<li><code>count()</code> - Cannot return a single count from a streaming Dataset. Instead, use <code>ds.groupBy().count()</code> which returns a streaming Dataset containing a running count.</li>
+<li><code>foreach()</code> - Instead use <code>ds.writeStream.foreach(...)</code> (see next section).</li>
+<li><code>show()</code> - Instead use the console sink (see next section).</li>
+</ul>
+<p>If you try any of these operations, you will see an <code>AnalysisException</code> like “operation XYZ is not supported with streaming DataFrames&#x2F;Datasets”. While some of them may be supported in future releases of Spark, there are others which are fundamentally hard to implement on streaming data efficiently. For example, sorting on the input stream is not supported, as it requires keeping track of all the data received in the stream. This is therefore fundamentally hard to execute efficiently.</p>
+<p><strong>翻译</strong></p>
+<p>有一些DataFrame&#x2F;Dataset操作不支持流式DataFrame&#x2F;Dataset。其中一些如下。</p>
+<ul>
+<li>流数据集还不支持多个流聚合(即流DF上的聚合链)。</li>
+<li>限制和取前N行不支持流数据集。</li>
+<li>不支持流式数据集上的不同操作。</li>
+<li>流数据集聚合后，不支持重复数据删除操作。</li>
+<li>只有在聚合和完全输出模式下，流数据集才支持排序操作。</li>
+<li>流数据集上很少类型的外部连接是不支持的。有关更多细节，请参阅<a target="_blank" rel="noopener" href="http://spark.incubator.apache.org/docs/latest/structured-streaming-programming-guide.html#support-matrix-for-joins-in-streaming-queries">Join Operations部分中的支持矩阵</a>。</li>
+</ul>
+<p>此外，还有一些数据集方法不能用于流数据集。它们是立即运行查询并返回结果的操作，这在流数据集上是没有意义的。相反，这些功能可以通过显式启动流查询来实现(请参阅下一节)。</p>
+<ul>
+<li>‘ count() ‘ -不能从流数据集返回单个计数。相反，使用’ ds.groupBy().count() ‘返回一个包含运行计数的流数据集。</li>
+<li>‘ foreach() ‘ -使用’ ds.writeStream.foreach(…)’(见下一节)。</li>
+<li>‘ show() ‘ -使用控制台接收器(见下一节)。</li>
+</ul>
+<p>如果你尝试任何这些操作，你会看到一个’ AnalysisException ‘像“操作XYZ不支持流数据帧&#x2F;数据集”。虽然其中一些可能会在未来的Spark版本中得到支持，但还有一些从根本上来说很难在流数据上有效地实现。例如，不支持对输入流进行排序，因为它需要跟踪流中接收到的所有数据。因此，从根本上来说，这很难有效地执行。</p>
+<h3 id="Trigger"><a href="#Trigger" class="headerlink" title="Trigger"></a>Trigger</h3><h4 id="何时计算数据？"><a href="#何时计算数据？" class="headerlink" title="何时计算数据？"></a>何时计算数据？</h4><table>
+<thead>
+<tr>
+<th>Trigger Type</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Default</td>
+<td>未显示指定时，采用“微批次”模式，上一个批次计算完成，下一个批次立即执行</td>
+</tr>
+<tr>
+<td>微批次：定时</td>
+<td>按指定时间间隔生成batch，无新数据不生产batch</td>
+</tr>
+<tr>
+<td>微批次：一次性</td>
+<td>只计算一次即停止运行</td>
+</tr>
+<tr>
+<td>持续处理</td>
+<td>不间断运行</td>
+</tr>
+</tbody></table>
+<p>org.apache.spark.sql.streaming.Trigger</p>
+<h3 id="Continuous-Processing的局限性"><a href="#Continuous-Processing的局限性" class="headerlink" title="Continuous Processing的局限性"></a>Continuous Processing的局限性</h3><p>As of Spark 2.4, only the following type of queries are supported in the continuous processing mode.</p>
+<ul>
+<li>Operations: Only map-like Dataset&#x2F;DataFrame operations are supported in continuous mode, that is, only projections (select, map, flatMap, mapPartitions, etc.) and selections (where, filter, etc.).<ul>
+<li>All SQL functions are supported except aggregation functions (since aggregations are not yet supported), current_timestamp() and current_date() (deterministic computations using time is challenging).</li>
+</ul>
+</li>
+<li>Sources:<ul>
+<li>Kafka source: All options are supported.</li>
+<li>Rate source: Good for testing. Only options that are supported in the continuous mode are numPartitions and rowsPerSecond.</li>
+</ul>
+</li>
+<li>Sinks:<ul>
+<li>Kafka sink: All options are supported.</li>
+<li>Memory sink: Good for debugging.</li>
+<li>Console sink: Good for debugging. All options are supported. Note that the console will print every checkpoint interval that you have specified in the continuous trigger.</li>
+</ul>
+</li>
+</ul>
+<p><strong>翻译</strong></p>
+<p>从Spark 2.4开始，连续处理模式只支持以下类型的查询。</p>
+<ul>
+<li><p>Operations:在连续模式下只支持类似map的Dataset&#x2F;DataFrame操作，即只支持投影(select, map, flatMap, mapPartitions等)和选择(where, filter等)。</p>
+<ul>
+<li>除了聚合函数(因为聚合还不支持)、current_timestamp()和current_date()(使用时间进行确定性计算是一个挑战)外，所有的SQL函数都支持。</li>
+</ul>
+</li>
+<li><p>来源:</p>
+<ul>
+<li>Kafka source:支持所有选项。</li>
+<li>速率来源:适合测试。连续模式下支持的选项只有numPartitions和rowsPerSecond。</li>
+</ul>
+</li>
+<li><p>接收器:</p>
+<ul>
+<li>Kafka sink:支持所有选项。</li>
+<li>内存接收器:适合调试。</li>
+<li>控制台接收器:适合调试。支持所有选项。请注意，控制台将打印您在连续触发器中指定的每个检查点间隔。</li>
+</ul>
+</li>
+</ul>
+<h2 id="事件时间"><a href="#事件时间" class="headerlink" title="事件时间"></a>事件时间</h2><h3 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h3><p>每个5分钟统计最近10分钟之内的单词count数</p>
+<p>8:30<br>第一个窗口：8:30-8:40<br>第二个窗口：8:35-8:45</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> spark.implicits._</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> words = ... <span class="comment">// streaming DataFrame of schema &#123; timestamp: Timestamp, word: String &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Group the data by window and word and compute the count of each group</span></span><br><span class="line"><span class="keyword">val</span> windowedCounts = words.groupBy(</span><br><span class="line">  window($<span class="string">&quot;timestamp&quot;</span>, <span class="string">&quot;10 minutes&quot;</span>, <span class="string">&quot;5 minutes&quot;</span>),</span><br><span class="line">  $<span class="string">&quot;word&quot;</span></span><br><span class="line">).count()</span><br></pre></td></tr></table></figure>
+
+<h3 id="计算过程"><a href="#计算过程" class="headerlink" title="计算过程"></a>计算过程</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404211930.png"></p>
+<h3 id="处理延迟数据"><a href="#处理延迟数据" class="headerlink" title="处理延迟数据"></a>处理延迟数据</h3><p>12:06分产生的数据，12:16才到达计算引擎</p>
+<ol>
+<li>严格按照窗口时间执行计算：数据丢失，结果不准确</li>
+<li>等待所有数据到达再执行计算：计算时间无限推迟，有大量状态需要保存</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404212012.png"></p>
+<h3 id="乱序数据处理：水位线"><a href="#乱序数据处理：水位线" class="headerlink" title="乱序数据处理：水位线"></a>乱序数据处理：水位线</h3><p>引入水位线：窗口允许的最大延迟时间</p>
+<p>trigger：5分钟触发一次</p>
+<p>watermark：10分钟</p>
+<p>蓝色线：实际数据</p>
+<p>橙色线：水位线</p>
+<p>以12:10要开始计算为例，如果<strong>数据到达时间</strong>小于<strong>开始计算时间+watermark时间</strong>则放入到窗口处理</p>
+<p>如下图12:08数据在大约12:17左右到达，在12:10计算窗口内，水位线为10分钟，也就是在12:20之前到达的数据都会放入12:10计算窗口内。下图12:04数据在12:22左右到达，超过12:20则不放入12:10计算窗口。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404212107.png"> </p>
+<h2 id="结果输出"><a href="#结果输出" class="headerlink" title="结果输出"></a>结果输出</h2><ul>
+<li>Complete：全量输出，输出<strong>整个</strong>Result Table数据</li>
+<li>Update：增量输出，只输出Result Table中<strong>被修改</strong>的数据</li>
+<li>Append : 追加输出，只输出<strong>新添加</strong>进Result Table的数据。根据水位线判断数据不会再发生变换则输出数据</li>
+</ul>
+<p>org.apache.spark.sql.streaming.OutputMode</p>
+<h3 id="Output-Mode-Complete"><a href="#Output-Mode-Complete" class="headerlink" title="Output Mode - Complete"></a>Output Mode - Complete</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404222459.png"></p>
+<h3 id="Output-Mode-Append"><a href="#Output-Mode-Append" class="headerlink" title="Output Mode - Append"></a>Output Mode - Append</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404222511.png"></p>
+<p>在Append模式下，Structured Streaming需要知道，某一条key的结果什么时候不会再更新了。当确认结果不会再更新的时候，就可以将结果进行输出 。（依靠watermark确认结果不再进行更新）</p>
+<h3 id="Output-Mode-Update"><a href="#Output-Mode-Update" class="headerlink" title="Output Mode - Update"></a>Output Mode - Update</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404222633.png"></p>
+<h3 id="Output-Mode-不同的Output-Mode对应不同的Query类型"><a href="#Output-Mode-不同的Output-Mode对应不同的Query类型" class="headerlink" title="Output Mode - 不同的Output Mode对应不同的Query类型"></a>Output Mode - 不同的Output Mode对应不同的Query类型</h3><table>
+<thead>
+<tr>
+<th>Query Type</th>
+<th>Output Mode</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>aggregation:基于event-time并带watermark</td>
+<td>Append<br />Update<br />Complete</td>
+<td>唯一支持3种模式的Query</td>
+</tr>
+<tr>
+<td>aggregation:其他</td>
+<td>Update<br />Complete</td>
+<td></td>
+</tr>
+<tr>
+<td>mapGroupsWithState</td>
+<td>Update</td>
+<td></td>
+</tr>
+<tr>
+<td>flatMapGroupsWithState</td>
+<td>Append</td>
+<td></td>
+</tr>
+<tr>
+<td>joins</td>
+<td>Append</td>
+<td></td>
+</tr>
+<tr>
+<td>除上之外的Query</td>
+<td>Append<br />Update</td>
+<td>非聚合查询如支持complete模式，会造成Result Table爆炸</td>
+</tr>
+</tbody></table>
+<h3 id="Output-Sink-将数据输出到哪里？"><a href="#Output-Sink-将数据输出到哪里？" class="headerlink" title="Output Sink - 将数据输出到哪里？"></a>Output Sink - 将数据输出到哪里？</h3><table>
+<thead>
+<tr>
+<th>Sink</th>
+<th>Output Mode</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>File</td>
+<td>Append</td>
+<td></td>
+</tr>
+<tr>
+<td>Kafka</td>
+<td>Update<br />Complete<br />Append</td>
+<td>参考“Kafka集成文档”</td>
+</tr>
+<tr>
+<td>Foreach</td>
+<td>Update<br />Complete<br />Append</td>
+<td>逐行处理，逻辑自由，输出自由</td>
+</tr>
+<tr>
+<td>Console</td>
+<td>Update<br />Complete<br />Append</td>
+<td>测试常用</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>Complete<br />Append</td>
+<td>非聚合查询如支持complete模式，会造成Result Table爆炸</td>
+</tr>
+</tbody></table>
+<p>org.apache.spark.sql.execution.streaming.Sink</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404224251.png"></p>
+<h2 id="管理-监控"><a href="#管理-监控" class="headerlink" title="管理&amp;监控"></a>管理&amp;监控</h2><p>对Query进行监控和管理</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> query = df.writeStream.format(<span class="string">&quot;console&quot;</span>).start()   <span class="comment">// get the query object</span></span><br><span class="line"></span><br><span class="line">query.id          <span class="comment">// get the unique identifier of the running query that persists across restarts from checkpoint data</span></span><br><span class="line"></span><br><span class="line">query.runId       <span class="comment">// get the unique id of this run of the query, which will be generated at every start/restart</span></span><br><span class="line"></span><br><span class="line">query.name        <span class="comment">// get the name of the auto-generated or user-specified name</span></span><br><span class="line"></span><br><span class="line">query.explain()   <span class="comment">// print detailed explanations of the query</span></span><br><span class="line"></span><br><span class="line">query.stop()      <span class="comment">// stop the query</span></span><br><span class="line"></span><br><span class="line">query.awaitTermination()   <span class="comment">// block until query is terminated, with stop() or with error</span></span><br><span class="line"></span><br><span class="line">query.exception       <span class="comment">// the exception if the query has been terminated with error</span></span><br><span class="line"></span><br><span class="line">query.recentProgress  <span class="comment">// an array of the most recent progress updates for this query</span></span><br><span class="line"></span><br><span class="line">query.lastProgress    <span class="comment">// the most recent progress update of this streaming query</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="持续增量计算的原理"><a href="#持续增量计算的原理" class="headerlink" title="持续增量计算的原理"></a>持续增量计算的原理</h1><h2 id="核心流程"><a href="#核心流程" class="headerlink" title="核心流程"></a>核心流程</h2><ol>
+<li>获取数据源 offset</li>
+<li>获取当前offset，跟数据源 offset 进行对比，得到当前应该消费的 offset，将 offset 写入到 offsetLog 中，进行状态保存，方便后面恢复<br>例如：数据源为7，当前为3，则从3开始处理。如果已经消费完没有数据则不需要处理</li>
+<li>根据 offset 和需要处理的数据生成 logicalPlan，整个 DAG 的图</li>
+<li>logicalPlan 优化完后生成 optimizedLogicalPlan</li>
+<li>执行物理计划，记录执行状态</li>
+<li>执行完成输出结果到 sink 端，写入成功会记录到 batchCommitLog 中，告诉 source 进行 commit，把 offset 进行提交</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404224556.png"></p>
+<h2 id="StreamExecution"><a href="#StreamExecution" class="headerlink" title="StreamExecution"></a>StreamExecution</h2><p>org.apache.spark.sql.execution.streaming.StreamExecution</p>
+<p>成员变量：</p>
+<ul>
+<li>sources：streaming data 的产生端（比如 kafka 等）</li>
+<li>logicalPlan：DataFrame&#x2F;Dataset 的一系列变换（即计算逻辑）</li>
+<li>sink：最终结果写出的接收端（比如 file system 等）</li>
+<li>currentBatchId：当前执行的 id</li>
+<li>batchCommitLog：已经成功处理的批次有哪些</li>
+<li>offsetLog，availableOffsets，committedOffsets：当前执行需要处理的 source data 的 meta 信息</li>
+<li>offsetSeqMetadata：当前执行的 watermark 信息（event time 相关）等</li>
+</ul>
+<h2 id="状态存储-StateStore"><a href="#状态存储-StateStore" class="headerlink" title="状态存储 StateStore"></a>状态存储 StateStore</h2><p>State通过Key-Value结构存放数据，Key&#x3D;operator+partition+version(批次号)</p>
+<ul>
+<li>分布式实现</li>
+<li>状态分片</li>
+<li>状态分版本</li>
+<li>批量读入和写出分片</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404224653.png"></p>
+<p>org.apache.spark.sql.execution.streaming.state.StateStore（未完成）</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* CRUD 增删改查 */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询一条 key-value</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span></span>(key: <span class="type">UnsafeRow</span>): <span class="type">UnsafeRow</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新增、或修改一条 key-value</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">put</span></span>(key: <span class="type">UnsafeRow</span>, value: <span class="type">UnsafeRow</span>): <span class="type">Unit</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除一条符合条件的 key-value</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">remove</span></span>(condition: <span class="type">UnsafeRow</span> =&gt; <span class="type">Boolean</span>): <span class="type">Unit</span></span><br><span class="line"><span class="comment">// 根据 key 删除 key-value</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">remove</span></span>(key: <span class="type">UnsafeRow</span>): <span class="type">Unit</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* 批量操作相关 */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 提交当前执行批次的所有修改，将刷出到 HDFS，成功后版本将自增</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">commit</span></span>(): <span class="type">Long</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 放弃当前执行批次的所有修改</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">abort</span></span>(): <span class="type">Unit</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 当前状态分片、当前版本的所有 key-value 状态</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">iterator</span></span>(): <span class="type">Iterator</span>[<span class="type">UnsafeRowPair</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">// 当前状态分片、当前版本比上一个版本的所有增量更新</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">updates</span></span>(): <span class="type">Iterator</span>[<span class="type">StoreUpdate</span>]</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="如何保证端到端的Exactly-Once语义？"><a href="#如何保证端到端的Exactly-Once语义？" class="headerlink" title="如何保证端到端的Exactly-Once语义？"></a>如何保证端到端的Exactly-Once语义？</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220404224822.png"></p>
+<h1 id="动手操作"><a href="#动手操作" class="headerlink" title="动手操作"></a>动手操作</h1><ol>
+<li>比较Spark Streaming 和 Structured Streaming的异同点 </li>
+<li>将WordCount的结果输出到MySQL或HBase </li>
+<li>利用StateStore完成Top N 和去重运算</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/03-Spark/04-StructuredStreaming/" data-id="clmcxec7s0016u8wa4j9tdciw" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/04-Flink/01-Flink%E5%9F%BA%E7%A1%80/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/03-Spark/03-SparkShuffle&SQL&MLlib/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

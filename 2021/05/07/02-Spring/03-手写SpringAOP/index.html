@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>手写SpringAOP | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="AOP分析AOP框架的责任 AOP是什么？ Aspect Oriented Programming面向切面编程，在不改变类的代码的情况下，对类方法进行功能增强。  AspectJ和AOP的代理区别？ AspectJ会对原有的类的二进制文件进行修改，当你在类的内部调用其它方法时还是会功能增强。 AOP是基于动态代理，在不改变类的代码的情况下，对类方法进行功能增强。所以当你在类的内部调用其它方法时没有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手写SpringAOP">
+<meta property="og:url" content="http://example.com/2021/05/07/02-Spring/03-%E6%89%8B%E5%86%99SpringAOP/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="AOP分析AOP框架的责任 AOP是什么？ Aspect Oriented Programming面向切面编程，在不改变类的代码的情况下，对类方法进行功能增强。  AspectJ和AOP的代理区别？ AspectJ会对原有的类的二进制文件进行修改，当你在类的内部调用其它方法时还是会功能增强。 AOP是基于动态代理，在不改变类的代码的情况下，对类方法进行功能增强。所以当你在类的内部调用其它方法时没有">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210802223915.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210802225142.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210802231203.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210803001459.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210803001946.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210803003340.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210803003602.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210803003817.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210804205856.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210804210418.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724182323.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210804211351.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210804214530.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210804215507.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210804215658.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807215058.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807215808.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807220539.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807215914.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807220930.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807221743.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807222819.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807223607.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807223837.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807224058.png">
+<meta property="article:published_time" content="2021-05-07T14:36:30.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:13:56.858Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Spring">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210802223915.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-02-Spring/03-手写SpringAOP" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/02-Spring/03-%E6%89%8B%E5%86%99SpringAOP/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spring/">Spring</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      手写SpringAOP
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="AOP分析"><a href="#AOP分析" class="headerlink" title="AOP分析"></a>AOP分析</h1><h2 id="AOP框架的责任"><a href="#AOP框架的责任" class="headerlink" title="AOP框架的责任"></a>AOP框架的责任</h2><ul>
+<li><p><strong>AOP是什么？</strong></p>
+<p>Aspect Oriented Programming面向切面编程，在不改变类的代码的情况下，对类方法进行功能增强。</p>
+</li>
+<li><p><strong>AspectJ和AOP的代理区别？</strong></p>
+<p>AspectJ会对原有的类的二进制文件进行修改，当你在类的内部调用其它方法时还是会功能增强。</p>
+<p>AOP是基于动态代理，在不改变类的代码的情况下，对类方法进行功能增强。所以当你在类的内部调用其它方法时没有通过代理类是不会功能增强。</p>
+</li>
+<li><p><strong>AOP框架要做什么？</strong></p>
+<p>AOP框架中要向使用用户提供AOP功能，让用户可以通过AOP技术实现对类方法进行功能增强。</p>
+</li>
+</ul>
+<h2 id="AOP元素分析"><a href="#AOP元素分析" class="headerlink" title="AOP元素分析"></a>AOP元素分析</h2><p><strong>Advice</strong></p>
+<p>​	通知，增强的功能（用户提供框架使用）</p>
+<p><strong>Join points</strong></p>
+<p>​	连接点，可选的方法点（框架提供用户使用）</p>
+<p><strong>Pointcut</strong></p>
+<p>​	切入点，选择切入的方法点（用户提供框架使用）</p>
+<p><strong>Aspect</strong></p>
+<p>​	切面，选择的（多个）方法点  + 增强的功能（用户提供框架使用）</p>
+<p><strong>Introduction</strong></p>
+<p>​	引入 ：添加新的方法、属性到已存在的类中，就叫引入</p>
+<p><strong>Weaving</strong></p>
+<p>​	织入（编织）：不改原类的代码，加入功能增强（框架使用）</p>
+<h2 id="AOP分析-1"><a href="#AOP分析-1" class="headerlink" title="AOP分析"></a>AOP分析</h2><p>Aspect Oriented Programming面向切面编程，在不改变类的代码的情况下，对类方法进行功能增强。</p>
+<p>根据AOP的定义，得出AOP需要提供的功能特性</p>
+<h2 id="图解AOP"><a href="#图解AOP" class="headerlink" title="图解AOP"></a>图解AOP</h2><p>AOP各个元素参与AOP执行流程示意理解图</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210802223915.png"></p>
+<h2 id="AOP概念—特点分析"><a href="#AOP概念—特点分析" class="headerlink" title="AOP概念—特点分析"></a>AOP概念—特点分析</h2><p>Advice、Pointcut、Weaving各自有什么特点？</p>
+<ul>
+<li><p><strong>Advice</strong></p>
+<ol>
+<li>用户性：由用户提供增强功能逻辑代码</li>
+<li>变化的：不同的增强需求，会有不同的逻辑</li>
+<li>可选时机：可选择在方法功能前、后、异常时进行功能增强</li>
+<li>多重的：同一个切入点上可以有多重增强</li>
+</ol>
+</li>
+<li><p><strong>Pointcut</strong></p>
+<ol>
+<li>用户性：由用户来指定</li>
+<li>变化的：用户可灵活指定</li>
+<li>多点性：用户可以选择在多个点上进行增强</li>
+</ol>
+</li>
+<li><p><strong>Weaving</strong></p>
+<ol>
+<li>无侵入性，不改原类代码</li>
+<li>在AOP框架中实现</li>
+</ol>
+</li>
+</ul>
+<h1 id="Advice"><a href="#Advice" class="headerlink" title="Advice"></a>Advice</h1><h2 id="Advice设计"><a href="#Advice设计" class="headerlink" title="Advice设计"></a>Advice设计</h2><ul>
+<li>Advice是由用户来提供，我们来使用，它是多变的。<ol>
+<li>我们如何能认识用户提供的东西？用户在我们写好框架后使用我们的框架。</li>
+<li>如何让我们的代码隔绝用户提供的多变？</li>
+</ol>
+</li>
+</ul>
+<p><strong>我们定义一套标准接口，用户通过实现接口来提供他们不同的逻辑。</strong></p>
+<p><strong>重要设计原则：如何应对变化，面向接口编程！</strong></p>
+<ul>
+<li><p>定义Advice接口</p>
+<p>接口没有定义任何方法</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210802225142.png"></p>
+</li>
+<li><p>Advice的特点：可选时机，可选择在方法功能前、后、异常时进行功能增强</p>
+<ol>
+<li>有的advice是在方法执行前进行增强；（前置增强）</li>
+<li>有的是在方法执行后进行增强；（后置增强）</li>
+<li>有的会是之前、之后都进行增强；（环绕增强）</li>
+<li>有的则只是在方法执行抛出异常时进行异常增强处理；（异常处理增强）</li>
+</ol>
+</li>
+</ul>
+<p>我们需要做什么？</p>
+<p>​	定义标准接口方法，让用户可以实现它，提供各种增强。</p>
+<h2 id="Advice—前置增强分析"><a href="#Advice—前置增强分析" class="headerlink" title="Advice—前置增强分析"></a>Advice—前置增强分析</h2><ul>
+<li><p>前置增强：在方法执行前进行增强。</p>
+<ul>
+<li><p>它可能需要什么参数？</p>
+<p>目的是对方法进行增强，应该需要的是方法相关的信息；我们使用它时，能给入它的好像也只有当前要执行方法的信息。</p>
+</li>
+<li><p>运行时方法有哪些信息？</p>
+<ul>
+<li>方法本身 Method</li>
+<li>方法所属的对象 Object </li>
+<li>方法的参数 Object[]</li>
+</ul>
+</li>
+<li><p>前置增强的返回值是什么？</p>
+<ul>
+<li>在方法执行前进行增强，不需要返回值！</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Advice—后置增强分析"><a href="#Advice—后置增强分析" class="headerlink" title="Advice—后置增强分析"></a>Advice—后置增强分析</h2><ul>
+<li>后置增强：在方法执行后进行增强<ul>
+<li>它可能需要什么参数？<ul>
+<li>方法本身 Method</li>
+<li>方法所属的对象 Object </li>
+<li>方法的参数 Object[]</li>
+<li>方法的返回值 Object</li>
+</ul>
+</li>
+<li>它的返回值是什么？<ul>
+<li>在方法执行后进行增强，不需要返回值！</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Advice—环绕增强分析"><a href="#Advice—环绕增强分析" class="headerlink" title="Advice—环绕增强分析"></a>Advice—环绕增强分析</h2><ul>
+<li>环绕增强：包裹方法进行增强<ul>
+<li>它可能需要什么参数？<ul>
+<li>方法本身 Method</li>
+<li>方法所属的对象 Object </li>
+<li>方法的参数 Object[]</li>
+</ul>
+</li>
+<li>它的返回值是什么？<ul>
+<li>方法被它包裹，也即方法的将由它来执行，它需要返回方法的返回值。 Object</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Advice—异常处理增强分析"><a href="#Advice—异常处理增强分析" class="headerlink" title="Advice—异常处理增强分析"></a>Advice—异常处理增强分析</h2><ul>
+<li><p>异常处理增强：捕获方法执行时的异常，进行增强处理</p>
+<ul>
+<li><p>进行异常处理增强需要包裹方法吗？</p>
+<p>需要</p>
+</li>
+<li><p>那它可否在环绕中实现？</p>
+<p>可以</p>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">	...执行方法</span><br><span class="line">&#125;<span class="keyword">catch</span>(ExceptionA e)&#123;</span><br><span class="line">	...A异常的增强处理</span><br><span class="line">&#125;<span class="keyword">catch</span>(ExceptionB e)&#123;</span><br><span class="line">	...B异常的增强处理</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Advice设计-1"><a href="#Advice设计-1" class="headerlink" title="Advice设计"></a>Advice设计</h2><ul>
+<li><p>经前面的分析，我们一共需要定义三个方法</p>
+<p>思考：是把这三个定义到一个接口中，还是分三个接口定义？</p>
+<p><strong>分三个接口，还可通过类型来区分不同的Advice</strong></p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210802231203.png"></p>
+<h1 id="Pointcut"><a href="#Pointcut" class="headerlink" title="Pointcut"></a>Pointcut</h1><h2 id="Pointcut分析"><a href="#Pointcut分析" class="headerlink" title="Pointcut分析"></a>Pointcut分析</h2><ul>
+<li><p>Pointcut的特点</p>
+<ol>
+<li>用户性：由用户来指定</li>
+<li>变化的：用户可灵活指定</li>
+<li>多点性：用户可以选择在多个点上进行增强</li>
+</ol>
+</li>
+<li><p>我们需要做什么？</p>
+<p>为用户提供一个东西，让他们可以灵活地指定多个方法点，而我们又能懂！</p>
+<p>思考：切入点是由用户来指定在哪些方法点上进行增强，那么这个哪些方法点如何来表示，能满足上面的特点？</p>
+</li>
+<li><p>分析</p>
+<ol>
+<li><p>指定哪些方法，是不是一个描述信息？</p>
+</li>
+<li><p>如何来指定一个方法？（xx类的xx方法）</p>
+</li>
+<li><p>重载怎么办？（加上参数类型）</p>
+</li>
+<li><p>总结：其实就是一个完整的方法签名！</p>
+<p>com.study.spring.aop.Girl.dbj(Boy,Time)</p>
+<p>com.study.spring.aop.Girl.dbj(Boy,Girl,Time)</p>
+</li>
+<li><p>如何做到多点性，灵活性？在一个描述中指定一类方法？</p>
+<ul>
+<li><p>某个包下的某个类的某个方法</p>
+</li>
+<li><p>某个包下的所有类中所有方法</p>
+</li>
+<li><p>某个包下的所有类中的do开头的方法</p>
+</li>
+<li><p>某个包下的以service结尾的类的中的do开头的方法</p>
+</li>
+<li><p>某个包下的及其子包下的以service结尾的类的中的do开头的方法</p>
+<p>我们需要一个表达式，能灵活描述这些的信息的表达式</p>
+</li>
+</ul>
+</li>
+<li><p>要表达哪些信息？</p>
+<p>包名.类名.方法名(参数类型)</p>
+</li>
+<li><p>每部分的要求是怎样的？</p>
+<ul>
+<li>包名：有父子特点，要能模糊匹配</li>
+<li>类名：要能模糊匹配</li>
+<li>方法：要能模糊匹配</li>
+<li>参数类型：参数可以多个</li>
+</ul>
+</li>
+<li><p>这个表达式将被我们用来决定是否需要对某个类的某方法进行增强，这个决定过程应该是怎样的？</p>
+<ul>
+<li>匹配类，匹配方法</li>
+</ul>
+</li>
+<li><p>一个表达式如果不好实现，分成多个表达式进行组合是否容易些？</p>
+<ul>
+<li><strong>是的，可以这么考虑！</strong></li>
+</ul>
+</li>
+<li><p>我们的掌握的表达式有哪些？它们是否能满足这里的需要？</p>
+<ul>
+<li><strong>正则表达式？</strong></li>
+<li><strong>Ant Path表达式？</strong></li>
+<li><strong>AspectJ 的 pointcut 表达式?</strong>           execution(* com.xyz.service.AccountService.*(..))</li>
+</ul>
+<p><strong>正则表达式是可以的。AspectJ本就是切面编程组件，也是可以的。</strong></p>
+<p>AspectJ官网地址：<a target="_blank" rel="noopener" href="http://www.eclipse.org/aspectj/">http://www.eclipse.org/aspectj/</a></p>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="AspectJ表达式语法学习"><a href="#AspectJ表达式语法学习" class="headerlink" title="AspectJ表达式语法学习"></a>AspectJ表达式语法学习</h2><ul>
+<li><p>通过spring中的AOP介绍学习：</p>
+<p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#aop-pointcuts">https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#aop-pointcuts</a></p>
+</li>
+<li><p>如果英文有问题，请参考：</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/loongss/p/5774859.html">https://www.cnblogs.com/loongss/p/5774859.html</a></p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">execution(modifiers-pattern? ret-type-pattern declaring-type-pattern?name-pattern(param-pattern) throws-pattern?)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Pointcut设计"><a href="#Pointcut设计" class="headerlink" title="Pointcut设计"></a>Pointcut设计</h2><ul>
+<li><p>该来对Pointcut进行接口、类设计了</p>
+<ol>
+<li><p>切点应有什么属性？</p>
+<p>切点定义表达式</p>
+</li>
+<li><p>切点应对外提供什么行为（方法）？<br>检验类是否匹配<br>检验方法是否匹配</p>
+</li>
+<li><p>切点将被我们用来做什么？<br>对类、方法进行匹配<br>切点应提供匹配类，匹配方法的行为。</p>
+</li>
+<li><p>如果在我们设计的框架中要能灵活扩展切点的实现方式，我们该如何设计？<br>这又是一个要支持可多变的问题，像通知一样，我们来定义一套标准接口，定义好基本行为，面向接口编程，屏蔽掉具体的实现。<br>无论哪种实现，都实现匹配类、匹配方法的接口</p>
+</li>
+</ol>
+</li>
+<li><p>Pointcut标准接口</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210803001459.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.study.aop.pointcut;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Pointcut</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">matchsClass</span><span class="params">(Class&lt;?&gt; targetClass)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">matchsMethod</span><span class="params">(Method method, Class&lt;?&gt; targetClass)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="AspectJExpressionPointcut实现"><a href="#AspectJExpressionPointcut实现" class="headerlink" title="AspectJExpressionPointcut实现"></a>AspectJExpressionPointcut实现</h2></li>
+<li><p>实现步骤</p>
+<ol>
+<li><p>引入AspectJ的jar</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.aspectj<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>aspectjweaver<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.9.6<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>掌握Aspectj的api使用，我们只使用它的切点表达式解析匹配部分。</p>
+<ol>
+<li><p>入口：org.aspectj.weaver.tools.PointcutParser 获得切点解析器；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">PointcutParser</span> <span class="variable">pp</span> <span class="operator">=</span> PointcutParser.getPointcutParserSupportingAllPrimitivesAndUsingContextClassloaderForResolution();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解析表达式，得到 org.aspectj.weaver.tools.PointcutExpression</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">PointcutExpression</span> <span class="variable">pe</span> <span class="operator">=</span> pp.parsePointcutExpression(</span><br><span class="line">                <span class="string">&quot;execution(* com.study.beans.BeanFactory.get*(..))&quot;</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用PointcutExpression 匹配类，不可靠。没关系，通过方法匹配来正确匹配。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pe.couldMatchJoinPointsInType(ABean.class)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用PointcutExpression 匹配方法，可靠。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt; cl = ABean.class;</span><br><span class="line"><span class="type">Method</span> <span class="variable">aMethod</span> <span class="operator">=</span> cl.getMethod(<span class="string">&quot;doSomthing&quot;</span>, <span class="literal">null</span>);</span><br><span class="line"><span class="type">ShadowMatch</span> <span class="variable">sm</span> <span class="operator">=</span> pe.matchesMethodExecution(aMethod);</span><br><span class="line">System.out.println(sm.alwaysMatches());</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="Advice-Pointcut使用"><a href="#Advice-Pointcut使用" class="headerlink" title="Advice Pointcut使用"></a>Advice Pointcut使用</h2><ul>
+<li>用户该如何使用我们提供的东西？<br><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210803001946.png"></li>
+</ul>
+<h2 id="Aspec设计"><a href="#Aspec设计" class="headerlink" title="Aspec设计"></a>Aspec设计</h2><ul>
+<li>为用户提供更简单的外观，Advisor(通知者)组合Advice和Pointcut</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210803003340.png"></p>
+<h2 id="Advisor扩展说明"><a href="#Advisor扩展说明" class="headerlink" title="Advisor扩展说明"></a>Advisor扩展说明</h2><ul>
+<li>扩展不同的Advisor实现<br><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210803003602.png"></li>
+<li>还可这样设计<br><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210803003817.png"></li>
+</ul>
+<h1 id="Weaving"><a href="#Weaving" class="headerlink" title="Weaving"></a>Weaving</h1><h2 id="Weaving-织入-分析"><a href="#Weaving-织入-分析" class="headerlink" title="Weaving 织入-分析"></a>Weaving 织入-分析</h2><ul>
+<li><p>织入要完成什么？</p>
+<p>将用户提供的增强功能加到指定的方法上。这部分是要我们实现的！</p>
+</li>
+<li><p>请思考以下问题：</p>
+<ol>
+<li><p>在什么时候做织入？</p>
+<p>创建bean实例的时候，在bean初始化后，再对其进行增强。</p>
+</li>
+<li><p>如何确定bean要增强？</p>
+<p>对bean类及方法挨个匹配用户指定的切面，如果有匹配的切面就是要增强。</p>
+</li>
+<li><p>如何织入？</p>
+<p>代理</p>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="Weaving-织入-设计"><a href="#Weaving-织入-设计" class="headerlink" title="Weaving 织入-设计"></a>Weaving 织入-设计</h2><ul>
+<li>整理一下AOP的使用流程，帮助我们更好地去设计织入</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210804205856.png"></p>
+<ul>
+<li><p>思考：</p>
+<ol>
+<li><p>用户到哪里去注册切面？</p>
+<p>BeanFactory？</p>
+</li>
+<li><p>判断匹配、织入的逻辑写到哪里？</p>
+<p>写在BeanFactory中？</p>
+</li>
+<li><p>我们现在是不是要在Bean创建的过程中加一项处理？</p>
+</li>
+<li><p>后续可能在bean创建过程中还会加入更多别的处理，如果直接在BeanFactory中实现会有什么不好？</p>
+<ul>
+<li>BeanFactory类代码爆炸</li>
+<li>不易扩展</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p>回顾总结一下Bean的产生过程都经历了什么</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210804210418.png"></p>
+<p>在这个过程中，将来会有更多处理逻辑加入到过程的不同阶段</p>
+<p>我们如何设计能让我们一次写好BeanFactory后，不改代码，就可以灵活扩展！</p>
+<p>在各个节点加入扩展点，加入注册机制。</p>
+<p>什么是扩展点，什么是注册机制？</p>
+<p>​	想想观察者模式（监听模式）</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210724182323.png"></p>
+<p>这里有六个扩展点，就是六个主题，六类观察者。</p>
+<p>该设计几个接口？</p>
+<p>​	由你来定了！</p>
+<ul>
+<li>应用观察者模式来加入我们的AOP织入</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210804211351.png"></p>
+<h2 id="Weaving-织入-实现"><a href="#Weaving-织入-实现" class="headerlink" title="Weaving 织入-实现"></a>Weaving 织入-实现</h2><ul>
+<li>现在来聚焦实现织入：判断bean是否需要织入增强</li>
+</ul>
+<p>如何判断bean实例是否要增强？</p>
+<ol>
+<li><p>获取bean的类及所有方法；</p>
+<p>如何取到所有的方法？<br>这两个方法可以取到吗？可以使用spring-core中的工具类获取</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取当前类和父类中的所有public方法</span></span><br><span class="line">Method[] getMethods();</span><br><span class="line"><span class="comment">// 获取当前类所有的public、default、properted、private方法</span></span><br><span class="line">Method[] getDeclaredMethods();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>遍历Advisor，取advisor中的Pointcut来匹配类、方法。</p>
+</li>
+</ol>
+<p>![image-20210804213839940](C:\Users\chen cheng\AppData\Roaming\Typora\typora-user-images\image-20210804213839940.png)</p>
+<ul>
+<li>现在来聚焦实现织入：代理增强</li>
+</ul>
+<p>代理增强的逻辑是怎样？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210804214530.png"></p>
+<h2 id="回顾-JDK状态代理"><a href="#回顾-JDK状态代理" class="headerlink" title="回顾-JDK状态代理"></a>回顾-JDK状态代理</h2><ul>
+<li>在运行时，对接口创建代理对象</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210804215507.png"></p>
+<h2 id="回顾-CGLIB动态代理"><a href="#回顾-CGLIB动态代理" class="headerlink" title="回顾-CGLIB动态代理"></a>回顾-CGLIB动态代理</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210804215658.png"></p>
+<h2 id="Weaving-织入-搭架子"><a href="#Weaving-织入-搭架子" class="headerlink" title="Weaving 织入- 搭架子"></a>Weaving 织入- 搭架子</h2><ul>
+<li>先把架子搭起来，再填砖！</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807215058.png"></p>
+<h2 id="Weaving-织入-增强逻辑实现"><a href="#Weaving-织入-增强逻辑实现" class="headerlink" title="Weaving 织入- 增强逻辑实现"></a>Weaving 织入- 增强逻辑实现</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807215808.png"></p>
+<p>它们俩中的逻辑一样吗？</p>
+<p>都是应用Advice增强具体的逻辑是怎样的？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807220539.png"></p>
+<p><strong>把相同的处理逻辑提出来</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807215914.png"></p>
+<h2 id="Weaving-织入-代理创建实现"><a href="#Weaving-织入-代理创建实现" class="headerlink" title="Weaving 织入- 代理创建实现"></a>Weaving 织入- 代理创建实现</h2><ul>
+<li>实现代理对象创建</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807220930.png"></p>
+<ol>
+<li>先实现jdk方式的，需要的参数：<ul>
+<li>要实现的接口</li>
+<li>InvocationHandler</li>
+</ul>
+</li>
+<li>实现Cglib方式的：需要的参数<ul>
+<li>继承的类</li>
+<li>实现的接口</li>
+<li>Callback</li>
+<li>构造参数类型</li>
+<li>构造参数</li>
+</ul>
+</li>
+</ol>
+<p>问题：构造参数类型、构造参数从哪来？</p>
+<p>创建对象实例时会有！</p>
+<h2 id="Weaving-织入-传递构造参数、参数类型"><a href="#Weaving-织入-传递构造参数、参数类型" class="headerlink" title="Weaving 织入- 传递构造参数、参数类型"></a>Weaving 织入- 传递构造参数、参数类型</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807221743.png"></p>
+<p>如何来传递创建bean实例时获得的数据到初始化后的Aop中？</p>
+<p>这里我们要考虑BeanFactory的IOC&amp;DI纯洁性，不应与其他功能的类有染！</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807222819.png"></p>
+<p>方式：<strong>在BeanDefinition中用ThreadLocal持有参数值</strong></p>
+<h2 id="Weaving-织入-如何使用AopProxy"><a href="#Weaving-织入-如何使用AopProxy" class="headerlink" title="Weaving 织入- 如何使用AopProxy"></a>Weaving 织入- 如何使用AopProxy</h2><ul>
+<li>Creator中怎么使用AopProxy?</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807223607.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807223837.png"></p>
+<p>怎么使用AopProxy？</p>
+<p>应用一下工厂模式吧！把选择的逻辑交给工厂</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210807224058.png"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/02-Spring/03-%E6%89%8B%E5%86%99SpringAOP/" data-id="clmcxecse006pu8wadg4m9s46" data-title="手写SpringAOP" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/05/07/02-Spring/02-%E6%89%8B%E5%86%99SpringIOC%E5%AE%B9%E5%99%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          手写SpringIOC容器
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/05/07/02-Spring/04-%E6%89%8B%E5%86%99Spring%E9%85%8D%E7%BD%AE/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">手写Spring配置</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

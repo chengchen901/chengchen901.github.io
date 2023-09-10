@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Lua脚本简述Lua脚本语言官网：https:&#x2F;&#x2F;www.lua.org Lua是一种功能强大，高效，轻量级，可嵌入的脚本语言，非常容易嵌入到我们应用程序中。 Lua是动态类型的，通过使用基于寄存器的虚拟机解释字节码来运行，并具有增量垃圾收集的自动内存管理，使其成为配置，脚本和快速原型设计的理想选择。 Lua旨在成为一种轻量级可嵌入脚本语言。它用于各种应用程序，从游戏到Web应用程序和图像处理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/16-Nginx/03-00-Lua%E6%89%A9%E5%B1%95Nginx/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Lua脚本简述Lua脚本语言官网：https:&#x2F;&#x2F;www.lua.org Lua是一种功能强大，高效，轻量级，可嵌入的脚本语言，非常容易嵌入到我们应用程序中。 Lua是动态类型的，通过使用基于寄存器的虚拟机解释字节码来运行，并具有增量垃圾收集的自动内存管理，使其成为配置，脚本和快速原型设计的理想选择。 Lua旨在成为一种轻量级可嵌入脚本语言。它用于各种应用程序，从游戏到Web应用程序和图像处理。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221016153403.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221022162241.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221022163133.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221022163509.png">
+<meta property="article:published_time" content="2023-09-10T03:59:07.786Z">
+<meta property="article:modified_time" content="2022-10-22T09:41:42.344Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221016153403.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-16-Nginx/03-00-Lua扩展Nginx" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/16-Nginx/03-00-Lua%E6%89%A9%E5%B1%95Nginx/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:07.786Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Lua脚本简述"><a href="#Lua脚本简述" class="headerlink" title="Lua脚本简述"></a>Lua脚本简述</h1><h2 id="Lua脚本语言"><a href="#Lua脚本语言" class="headerlink" title="Lua脚本语言"></a>Lua脚本语言</h2><p>官网：<a target="_blank" rel="noopener" href="https://www.lua.org/">https://www.lua.org</a></p>
+<p>Lua是一种功能强大，高效，轻量级，可嵌入的脚本语言，非常容易嵌入到我们应用程序中。</p>
+<p>Lua是动态类型的，通过使用基于寄存器的虚拟机解释字节码来运行，并具有增量垃圾收集的自动内存管理，使其成为配置，脚本和快速原型设计的理想选择。</p>
+<p>Lua旨在成为一种轻量级可嵌入脚本语言。它用于各种应用程序，从游戏到Web应用程序和图像处理。</p>
+<p><strong>应用场景</strong></p>
+<ol>
+<li>许多工业应用 （例如， Adobe的Photoshop Lightroom）</li>
+<li>重点是嵌入式系统（例如， 巴西的数字电视的 Ginga中间件）</li>
+<li>Lua目前 是游戏中领先的脚本语言，在游戏 （例如， 魔兽世界和愤怒的小鸟）中使用。</li>
+</ol>
+<h2 id="Lua脚本特点"><a href="#Lua脚本特点" class="headerlink" title="Lua脚本特点"></a>Lua脚本特点</h2><p><strong>快</strong>，Lua是解释脚本语言领域中最快的语言</p>
+<p><strong>Lua是便携式的</strong>，在具有标准C编译器的所有平台中构建成开箱即用，可运行各种Unix和Windows，移动设备（运行Android，iOS，BREW，Symbian，Windows Phone），嵌入式微处理器（如ARM和Rabbit，适用于Lego MindStorms等应用程序），IBM大型机等。</p>
+<p><strong>可嵌入</strong>，Lua是一种快速语言引擎，占用空间小，可以轻松嵌入到应用程序中。</p>
+<p><strong>简单而强大</strong>，提供实现功能的元机制，而不是直接在语言中提供大量功能。Lua不是纯粹的面向对象语言，提供了现类和继承的元机制。</p>
+<p><strong>小</strong>，源包含大约24000行C，包含源代码和文档的Lua 5.3.5的tar包需要297K压缩和1.2M未压缩。</p>
+<p><strong>免费</strong>，MIT许可证，可以用于任何目的，包括商业目的，完全免费。</p>
+<h2 id="开始使用Lua"><a href="#开始使用Lua" class="headerlink" title="开始使用Lua"></a>开始使用Lua</h2><p>安装Lua</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -R -O http://www.lua.org/ftp/lua-5.3.5.tar.gz </span><br><span class="line">tar zxf lua-5.3.5.tar.gz </span><br><span class="line">cd lua-5.3.5 </span><br><span class="line">make linux test</span><br></pre></td></tr></table></figure>
+
+<p>Hello World</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ lua</span><br><span class="line">Lua 5.1.4 Copyright (C) 1994-2008 Lua.org, PUC-Rio</span><br><span class="line">&gt; print(&quot;hello, world&quot;)</span><br><span class="line">hello, world</span><br></pre></td></tr></table></figure>
+
+<h2 id="一个小例子"><a href="#一个小例子" class="headerlink" title="一个小例子"></a>一个小例子</h2><p>新建hello.lua文件，Lua实现的阶乘代码示例，内容如下</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- defines a factorial function</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fact</span> <span class="params">(n)</span></span></span><br><span class="line">  <span class="keyword">if</span> n == <span class="number">0</span> <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> n * fact(n<span class="number">-1</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;enter a number:&quot;</span>)</span><br><span class="line">a = <span class="built_in">io</span>.<span class="built_in">read</span>(<span class="string">&quot;*number&quot;</span>) <span class="comment">-- read a number</span></span><br><span class="line"><span class="built_in">print</span>(fact(a))</span><br></pre></td></tr></table></figure>
+
+<p>运行示例hello.lua文件</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ lua hello.lua</span><br><span class="line">enter a number:</span><br><span class="line"><span class="number">5</span></span><br><span class="line"><span class="number">120</span> # <span class="number">120</span>=<span class="number">5</span>*<span class="number">4</span>*<span class="number">3</span>*<span class="number">2</span>*<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>语法比Java要简略，缩进对齐，无大括号分号</p>
+<h1 id="Nginx增加Lua执行模块"><a href="#Nginx增加Lua执行模块" class="headerlink" title="Nginx增加Lua执行模块"></a>Nginx增加Lua执行模块</h1><h2 id="Nginx嵌入Lua脚本语言"><a href="#Nginx嵌入Lua脚本语言" class="headerlink" title="Nginx嵌入Lua脚本语言"></a>Nginx嵌入Lua脚本语言</h2><p>ngx_lua模块资料：<a target="_blank" rel="noopener" href="https://github.com/openresty/lua-nginx-module">https://github.com/openresty/lua-nginx-module</a></p>
+<p><strong>ngx_lua模块</strong></p>
+<p>不鼓励自己用Nginx构建这个模块，自己构建需要注意，Nginx，LuaJIT和OpenSSL官方发行版具有各种限制和长期存在的错误，这些错误可能会导致某些模块的功能被禁用，无法正常运行或运行速度变慢。如何编译，<strong>参考《Nginx嵌入Lua脚本语言操作》</strong>手册。</p>
+<p>使用ngx_lua模块相当于使用Openresty，建议用官方版本OpenResty，它做了大量优化、集成了常用的第三方插件。</p>
+<p><strong>OpenResty</strong></p>
+<p>OpenResty是一款基于NGINX 和 LuaJIT 的Web 平台。</p>
+<p>OpenResty内部集成了大量精良的 Lua 库、第三方模块以及大多数的依赖项。用于方便地搭建能够处理超高并发、扩展性极高的动态 Web 应用、Web 服务和动态网关。</p>
+<p>OpenResty的安装参考《OpenResty安装操作》，比构建ngx_lua模块简单很多</p>
+<h2 id="ngx-lua支持的指令"><a href="#ngx-lua支持的指令" class="headerlink" title="ngx_lua支持的指令"></a>ngx_lua支持的指令</h2><p><strong>认识ngx_lua中的指令</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">指令分为配置指令、控制指令。</span><br><span class="line">控制指令分为两种方式：</span><br><span class="line">  lua脚本块*_by_lua_block</span><br><span class="line">  lua脚本文件*_by_lua_file</span><br><span class="line">Lua脚本执行顺序，如下图从上至下：初始化、重写/访问、内容处理、日志输出四个阶段。</span><br><span class="line">内容处理可以由上游服务或者Lua脚本语言来处理，用Lua脚本就大有可为了。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221016153403.png"></p>
+<h2 id="ngx-lua演示"><a href="#ngx-lua演示" class="headerlink" title="ngx_lua演示"></a>ngx_lua演示</h2><p>在OpenResty中演示ngx_lua的指令</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">worker_processes</span>  <span class="number">1</span>;</span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span> <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="comment"># 设置由set_by_lua， content_by_lua等指定的脚本使用的Lua模块搜索路径。类似java的classPath</span></span><br><span class="line">    <span class="comment"># 路径字符串采用标准的Lua路径形式，;; 可用于代表原始搜索路径。</span></span><br><span class="line">	<span class="attribute">lua_package_path</span> <span class="string">&quot;/usr/local/openresty/lua_scripts/?.lua;;&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 申请一个名为dogs的10m字典内存，共享在所有工作进程中</span></span><br><span class="line">    <span class="attribute">lua_shared_dict</span> dogs <span class="number">10m</span>;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 在服务器启动时预加载Lua模块，并利用现代操作系统的写时复制（COW）优化。</span></span><br><span class="line">    <span class="section">init_by_lua_block</span> &#123;</span><br><span class="line">        -- 预加载json模块</span><br><span class="line">        <span class="attribute">require</span> <span class="string">&quot;cjson&quot;</span></span><br><span class="line"></span><br><span class="line">        -- 操作共享内存</span><br><span class="line">        local dogs = ngx.shared.dogs;</span><br><span class="line">        dogs:set(&quot;Tom&quot;, 56)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">8080</span>;</span><br><span class="line">        <span class="section">location</span> /lua &#123;</span><br><span class="line">            <span class="attribute">default_type</span> text/html;</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 在location、location if上下文中使用。充当“内容处理程序”并执行指定的lua脚本内容，</span></span><br><span class="line">            <span class="comment"># Lua代码可以进行API调用，并在独立的全局环境（即沙箱）中作为新的衍生协程执行</span></span><br><span class="line">            <span class="section">content_by_lua_block</span> &#123;</span><br><span class="line">                <span class="attribute">local</span> mydata = require <span class="string">&quot;mydata&quot;</span></span><br><span class="line">                ngx.say(mydata.get_age(<span class="string">&quot;dog&quot;</span>))</span><br><span class="line"></span><br><span class="line">                -- require关键字会返回init_by_lua_block中已经预加载了cjson模块</span><br><span class="line">                ngx.say(require <span class="string">&quot;cjson&quot;</span>.encode&#123;<span class="attribute">dog</span> = <span class="number">5</span>, cat = <span class="number">6</span>&#125;)</span><br><span class="line"></span><br><span class="line">                -- 读取共享内存中的信息</span><br><span class="line">                local dogs = ngx.shared.dogs;</span><br><span class="line">                ngx.say(dogs:get(&quot;Tom&quot;))</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>redis、mysql、http、html等lua操作参考《OpenResty安装操作》文件</p>
+<h1 id="打造高性能后端接口"><a href="#打造高性能后端接口" class="headerlink" title="打造高性能后端接口"></a>打造高性能后端接口</h1><h2 id="OpenResty-Redis模块"><a href="#OpenResty-Redis模块" class="headerlink" title="OpenResty Redis模块"></a>OpenResty Redis模块</h2><p>OpenResty中默认嵌入了下列模块，包含Redis，所以要使用Redis非常简单。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221022162241.png"></p>
+<p>Lua中使用Redis代码示例</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 引入Redis模块</span></span><br><span class="line"><span class="keyword">local</span> redis = <span class="built_in">require</span>(<span class="string">&quot;resty.redis&quot;</span>)</span><br><span class="line"><span class="comment">--创建实例</span></span><br><span class="line"><span class="keyword">local</span> red = redis:new() </span><br><span class="line"><span class="comment">--建立连接</span></span><br><span class="line"><span class="keyword">local</span> ok, err = red:connect(“<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>”, <span class="number">6379</span>)</span><br><span class="line"><span class="comment">--调用API进行处理</span></span><br><span class="line">ok, err = red:set(<span class="string">&quot;msg&quot;</span>, <span class="string">&quot;hello world&quot;</span>)</span><br><span class="line"><span class="keyword">local</span> resp, err = red:get(<span class="string">&quot;msg&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Nginx非阻塞与Lua协程的绝配"><a href="#Nginx非阻塞与Lua协程的绝配" class="headerlink" title="Nginx非阻塞与Lua协程的绝配"></a>Nginx非阻塞与Lua协程的绝配</h2><p>服务器有个设计原则：永远不能阻塞。</p>
+<p>nginx作为非常优秀的服务器，这点发挥的非常极致。在nginx里有很多的体现异步的地方。</p>
+<p>Lua嵌入会阻塞吗?</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- foo本身是个协程，由nginx调用</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">()</span></span> </span><br><span class="line">    <span class="comment">-- 此处由nginx发起db的连接请求，因为异步这里先暂停协程</span></span><br><span class="line">    users = db.query(<span class="string">&#x27;users&#x27;</span>, &#123;name: name&#125;); </span><br><span class="line">    <span class="comment">-- 当请求有响应得到处理时，继续执行协程，这些才运行</span></span><br><span class="line">    deal_with(users); </span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>通过nginx的异步机制和lua的协程，很容易实现这种同步写法，异步实现的模型，但对开发人员而言，不用关心内部做了什么。</p>
+<h2 id="Lua协程"><a href="#Lua协程" class="headerlink" title="Lua协程"></a>Lua协程</h2><p><strong>什么是协程？</strong></p>
+<p>Lua协程，称为<strong>协作式多线程</strong>。Lua中的协程代表一个独立的执行线程，具有自己的堆栈、自己的局部变量、PC计数器和其自己的指令指针; 与java线程不同的是，协程只通过显式调用yield函数来暂停其执行。同一时间，多协程只运行其中一个，java多线程则可以运行多个。协程可以处于三种不同状态之一：<strong>暂停，运行和死亡</strong></p>
+<p><strong>使用Lua协程</strong></p>
+<p>coroutine.create(f)：创建一个新的协同程序并返回一个类型为thread的对象，并不启动协程。</p>
+<p>coroutine.resume(co)：开始或继续执行协同程序co</p>
+<p>coroutine.yield：暂停执行调用协程，让出CPU</p>
+<p>coroutine.wrap(f)：类似create方法，创建一个协程但它不是返回协程本身，而是返回一个函数，当被调用时，它恢复协程</p>
+<h2 id="Lua协程示例"><a href="#Lua协程示例" class="headerlink" title="Lua协程示例"></a>Lua协程示例</h2><p>同步的写法，异步的实现</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">co = <span class="built_in">coroutine</span>.<span class="built_in">create</span>(<span class="function"><span class="keyword">function</span> <span class="params">()</span></span></span><br><span class="line">    <span class="keyword">for</span> i=<span class="number">1</span>,<span class="number">10</span> <span class="keyword">do</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;co&quot;</span>, i)</span><br><span class="line">        <span class="built_in">coroutine</span>.<span class="built_in">yield</span>()</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">coroutine</span>.<span class="built_in">resume</span>(co) <span class="comment">-- 输出 co 1</span></span><br><span class="line"><span class="built_in">coroutine</span>.<span class="built_in">resume</span>(co) <span class="comment">-- 输出 co 2</span></span><br><span class="line"><span class="built_in">coroutine</span>.<span class="built_in">resume</span>(co) <span class="comment">-- 输出 co 3</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="功能实战"><a href="#功能实战" class="headerlink" title="功能实战"></a>功能实战</h1><h2 id="商品页面需求"><a href="#商品页面需求" class="headerlink" title="商品页面需求"></a>商品页面需求</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221022163133.png"></p>
+<p>商品页主要包括商品基本信息、商品介绍、其他信息。</p>
+<p>商品基本信息：</p>
+<p>基本信息、图片列表、颜色&#x2F;尺码关系、扩展属性、规格参数、包装清单、售后保障等</p>
+<p>其他信息：</p>
+<p>分类、品牌、店铺【第三方卖家】、店内分类【第三方卖家】、同类相关品牌</p>
+<p>亿级别的商品数量，每次动态获取上面内容进行模板拼装，数据来源多到造成性能无法满足要求，而且页面需要动态支持多套模板，怎么处理？</p>
+<h2 id="商品页面功能设计"><a href="#商品页面功能设计" class="headerlink" title="商品页面功能设计"></a>商品页面功能设计</h2><p>可以通过Nginx的API服务功能来实现</p>
+<p>将需要的数据准备好，通过Lua访问Redis获取得，再由Lua生成json数据，交给Lua模板解析器，通过Lua模板解析器，来完成模板数据的动态生成。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20221022163509.png"></p>
+<h2 id="商品页面功能实现"><a href="#商品页面功能实现" class="headerlink" title="商品页面功能实现"></a>商品页面功能实现</h2><p><strong>程序实现</strong></p>
+<p>goods&#x2F;info?goodsId&#x3D;234</p>
+<p>github：<a target="_blank" rel="noopener" href="https://github.com/chengchen901/nginx-balancer-demo.git">https://github.com/chengchen901/nginx-balancer-demo.git</a></p>
+<p><strong>Lua脚本实现</strong></p>
+<p>commond.lua</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> redis = <span class="built_in">require</span>(<span class="string">&quot;resty.redis&quot;</span>)</span><br><span class="line"><span class="keyword">local</span> ngx_log = ngx.<span class="built_in">log</span></span><br><span class="line"><span class="keyword">local</span> ngx_ERR = ngx.ERR  </span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">close_redis</span><span class="params">(red)</span></span>  </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> red <span class="keyword">then</span>  </span><br><span class="line">        <span class="keyword">return</span>  </span><br><span class="line">    <span class="keyword">end</span>  </span><br><span class="line">    <span class="comment">--释放连接(连接池实现)  </span></span><br><span class="line">    <span class="keyword">local</span> pool_max_idle_time = <span class="number">10000</span> <span class="comment">--毫秒  </span></span><br><span class="line">    <span class="keyword">local</span> pool_size = <span class="number">100</span> <span class="comment">--连接池大小  </span></span><br><span class="line">    <span class="keyword">local</span> ok, err = red:set_keepalive(pool_max_idle_time, pool_size)  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> ok <span class="keyword">then</span>  </span><br><span class="line">        ngx_log(ngx_ERR, <span class="string">&quot;set redis keepalive error : &quot;</span>, err)  </span><br><span class="line">    <span class="keyword">end</span>  </span><br><span class="line"><span class="keyword">end</span>  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">read_redis</span><span class="params">(ip, port, keys)</span></span>  </span><br><span class="line">    <span class="keyword">local</span> red = redis:new()  </span><br><span class="line">    red:set_timeout(<span class="number">1000</span>)  </span><br><span class="line">    <span class="keyword">local</span> ok, err = red:connect(ip, port)  </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> ok <span class="keyword">then</span>  </span><br><span class="line">        ngx_log(ngx_ERR, <span class="string">&quot;connect to redis error : &quot;</span>, err)  </span><br><span class="line">        <span class="keyword">return</span> close_redis(red)  </span><br><span class="line">    <span class="keyword">end</span>  </span><br><span class="line">    <span class="keyword">local</span> resp = <span class="literal">nil</span>  </span><br><span class="line">    <span class="keyword">if</span> #keys == <span class="number">1</span> <span class="keyword">then</span>  </span><br><span class="line">        resp, err = red:get(keys[<span class="number">1</span>])  </span><br><span class="line">    <span class="keyword">else</span>  </span><br><span class="line">        resp, err = red:mget(keys)  </span><br><span class="line">    <span class="keyword">end</span>  </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> resp <span class="keyword">then</span>  </span><br><span class="line">        ngx_log(ngx_ERR, <span class="string">&quot;get redis content error : &quot;</span>, err)  </span><br><span class="line">        <span class="keyword">return</span> close_redis(red)  </span><br><span class="line">    <span class="keyword">end</span>  </span><br><span class="line">  </span><br><span class="line">    <span class="comment">--得到的数据为空处理  </span></span><br><span class="line">    <span class="keyword">if</span> resp == ngx.null <span class="keyword">then</span>  </span><br><span class="line">        resp = <span class="literal">nil</span>  </span><br><span class="line">    <span class="keyword">end</span>  </span><br><span class="line">    close_redis(red)  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> resp  </span><br><span class="line"><span class="keyword">end</span>  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">read_http</span><span class="params">(args)</span></span>  </span><br><span class="line">    <span class="keyword">local</span> resp = ngx.location.capture(<span class="string">&quot;/goods/info&quot;</span>, &#123;</span><br><span class="line">        method = ngx.HTTP_GET,</span><br><span class="line">        args = args</span><br><span class="line">    &#125;)  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> resp <span class="keyword">then</span>  </span><br><span class="line">        ngx_log(ngx_ERR, <span class="string">&quot;request error&quot;</span>)  </span><br><span class="line">        <span class="keyword">return</span>  </span><br><span class="line">    <span class="keyword">end</span>  </span><br><span class="line">    <span class="keyword">if</span> resp.<span class="built_in">status</span> ~= <span class="number">200</span> <span class="keyword">then</span>  </span><br><span class="line">        ngx_log(ngx_ERR, <span class="string">&quot;request error, status :&quot;</span>, resp.<span class="built_in">status</span>)  </span><br><span class="line">        <span class="keyword">return</span>  </span><br><span class="line">    <span class="keyword">end</span>  </span><br><span class="line">    <span class="keyword">return</span> resp.body  </span><br><span class="line"><span class="keyword">end</span>  </span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> _M = &#123;  </span><br><span class="line">    read_redis = read_redis,</span><br><span class="line">    read_http = read_http</span><br><span class="line">&#125;  </span><br><span class="line"><span class="keyword">return</span> _M</span><br></pre></td></tr></table></figure>
+
+<p>goods_template.lua</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>Nginx配置文件实现</strong></p>
+<p>nginx_goods_template.conf</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><strong>初始Lua脚本语言</strong></p>
+<p>脚本语言的特点</p>
+<p><strong>给老虎插上翅膀</strong></p>
+<p>Nginx+Lua、ngx_lua模块指令、指令执行顺序及阶段</p>
+<p><strong>高性能接口</strong></p>
+<p>ngx_lua中的第三方模块（ Redis 、MySQL、HTTP、Template）</p>
+<p>为什么Nginx与Lua协程天生绝配？</p>
+<p><strong>商品页面实战</strong></p>
+<p>redis、nginx_lua、lua-resty-redis、lua-resty-template</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/16-Nginx/03-00-Lua%E6%89%A9%E5%B1%95Nginx/" data-id="clmcxecbq002nu8wa4t7t3xhr" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/16-Nginx/03-01-Nginx%E5%B5%8C%E5%85%A5Lua%E8%84%9A%E6%9C%AC%E8%AF%AD%E8%A8%80%E6%93%8D%E4%BD%9C/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/16-Nginx/02-01-%E5%88%B6%E4%BD%9C%E7%AC%AC%E4%B8%80%E5%BC%A0%E8%87%AA%E5%B7%B1%E7%9A%84SSL%E8%AF%81%E4%B9%A6/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

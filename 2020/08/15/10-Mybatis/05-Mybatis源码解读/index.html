@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Mybatis源码解读 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Mybatis整体架构设计 Mybatis配置加载过程Mybatis核心流程三大阶段 初始化阶段读取XML配置文件和注解中的配置信息，创建配置对象，并完成各个模块的初始化的工作； 代理阶段封装iBatis的编程模型，使用mapper接口开发的初始化工作； 数据读写阶段通过SqlSession完成SQL的解析，参数的映射、SQL的执行、结果的解析过程；  Mybatis的初始化 建造者模式建造者模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mybatis源码解读">
+<meta property="og:url" content="http://example.com/2020/08/15/10-Mybatis/05-Mybatis%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Mybatis整体架构设计 Mybatis配置加载过程Mybatis核心流程三大阶段 初始化阶段读取XML配置文件和注解中的配置信息，创建配置对象，并完成各个模块的初始化的工作； 代理阶段封装iBatis的编程模型，使用mapper接口开发的初始化工作； 数据读写阶段通过SqlSession完成SQL的解析，参数的映射、SQL的执行、结果的解析过程；  Mybatis的初始化 建造者模式建造者模式">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924084153.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924084353.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924084552.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924085156.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924085235.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924085339.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924085432.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924085900.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924085952.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924090227.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924090327.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924090415.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924090640.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924090712.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924090834.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924091201.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924092106.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:51:25.204Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Mybatis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924084153.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-10-Mybatis/05-Mybatis源码解读" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/10-Mybatis/05-Mybatis%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mybatis/">Mybatis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Mybatis源码解读
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Mybatis整体架构设计"><a href="#Mybatis整体架构设计" class="headerlink" title="Mybatis整体架构设计"></a>Mybatis整体架构设计</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924084153.png"></p>
+<h1 id="Mybatis配置加载过程"><a href="#Mybatis配置加载过程" class="headerlink" title="Mybatis配置加载过程"></a>Mybatis配置加载过程</h1><h2 id="Mybatis核心流程三大阶段"><a href="#Mybatis核心流程三大阶段" class="headerlink" title="Mybatis核心流程三大阶段"></a>Mybatis核心流程三大阶段</h2><ol>
+<li>初始化阶段<br>读取XML配置文件和注解中的配置信息，创建配置对象，并完成各个模块的初始化的工作；</li>
+<li>代理阶段<br>封装iBatis的编程模型，使用mapper接口开发的初始化工作；</li>
+<li>数据读写阶段<br>通过SqlSession完成SQL的解析，参数的映射、SQL的执行、结果的解析过程；</li>
+</ol>
+<h2 id="Mybatis的初始化-建造者模式"><a href="#Mybatis的初始化-建造者模式" class="headerlink" title="Mybatis的初始化 建造者模式"></a>Mybatis的初始化 建造者模式</h2><p>建造者模式（Builder Pattern）使用多个简单的对象一步一步构建成一个复杂的对象。这种类型的设计模 式属于创建型模式，它提供了一种创建对象的最佳方式。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924084353.png"></p>
+<p>Builder：给出一个抽象接口，以规范产品对象的各个组成成分的建造。这个接口规定要实现复杂对象的哪些部分的创建，并不涉及具体的对象部件的创建；</p>
+<p>ConcreteBuilder：实现Builder接口，针对不同的商业逻辑，具体化复杂对象的各部分的创建。 在建造过程完成后，提供产品的实例；</p>
+<p>Director：调用具体建造者来创建复杂对象的各个部分，在指导者中不涉及具体产品的信息，只负责保证对象各部分完整创建或按某种顺序创建；</p>
+<p>Product：要创建的复杂对象需要生成的对象具有复杂的内部结构，实例化对象时要屏蔽掉对象内部的细节，让上层代码与复杂对象的实例化过程解耦，可以使用建造者模式；简而言之，如果“遇到多个构造器参数时要考虑用构建器”；</p>
+<p>一个对象的实例化是依赖各个组件的产生以及装配顺序，关注的是一步一步地组装出目标对象，可以使用建造器模式；</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924084552.png"></p>
+<ul>
+<li><p>XMLConfigBuilder： 主要负责解析mybatis-config.xml；</p>
+</li>
+<li><p>XMLMapperBuilder： 主要负责解析映射配置文件；</p>
+<p>org.apache.ibatis.builder.MapperBuilderAssistant#addMappedStatement()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ... 省略其他代码 </span></span><br><span class="line"><span class="type">MappedStatement</span> <span class="variable">statement</span> <span class="operator">=</span> statementBuilder.build(); </span><br><span class="line">configuration.addMappedStatement(statement); </span><br><span class="line"><span class="keyword">return</span> statement;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>XMLStatementBuilder： 主要负责解析映射配置文件中的SQL节点；</p>
+</li>
+</ul>
+<h2 id="映射器的关键类"><a href="#映射器的关键类" class="headerlink" title="映射器的关键类"></a>映射器的关键类</h2><p><strong>Configuration</strong> ： Mybatis启动初始化的核心就是将所有xml配置文件信息加载到Configuration对象中， Configuration是单例的，生命周期是应用级的；</p>
+<p><strong>MapperRegistry</strong>：mapper接口动态代理工厂类的注册中心。在MyBatis中，通过mapperProxy实现InvocationHandler接口，MapperProxyFactory用于生成动态代理的实例对象；</p>
+<p><strong>ResultMap</strong>：用于解析mapper.xml文件中的resultMap节点，使用ResultMapping来封装id，result等子元素；</p>
+<p><strong>MappedStatement</strong>：用于存储mapper.xml文件中的select、insert、update和delete节点，同时还包含了这些节点的很多重要属性；</p>
+<p><strong>SqlSource</strong>：mapper.xml文件中的sql语句会被解析成SqlSource对象，经过解析SqlSource包含的语句最终仅仅包含？占位符，可以直接提交给数据库执行；</p>
+<h2 id="Mybatis的初始化"><a href="#Mybatis的初始化" class="headerlink" title="Mybatis的初始化"></a>Mybatis的初始化</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924085156.png"></p>
+<h2 id="Configuration类图解"><a href="#Configuration类图解" class="headerlink" title="Configuration类图解"></a>Configuration类图解</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924085235.png"></p>
+<h2 id="MappedStatment图解"><a href="#MappedStatment图解" class="headerlink" title="MappedStatment图解"></a>MappedStatment图解</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924085339.png"></p>
+<h2 id="Mybatis的初始化过程"><a href="#Mybatis的初始化过程" class="headerlink" title="Mybatis的初始化过程"></a>Mybatis的初始化过程</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924085432.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 添加mapper xml中的sql语句</span></span><br><span class="line">addMappedStatement(String, SqlSource, StatementType, SqlCommandType, Integer, Integer, String, Class, String, Class, ResultSetType, <span class="type">boolean</span>, <span class="type">boolean</span>, <span class="type">boolean</span>, KeyGenerator, String, String, String, LanguageDriver, String):<span class="number">302</span>, MapperBuilderAssistant (org.apache.ibatis.builder)</span><br><span class="line">parseStatementNode():<span class="number">109</span>, XMLStatementBuilder (org.apache.ibatis.builder.xml)</span><br><span class="line">buildStatementFromContext(List, String):<span class="number">135</span>, XMLMapperBuilder (org.apache.ibatis.builder.xml)</span><br><span class="line">buildStatementFromContext(List):<span class="number">128</span>, XMLMapperBuilder (org.apache.ibatis.builder.xml)</span><br><span class="line">configurationElement(XNode):<span class="number">118</span>, XMLMapperBuilder (org.apache.ibatis.builder.xml)</span><br><span class="line">parse():<span class="number">92</span>, XMLMapperBuilder (org.apache.ibatis.builder.xml)</span><br><span class="line">buildSqlSessionFactory():<span class="number">521</span>, SqlSessionFactoryBean (org.mybatis.spring)</span><br><span class="line">afterPropertiesSet():<span class="number">380</span>, SqlSessionFactoryBean (org.mybatis.spring)</span><br><span class="line">getObject():<span class="number">547</span>, SqlSessionFactoryBean (org.mybatis.spring)</span><br><span class="line">sqlSessionFactorys():<span class="number">78</span>, MybatisConfiguration (com.study.dbconfig)</span><br><span class="line">CGLIB$sqlSessionFactorys$<span class="number">0</span>():-<span class="number">1</span>, MybatisConfiguration$$EnhancerBySpringCGLIB$$eb3f051c (com.study.dbconfig)</span><br><span class="line">invoke(<span class="type">int</span>, Object, Object[]):-<span class="number">1</span>, MybatisConfiguration$$EnhancerBySpringCGLIB$$eb3f051c$$FastClassBySpringCGLIB$$53bfb481 (com.study.dbconfig)</span><br><span class="line">invokeSuper(Object, Object[]):<span class="number">244</span>, MethodProxy (org.springframework.cglib.proxy)</span><br><span class="line">intercept(Object, Method, Object[], MethodProxy):<span class="number">331</span>, ConfigurationClassEnhancer$BeanMethodInterceptor (org.springframework.context.annotation)</span><br><span class="line">sqlSessionFactorys():-<span class="number">1</span>, MybatisConfiguration$$EnhancerBySpringCGLIB$$eb3f051c (com.study.dbconfig)</span><br><span class="line">invoke0(Method, Object, Object[]):-<span class="number">1</span>, NativeMethodAccessorImpl (sun.reflect)</span><br><span class="line">invoke(Object, Object[]):<span class="number">62</span>, NativeMethodAccessorImpl (sun.reflect)</span><br><span class="line">invoke(Object, Object[]):<span class="number">43</span>, DelegatingMethodAccessorImpl (sun.reflect)</span><br><span class="line">invoke(Object, Object[]):<span class="number">498</span>, Method (java.lang.reflect)</span><br><span class="line">instantiate(RootBeanDefinition, String, BeanFactory, Object, Method, Object[]):<span class="number">154</span>, SimpleInstantiationStrategy (org.springframework.beans.factory.support)</span><br><span class="line">instantiate(String, RootBeanDefinition, Object, Method, Object[]):<span class="number">650</span>, ConstructorResolver (org.springframework.beans.factory.support)</span><br><span class="line">instantiateUsingFactoryMethod(String, RootBeanDefinition, Object[]):<span class="number">483</span>, ConstructorResolver (org.springframework.beans.factory.support)</span><br><span class="line">instantiateUsingFactoryMethod(String, RootBeanDefinition, Object[]):<span class="number">1336</span>, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">createBeanInstance(String, RootBeanDefinition, Object[]):<span class="number">1176</span>, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">doCreateBean(String, RootBeanDefinition, Object[]):<span class="number">556</span>, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">createBean(String, RootBeanDefinition, Object[]):<span class="number">516</span>, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">lambda$doGetBean$<span class="number">0</span>(String, RootBeanDefinition, Object[]):<span class="number">324</span>, AbstractBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">getObject():-<span class="number">1</span>, <span class="number">1868578441</span> (org.springframework.beans.factory.support.AbstractBeanFactory$$Lambda$<span class="number">172</span>)</span><br><span class="line">getSingleton(String, ObjectFactory):<span class="number">234</span>, DefaultSingletonBeanRegistry (org.springframework.beans.factory.support)</span><br><span class="line">doGetBean(String, Class, Object[], <span class="type">boolean</span>):<span class="number">322</span>, AbstractBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">getBean(String):<span class="number">202</span>, AbstractBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">resolveCandidate(String, Class, BeanFactory):<span class="number">276</span>, DependencyDescriptor (org.springframework.beans.factory.config)</span><br><span class="line">doResolveDependency(DependencyDescriptor, String, Set, TypeConverter):<span class="number">1307</span>, DefaultListableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">resolveDependency(DependencyDescriptor, String, Set, TypeConverter):<span class="number">1227</span>, DefaultListableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">autowireByType(String, AbstractBeanDefinition, BeanWrapper, MutablePropertyValues):<span class="number">1509</span>, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">populateBean(String, RootBeanDefinition, BeanWrapper):<span class="number">1404</span>, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">doCreateBean(String, RootBeanDefinition, Object[]):<span class="number">593</span>, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">createBean(String, RootBeanDefinition, Object[]):<span class="number">516</span>, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">lambda$doGetBean$<span class="number">0</span>(String, RootBeanDefinition, Object[]):<span class="number">324</span>, AbstractBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">getObject():-<span class="number">1</span>, <span class="number">1868578441</span> (org.springframework.beans.factory.support.AbstractBeanFactory$$Lambda$<span class="number">172</span>)</span><br><span class="line">getSingleton(String, ObjectFactory):<span class="number">234</span>, DefaultSingletonBeanRegistry (org.springframework.beans.factory.support)</span><br><span class="line">doGetBean(String, Class, Object[], <span class="type">boolean</span>):<span class="number">322</span>, AbstractBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">getBean(String):<span class="number">202</span>, AbstractBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">resolveCandidate(String, Class, BeanFactory):<span class="number">276</span>, DependencyDescriptor (org.springframework.beans.factory.config)</span><br><span class="line">doResolveDependency(DependencyDescriptor, String, Set, TypeConverter):<span class="number">1307</span>, DefaultListableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">resolveDependency(DependencyDescriptor, String, Set, TypeConverter):<span class="number">1227</span>, DefaultListableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">inject(Object, String, PropertyValues):<span class="number">640</span>, AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement (org.springframework.beans.factory.annotation)</span><br><span class="line">inject(Object, String, PropertyValues):<span class="number">130</span>, InjectionMetadata (org.springframework.beans.factory.annotation)</span><br><span class="line">postProcessProperties(PropertyValues, Object, String):<span class="number">399</span>, AutowiredAnnotationBeanPostProcessor (org.springframework.beans.factory.annotation)</span><br><span class="line">populateBean(String, RootBeanDefinition, BeanWrapper):<span class="number">1420</span>, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">doCreateBean(String, RootBeanDefinition, Object[]):<span class="number">593</span>, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">createBean(String, RootBeanDefinition, Object[]):<span class="number">516</span>, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">lambda$doGetBean$<span class="number">0</span>(String, RootBeanDefinition, Object[]):<span class="number">324</span>, AbstractBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">getObject():-<span class="number">1</span>, <span class="number">1868578441</span> (org.springframework.beans.factory.support.AbstractBeanFactory$$Lambda$<span class="number">172</span>)</span><br><span class="line">getSingleton(String, ObjectFactory):<span class="number">234</span>, DefaultSingletonBeanRegistry (org.springframework.beans.factory.support)</span><br><span class="line">doGetBean(String, Class, Object[], <span class="type">boolean</span>):<span class="number">322</span>, AbstractBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">getBean(String):<span class="number">202</span>, AbstractBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">preInstantiateSingletons():<span class="number">897</span>, DefaultListableBeanFactory (org.springframework.beans.factory.support)</span><br><span class="line">finishBeanFactoryInitialization(ConfigurableListableBeanFactory):<span class="number">879</span>, AbstractApplicationContext (org.springframework.context.support)</span><br><span class="line">refresh():<span class="number">551</span>, AbstractApplicationContext (org.springframework.context.support)</span><br><span class="line">refresh():<span class="number">143</span>, ServletWebServerApplicationContext (org.springframework.boot.web.servlet.context)</span><br><span class="line">refresh(ConfigurableApplicationContext):<span class="number">758</span>, SpringApplication (org.springframework.boot)</span><br><span class="line">refresh(ApplicationContext):<span class="number">750</span>, SpringApplication (org.springframework.boot)</span><br><span class="line">refreshContext(ConfigurableApplicationContext):<span class="number">405</span>, SpringApplication (org.springframework.boot)</span><br><span class="line">run(String[]):<span class="number">315</span>, SpringApplication (org.springframework.boot)</span><br><span class="line">run(Class[], String[]):<span class="number">1237</span>, SpringApplication (org.springframework.boot)</span><br><span class="line">run(Class, String[]):<span class="number">1226</span>, SpringApplication (org.springframework.boot)</span><br><span class="line">main(String[]):<span class="number">9</span>, Application (com.study)</span><br></pre></td></tr></table></figure>
+
+<h1 id="代理生成过程"><a href="#代理生成过程" class="headerlink" title="代理生成过程"></a>代理生成过程</h1><h2 id="为什么使用mapper接口就能操作数据库？"><a href="#为什么使用mapper接口就能操作数据库？" class="headerlink" title="为什么使用mapper接口就能操作数据库？"></a>为什么使用mapper接口就能操作数据库？</h2><p>配置文件解读 + 动态代理的增强</p>
+<h2 id="解读MapperMethod"><a href="#解读MapperMethod" class="headerlink" title="解读MapperMethod"></a>解读MapperMethod</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924085900.png"></p>
+<h2 id="MapperProxy"><a href="#MapperProxy" class="headerlink" title="MapperProxy"></a>MapperProxy</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924085952.png"></p>
+<p><strong>MapperRegistry</strong> ： mapper接口和对应的代理对象工厂的注册中心；</p>
+<p><strong>MapperProxyFactory</strong>：用于生成mapper接口动态代理的实例对象；</p>
+<p><strong>MapperProxy</strong>：实现了InvocationHandler接口，它是增强mapper接口的实现；</p>
+<p><strong>MapperMethod</strong>：封装了Mapper接口中对应方法的信息，以及对应的sql语句的信息；它是mapper接口与映射配置文件中sql语句的桥梁；</p>
+<p><strong>我们从XMLMapperBuilder.bindMapperForNamespace()开始入手！</strong></p>
+<h2 id="MapperMethod"><a href="#MapperMethod" class="headerlink" title="MapperMethod"></a>MapperMethod</h2><p><strong>MapperMethod</strong>：封装了Mapper接口中对应方法的信息，以及对应的sql语句的信息；它是mapper接口与映射配置文件中sql语句的桥梁； <strong>MapperMethod对象不记录任何状态信息，所以它可以在多个代理对象之间共享；</strong></p>
+<ul>
+<li>SqlCommand ： 从configuration中获取方法的命名空间.方法名以及SQL语句的类型；</li>
+<li>MethodSignature：封装mapper接口方法的相关信息（入参，返回类型）；</li>
+<li>ParamNameResolver： 解析mapper接口方法中的入参；</li>
+</ul>
+<h1 id="SqlSession原理"><a href="#SqlSession原理" class="headerlink" title="SqlSession原理"></a>SqlSession原理</h1><p>查看方法Mybatis的DefaultSqlSessionFactory#openSessionFromDataSource方法</p>
+<h2 id="SqlSession相关类UML"><a href="#SqlSession相关类UML" class="headerlink" title="SqlSession相关类UML"></a>SqlSession相关类UML</h2><p>SqlSession是MyBaits对外提供的最关键的核心接口，通过它可以执行数据库读写命令、获取映射器、管 理事务等；</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924090227.png"></p>
+<h2 id="SqlSessionManager"><a href="#SqlSessionManager" class="headerlink" title="SqlSessionManager"></a>SqlSessionManager</h2><p>SqlSessionManager同时继承了SqlSession接口和SqlSessionFactroy接口，提供了创建SqlSession对象和操纵数据库的能力；</p>
+<p>SqlSessionManager有两种获取SqlSession的模式：</p>
+<ul>
+<li>第一种模式和SqlSessionFactroy 相同，同一个线程每次访问数据库，每次都可以创建新的SqlSession对象；</li>
+<li>第二种模式，同一个线程每次访问数据库，都是使用同一个SqlSession对象,通过localSqlSession实现；</li>
+</ul>
+<h2 id="SqlSession查询接口嵌套关系"><a href="#SqlSession查询接口嵌套关系" class="headerlink" title="SqlSession查询接口嵌套关系"></a>SqlSession查询接口嵌套关系</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924090327.png"></p>
+<h2 id="Executor"><a href="#Executor" class="headerlink" title="Executor"></a>Executor</h2><p>Executor是MyBaits核心接口之一，定义了数据库操作最基本的方法，SqlSession的功能都是基于它来实现的；</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924090415.png"></p>
+<p>Executor的执行过程是由了模板方法设计模式，例如查询操作流程。</p>
+<ol>
+<li>开始SqlSession执行SQL</li>
+<li>Executor.query</li>
+<li>获取sql信息（boundSql） </li>
+<li>拼装CacheKey（cacheKey） </li>
+<li>判断是否需要清空一级缓存</li>
+<li>根据 cacheKey 查找一级缓存</li>
+<li>是否命中一级缓存，命中则进行SqlSession执行SQL</li>
+<li>未命中缓存，查询数据库得到结果ResultSet<br> 有三种方式执行：SIMPLE、REUSE、BATCH</li>
+<li>结果保存到一级缓存</li>
+<li>缓存延迟加载处理</li>
+<li>SqlSession执行SQL</li>
+</ol>
+<ul>
+<li>SimpleExecutor：默认配置，使用statement对象访问数据库，每次访问都要创建新的statement对象；</li>
+<li>ReuseExecutor：可以重用的执行器，使用预编译PrepareStatement对象访问数据库，访问时，会重用缓存中的statement对象；</li>
+<li>BatchExecutor：实现批量执行多条SQL语句的能力；</li>
+</ul>
+<p>Executor下的三个Handler</p>
+<p>通过对SimpleExecutor doQuery()方法的解读发现，Executor是个指挥官，它在调度三个Handler工作：</p>
+<ol>
+<li>StatementHandler：它的作用是使用数据库的Statement或PrepareStatement执行操作，启承上启下作用；</li>
+<li>ParameterHandler：对预编译的SQL语句进行参数设置，SQL语句中的的占位符“？”都对应BoundSql.parameterMappings集合中的一个元素，在该对象中记录了对应的参数名称以及该参数的相关属性</li>
+<li>ResultSetHandler：对数据库返回的结果集（ResultSet）进行封装，返回用户指定的实体类型；</li>
+</ol>
+<h2 id="Executor内部运作过程"><a href="#Executor内部运作过程" class="headerlink" title="Executor内部运作过程"></a>Executor内部运作过程</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924090640.png"></p>
+<h1 id="结果参数绑定"><a href="#结果参数绑定" class="headerlink" title="结果参数绑定"></a>结果参数绑定</h1><h2 id="StatementHandler分析"><a href="#StatementHandler分析" class="headerlink" title="StatementHandler分析"></a>StatementHandler分析</h2><p>StatementHandler完成Mybatis最核心的工作，也是Executor实现的基础；功能包括：创建statement对象， 为sql语句绑定参数，执行增删改查等SQL语句、将结果映射集进行转化；</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924090712.png"></p>
+<p>BaseStatementHandler：所有子类的抽象父类，定义了初始化statement的操作顺序，由子类实现具体的实例化不同的statement（模板模式）；</p>
+<p>RoutingStatementHandler：Excutor组件真正实例化的子类，使用静态代理模式，根据上下文决定创建哪个具体实体类；</p>
+<p>SimpleStatmentHandler ：使用statement对象访问数据库，无须参数化；</p>
+<p>PreparedStatmentHandler ：使用预编译PrepareStatement对象访问数据库；</p>
+<p>CallableStatmentHandler ：调用存储过程；</p>
+<h2 id="ResultSetHandler分析"><a href="#ResultSetHandler分析" class="headerlink" title="ResultSetHandler分析"></a>ResultSetHandler分析</h2><p>ResultSetHandler将从数据库查询得到的结果按照映射配置文件的映射规则，映射成相应的结果集对象；</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924090834.png"></p>
+<h1 id="Mybatis事务"><a href="#Mybatis事务" class="headerlink" title="Mybatis事务"></a>Mybatis事务</h1><h2 id="Mybatis事务管理"><a href="#Mybatis事务管理" class="headerlink" title="Mybatis事务管理"></a>Mybatis事务管理</h2><p>对数据库的事务而言，具有：创建（create）、提交（commit）、回滚（rollback）、关闭（close）。对应地，MyBatis将事务抽象成了Transaction接口，其接口定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.apache.ibatis.transaction;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Wraps a database connection.</span></span><br><span class="line"><span class="comment"> * Handles the connection lifecycle that comprises: its creation, preparation, commit/rollback and close.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Clinton Begin</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Transaction</span> &#123;</span><br><span class="line"></span><br><span class="line">  Connection <span class="title function_">getConnection</span><span class="params">()</span> <span class="keyword">throws</span> SQLException;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">commit</span><span class="params">()</span> <span class="keyword">throws</span> SQLException;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">rollback</span><span class="params">()</span> <span class="keyword">throws</span> SQLException;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">close</span><span class="params">()</span> <span class="keyword">throws</span> SQLException;</span><br><span class="line"></span><br><span class="line">  Integer <span class="title function_">getTimeout</span><span class="params">()</span> <span class="keyword">throws</span> SQLException;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>MyBatis的事务管理分为两种形式：</p>
+<ol>
+<li>使用JDBC的事务管理机制：即利用java.sql.Connection对象完成对事务的提交（commit()）、回滚（rollback()）、关闭（close()）等。</li>
+<li>使用MANAGED的事务管理机制：这种机制MyBatis自身不会去实现事务管理，而是让程序的容器如（JBOSS，Weblogic）来实现对事务的管理。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924091201.png"></p>
+<p>Spring是另外的实现，不属于Mybatis事务管理范畴，Spring的事务管理这里就不去涉及了，可以参考前面Spring专题的内容。</p>
+<h2 id="事务管理配置"><a href="#事务管理配置" class="headerlink" title="事务管理配置"></a>事务管理配置</h2><p>使用MyBatis时，需要在mybatis-config.xml配置文件中定义类似如下的信息：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span> <span class="meta">&lt;!DOCTYPE <span class="keyword">configuration</span> <span class="keyword">PUBLIC</span> <span class="string">&quot;-//mybatis.org//DTD Config 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta">        <span class="string">&quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span> <span class="comment">&lt;!--映入外部文件定义的属性，供此配置文件使用--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span> <span class="attr">resource</span>=<span class="string">&quot;jdbc.properties&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">environments</span> <span class="attr">default</span>=<span class="string">&quot;development&quot;</span>&gt;</span> <span class="comment">&lt;!-- 连接环境信息，取一个任意唯一的名字 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">environment</span> <span class="attr">id</span>=<span class="string">&quot;development&quot;</span>&gt;</span> <span class="comment">&lt;!-- mybatis使用jdbc事务管理方式 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">&quot;jdbc&quot;</span>/&gt;</span> <span class="comment">&lt;!-- mybatis使用连接池方式来获取连接 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">&quot;pooled&quot;</span>&gt;</span> <span class="comment">&lt;!-- 配置与数据库交互的4个必要属性 --&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driver&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.driver&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.url&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.username&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.password&#125;&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">environment</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">environments</span>&gt;</span> <span class="comment">&lt;!-- 加载映射文件--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;com/mybatis/EmployeeMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mappers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>&lt; environment&gt;节点定义了连接某个数据库的信息，其子节点&lt; transactionManager&gt;的type 会决定我们用什么类型的事务管理机制。</p>
+<h2 id="事务工厂的创建"><a href="#事务工厂的创建" class="headerlink" title="事务工厂的创建"></a>事务工厂的创建</h2><p>MyBatis事务的创建是交给TransactionFactory 事务工厂来创建的，如果我们将&lt; transactionManager&gt;的type 配置为”JDBC”,那么，在MyBatis初始化解析&lt; environment&gt;节点时，会根据type&#x3D;”JDBC”创建一个JdbcTransactionFactory工厂，源码如下：</p>
+<p>org.apache.ibatis.builder.xml.XMLConfigBuilder#transactionManagerElement</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 解析&lt;transactionManager&gt;节点，创建对应的TransactionFactory</span></span><br><span class="line"><span class="keyword">private</span> TransactionFactory <span class="title function_">transactionManagerElement</span><span class="params">(XNode context)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="keyword">if</span> (context != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">type</span> <span class="operator">=</span> context.getStringAttribute(<span class="string">&quot;type&quot;</span>);</span><br><span class="line">        <span class="type">Properties</span> <span class="variable">props</span> <span class="operator">=</span> context.getChildrenAsProperties();</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        在Configuration初始化的时候，会通过以下语句，给JDBC和MANAGED对应的工厂类</span></span><br><span class="line"><span class="comment">        typeAliasRegistry.registerAlias(&quot;JDBC&quot;, JdbcTransactionFactory.class);</span></span><br><span class="line"><span class="comment">        typeAliasRegistry.registerAlias(&quot;MANAGED&quot;,ManagedTransactionFactory.class);</span></span><br><span class="line"><span class="comment">        下述的resolveClass(type).newInstance()会创建对应的工厂实例</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="type">TransactionFactory</span> <span class="variable">factory</span> <span class="operator">=</span> (TransactionFactory) resolveClass(type).getDeclaredConstructor().newInstance();</span><br><span class="line">        factory.setProperties(props);</span><br><span class="line">        <span class="keyword">return</span> factory;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">BuilderException</span>(<span class="string">&quot;Environment declaration requires a TransactionFactory.&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如上述代码所示，如果type &#x3D; “JDBC”,则MyBatis会创建一个<strong>JdbcTransactionFactory.class</strong> 实例；如果type&#x3D;”MANAGED”，则MyBatis会创建一个<strong>MangedTransactionFactory.class</strong>实例。</p>
+<p>MyBatis对&lt; transactionManager&gt;节点的解析会生成 TransactionFactory实例；而对&lt; dataSource&gt;解析会生成datasouce实例。</p>
+<p>作为&lt; environment&gt;节点，会根据TransactionFactory和DataSource实例创建一个Environment对象，代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">environmentsElement</span><span class="params">(XNode context)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="keyword">if</span> (context != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (environment == <span class="literal">null</span>) &#123;</span><br><span class="line">            environment = context.getStringAttribute(<span class="string">&quot;default&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (XNode child : context.getChildren()) &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">id</span> <span class="operator">=</span> child.getStringAttribute(<span class="string">&quot;id&quot;</span>);</span><br><span class="line">            <span class="comment">//是和默认的环境相同时，解析之</span></span><br><span class="line">            <span class="keyword">if</span> (isSpecifiedEnvironment(id)) &#123;</span><br><span class="line">                <span class="comment">//1.解析&lt;transactionManager&gt;节点，决定创建什么类型的TransactionFactory</span></span><br><span class="line">                <span class="type">TransactionFactory</span> <span class="variable">txFactory</span> <span class="operator">=</span> transactionManagerElement(child.evalNode(<span class="string">&quot;transactionManager&quot;</span>));</span><br><span class="line">                <span class="comment">//2. 创建dataSource</span></span><br><span class="line">                <span class="type">DataSourceFactory</span> <span class="variable">dsFactory</span> <span class="operator">=</span> dataSourceElement(child.evalNode(<span class="string">&quot;dataSource&quot;</span>));</span><br><span class="line">                <span class="type">DataSource</span> <span class="variable">dataSource</span> <span class="operator">=</span> dsFactory.getDataSource();</span><br><span class="line">                <span class="comment">//3. 使用了Environment内置的构造器Builder，传递id 事务工厂TransactionFactory和数据源DataSource</span></span><br><span class="line">                Environment.<span class="type">Builder</span> <span class="variable">environmentBuilder</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Environment</span>.Builder(id)</span><br><span class="line">                    .transactionFactory(txFactory)</span><br><span class="line">                    .dataSource(dataSource);</span><br><span class="line">                configuration.setEnvironment(environmentBuilder.build());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Environment</strong>表示一个数据库的连接，生成后的Environment对象会被设置到Configuration实例中，以供后续的使用。</p>
+<h2 id="TransactionFactory定义"><a href="#TransactionFactory定义" class="headerlink" title="TransactionFactory定义"></a>TransactionFactory定义</h2><p>事务工厂Transaction定义了创建Transaction的两个方法：</p>
+<p>通过指定的Connection对象创建Transaction</p>
+<p>通过数据源DataSource来创建Transaction</p>
+<p>与JDBC 和MANAGED两种Transaction相对应，TransactionFactory有两个对应的实现的子类：ManagedTransactionFactory、JdbcTransactionFactory，TransactionFactory很容易获取到Transaction对象实例。</p>
+<h2 id="JdbcTransaction"><a href="#JdbcTransaction" class="headerlink" title="JdbcTransaction"></a>JdbcTransaction</h2><p>JdbcTransaction直接使用JDBC的提交和回滚事务管理机制 。它依赖与从dataSource中取得的连接connection 来管理transaction 的作用域，connection对象的获取被延迟到调用getConnection()方法。如果autocommit设置为on，开启状态的话，它会忽略commit和rollback。</p>
+<p>直观地讲，就是JdbcTransaction是使用的java.sql.Connection 上的commit和rollback功能，JdbcTransaction只是相当于对java.sql.Connection事务处理进行了一次包装（wrapper），Transaction的事务管理都是通过java.sql.Connection实现的。</p>
+<p>看源码：org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory</p>
+<h2 id="ManagedTransaction"><a href="#ManagedTransaction" class="headerlink" title="ManagedTransaction"></a>ManagedTransaction</h2><p>ManagedTransaction让容器来管理事务Transaction的整个生命周期，意思就是说，使用ManagedTransaction的commit和rollback功能不会对事务有任何的影响，它什么都不会做，它将事务管理的权利移交给了容器来实现。</p>
+<p>看源码：org.apache.ibatis.transaction.managed.ManagedTransactionFactory</p>
+<p>注意：如果我们使用MyBatis构建本地程序，即不是WEB程序，若将type设置成”MANAGED”，那么，我们执行的任何update操作，即使我们最后执行了commit操作，数据也不会保留，不会对数据库造成任何影响。因为我们将MyBatis配置成了“MANAGED”，即MyBatis自己不管理事务，而我们又是运行的本地程序，没有事务管理功能，所以对数据库的update操作都是无效的。</p>
+<h2 id="事务的最终控制"><a href="#事务的最终控制" class="headerlink" title="事务的最终控制"></a>事务的最终控制</h2><p>MyBatis使用sqlSession对象来封装对一次数据库的会话访问。通过sqlSession对象，由Executor调用，实现事务的控制和数据查询。</p>
+<h2 id="数据源模块"><a href="#数据源模块" class="headerlink" title="数据源模块"></a>数据源模块</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210924092106.png"></p>
+<ul>
+<li>PooledConnection：使用动态代理封装了真正的数据库连接对象；</li>
+<li>PoolState：用于管理PooledConnection对象状态的组件，通过两个list分别 管理空闲状态的连接资源和活跃状态的连接资源</li>
+<li>PooledDataSource：一个简单，同步的、线程安全的数据库连接池</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/10-Mybatis/05-Mybatis%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" data-id="clmcxed4v00c8u8wa3vp4h0cx" data-title="Mybatis源码解读" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/10-Mybatis/04-%E6%89%8B%E5%86%99Mybatis-3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          手写Mybatis-3
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/11-MySQL/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/04-MySQL%E8%B0%83%E4%BC%98/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">MySQL调优</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="主从集群安装MongoDB如何安装一个MongoDB请参考《MongoDB安装手册》。我们通过安装一个3个节点的伪集群，来学习如何搭建MongoDB的主从集群搭建。 构建集群通过命令方式配置集群的三个节点通过下面的命令方式启动。 12# 创建备用目录 sudo mkdir -p &#x2F;mongodb&#x2F;data01 &#x2F;mongodb&#x2F;data02 &#x2F;mongodb&#x2F;data03  启动集群成员12345">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/18-MongoDB/04-00-Mongo%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="主从集群安装MongoDB如何安装一个MongoDB请参考《MongoDB安装手册》。我们通过安装一个3个节点的伪集群，来学习如何搭建MongoDB的主从集群搭建。 构建集群通过命令方式配置集群的三个节点通过下面的命令方式启动。 12# 创建备用目录 sudo mkdir -p &#x2F;mongodb&#x2F;data01 &#x2F;mongodb&#x2F;data02 &#x2F;mongodb&#x2F;data03  启动集群成员12345">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-09-10T03:59:07.951Z">
+<meta property="article:modified_time" content="2023-01-30T09:22:59.461Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-18-MongoDB/04-00-Mongo集群搭建" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/18-MongoDB/04-00-Mongo%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:07.951Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="主从集群"><a href="#主从集群" class="headerlink" title="主从集群"></a>主从集群</h1><h2 id="安装MongoDB"><a href="#安装MongoDB" class="headerlink" title="安装MongoDB"></a>安装MongoDB</h2><p>如何安装一个MongoDB请参考《MongoDB安装手册》。我们通过安装一个3个节点的伪集群，来学习如何搭建MongoDB的主从集群搭建。</p>
+<h2 id="构建集群"><a href="#构建集群" class="headerlink" title="构建集群"></a>构建集群</h2><h3 id="通过命令方式"><a href="#通过命令方式" class="headerlink" title="通过命令方式"></a>通过命令方式</h3><h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><p>集群的三个节点通过下面的命令方式启动。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建备用目录 </span></span><br><span class="line">sudo <span class="built_in">mkdir</span> -p /mongodb/data01 /mongodb/data02 /mongodb/data03</span><br></pre></td></tr></table></figure>
+
+<h4 id="启动集群成员"><a href="#启动集群成员" class="headerlink" title="启动集群成员"></a>启动集群成员</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 第一个节点 </span></span><br><span class="line">sudo mongod --replSet <span class="string">&quot;rs1&quot;</span> --bind_ip 0.0.0.0 --dbpath /mongodb/data01 --port 28018 --oplogSize 128 </span><br><span class="line"><span class="comment"># 第二个节点 </span></span><br><span class="line">sudo mongod --replSet <span class="string">&quot;rs1&quot;</span> --bind_ip 0.0.0.0 --dbpath /mongodb/data02 --port 28019 --oplogSize 128 </span><br><span class="line"><span class="comment"># 第三个节点 </span></span><br><span class="line">sudo mongod --replSet <span class="string">&quot;rs1&quot;</span> --bind_ip 0.0.0.0 --dbpath /mongodb/data03 --port 28020 --oplogSize 128</span><br></pre></td></tr></table></figure>
+
+<p>–replSet用来指定同一个集群中的集群名称，集群成员通过集群名字来找到组织。</p>
+<p>–bind_ip表示对集群成员的ip地址进行开放，集群成员之间需要网络通讯，多个地址用逗号分隔。这里</p>
+<p>我们用0.0.0.0来允许所有地址访问，实际环境不建议这么做。</p>
+<p>–dbpath指定数据目录的路径</p>
+<p>–port同一台机器上的伪集群，需要用不同的端口号来启动</p>
+<p>–oplogSize限制每个mongod实例使用的磁盘空间</p>
+<h4 id="初始化集群成员"><a href="#初始化集群成员" class="headerlink" title="初始化集群成员"></a>初始化集群成员</h4><p>进入到前面的任意端口shell窗口，比如28019</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mongo --port 28019</span><br></pre></td></tr></table></figure>
+
+<p>在shell界面中，使用下面的配置来启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">var rsconf = &#123; </span><br><span class="line">    _id: <span class="string">&quot;rs1&quot;</span>, </span><br><span class="line">    members: [ </span><br><span class="line">        &#123; _id: 0, host: <span class="string">&quot;127.0.0.1:28018&quot;</span> &#125;, </span><br><span class="line">        &#123; _id: 1, host: <span class="string">&quot;127.0.0.1:28019&quot;</span> &#125;, </span><br><span class="line">        &#123; _id: 2, host: <span class="string">&quot;127.0.0.1:28020&quot;</span> &#125; </span><br><span class="line">    ] </span><br><span class="line">&#125;</span><br><span class="line">rs.initiate(rsconf);</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就成功通过命令的方式启动了一个主从集群。</p>
+<h3 id="配置文件方式"><a href="#配置文件方式" class="headerlink" title="配置文件方式"></a>配置文件方式</h3><p>配置文件方式，其实就是讲命令方式中的配置挪到了配置文件中。</p>
+<h4 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果是yum安装方式，可以将默认配置文件复制出三个配置文件 </span></span><br><span class="line">sudo <span class="built_in">cp</span> /etc/mongod.conf /etc/rep-mongod01.conf </span><br><span class="line">sudo <span class="built_in">cp</span> /etc/mongod.conf /etc/rep-mongod02.conf </span><br><span class="line">sudo <span class="built_in">cp</span> /etc/mongod.conf /etc/rep-mongod03.conf </span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果不是，则创建，准备三个配置文件 </span></span><br><span class="line">sudo vim /etc/rep-mongod01.conf </span><br><span class="line">sudo vim /etc/rep-mongod02.conf </span><br><span class="line">sudo vim /etc/rep-mongod03.conf </span><br><span class="line"></span><br><span class="line"><span class="comment"># 准备目录 </span></span><br><span class="line">sudo <span class="built_in">mkdir</span> -p /mongodb/dataOne /mongodb/dataTwo /mongodb/dataThree</span><br></pre></td></tr></table></figure>
+
+<p>配置文件中的配置内容如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">systemLog:</span> </span><br><span class="line">  <span class="attr">destination:</span> <span class="string">file</span> </span><br><span class="line">  <span class="attr">logAppend:</span> <span class="literal">true</span> </span><br><span class="line">  <span class="attr">path:</span> <span class="string">/var/log/mongodb/mongod.log</span> </span><br><span class="line"></span><br><span class="line"><span class="comment"># Where and how to store data. </span></span><br><span class="line"><span class="attr">storage:</span> </span><br><span class="line">  <span class="attr">dbPath:</span> <span class="string">/mongodb/dataOne</span> </span><br><span class="line">  <span class="attr">journal:</span> </span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="comment"># engine: </span></span><br><span class="line"><span class="comment"># wiredTiger: </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># how the process runs </span></span><br><span class="line"><span class="attr">processManagement:</span> </span><br><span class="line">  <span class="attr">fork:</span> <span class="literal">true</span> <span class="comment"># fork and run in background </span></span><br><span class="line">  <span class="attr">pidFilePath:</span> <span class="string">/var/run/mongodb/mongod.pid</span> <span class="comment"># 不同的实例 </span></span><br><span class="line">  <span class="attr">timeZoneInfo:</span> <span class="string">/usr/share/zoneinfo</span> </span><br><span class="line"></span><br><span class="line"><span class="comment"># network interfaces </span></span><br><span class="line"><span class="attr">net:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">38017</span></span><br><span class="line">  <span class="attr">bindIpAll:</span> <span class="literal">true</span></span><br><span class="line"><span class="comment"># replication: </span></span><br><span class="line"><span class="attr">replication:</span> </span><br><span class="line">  <span class="attr">oplogSizeMB:</span> <span class="number">128</span> </span><br><span class="line">  <span class="attr">replSetName:</span> <span class="string">&quot;rs0&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>配置文件需要修改的三个地方，数据目录、端口号、集群配置，三个配置文件的属性配置如下：</p>
+<table>
+<thead>
+<tr>
+<th>配置文件</th>
+<th>数据目录</th>
+<th>端口号</th>
+<th>集群配置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rep-mongod01.conf</td>
+<td>&#x2F;mongodb&#x2F;dataOne</td>
+<td>38017</td>
+<td>replication:<br/>oplogSizeMB: 128<br/>replSetName: “rs0”</td>
+</tr>
+<tr>
+<td>rep-mongod02.conf</td>
+<td>&#x2F;mongodb&#x2F;dataTwo</td>
+<td>38018</td>
+<td>与第一个配置文件一样</td>
+</tr>
+<tr>
+<td>rep-mongod03.conf</td>
+<td>&#x2F;mongodb&#x2F;dataThree</td>
+<td>38019</td>
+<td>与第一个配置文件一样</td>
+</tr>
+</tbody></table>
+<h4 id="启动集群成员-1"><a href="#启动集群成员-1" class="headerlink" title="启动集群成员"></a>启动集群成员</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo mongod --config /etc/rep-mongod01.conf </span><br><span class="line">sudo mongod --config /etc/rep-mongod02.conf </span><br><span class="line">sudo mongod --config /etc/rep-mongod03.conf</span><br></pre></td></tr></table></figure>
+
+<h4 id="初始化集群成员-1"><a href="#初始化集群成员-1" class="headerlink" title="初始化集群成员"></a>初始化集群成员</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mongo --port 38017 </span><br><span class="line">var rsconf = &#123; </span><br><span class="line">    _id: <span class="string">&quot;rs0&quot;</span>, </span><br><span class="line">    members: [ </span><br><span class="line">        &#123; _id: 0, host: <span class="string">&quot;127.0.0.1:38017&quot;</span> &#125;, </span><br><span class="line">        &#123; _id: 1, host: <span class="string">&quot;127.0.0.1:38018&quot;</span> &#125;, </span><br><span class="line">        &#123; _id: 2, host: <span class="string">&quot;127.0.0.1:38019&quot;</span> &#125; </span><br><span class="line">    ] </span><br><span class="line">&#125;</span><br><span class="line">rs.initiate(rsconf);</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加仲裁器"><a href="#添加仲裁器" class="headerlink" title="添加仲裁器"></a>添加仲裁器</h3><p>仲裁器是一个mongod进程，不维护数据。集群成员为偶数个时，建议添加仲裁器来进行的主节点选举。</p>
+<p>准备数据目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">mkdir</span> -p /mongodb/arb</span><br></pre></td></tr></table></figure>
+
+<p>运行仲裁器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">nohup</span> mongod --port 38020 --dbpath /mongodb/arb --replSet <span class="string">&quot;rs0&quot;</span> --bind_ip 0.0.0.0 &amp;</span><br></pre></td></tr></table></figure>
+
+<p>使用mongo shell连接<strong>集群主节点</strong>，运行下面命令添加仲裁器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rs.addArb(<span class="string">&quot;127.0.0.1:38020&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><h3 id="查看集群配置"><a href="#查看集群配置" class="headerlink" title="查看集群配置"></a>查看集群配置</h3><p>在另一个端口的shell界面中，通过下面命令来查看集群配置内容。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rs.conf()</span><br></pre></td></tr></table></figure>
+
+<p>更多关于rs主从集群的相关命令，可以在mongo shell界面中，通过rs.help();来查看。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">rs.status(); <span class="comment"># 查看集群各个节点状态 </span></span><br><span class="line">rs.remove(<span class="string">&quot;127.0.0.1:38017&quot;</span>); <span class="comment"># 删除集群成员</span></span><br><span class="line"></span><br><span class="line">var rsconf = &#123; </span><br><span class="line">  _id: <span class="string">&quot;rs0&quot;</span>, </span><br><span class="line">  protocolVersion : NumberLong(1), <span class="comment"># 必填项，可以通过rs.conf()来查看当前的版本</span></span><br><span class="line">  members: [ </span><br><span class="line">    &#123; _id: 1, host: <span class="string">&quot;127.0.0.1:38018&quot;</span> &#125;, </span><br><span class="line">    &#123; _id: 2, host: <span class="string">&quot;127.0.0.1:38019&quot;</span> &#125; </span><br><span class="line">  ] </span><br><span class="line">&#125;</span><br><span class="line">rs.reconfig(rsconf); <span class="comment"># 重新配置集群</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 向集群中添加成员。先启动成员38017，然后添加成员到集群中 </span></span><br><span class="line"><span class="comment"># 初始priority、votes必须为0</span></span><br><span class="line">rs.add( &#123; host: <span class="string">&quot;127.0.0.1:38017&quot;</span>, priority: 0, votes: 0 &#125; )</span><br><span class="line"><span class="comment"># 修改priority、votes的值，参与集群投票</span></span><br><span class="line">var cfg = rs.conf(); </span><br><span class="line">cfg.members[2].priority = 1 </span><br><span class="line">cfg.members[2].votes = 1 </span><br><span class="line">rs.reconfig(cfg)</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看集群角色"><a href="#查看集群角色" class="headerlink" title="查看集群角色"></a>查看集群角色</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过下面的命令来查看集群中节点的角色 </span></span><br><span class="line">db.isMaster()</span><br></pre></td></tr></table></figure>
+
+<h3 id="集群间的数据同步"><a href="#集群间的数据同步" class="headerlink" title="集群间的数据同步"></a>集群间的数据同步</h3><p>进入到主节点，输入下面数据</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">use <span class="built_in">test</span>; </span><br><span class="line">db.inventory.drop() </span><br><span class="line">db.inventory.insertMany([ </span><br><span class="line">  &#123; item:<span class="string">&quot;canvas&quot;</span>, qty:120, size:&#123; h:28, w:35.5, uom:<span class="string">&quot;cm&quot;</span> &#125;, status:<span class="string">&quot;A&quot;</span>, createDate:ISODate(<span class="string">&quot;2016-02-06T20:20:13Z&quot;</span>) &#125;, </span><br><span class="line">  &#123; item:<span class="string">&quot;journal&quot;</span>, qty:25, tags:[ &#123;tag:<span class="string">&quot;gray&quot;</span>, <span class="built_in">type</span>:<span class="string">&quot;paper&quot;</span>&#125;, &#123;tag:<span class="string">&quot;red&quot;</span>, <span class="built_in">type</span>:<span class="string">&quot;electron&quot;</span>&#125; ], size:&#123; h:14, w:21, uom:<span class="string">&quot;cm&quot;</span> &#125;, status:<span class="string">&quot;A&quot;</span>, createDate:ISODate(<span class="string">&quot;2016-02-07T20:20:13Z&quot;</span>) &#125;, </span><br><span class="line">  &#123; item:<span class="string">&quot;notebook&quot;</span>, qty:50, tags:[ &#123;tag:<span class="string">&quot;yellow&quot;</span>, <span class="built_in">type</span>:<span class="string">&quot;paper&quot;</span>&#125;, &#123;tag:<span class="string">&quot;green&quot;</span>, <span class="built_in">type</span>:<span class="string">&quot;electron&quot;</span>&#125;], size:&#123; h:8.5, w:11, uom:<span class="string">&quot;in&quot;</span> &#125;, status:<span class="string">&quot;P&quot;</span>, createDate:ISODate(<span class="string">&quot;2016-02-08T20:20:13Z&quot;</span>)&#125; </span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
+
+<p>切换到次要节点</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">use <span class="built_in">test</span>; </span><br><span class="line">db.inventory.find();</span><br><span class="line">Error: error: &#123; </span><br><span class="line">    <span class="string">&quot;operationTime&quot;</span> : Timestamp(1573826154, 1), </span><br><span class="line">    <span class="string">&quot;ok&quot;</span> : 0, </span><br><span class="line">    <span class="string">&quot;errmsg&quot;</span> : <span class="string">&quot;not master and slaveOk=false&quot;</span>, </span><br><span class="line">    <span class="string">&quot;code&quot;</span> : 13435, </span><br><span class="line">    <span class="string">&quot;codeName&quot;</span> : <span class="string">&quot;NotMasterNoSlaveOk&quot;</span>, </span><br><span class="line">    <span class="string">&quot;<span class="variable">$clusterTime</span>&quot;</span> : &#123; </span><br><span class="line">        <span class="string">&quot;clusterTime&quot;</span> : Timestamp(1573826154, 1), </span><br><span class="line">        <span class="string">&quot;signature&quot;</span> : &#123; </span><br><span class="line">            <span class="string">&quot;hash&quot;</span> : BinData(0,<span class="string">&quot;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&quot;</span>), </span><br><span class="line">            <span class="string">&quot;keyId&quot;</span> : NumberLong(0) </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发现报错！默认只能在主节点查看数据 </span></span><br><span class="line"><span class="comment"># 需要在次要节点上查看数据，执行下面的命令 </span></span><br><span class="line">rs.slaveOk(); </span><br><span class="line"><span class="comment"># 再执行上面的查询语句，这时我们就能够看到数据了 </span></span><br><span class="line">db.inventory.find();</span><br></pre></td></tr></table></figure>
+
+<h3 id="集群可用性"><a href="#集群可用性" class="headerlink" title="集群可用性"></a>集群可用性</h3><p>依次关闭集群的一台、两台节点情况，通过rs.status()方法查看集群的反应。</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>集群服务状况</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>关闭一台次节点</td>
+<td>不受影响</td>
+</tr>
+<tr>
+<td>关闭一台主节点</td>
+<td>服务短暂连接不上，很快又恢复</td>
+</tr>
+<tr>
+<td>关闭两台次节点</td>
+<td>主节点变成了次要节点，只能查询，不能进行写操作</td>
+</tr>
+<tr>
+<td>关闭一主一次节点</td>
+<td>状况跟关闭两台次节点一样</td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/18-MongoDB/04-00-Mongo%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/" data-id="clmcxecgg003pu8wa4fhvhu0a" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/18-MongoDB/04-01-Mongo%E4%B8%BB%E4%BB%8E%E9%9B%86%E7%BE%A4/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/18-MongoDB/03-MongoDB%E7%B4%A2%E5%BC%95%E7%94%A8%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

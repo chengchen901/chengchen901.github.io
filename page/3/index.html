@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/page/3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:locale" content="en_US">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-999-工具/02-MyBatis Migrations/02-MyBatis Migrations常用命令一览表" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/999-%E5%B7%A5%E5%85%B7/02-MyBatis%20Migrations/02-MyBatis%20Migrations%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%B8%80%E8%A7%88%E8%A1%A8/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.196Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">migrate <span class="built_in">command</span> [parameter] [--path=&lt;directory&gt;] [--<span class="built_in">env</span>=&lt;environment&gt;] [--template=&lt;path to custom template&gt;]</span><br></pre></td></tr></table></figure>
+
+<h1 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h1><table>
+<thead>
+<tr>
+<th><strong>命令</strong></th>
+<th><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>info</td>
+<td>显示构建版本信息</td>
+</tr>
+<tr>
+<td>init</td>
+<td>创建(如果有必要)和初始化一个迁移路径</td>
+</tr>
+<tr>
+<td>bootstrap</td>
+<td>运行 bootstrap SQL 脚本 (参见 scripts&#x2F;bootstrap.sql 了解更多)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>使用提供的描述创建一个新的迁移</td>
+</tr>
+<tr>
+<td>status</td>
+<td>如果changelog表存在，则从数据库打印changelog状态</td>
+</tr>
+<tr>
+<td>up [n]</td>
+<td>按顺序运行所有待处理迁移的<strong>do部分</strong>，默认所有待处理迁移 或 自定义最近n次待处理迁移</td>
+</tr>
+<tr>
+<td>down [n]</td>
+<td>只运行上次已应用迁移的<strong>undo部分</strong>，默认最近1次已应用迁移 或 自定义最近n次已应用迁移</td>
+</tr>
+<tr>
+<td>version &lt; version&gt;</td>
+<td>将数据库up或down迁移至指定的版本</td>
+</tr>
+<tr>
+<td>pending</td>
+<td>强制无序执行所有待处理的迁移的<strong>do部分</strong>(不推荐)</td>
+</tr>
+<tr>
+<td>redo [n]</td>
+<td>重新运行最近的迁移操作，默认最近1次 或 自定义最近n次</td>
+</tr>
+<tr>
+<td>script &lt; v1&gt; &lt; v2&gt;</td>
+<td>生成从版本1到版本2的增量迁移脚本(如果v1 &gt; v2，则执行down回滚操作)</td>
+</tr>
+</tbody></table>
+<h1 id="选项"><a href="#选项" class="headerlink" title="选项"></a>选项</h1><table>
+<thead>
+<tr>
+<th><strong>选项</strong></th>
+<th><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>–help</td>
+<td>帮助</td>
+</tr>
+<tr>
+<td>–path&#x3D;&lt; directory&gt;</td>
+<td>迁移路径(又称为存储库)，默认当前工作目录</td>
+</tr>
+<tr>
+<td>–env&#x3D;&lt; environment&gt;</td>
+<td>环境配置，默认环境是’development’，不带路径或“.properties”部分</td>
+</tr>
+<tr>
+<td>–template&#x3D;&lt; template&gt;</td>
+<td>用于创建新的sql脚本的自定义模板的路径</td>
+</tr>
+<tr>
+<td>–force</td>
+<td>强制脚本继续(即使遇到SQL错误)</td>
+</tr>
+<tr>
+<td>–trace</td>
+<td>显示额外的错误细节(如果有的话)</td>
+</tr>
+<tr>
+<td>–quiet</td>
+<td>抑制输出</td>
+</tr>
+<tr>
+<td>–color</td>
+<td>彩色化输出</td>
+</tr>
+</tbody></table>
+<h1 id="实操"><a href="#实操" class="headerlink" title="实操"></a>实操</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">migrate new <span class="string">&quot;create blog table&quot;</span></span><br><span class="line">//自动生成示例</span><br><span class="line">20090807221758_create_blog_table.sql</span><br></pre></td></tr></table></figure>
+
+<p>自己写入创建表 SQL 和 UNDO SQL，UNDO SQL 对应创建表为删除表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- // create blog table</span></span><br><span class="line"><span class="comment">-- Migration SQL that makes the change goes here.</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> BLOG (</span><br><span class="line">  ID <span class="type">INT</span>,</span><br><span class="line">  NAME <span class="type">VARCHAR</span>(<span class="number">255</span>),</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY(ID)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">-- //@UNDO</span></span><br><span class="line"><span class="comment">-- SQL to undo the change goes here.</span></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> BLOG;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">migrate status</span><br><span class="line">migrate up</span><br><span class="line">migrate up 1</span><br><span class="line">migrate up x</span><br><span class="line">migrate down</span><br><span class="line">migrate down 1</span><br><span class="line">migrate down x</span><br><span class="line"><span class="comment"># version 为 migrate status 返回结果中的 ID</span></span><br><span class="line">migrate version 20230312093238</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/999-%E5%B7%A5%E5%85%B7/02-MyBatis%20Migrations/02-MyBatis%20Migrations%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%B8%80%E8%A7%88%E8%A1%A8/" data-id="clmcxecmr0058u8waeo9jegmz" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-999-工具/02-MyBatis Migrations/01-MyBatis Migrations安装以及初始化配置" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/999-%E5%B7%A5%E5%85%B7/02-MyBatis%20Migrations/01-MyBatis%20Migrations%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.189Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="MyBatis-Schema-Migrations介绍"><a href="#MyBatis-Schema-Migrations介绍" class="headerlink" title="MyBatis Schema Migrations介绍"></a>MyBatis Schema Migrations介绍</h1><p>The MyBatis Schema Migrations tool（<a target="_blank" rel="noopener" href="https://github.com/mybatis/">https://github.com/mybatis/</a> 下文简称Migrations）是一个开源的用于DB版本控制的命令行工具，</p>
+<p>Migrations通过生成统一格式的DDL脚本模板、在目标DB中记录版本信息和当前状态，使得多人开发团队可以在多个DB环境上井然有序的工作，为敏捷和迭代开发提供强有力的技术保障。</p>
+<p>同时Migrations学习和使用又非常简单，常用的命令不到10个；</p>
+<h1 id="安装MyBatis-Migrations"><a href="#安装MyBatis-Migrations" class="headerlink" title="安装MyBatis Migrations"></a>安装MyBatis Migrations</h1><p>从<a target="_blank" rel="noopener" href="https://github.com/mybatis/migrations/releases">MyBatis Migrations Github Releases</a>下载最新版MyBatis Migrations。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget -c https://github.com/mybatis/migrations/releases/download/mybatis-migrations-3.3.11/mybatis-migrations-3.3.11-bundle.zip</span><br></pre></td></tr></table></figure>
+
+<p>解压并重命名</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">unzip -q mybatis-migrations-3.3.11-bundle.zip</span><br><span class="line"><span class="built_in">mv</span> mybatis-migrations-3.3.11 mybatis-migrations</span><br></pre></td></tr></table></figure>
+
+<p>移动到&#x2F;opt目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">mv</span> mybatis-migrations /opt</span><br></pre></td></tr></table></figure>
+
+<p>配置MIGRATIONS_HOME、MIGRATIONS、PATH环境变量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export MIGRATIONS_HOME=&quot;/opt/mybatis-migrations&quot;&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export MIGRATIONS=&quot;$MIGRATIONS_HOME/bin&quot;&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export PATH=&quot;$MIGRATIONS:$PATH&quot;&#x27;</span> &gt;&gt; ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<p>清理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> mybatis-migrations-3.3.11-bundle.zip</span><br></pre></td></tr></table></figure>
+
+<p>重启终端，验证安装是否成功</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">migrate info</span><br></pre></td></tr></table></figure>
+
+<h1 id="初始化迁移路径"><a href="#初始化迁移路径" class="headerlink" title="初始化迁移路径"></a>初始化迁移路径</h1><p>假设Spring Boot项目目录名称为demo，位于用户目录下。</p>
+<p>注：Migrations目录无需手动创建，会被自动创建。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">migrate init --path=~/demo/Migrations</span><br></pre></td></tr></table></figure>
+
+<p>最终Migrations目录结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/Migrations</span><br><span class="line">  /drivers</span><br><span class="line">    mysql-connector-java-8.0.30.jar</span><br><span class="line">  /environments</span><br><span class="line">    development.properties</span><br><span class="line">    test.properties</span><br><span class="line">    production.properties</span><br><span class="line">  /scripts</span><br><span class="line">    20220903111800_create_changelog.sql</span><br><span class="line">    20220903111801_first_migration.sql</span><br><span class="line">    bootstrap.sql</span><br><span class="line">  README</span><br></pre></td></tr></table></figure>
+
+<h1 id="安装MySQL驱动"><a href="#安装MySQL驱动" class="headerlink" title="安装MySQL驱动"></a>安装MySQL驱动</h1><p>下载<a target="_blank" rel="noopener" href="https://dev.mysql.com/downloads/connector/j/">Connector&#x2F;J 8.0.30</a>驱动。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget -c https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.30.tar.gz</span><br></pre></td></tr></table></figure>
+
+<p>解压</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxf mysql-connector-java-8.0.30.tar.gz</span><br></pre></td></tr></table></figure>
+
+<p>复制mysql-connector-java-8.0.30.jar到Migrations&#x2F;drivers目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> mysql-connector-java-8.0.30</span><br><span class="line"><span class="built_in">cp</span> mysql-connector-java-8.0.30.jar ~/demo/Migrations/drivers</span><br></pre></td></tr></table></figure>
+
+<p>清理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span></span><br><span class="line"><span class="built_in">rm</span> mysql-connector-java-8.0.30.tar.gz</span><br><span class="line"><span class="built_in">rm</span> -rf mysql-connector-java-8.0.30</span><br></pre></td></tr></table></figure>
+
+<h1 id="development-properties"><a href="#development-properties" class="headerlink" title="development.properties"></a>development.properties</h1><p>需提前手动创建好数据库。</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 时区</span></span><br><span class="line"><span class="attr">time_zone</span>=<span class="string">GMT+8:00</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">## 脚本编码字符集</span></span><br><span class="line"><span class="comment"># script_char_set=UTF-8</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">## 跟踪数据库更改的表名</span></span><br><span class="line"><span class="attr">changelog</span>=<span class="string">CHANGELOG</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">## JDBC连接属性</span></span><br><span class="line"><span class="attr">driver</span>=<span class="string">com.mysql.cj.jdbc.Driver</span></span><br><span class="line"><span class="attr">url</span>=<span class="string">jdbc:mysql://127.0.0.1:3306/springblog</span></span><br><span class="line"><span class="attr">username</span>=<span class="string">root</span></span><br><span class="line"><span class="attr">password</span>=<span class="string">Password-4-Root</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">## 配置驱动路径，默认&quot;migrate init&quot;创建的driver目录</span></span><br><span class="line"><span class="comment"># driver_path=</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">## 逗号语句分隔符</span></span><br><span class="line"><span class="attr">delimiter</span>=<span class="string">;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">## 整行分隔符，比如&quot;GO&quot; 或 &quot;/&quot; 或 &quot;!RUN!&quot;</span></span><br><span class="line"><span class="attr">full_line_delimiter</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">## 如果为true：忽略逗号语句分隔符，把所有语句当成一条语句发送</span></span><br><span class="line"><span class="comment">## 如果为false：凡遇到逗号语句分隔符，迁移语法会自动断句，当成多条语句发送</span></span><br><span class="line"><span class="comment">## 应用场景：函数等内嵌的逗号语句分隔符与迁移语法的逗号语句分隔符冲突</span></span><br><span class="line"><span class="comment">## 解决方案1：配置为true，忽略逗号语句分隔符，把所有语句当成一条语句发送</span></span><br><span class="line"><span class="comment">## 解决方案2：配置为flase，使用整行分隔符替代函数等内嵌的逗号语句分隔符</span></span><br><span class="line"><span class="attr">send_full_script</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">## 如果为true，每条语句被隔离在自己的事务中</span></span><br><span class="line"><span class="comment">## 如果为flase，整个脚本在一个事务中执行</span></span><br><span class="line"><span class="comment">## 很少有数据库需要配置为true</span></span><br><span class="line"><span class="attr">auto_commit</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">## 如果为flase，从数据库返回的警告将中断迁移</span></span><br><span class="line"><span class="attr">ignore_warnings</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">## 变量</span></span><br><span class="line"><span class="comment">## 迁移文件使用$&#123;变量名&#125;调用</span></span><br><span class="line"><span class="comment"># 变量名=值</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="20220903111801-first-migration-sql"><a href="#20220903111801-first-migration-sql" class="headerlink" title="20220903111801_first_migration.sql"></a>20220903111801_first_migration.sql</h1><p>20220903111801_first_migration.sql为一个空的示例迁移脚本，示例代码如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- // First migration.</span></span><br><span class="line"><span class="comment">-- Migration SQL that makes the change goes here.</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> BLOG (</span><br><span class="line">  ID <span class="type">INT</span>,</span><br><span class="line">  NAME <span class="type">VARCHAR</span>(<span class="number">255</span>),</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY(ID)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">-- //@UNDO</span></span><br><span class="line"><span class="comment">-- SQL to undo the change goes here.</span></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> BLOG;</span><br></pre></td></tr></table></figure>
+
+<p><code>new</code>命令可以帮助我们自动生成迁移脚本的骨架</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/demo/Migrations</span><br><span class="line">migrate new <span class="string">&quot;create blog table&quot;</span></span><br><span class="line">//自动生成示例</span><br><span class="line">20090807221758_create_blog_table.sql</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/999-%E5%B7%A5%E5%85%B7/02-MyBatis%20Migrations/01-MyBatis%20Migrations%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE/" data-id="clmcxecmk0057u8waguakf1bb" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-999-工具/01-AutoHotKey/01-初识AutoHotKey" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/999-%E5%B7%A5%E5%85%B7/01-AutoHotKey/01-%E5%88%9D%E8%AF%86AutoHotKey/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.180Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>AutoHotkey 是一款 windows 平台下的热键脚本语言程序。可以实现诸如窗口置顶、快速输入、快捷操作等丰富多彩的功能。</p>
+<p>能够通过自定义脚本实现很多快捷、自动化操作，乃至创建图形界面程序，而且占用资源极小，是一个能够高度自定义、可用性极高的工具。</p>
+<p>官网：<a target="_blank" rel="noopener" href="https://autohotkey.com/">https://autohotkey.com/</a></p>
+<p>百度网盘：链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/148b3lGp6z3bxSqfy7b-1kg">https://pan.baidu.com/s/148b3lGp6z3bxSqfy7b-1kg</a> 提取码：m3kh</p>
+<p>这里就介绍下如何通过 AutoHotkey 来提高我们的操作效率。</p>
+<h1 id="AutoHotkey-使用方法"><a href="#AutoHotkey-使用方法" class="headerlink" title="AutoHotkey 使用方法"></a>AutoHotkey 使用方法</h1><p>下载并解压 “AutoHotkey_绿色版” ，AutoHotkeyU32&#x2F;64 分别为 32 位和 64 位程序，绿色版，将脚本文件拖动到上面即可启用脚本。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220326212752.png"></p>
+<p><strong>使用示例：</strong>新建文本文件，编写脚本如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">;这里的 “分号” 表示注释</span><br><span class="line">;快捷键 alt + n 打开记事本</span><br><span class="line">!n::Run notepad</span><br><span class="line"></span><br><span class="line">;快捷键 alt + y 打开护眼宝</span><br><span class="line">!y::Run D:\software\护眼宝\HuYanBao.exe</span><br></pre></td></tr></table></figure>
+
+<p>保存为 test.ahk （脚本后缀名都为 .ahk）。</p>
+<p>右键选择 “打开方式” -&gt; 浏览计算机中的程序 -&gt; 定位到 AutoHotKey 软件所在目录中 -&gt; 选择 AutoHotkeyU64.exe，确定。</p>
+<p>以后双击脚本，即可运行。这时就可以通过快捷键 alt + n 启动记事本，通过 alt + y 启动护眼宝了。</p>
+<h1 id="自制快捷启动器"><a href="#自制快捷启动器" class="headerlink" title="自制快捷启动器"></a>自制快捷启动器</h1><p>下面带大家从零开始写一个快捷启动脚本，很简单。这里分成 3 部分来说。</p>
+<h2 id="1-热键标记"><a href="#1-热键标记" class="headerlink" title="1. 热键标记"></a>1. 热键标记</h2><p><code>!</code>：是热键标记，这里的感叹号代表键盘上的 alt 键。<br><code>!n</code>：即对应键盘热键 alt + n。</p>
+<p>常用热键标记对应关系：</p>
+<ul>
+<li><code>#</code> ：win 键</li>
+<li><code>!</code> ：alt</li>
+<li><code>^</code> ：ctrl</li>
+<li><code>+</code> ：shift</li>
+</ul>
+<h2 id="2-连接"><a href="#2-连接" class="headerlink" title="2. 连接"></a>2. 连接</h2><p>符号 <code>::</code> 意味着每次按下前面的热键时，随后的命令将会被执行。这里用来连接热键标记和 Run 命令。</p>
+<h2 id="3-Run-命令"><a href="#3-Run-命令" class="headerlink" title="3. Run 命令"></a>3. Run 命令</h2><p>Run 命令：用来启动一个程序、文档、URL 网址或者快捷方式。如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Run Notepad</span><br><span class="line">Run C:\My Documents\Address List.doc</span><br><span class="line">Run www.baidu.com</span><br><span class="line">Run mailto:someone@somedomain.com</span><br></pre></td></tr></table></figure>
+
+<p>把上面 3 部分组合起来即可实现自定义快捷键。</p>
+<p>比如我想通过按 ctrl + q 启动位于 D:\software\QQ.exe 的 QQ 程序，按 alt + b 打开百度，可以这样写：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">^q::Run D:\software\QQ.exe</span><br><span class="line">!b::Run www.baidu.com</span><br></pre></td></tr></table></figure>
+
+<p>这样，大家就可以自定义自己的程序启动热键了。</p>
+<h2 id="脚本推荐"><a href="#脚本推荐" class="headerlink" title="脚本推荐"></a>脚本推荐</h2><p><strong>1. 快捷启动</strong></p>
+<p>即上面介绍的例子，自定义快捷键，快速打开程序、文件、网址等。这里给出一个模板，大家可以根据需要编辑修改。</p>
+<p><strong>2. 鼠标中间音量控制</strong></p>
+<p>把鼠标浮动在任务栏时，可以通过滚轮来调节音量，点击中键开启或关闭声音。</p>
+<p><strong>3. 屏幕键盘</strong></p>
+<p>在屏幕下方显示一个透明的模拟键盘，来实时显示我们按下的按键，用来学习盲打时很方便。双击托盘图标可以显示或隐藏模拟键盘。</p>
+<p><strong>4. 窗口置顶</strong></p>
+<p>选中窗口，按 win + ~，该窗口将在桌面上保持置顶状态。</p>
+<p><strong>5. 一键拷贝文件路径</strong></p>
+<p>ctrl + shift + c 复制文件路径到剪贴板。</p>
+<p><strong>6. 常用语缩写输入</strong></p>
+<p>通过缩写或快捷键快速打出常用语句。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">; / + 缩写 触发，格式 “ ::/缩写::文本 ”</span><br><span class="line">::/qm::123456@qq.com</span><br><span class="line">::/zw::输入中文符号 、 也可触发</span><br><span class="line">::/2::您好，请问有什么可以帮助您的吗？</span><br><span class="line">::/h::哈哈哈哈</span><br><span class="line"></span><br><span class="line">; 结合快捷键命令，按 alt + 1 触发，</span><br><span class="line">; 以下是一条完整的命令，“!1” 为快捷键设置，Send 后跟文本</span><br><span class="line">!1::</span><br><span class="line">Send 快捷键触发输出</span><br><span class="line">return</span><br></pre></td></tr></table></figure>
+
+
+
+<p>键盘输入 <code>/qm</code>、<code>/wait</code>、<code>/2</code>、<code>/h</code> + Tab、空格或回车，触发缩写功能，自动快速输入对应文本。</p>
+<p>并且会在文本后面自动添加 “Tab、空格或回车”，取决于触发时的快捷键。</p>
+<h2 id="开机自启"><a href="#开机自启" class="headerlink" title="开机自启"></a>开机自启</h2><p>把需要开机启动的脚本，放入 “启动” 文件夹即可。</p>
+<p>两种方法</p>
+<ol>
+<li>目录：<code>C:\Users\username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup</code></li>
+<li>开机自启动：Windows+R，键入shell:startup</li>
+</ol>
+<h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><ul>
+<li>修改脚本后需要重启 AHK，或右键菜单中 “重载脚本”；</li>
+<li>在设置时注意快捷键不要和系统默认快捷键冲突；</li>
+<li>编辑脚本时使用英文输入法；</li>
+<li>因为每运行一个脚本就会在任务栏显示一个图标，使用 ≥ 2 个脚本时，建议将其中内容合并到一个脚本文件中；</li>
+<li>可以通过 “想实现的功能描述 + ahk” 搜索需要脚本；</li>
+<li><a target="_blank" rel="noopener" href="https://wyagd001.github.io/zh-cn/docs/AutoHotkey.htm">文档资料</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/999-%E5%B7%A5%E5%85%B7/01-AutoHotKey/01-%E5%88%9D%E8%AF%86AutoHotKey/" data-id="clmcxecgs003ru8waej5bhkfc" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-98-Go/04-面向对象编程/01-结构体" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/98-Go/04-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/01-%E7%BB%93%E6%9E%84%E4%BD%93/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.140Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="结构体的定义方式"><a href="#结构体的定义方式" class="headerlink" title="结构体的定义方式"></a>结构体的定义方式</h1><p>type 名称 struct {<br>成员名 类型<br>成员名 类型<br>……<br>    }</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Student <span class="keyword">struct</span> &#123;</span><br><span class="line">	id     <span class="type">int</span></span><br><span class="line">	name   <span class="type">string</span></span><br><span class="line">	score  <span class="type">int</span></span><br><span class="line">	age    <span class="type">int</span></span><br><span class="line">	gender <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	stu := Student&#123;<span class="number">1</span>, <span class="string">&quot;小明&quot;</span>, <span class="number">100</span>, <span class="number">18</span>, <span class="string">&quot;男&quot;</span>&#125;</span><br><span class="line">	fmt.Println(stu)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%T\n&quot;</span>, stu)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Student <span class="keyword">struct</span> &#123;</span><br><span class="line">	id     <span class="type">int</span></span><br><span class="line">	name   <span class="type">string</span></span><br><span class="line">	score  <span class="type">int</span></span><br><span class="line">	age    <span class="type">int</span></span><br><span class="line">	gender <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> slic = []Student&#123;&#123;<span class="number">1</span>, <span class="string">&quot;小强&quot;</span>, <span class="number">60</span>, <span class="number">19</span>, <span class="string">&quot;男&quot;</span>&#125;, &#123;<span class="number">2</span>, <span class="string">&quot;小美&quot;</span>, <span class="number">100</span>, <span class="number">19</span>, <span class="string">&quot;女&quot;</span>&#125;&#125;</span><br><span class="line">	<span class="keyword">for</span> i, v := <span class="keyword">range</span> slic &#123;</span><br><span class="line">		fmt.Println(i, v)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Student <span class="keyword">struct</span> &#123;</span><br><span class="line">	id     <span class="type">int</span></span><br><span class="line">	name   <span class="type">string</span></span><br><span class="line">	score  <span class="type">int</span></span><br><span class="line">	age    <span class="type">int</span></span><br><span class="line">	gender <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test</span><span class="params">(stu Student)</span></span> Student &#123;</span><br><span class="line">	stu.age = <span class="number">18</span></span><br><span class="line">	<span class="keyword">return</span> stu</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	stu := test(Student&#123;<span class="number">1</span>, <span class="string">&quot;卢姥爷&quot;</span>, <span class="number">50</span>, <span class="number">27</span>, <span class="string">&quot;男&quot;</span>&#125;)</span><br><span class="line">	a := test(stu)</span><br><span class="line">	fmt.Println(stu)</span><br><span class="line">	fmt.Println(a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/98-Go/04-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B/01-%E7%BB%93%E6%9E%84%E4%BD%93/" data-id="clmcxecl7004yu8wa6qoi1elt" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-97-算法与数据结构/03-链表/07-两数相加" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/97-%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03-%E9%93%BE%E8%A1%A8/07-%E4%B8%A4%E6%95%B0%E7%9B%B8%E5%8A%A0/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.026Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/97-%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03-%E9%93%BE%E8%A1%A8/07-%E4%B8%A4%E6%95%B0%E7%9B%B8%E5%8A%A0/" data-id="clmcxecie0046u8wa523w8ki5" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-97-算法与数据结构/03-链表/06-深度拷贝带随机指针的链表实战" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/97-%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03-%E9%93%BE%E8%A1%A8/06-%E6%B7%B1%E5%BA%A6%E6%8B%B7%E8%B4%9D%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8%E5%AE%9E%E6%88%98/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.025Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/97-%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03-%E9%93%BE%E8%A1%A8/06-%E6%B7%B1%E5%BA%A6%E6%8B%B7%E8%B4%9D%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8%E5%AE%9E%E6%88%98/" data-id="clmcxeci7003zu8wa422rfcpu" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-97-算法与数据结构/03-链表/05-翻转链表实战" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/97-%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03-%E9%93%BE%E8%A1%A8/05-%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8%E5%AE%9E%E6%88%98/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.024Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/97-%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03-%E9%93%BE%E8%A1%A8/05-%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8%E5%AE%9E%E6%88%98/" data-id="clmcxeci7003yu8wafuw7emlc" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-97-算法与数据结构/03-链表/04-什么是双向链表" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/97-%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03-%E9%93%BE%E8%A1%A8/04-%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.023Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/97-%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03-%E9%93%BE%E8%A1%A8/04-%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8/" data-id="clmcxeci90040u8wa3py9d076" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-97-算法与数据结构/03-链表/03-什么是链表" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/97-%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03-%E9%93%BE%E8%A1%A8/03-%E4%BB%80%E4%B9%88%E6%98%AF%E9%93%BE%E8%A1%A8/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.022Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>链表是一种物理存储单元上非连续、非顺序的存储结构，数据元素的逻辑顺序是通过链表中的指针链接次序实现的。</p>
+<p>数组在创建是需要连续的内存空间，如果申请一个10m 的数组，内存中只有连续8m、9m 的空间，没有连续10m 大小的空间则数组无法创建成功。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220108235130.png"></p>
+<h1 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220108235712.png"></p>
+<h1 id="随机访问"><a href="#随机访问" class="headerlink" title="随机访问"></a>随机访问</h1><p>需要遍历整个链表，时间复杂度 O(n)</p>
+<h1 id="环形链表"><a href="#环形链表" class="headerlink" title="环形链表"></a>环形链表</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220109002337.png"></p>
+<p><strong>约瑟夫问题是个有名的问题：N个人围成一圈，从第一个开始报数，第M个将被杀掉，最后剩下一个，其余人都将被杀掉。例如N&#x3D;6，M&#x3D;5，被杀掉的顺序是：5，4，6，2，3。</strong></p>
+<p>用链表实现还是用数组实现都有一个共同点：要模拟整个游戏过程，不仅程序写起来比较烦，而且时间复杂度高达O（nm），当n，m非常大（例如上百万，上千万）的时候，几乎是没有办法在短时间内出结果的。问题仅仅是要求出最后的胜利者的序号，而不是要模拟整个过程.</p>
+<p>为了讨论方便，先把问题稍微改变一下，并不影响原意：问题描述：n个人（编号<strong>0~(n-1）</strong>），从0开始报数，报到（<strong>m-1</strong>）的退出，剩下的人继续从0开始报数。求胜利者的编号。</p>
+<p>我们知道第一个人（编号一定是<strong>（m-1）mod n</strong>) 出列之后，剩下的n-1个人组成了一个新的约瑟夫环（以编号为<strong>k&#x3D;m mod n</strong>的人开始）：k k+1 k+2 … n-2,n-1,0,1,2,… k-2</p>
+<p>并且从k开始报0。我们把他们的编号做一下转换：<br>k –&gt; 0<br>k+1 –&gt; 1<br>k+2 –&gt; 2<br>…<br>…<br>k-2 –&gt; n-2</p>
+<p>变换后就完完全全成为了（n-1）个人报数的子问题，假如我们知道这个子问题的解：例如x是最终的胜利者，那么根据上面这个表把这个x变回去不刚好就是n个人情况的解吗。变回去的公式很简单，相信大家都可以推出来：x’&#x3D;(x+k) mod n</p>
+<p>如何知道（n-1）个人报数的问题的解。对，只要知道（n-2）个人的解就行了。（n-2）个人的解呢。当然是先求（n-3）的情况 —- 这显然就是一个倒推问题。好了，思路出来了，下面写递推公式：<br>令 f 表示 i 个人玩游戏报 m 退出最后胜利者的编号，最后的结果自然是 f[n]<br><strong>递推公式</strong><br>f[1]&#x3D;0;<br>f[i]&#x3D;(f[i-1]+m) mod i; (i&gt;1）</p>
+<p>有了这个公式，我们要做的就是从1-n 顺序算出 f 的数值，最后结果是 f[n]。因为实际生活中编号总是从1开始，我们输出 f[n]+1<br>由于是逐级递推，不需要保存每个 f，程序也是异常简单：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.study;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Demo</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 约瑟夫问题是个有名的问题：N个人围成一圈，从第一个开始报数，第M个将被杀掉，最后剩下一个，其余人都将被杀掉。例如N=6，M=5，被杀掉的顺序是：5，4，6，2，3。</span></span><br><span class="line"><span class="comment">     * 分析：</span></span><br><span class="line"><span class="comment">     * （1）由于对于每个人只有死和活两种状态，因此可以用布尔型数组标记每个人的状态，可用true表示死，false表示活。</span></span><br><span class="line"><span class="comment">     * （2）开始时每个人都是活的，所以数组初值全部赋为false。</span></span><br><span class="line"><span class="comment">     * （3）模拟杀人过程，直到所有人都被杀死为止。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        test1(<span class="number">2</span>, <span class="number">2</span>);</span><br><span class="line">        test2(<span class="number">16</span>, <span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">test2</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> m)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">f</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">            f = (f + m) % i;</span><br><span class="line">            System.out.println(<span class="string">&quot;the winner is &quot;</span> + (f + <span class="number">1</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">test1</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> m)</span> &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="type">Node</span> <span class="variable">head</span> <span class="operator">=</span> initNode(n);</span><br><span class="line">        System.out.println(<span class="string">&quot;初始化 &quot;</span> + n + <span class="string">&quot; 个环形链表&quot;</span>);</span><br><span class="line">        printNode(head);</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">mCount</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">deadCount</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">Node</span> <span class="variable">current</span> <span class="operator">=</span> head;</span><br><span class="line">        <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (deadCount != n &amp;&amp; current != <span class="literal">null</span>) &#123;</span><br><span class="line">            count++;</span><br><span class="line">            <span class="comment">// 活着的人报数</span></span><br><span class="line">            <span class="keyword">if</span> (current.flag) &#123;</span><br><span class="line">                mCount++;</span><br><span class="line">                <span class="comment">// 查看是否为 m 个人</span></span><br><span class="line">                <span class="keyword">if</span> (mCount % m == <span class="number">0</span>) &#123;</span><br><span class="line">                    current.flag = <span class="literal">false</span>;</span><br><span class="line">                    <span class="comment">// 死亡人数加1</span></span><br><span class="line">                    deadCount++;</span><br><span class="line">                    System.out.println(<span class="string">&quot;第 &quot;</span> + current.val + <span class="string">&quot; 个人死亡，死亡人数 &quot;</span> + deadCount);</span><br><span class="line">                    printNode(head);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            current = current.next;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;循环次数 &quot;</span> + count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Node <span class="title function_">initNode</span><span class="params">(<span class="type">int</span> n)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (n &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">Node</span> <span class="variable">head</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Node</span>(<span class="number">1</span>);</span><br><span class="line">        <span class="type">Node</span> <span class="variable">pre</span> <span class="operator">=</span> head;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">            <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Node</span>(i + <span class="number">1</span>);</span><br><span class="line">            pre.next = node;</span><br><span class="line">            pre = node;</span><br><span class="line">        &#125;</span><br><span class="line">        pre.next=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">printNode</span><span class="params">(Node head)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (head == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">str</span> <span class="operator">=</span> <span class="string">&quot;-&gt;&quot;</span>;</span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">        <span class="type">Node</span> <span class="variable">current</span> <span class="operator">=</span> head;</span><br><span class="line">        <span class="keyword">while</span> (current != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (current.flag) &#123;</span><br><span class="line">                sb.append(current.val).append(str);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            current = current.next;</span><br><span class="line">            <span class="keyword">if</span> (current == head) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (sb.length() &gt;= str.length()) &#123;</span><br><span class="line">            System.out.println(sb.substring(<span class="number">0</span>, sb.length() - str.length()));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">        <span class="type">int</span> val;</span><br><span class="line">        Node next;</span><br><span class="line">        <span class="comment">/** 标识是否死亡，true 活，false 死*/</span></span><br><span class="line">        <span class="type">boolean</span> flag;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">Node</span><span class="params">(<span class="type">int</span> val)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.val = val;</span><br><span class="line">            <span class="built_in">this</span>.flag = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="链表和数组对比"><a href="#链表和数组对比" class="headerlink" title="链表和数组对比"></a>链表和数组对比</h1><table>
+<thead>
+<tr>
+<th></th>
+<th>数组</th>
+<th>链表</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>插入</td>
+<td>O(n)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>随机访问</td>
+<td>O(1)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>扩容</td>
+<td>每次创建新的数组将旧数组元素拷贝到新的数组</td>
+<td>创建新节点后尾部指针指向即可</td>
+</tr>
+</tbody></table>
+<p>实际应用中除了考虑插入和访问复杂度还要考虑其他方面，例如数组简单易用，内存是连续的所以可以借助 CPU 的缓存机制来预读数据提高访问效率。而链表内存不是连续的及时优点也是缺点，都是双刃剑。</p>
+<h1 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h1><ol>
+<li><p>记住指针 next 位置</p>
+</li>
+<li><p>哨兵节点，dummy 节点。删除的时候如果删除头节点则无法访问其余链表。定义哨兵节点，头节点返回永远是哨兵节点的 next。</p>
+<p>当删除值为1的节点时，哨兵节点 next 指向2，这样访问的时候还是能访问到2、3节点。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220109001104.png"></p>
+</li>
+<li><p>平时和面试时写完代码要写测试 case</p>
+</li>
+<li><p>抽象能力比较差可以画图，面试的时候也可以画图对面试官也好理解</p>
+</li>
+<li><p>多练习多动手</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/97-%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03-%E9%93%BE%E8%A1%A8/03-%E4%BB%80%E4%B9%88%E6%98%AF%E9%93%BE%E8%A1%A8/" data-id="clmcxeci6003xu8wahbiz7u8u" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-97-算法与数据结构/03-链表/02-ArrayList的底层分析" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/97-%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03-%E9%93%BE%E8%A1%A8/02-ArrayList%E7%9A%84%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:08.014Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="简介-ArrayList"><a href="#简介-ArrayList" class="headerlink" title="简介 ArrayList"></a>简介 ArrayList</h1><p>GitHub 源码地址：<a target="_blank" rel="noopener" href="https://github.com/AdoptOpenJDK/openjdk-jdk11/blob/master/src/java.base/share/classes/java/util/ArrayList.java">https://github.com/AdoptOpenJDK/openjdk-jdk11/blob/master/src/java.base/share/classes/java/util/ArrayList.java</a></p>
+<p>第136行 Object[] elementData; 表示 ArrayList 底层实际上是一个数组</p>
+<h1 id="插入-add"><a href="#插入-add" class="headerlink" title="插入 add"></a>插入 add</h1><p>第511行插入方法 add</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Inserts the specified element at the specified position in this</span></span><br><span class="line"><span class="comment"> * list. Shifts the element currently at that position (if any) and</span></span><br><span class="line"><span class="comment"> * any subsequent elements to the right (adds one to their indices).</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> index index at which the specified element is to be inserted</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> element element to be inserted</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IndexOutOfBoundsException &#123;<span class="doctag">@inheritDoc</span>&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">(<span class="type">int</span> index, E element)</span> &#123;</span><br><span class="line">    <span class="comment">// 判断是否需要扩容</span></span><br><span class="line">    rangeCheckForAdd(index);</span><br><span class="line">    modCount++;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">int</span> s;</span><br><span class="line">    Object[] elementData;</span><br><span class="line">    <span class="keyword">if</span> ((s = size) == (elementData = <span class="built_in">this</span>.elementData).length)</span><br><span class="line">        elementData = grow();</span><br><span class="line">    <span class="comment">// 将 index 位置后的元素后移，所以插入时间复杂度为 O(n)</span></span><br><span class="line">    System.arraycopy(elementData, index,</span><br><span class="line">                     elementData, index + <span class="number">1</span>,</span><br><span class="line">                     s - index);</span><br><span class="line">    elementData[index] = element;</span><br><span class="line">    size = s + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="删除-remove"><a href="#删除-remove" class="headerlink" title="删除 remove"></a>删除 remove</h1><p>第534行删除方法 remove</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Removes the element at the specified position in this list.</span></span><br><span class="line"><span class="comment"> * Shifts any subsequent elements to the left (subtracts one from their</span></span><br><span class="line"><span class="comment"> * indices).</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> index the index of the element to be removed</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> the element that was removed from the list</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IndexOutOfBoundsException &#123;<span class="doctag">@inheritDoc</span>&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> E <span class="title function_">remove</span><span class="params">(<span class="type">int</span> index)</span> &#123;</span><br><span class="line">    Objects.checkIndex(index, size);</span><br><span class="line">    <span class="keyword">final</span> Object[] es = elementData;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span> <span class="type">E</span> <span class="variable">oldValue</span> <span class="operator">=</span> (E) es[index];</span><br><span class="line">    fastRemove(es, index);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> oldValue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Private remove method that skips bounds checking and does not</span></span><br><span class="line"><span class="comment"> * return the value removed.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">fastRemove</span><span class="params">(Object[] es, <span class="type">int</span> i)</span> &#123;</span><br><span class="line">    modCount++;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">int</span> newSize;</span><br><span class="line">    <span class="keyword">if</span> ((newSize = size - <span class="number">1</span>) &gt; i)</span><br><span class="line">        <span class="comment">// 删除指定下标元素然后将后面的元素向前移动，所以删除时间复杂度是 O(n)</span></span><br><span class="line">        System.arraycopy(es, i + <span class="number">1</span>, es, i, newSize - i);</span><br><span class="line">    es[size = newSize] = <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="获取-get"><a href="#获取-get" class="headerlink" title="获取 get"></a>获取 get</h1><p>第457行获取指定下标值方法 get</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns the element at the specified position in this list.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>  index index of the element to return</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> the element at the specified position in this list</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IndexOutOfBoundsException &#123;<span class="doctag">@inheritDoc</span>&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> E <span class="title function_">get</span><span class="params">(<span class="type">int</span> index)</span> &#123;</span><br><span class="line">    Objects.checkIndex(index, size);</span><br><span class="line">    <span class="comment">// 根据下标获取时间复制度 O(1)</span></span><br><span class="line">    <span class="keyword">return</span> elementData(index);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="设置-set"><a href="#设置-set" class="headerlink" title="设置 set"></a>设置 set</h1><p>第471行设置指定下标值方法 set</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Replaces the element at the specified position in this list with</span></span><br><span class="line"><span class="comment"> * the specified element.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> index index of the element to replace</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> element element to be stored at the specified position</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> the element previously at the specified position</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IndexOutOfBoundsException &#123;<span class="doctag">@inheritDoc</span>&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> E <span class="title function_">set</span><span class="params">(<span class="type">int</span> index, E element)</span> &#123;</span><br><span class="line">    Objects.checkIndex(index, size);</span><br><span class="line">    <span class="type">E</span> <span class="variable">oldValue</span> <span class="operator">=</span> elementData(index);</span><br><span class="line">    <span class="comment">// 根据下标设置值时间复杂度 O(1)</span></span><br><span class="line">    elementData[index] = element;</span><br><span class="line">    <span class="keyword">return</span> oldValue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="扩容"><a href="#扩容" class="headerlink" title="扩容"></a>扩容</h1><p>一般初始化 ArrayList</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Object&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;Object&gt;();</span><br></pre></td></tr></table></figure>
+
+<p>来看一下这样初始化数组容量是多少，第166行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Constructs an empty list with an initial capacity of ten.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">public</span> <span class="title function_">ArrayList</span><span class="params">()</span> &#123;</span><br><span class="line">       <span class="built_in">this</span>.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现默认是初始一个空的数组，在 add 添加元素时会调用 newCapacity 方法，第一次添加元素为空时，扩容到默认元素为10。扩容实际上就是创建一个新的数组将旧数组的值拷贝到新数组中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">DEFAULT_CAPACITY</span> <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Returns a capacity at least as large as the given minimum capacity.</span></span><br><span class="line"><span class="comment">    * Returns the current capacity increased by 50% if that suffices.</span></span><br><span class="line"><span class="comment">    * Will not return a capacity greater than MAX_ARRAY_SIZE unless</span></span><br><span class="line"><span class="comment">    * the given minimum capacity is greater than MAX_ARRAY_SIZE.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> minCapacity the desired minimum capacity</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@throws</span> OutOfMemoryError if minCapacity is less than zero</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="type">int</span> <span class="title function_">newCapacity</span><span class="params">(<span class="type">int</span> minCapacity)</span> &#123;</span><br><span class="line">       <span class="comment">// overflow-conscious code</span></span><br><span class="line">       <span class="type">int</span> <span class="variable">oldCapacity</span> <span class="operator">=</span> elementData.length;</span><br><span class="line">       <span class="type">int</span> <span class="variable">newCapacity</span> <span class="operator">=</span> oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</span><br><span class="line">       <span class="keyword">if</span> (newCapacity - minCapacity &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">           <span class="comment">// 第一次添加元素为空时，扩容到默认元素为10</span></span><br><span class="line">           <span class="keyword">if</span> (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA)</span><br><span class="line">               <span class="keyword">return</span> Math.max(DEFAULT_CAPACITY, minCapacity);</span><br><span class="line">           <span class="keyword">if</span> (minCapacity &lt; <span class="number">0</span>) <span class="comment">// overflow</span></span><br><span class="line">               <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">OutOfMemoryError</span>();</span><br><span class="line">           <span class="keyword">return</span> minCapacity;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> (newCapacity - MAX_ARRAY_SIZE &lt;= <span class="number">0</span>)</span><br><span class="line">           ? newCapacity</span><br><span class="line">           : hugeCapacity(minCapacity);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>当你能提前知道或预估 ArrayList 容量时，最好通过构建参数指定。这样可以减少扩容拷贝数组的耗时使得运行耗时变快</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Object&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;Object&gt;(<span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+
+<p>源码中初始化容量代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Constructs an empty list with the specified initial capacity.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>  initialCapacity  the initial capacity of the list</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> IllegalArgumentException if the specified initial capacity</span></span><br><span class="line"><span class="comment"> *         is negative</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">ArrayList</span><span class="params">(<span class="type">int</span> initialCapacity)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (initialCapacity &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">this</span>.elementData = <span class="keyword">new</span> <span class="title class_">Object</span>[initialCapacity];</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (initialCapacity == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">this</span>.elementData = EMPTY_ELEMENTDATA;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Illegal Capacity: &quot;</span>+</span><br><span class="line">                                           initialCapacity);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/97-%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/03-%E9%93%BE%E8%A1%A8/02-ArrayList%E7%9A%84%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/" data-id="clmcxeccl002xu8wa66sh6mui" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

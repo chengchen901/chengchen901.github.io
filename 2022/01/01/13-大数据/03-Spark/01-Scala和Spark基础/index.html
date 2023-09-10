@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Spark | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Spark简介系统架构 Spark简介什么是Spark？    Spark是基于内存计算的通用大规模数据处理框架 Spark已经融入了Hadoop生态系统，可支持的作业类型和应用场景比MapReduce更为广泛，并且具备了MapReduce所有的高容错性和高伸缩性特点。  为何会诞生Spark？回顾MapReduce并不是所有的问题都可以简单的分解成Map和Reduce两步模型处理 MapRedu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark">
+<meta property="og:url" content="http://example.com/2022/01/01/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/03-Spark/01-Scala%E5%92%8CSpark%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Spark简介系统架构 Spark简介什么是Spark？    Spark是基于内存计算的通用大规模数据处理框架 Spark已经融入了Hadoop生态系统，可支持的作业类型和应用场景比MapReduce更为广泛，并且具备了MapReduce所有的高容错性和高伸缩性特点。  为何会诞生Spark？回顾MapReduce并不是所有的问题都可以简单的分解成Map和Reduce两步模型处理 MapRedu">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220135938.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220141243.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220141828.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220142341.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220142424.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220142528.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220142628.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220211756.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220221158.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220221341.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220221614.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220221711.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220221827.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220222050.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220222407.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-10.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220223145.png">
+<meta property="article:published_time" content="2022-01-01T04:00:00.000Z">
+<meta property="article:modified_time" content="2022-03-06T11:54:39.647Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Spark">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220135938.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-13-大数据/03-Spark/01-Scala和Spark基础" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/01/01/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/03-Spark/01-Scala%E5%92%8CSpark%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time class="dt-published" datetime="2022-01-01T04:00:00.000Z" itemprop="datePublished">2022-01-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Spark
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Spark简介"><a href="#Spark简介" class="headerlink" title="Spark简介"></a>Spark简介</h1><h2 id="系统架构"><a href="#系统架构" class="headerlink" title="系统架构"></a>系统架构</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220135938.png"></p>
+<h2 id="Spark简介-1"><a href="#Spark简介-1" class="headerlink" title="Spark简介"></a>Spark简介</h2><p>什么是Spark？<br>    Spark是基于<strong>内存计算</strong>的通用大规模数据处理框架</p>
+<p>Spark已经融入了Hadoop生态系统，可支持的作业类型和应用场景比MapReduce更为广泛，并且具备了MapReduce所有的高容错性和高伸缩性特点。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220141243.png"></p>
+<h2 id="为何会诞生Spark？"><a href="#为何会诞生Spark？" class="headerlink" title="为何会诞生Spark？"></a>为何会诞生Spark？</h2><p>回顾MapReduce<br>并不是所有的问题都可以简单的分解成Map和Reduce两步模型处理</p>
+<p>MapReduce缺点</p>
+<ul>
+<li>延时高<br>Example：不适合交互式SQL分析</li>
+<li>迭代计算力不从心<br>Example：斐波那契数列</li>
+<li>流式数据处理<br>Example：统计网站PV、UV数据</li>
+</ul>
+<p>Spark 一站式解决</p>
+<ul>
+<li>离线批处理</li>
+<li>流式计算</li>
+<li>在线实时分析</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220141828.png"></p>
+<h2 id="Spark为何快？"><a href="#Spark为何快？" class="headerlink" title="Spark为何快？"></a>Spark为何快？</h2><p>MapReduce会将中间结果输出到本地磁盘，例如Shuffle时Map输出的中间结果</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220142341.png"></p>
+<p>有多个MapReduce任务串联时，依赖HDFS存储中间结果的输出，例如执行Hive查询</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220142424.png"></p>
+<p>MapReduce在处理复杂DAG时会带来大量的数据copy、序列化和磁盘I&#x2F;O开销</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220142528.png"></p>
+<ul>
+<li>Spark尽可能减少中间结果写入磁盘</li>
+<li>尽可能减少不必要的Sort&#x2F;Shuffle</li>
+<li>反复用到的数据进行Cache</li>
+<li>对于DAG进行高度优化<ul>
+<li>划分不同的Stage</li>
+<li>使用延迟计算技术</li>
+</ul>
+</li>
+</ul>
+<p>逻辑回归耗时</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220142628.png"></p>
+<h2 id="Spark特点"><a href="#Spark特点" class="headerlink" title="Spark特点"></a>Spark特点</h2><ul>
+<li><p>内存计算</p>
+<ul>
+<li>支持复杂查询、流式计算、机器学习、图计算</li>
+</ul>
+</li>
+<li><p>融入Hadoop生态圈</p>
+<ul>
+<li>兼容HDFS</li>
+<li>兼容Yarn</li>
+</ul>
+</li>
+<li><p>核心代码由Scala编写</p>
+</li>
+<li><p>发展速度快</p>
+<ul>
+<li>社区活跃</li>
+<li>最新版本3.1.2 (截止2021年06月01日)</li>
+</ul>
+</li>
+</ul>
+<h2 id="Spark多语言支持"><a href="#Spark多语言支持" class="headerlink" title="Spark多语言支持"></a>Spark多语言支持</h2><p>Python和Scala支持交互式分析</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lines = sc.textFile(…)</span><br><span class="line">lines.<span class="built_in">filter</span>(<span class="keyword">lambda</span> s: <span class="string">&quot;Error&quot;</span> <span class="keyword">in</span> s).count()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> lines = sc.textFile(…)</span><br><span class="line">lines.filter(x =&gt; x.contains(<span class="string">&quot;Error&quot;</span>)).count()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">JavaRDD&lt;String&gt; lines = sc.textFile(…);</span><br><span class="line">lines.filter(<span class="keyword">new</span> <span class="title class_">Function</span>&lt;String, Boolean&gt;)() &#123;</span><br><span class="line">    Boolean <span class="title function_">call</span><span class="params">(String s)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> s.contains(<span class="string">&quot;Error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).count()</span><br></pre></td></tr></table></figure>
+
+<h1 id="Scala编程基础"><a href="#Scala编程基础" class="headerlink" title="Scala编程基础"></a>Scala编程基础</h1><p><strong>版本：scala-2.11.12</strong></p>
+<h2 id="Scala是一门怎样的语言，具有哪些优点？"><a href="#Scala是一门怎样的语言，具有哪些优点？" class="headerlink" title="Scala是一门怎样的语言，具有哪些优点？"></a>Scala是一门怎样的语言，具有哪些优点？</h2><ul>
+<li>快速实验<ul>
+<li>快速尝试各种语法和代码</li>
+</ul>
+</li>
+<li>一致性<ul>
+<li>静态类型系统+面向对象+函数式编程</li>
+</ul>
+</li>
+<li>面向对象<ul>
+<li>所有的变量和方法都封装在对象中</li>
+</ul>
+</li>
+<li>函数式编程<ul>
+<li>函数可以独立存在，可以定义一个函数作为另外一个函数的返回值，也可以接受函数作为函数的参数</li>
+</ul>
+</li>
+<li>异步编程<ul>
+<li>函数式编程提倡变量不可变，使得异步编程变得十分容易</li>
+</ul>
+</li>
+<li>基于JVM<ul>
+<li>Scala会被编译成为Bytecode，所以Scala能无缝集成已有的Java类库</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">products</span> </span>= orders.flatMap(o =&gt; o.products)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> List&lt;Product&gt; <span class="title function_">getProducts</span><span class="params">()</span> &#123;</span><br><span class="line">    List&lt;Product&gt; products = <span class="keyword">new</span> </span><br><span class="line">    <span class="title class_">ArrayList</span>&lt;Product&gt;();</span><br><span class="line">        <span class="keyword">for</span> (Order order : orders) &#123;</span><br><span class="line">            products.addAll(order.getProducts());</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">return</span> products;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Scala语法基础-从Hello-World说起"><a href="#Scala语法基础-从Hello-World说起" class="headerlink" title="Scala语法基础-从Hello World说起"></a>Scala语法基础-从Hello World说起</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloWorld</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    	System.out.println(<span class="string">&quot;Hello, World!&quot;</span>);</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>object 是一个关键词，表示一个单例对象</p>
+<p>方法返回为空用 Unit 表示</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">        println(<span class="string">&quot;Hello, World!&quot;</span>) </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Scala值和变量声明"><a href="#Scala值和变量声明" class="headerlink" title="Scala值和变量声明"></a>Scala值和变量声明</h2><ul>
+<li>val变量和var变量<ul>
+<li>val声明的变量不可变，相当于java中的final<ul>
+<li>val a &#x3D; 1</li>
+<li>a &#x3D; 2 &#x2F;&#x2F; 错误</li>
+</ul>
+</li>
+<li>var声明的变量可变<ul>
+<li>var a &#x3D; 1</li>
+<li>a &#x3D; 2 &#x2F;&#x2F; OK</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>在scala的类中，val会自动带有getter方法，var会自动带有getter和setter方法</li>
+</ul>
+<p>举个例子：</p>
+<p>在 VariableTest.scala 文件定义了俩个变量</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VariableTest</span> </span>&#123; </span><br><span class="line">	<span class="keyword">val</span> a = <span class="number">1</span></span><br><span class="line">	<span class="keyword">var</span> b = <span class="number">2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用 scalac VariableTest.scala 命令编译为 VariableTest.class 文件，再使用 jad VariableTest 反编译 class 文件结果如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">VariableTest</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> b;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">a</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> a;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">b</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> b;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> b_$eq(<span class="type">int</span> x$<span class="number">1</span>) &#123;</span><br><span class="line">        b = x$<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">VariableTest</span><span class="params">()</span> &#123;</span><br><span class="line">        b = <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Scala常用类型"><a href="#Scala常用类型" class="headerlink" title="Scala常用类型"></a>Scala常用类型</h2><p>Scala没有区分基本类型和包装类型，统一定义为class类。 </p>
+<ul>
+<li>1.toString() &#x2F;&#x2F; 生成字符串1</li>
+</ul>
+<p>7种数值类型+1种Boolean类型</p>
+<ul>
+<li>Byte -&gt; RichByte</li>
+<li>Char -&gt; RichChar</li>
+<li>Short -&gt; RichShort</li>
+<li>Int -&gt; RichInt</li>
+<li>Long -&gt; RichLong</li>
+<li>Float -&gt; RichFloat</li>
+<li>Double -&gt; RichDouble</li>
+</ul>
+<p>在基本数据类型上使用那些没有提供的方法时，scala会尝试“隐式转换”转换成增强类型</p>
+<ul>
+<li>1.to(10) &#x2F;&#x2F; 生成出Range(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)</li>
+</ul>
+<h2 id="方法的定义和使用"><a href="#方法的定义和使用" class="headerlink" title="方法的定义和使用"></a>方法的定义和使用</h2><p>方法定义</p>
+<ul>
+<li><p>格式<br><strong>def</strong> 方法名(参数名: 参数类型): 返回值类型 &#x3D; {<br>return xxx &#x2F;&#x2F; return可省略<br>}</p>
+</li>
+<li><p>当返回值为 unit 时</p>
+<p><strong>def</strong> 方法名(参数名: 参数类型) {</p>
+<p>&#x2F;&#x2F; 方法体</p>
+<p>}</p>
+</li>
+<li><p>无参数函数定义</p>
+<p><strong>def</strong> 方法名 {</p>
+<p>&#x2F;&#x2F; 方法体</p>
+<p>}</p>
+</li>
+</ul>
+<p>例子</p>
+<p><strong>def</strong> m1(a: Int, b: Int): Int &#x3D; {</p>
+<p>a + b</p>
+<p>}</p>
+<p><strong>def</strong> m2() &#x3D; 100</p>
+<p><strong>def</strong> m3 &#x3D; 100</p>
+<h2 id="函数的定义和使用"><a href="#函数的定义和使用" class="headerlink" title="函数的定义和使用"></a>函数的定义和使用</h2><p>函数定义</p>
+<ul>
+<li><p>函数在scala中是一等公民</p>
+</li>
+<li><p><strong>val</strong> 函数名:(参数类型1, … , 参数类型n)&#x3D;&gt;返回值类型 &#x3D; (T1,…, Tn) &#x3D;&gt; 函数体</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> f0 : (<span class="type">Int</span>) =&gt; <span class="type">Boolean</span> = i =&gt; &#123; i % <span class="number">2</span> == <span class="number">0</span> &#125;</span><br><span class="line"><span class="keyword">val</span> f1 : <span class="type">Int</span> =&gt; <span class="type">Boolean</span> = i =&gt; &#123; i % <span class="number">2</span> == <span class="number">0</span> &#125;</span><br><span class="line"><span class="keyword">val</span> f2 : <span class="type">Int</span> =&gt; <span class="type">Boolean</span> = i =&gt; i % <span class="number">2</span> == <span class="number">0</span></span><br><span class="line"><span class="keyword">val</span> f3 : <span class="type">Int</span> =&gt; <span class="type">Boolean</span> = _ % <span class="number">2</span> == <span class="number">0</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>val</strong> 函数名 &#x3D; (参数名1: 参数类型1, … , 参数名n: 参数类型n) &#x3D;&gt;函数体</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// implicit approach</span></span><br><span class="line"><span class="keyword">val</span> add0 = (x: <span class="type">Int</span>, y: <span class="type">Int</span>) =&gt; &#123; x + y &#125;</span><br><span class="line"><span class="keyword">val</span> add1 = (x: <span class="type">Int</span>, y: <span class="type">Int</span>) =&gt; x + y</span><br><span class="line"><span class="comment">// explicit approach</span></span><br><span class="line"><span class="keyword">val</span> add2 : (<span class="type">Int</span>, <span class="type">Int</span>) =&gt; <span class="type">Int</span> = (x,y) =&gt; &#123; x + y &#125;</span><br><span class="line"><span class="keyword">val</span> add3 : (<span class="type">Int</span>, <span class="type">Int</span>) =&gt; <span class="type">Int</span> = (x,y) =&gt; x + y</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>函数必须有参数列表，否则报错</p>
+<ul>
+<li><strong>val</strong> f1 &#x3D; &#x3D;&gt; 100 &#x2F;&#x2F; 错误</li>
+<li><strong>val</strong> f2 &#x3D; () &#x3D;&gt; 100 &#x2F;&#x2F; 正确</li>
+</ul>
+</li>
+</ul>
+<h2 id="函数与方法区别"><a href="#函数与方法区别" class="headerlink" title="函数与方法区别"></a>函数与方法区别</h2><p>方法不可以赋值给变量但是函数可以</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">m1</span></span>(a: <span class="type">Int</span>, b: <span class="type">Int</span>): <span class="type">Int</span> = &#123;</span><br><span class="line">a + b</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">val</span> m = m1 <span class="comment">// 错误：方法不可以赋值给一个变量</span></span><br><span class="line"><span class="keyword">val</span> m = m1 _ <span class="comment">// 正确：方法自动转化为函数</span></span><br><span class="line">m: (<span class="type">Int</span>, <span class="type">Int</span>) =&gt; <span class="type">Int</span> = &lt;function2&gt;</span><br></pre></td></tr></table></figure>
+
+<p>对于一个无参数的方法是没有参数列表的，而对于函数是有一个空参数列表。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">x</span> </span>= println(<span class="string">&quot;Hi scala&quot;</span>)</span><br><span class="line">x: <span class="type">Unit</span> <span class="comment">// 没有参数列表</span></span><br><span class="line"><span class="keyword">val</span> y = x _</span><br><span class="line">y: () =&gt; <span class="type">Unit</span> = &lt;function0&gt; <span class="comment">// 空的参数列表()</span></span><br></pre></td></tr></table></figure>
+
+<p>函数名后必须加括号才代表函数调用，否则为该函数本身，而方法名后不加括号为方法调用</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">y <span class="comment">// 仅代表函数本身</span></span><br><span class="line">res0: () =&gt; <span class="type">Unit</span> = &lt;function0&gt;</span><br><span class="line">y() <span class="comment">// 函数调用</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Example-方法计时器"><a href="#Example-方法计时器" class="headerlink" title="Example - 方法计时器"></a>Example - 方法计时器</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">TimeTest</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">time</span></span>[<span class="type">R</span>](block: =&gt; <span class="type">R</span>): <span class="type">R</span> = &#123; <span class="comment">// 这里使用了call-by-name参数</span></span><br><span class="line">    <span class="keyword">val</span> t0 = <span class="type">System</span>.currentTimeMillis()</span><br><span class="line">    <span class="keyword">val</span> result = block</span><br><span class="line">    <span class="keyword">val</span> t1 = <span class="type">System</span>.currentTimeMillis()</span><br><span class="line">    println(<span class="string">&quot;Elapsed time = &quot;</span> + (t1 - t0) + <span class="string">&quot;ms&quot;</span>)</span><br><span class="line">    result</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">method</span></span>(x: <span class="type">Int</span>): <span class="type">Unit</span> = &#123;</span><br><span class="line">        println(<span class="string">&quot;print test = &quot;</span> + x)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">        time(method(<span class="number">100</span>))</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="循环和高级for循环"><a href="#循环和高级for循环" class="headerlink" title="循环和高级for循环"></a>循环和高级for循环</h2><p>拥有与Java相同的while和do循环</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (x &gt; <span class="number">0</span>) &#123;</span><br><span class="line"><span class="comment">// do while</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>for循环与Java不同</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (x &lt;- 表达式) &#123;</span><br><span class="line">	<span class="comment">// do for</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> (x &lt;- <span class="number">1</span> to n) &#123;</span><br><span class="line">	<span class="comment">// do for</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> (x &lt;- <span class="string">&quot;Hello, World!&quot;</span>) &#123;</span><br><span class="line">	<span class="comment">// do for</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">val</span> s = <span class="string">&quot;Hello, World!&quot;</span></span><br><span class="line"><span class="keyword">for</span> (x &lt;- <span class="number">0</span> until s.length) &#123; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>for循环中不支持continue和break</p>
+<p>支持守卫</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(i &lt;- <span class="number">1</span> until <span class="number">10</span> reverse; <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>) &#123;</span><br><span class="line">	println(i) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>支持多个生成器</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(i &lt;- <span class="number">1</span> to <span class="number">3</span>; j &lt;- <span class="number">1</span> to <span class="number">3</span>) &#123; </span><br><span class="line">	print((<span class="number">10</span> * i + j) + <span class="string">&quot; &quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>支持守卫yield关键词</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> seq = <span class="keyword">for</span> (i &lt;- <span class="number">1</span> to <span class="number">10</span> <span class="keyword">if</span> i % <span class="number">2</span> == <span class="number">0</span>) <span class="keyword">yield</span> i</span><br><span class="line">print(seq)</span><br></pre></td></tr></table></figure>
+
+<h2 id="常见集合使用"><a href="#常见集合使用" class="headerlink" title="常见集合使用"></a>常见集合使用</h2><p>Scala有三大类集合</p>
+<ul>
+<li><p>序列Seq</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> v1 = <span class="type">Vector</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"><span class="keyword">val</span> list1 = <span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"><span class="keyword">val</span> que1 = <span class="type">Queue</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>集 Set</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Set</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>映射 Map</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Map</span>(<span class="number">1</span> -&gt; <span class="number">2</span>)</span><br><span class="line"><span class="type">Map</span>(<span class="string">&quot;foo&quot;</span> -&gt; <span class="string">&quot;bar&quot;</span>)</span><br><span class="line"><span class="type">Map</span>(<span class="number">1</span> -&gt; <span class="string">&quot;one&quot;</span>, <span class="number">2</span> -&gt; <span class="string">&quot;two&quot;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>几乎对所有集合都提供了可变和不可变的版本</p>
+<ul>
+<li>Scala.collection.immutable.Map &#x2F;&#x2F; 不可变集合</li>
+<li>Scala.collection.mutable.Map &#x2F;&#x2F; 可变集合</li>
+</ul>
+</li>
+<li><p>可以对集合进行丰富的操作</p>
+<ul>
+<li>map, flatMap, reduce, distinct, zip</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220211756.png"></p>
+<ul>
+<li>C 操作时间为常数</li>
+<li>eC 操作时间在满足某些假设的前提下为常数</li>
+<li>aC该操作的均摊运行时间为常数。某些调用的可能耗时较长，但多次调用之下，每次调用的平均耗时是常数。</li>
+<li>L 操作是线性的，耗时与容器的大小成正比。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>时间复杂度</th>
+<th>索引</th>
+<th>更新</th>
+<th>头部追加</th>
+<th>尾部追加</th>
+<th>插入</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Immutable</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>List</td>
+<td>L</td>
+<td>L</td>
+<td>C</td>
+<td>L</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Stream</td>
+<td>L</td>
+<td>L</td>
+<td>C</td>
+<td>L</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Vector</td>
+<td>eC</td>
+<td>eC</td>
+<td>eC</td>
+<td>eC</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Stack</td>
+<td>L</td>
+<td>L</td>
+<td>C</td>
+<td>L</td>
+<td>L</td>
+</tr>
+<tr>
+<td>Queue</td>
+<td>L</td>
+<td>L</td>
+<td>C</td>
+<td>C</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Range</td>
+<td>C</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>String</td>
+<td>C</td>
+<td>L</td>
+<td>L</td>
+<td>L</td>
+<td>-</td>
+</tr>
+<tr>
+<td>mutable</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ArrayBuffer</td>
+<td>C</td>
+<td>C</td>
+<td>L</td>
+<td>aC</td>
+<td>L</td>
+</tr>
+<tr>
+<td>ListBuffer</td>
+<td>L</td>
+<td>L</td>
+<td>C</td>
+<td>C</td>
+<td>L</td>
+</tr>
+<tr>
+<td>StringBuilder</td>
+<td>C</td>
+<td>C</td>
+<td>L</td>
+<td>aC</td>
+<td>L</td>
+</tr>
+<tr>
+<td>MutableList</td>
+<td>L</td>
+<td>L</td>
+<td>C</td>
+<td>C</td>
+<td>L</td>
+</tr>
+<tr>
+<td>Queue</td>
+<td>L</td>
+<td>L</td>
+<td>C</td>
+<td>C</td>
+<td>L</td>
+</tr>
+<tr>
+<td>ArraySeq</td>
+<td>C</td>
+<td>C</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Stack</td>
+<td>L</td>
+<td>L</td>
+<td>C</td>
+<td>L</td>
+<td>L</td>
+</tr>
+<tr>
+<td>ArrayStack</td>
+<td>C</td>
+<td>C</td>
+<td>aC</td>
+<td>L</td>
+<td>L</td>
+</tr>
+<tr>
+<td>Array</td>
+<td>C</td>
+<td>C</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+</tbody></table>
+<h2 id="常见集合操作"><a href="#常见集合操作" class="headerlink" title="常见集合操作"></a>常见集合操作</h2><p>map</p>
+<ul>
+<li><p>在列表中的每个元素上计算一个函数，并且返回一个包含相同数目元素的列表。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> nums = <span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line"><span class="keyword">val</span> squareNums1 = nums.map(num =&gt; num * num)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>flatMap</p>
+<ul>
+<li><p>结合了map和flatten的功能。接收一个可以处理嵌套列表的函数，把返回结果连接起来。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> nestedNumbers = <span class="type">List</span>(<span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>), <span class="type">List</span>(<span class="number">3</span>, <span class="number">4</span>))</span><br><span class="line">nestedNumbers.flatMap(x =&gt; x.map(<span class="type">Math</span>.pow(_, <span class="number">2</span>)))</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>filter</p>
+<ul>
+<li><p>移除任何使得传入的函数返回false的元素。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> nums = <span class="type">List</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>)</span><br><span class="line">nums.filter((i: <span class="type">Int</span>) =&gt; i % <span class="number">2</span> == <span class="number">0</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>zip</p>
+<ul>
+<li><p>两个列表的元素合成一个由元组对组成的列表里</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>).zip(<span class="type">List</span>(<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>))</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>partition</p>
+<ul>
+<li><p>断言函数的返回值对列表进行拆分</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>).partition(_ % <span class="number">2</span> == <span class="number">0</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	methodThatThrowsIOException();</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">	<span class="comment">// do IOException</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">	<span class="comment">// do Throwable</span></span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">	<span class="comment">// do finally</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123; </span><br><span class="line">	methodThatMayThrowAnException()</span><br><span class="line">&#125; <span class="keyword">catch</span> &#123; </span><br><span class="line">	<span class="keyword">case</span> e: <span class="type">IOException</span> =&gt; <span class="comment">// do IOException</span></span><br><span class="line">	<span class="keyword">case</span> _: <span class="type">Throwable</span> =&gt; <span class="comment">// do Throwable</span></span><br><span class="line">&#125; <span class="keyword">finally</span> &#123; </span><br><span class="line">	<span class="comment">// do finally</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果在.map, .flatMap中遇到异常如何处理？</p>
+<p>Scala提供了scala.util.Try 类型更加优雅的处理异常</p>
+<ul>
+<li>如果成功返回Success</li>
+<li>如果抛出异常返回Failure并携带异常信息</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> scala.util.&#123;<span class="type">Try</span>, <span class="type">Success</span>, <span class="type">Failure</span>&#125;</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">divideBy</span></span>(x: <span class="type">Int</span>, y: <span class="type">Int</span>): <span class="type">Try</span>[<span class="type">Int</span>] = &#123; </span><br><span class="line">	<span class="type">Try</span>(x / y)</span><br><span class="line">&#125;</span><br><span class="line">divideBy(<span class="number">1</span>, <span class="number">0</span>) <span class="keyword">match</span> &#123; </span><br><span class="line">	<span class="keyword">case</span> <span class="type">Success</span>(i) =&gt; println(<span class="string">s&quot;Success, value is: <span class="subst">$i</span>&quot;</span>) </span><br><span class="line">	<span class="keyword">case</span> <span class="type">Failure</span>(s) =&gt; println(<span class="string">s&quot;Failed, message is: <span class="subst">$s</span>&quot;</span>) </span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Failed, message is: java.lang.ArithmeticException: / by zero</span></span><br><span class="line">println(divideBy(<span class="number">1</span>, <span class="number">1</span>).getOrElse(<span class="number">0</span>)) <span class="comment">// 1</span></span><br><span class="line">println(divideBy(<span class="number">1</span>, <span class="number">0</span>).getOrElse(<span class="number">0</span>)) <span class="comment">// 0</span></span><br><span class="line"></span><br><span class="line"><span class="number">50.</span>to(<span class="number">55</span>).zip(<span class="number">0.</span>to(<span class="number">5</span>)).map(pair =&gt; divideBy(pair._1, pair._2).getOrElse(<span class="number">0</span>))</span><br><span class="line"><span class="comment">// scala.collection.immutable.IndexedSeq[Int] = Vector(0, 51, 26, 17, 13, 11)</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="类定义"><a href="#类定义" class="headerlink" title="类定义"></a>类定义</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>(<span class="params">name: <span class="type">String</span>, age: <span class="type">Int</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> work: <span class="type">String</span> = _</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> defaultSalary: <span class="type">Int</span> = <span class="number">10000</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getPersonInfo</span></span>(): <span class="type">String</span> = &#123;</span><br><span class="line">        <span class="string">&quot;Name = [&quot;</span> + name + <span class="string">&quot;], Age = [&quot;</span> + age + <span class="string">&quot;] &quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>scala类中方法默认都是public</li>
+<li>对var字段会生成getter和setter方法</li>
+<li>对val字段只会生成getter方法</li>
+<li>主构造器中的参数必须要被初始化</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> age;</span><br><span class="line">    <span class="keyword">private</span> String work;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">defaultSalary</span> <span class="operator">=</span> <span class="number">10000</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Person</span><span class="params">(String name, <span class="type">int</span> age)</span>&#123;</span><br><span class="line">        <span class="built_in">super</span>();</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getPersonInfo</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="keyword">new</span> <span class="title class_">StringBuilder</span>())</span><br><span class="line">            .append(<span class="string">&quot;Name = [&quot;</span>)</span><br><span class="line">            .append(name).append(<span class="string">&quot;], Age = [&quot;</span>)</span><br><span class="line">            .append(BoxesRunTime.boxToInteger(age))</span><br><span class="line">            .append(<span class="string">&quot;]&quot;</span>).toString();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">work</span><span class="params">()</span> &#123;</span><br><span class="line">    	<span class="keyword">return</span> work;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> work_$eq(String x$<span class="number">1</span>) &#123;</span><br><span class="line">    	work = x$<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> <span class="title function_">defaultSalary</span><span class="params">()</span> &#123;</span><br><span class="line">    	<span class="keyword">return</span> defaultSalary; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="类构造函数"><a href="#类构造函数" class="headerlink" title="类构造函数"></a>类构造函数</h2><ul>
+<li>辅助构造器使用def this定义</li>
+<li>每一个辅助构造器第一行必须调用其它辅助构造器或者一个主构造器</li>
+<li>println语句是主构造器的一部分</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>(<span class="params">name: <span class="type">String</span>, age: <span class="type">Int</span></span>) </span>&#123;</span><br><span class="line">	println(<span class="string">&quot;Name = [&quot;</span> + name + <span class="string">&quot;], Age = [&quot;</span> + age 	+ <span class="string">&quot;] &quot;</span>)</span><br><span class="line">	<span class="keyword">var</span> work: <span class="type">String</span> = _</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">this</span></span>(name: <span class="type">String</span>, age: <span class="type">Int</span>, work: <span class="type">String</span>) &#123;</span><br><span class="line">    	<span class="keyword">this</span>(name, age)</span><br><span class="line">    	<span class="keyword">this</span>.work = work</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getPersonInfo</span></span>(): <span class="type">String</span> = &#123;</span><br><span class="line">    	<span class="string">&quot;Name = [&quot;</span> + name + <span class="string">&quot;], Age = [&quot;</span> + age + <span class="string">&quot;] &quot;</span></span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>主构造器参数</th>
+<th>生成的字段&#x2F;方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>name: String</td>
+<td>对象私有字段</td>
+</tr>
+<tr>
+<td>val&#x2F;var name: String</td>
+<td>私有字段，公有的getter&#x2F;setter方法</td>
+</tr>
+<tr>
+<td>private val&#x2F;var name: String</td>
+<td>私有字段，私有的getter&#x2F;setter方法</td>
+</tr>
+<tr>
+<td>@BeanProperty val&#x2F;var name: String</td>
+<td>私有字段，公有Scala版和JavaBeans版的getter和setter方法</td>
+</tr>
+</tbody></table>
+<h2 id="类继承"><a href="#类继承" class="headerlink" title="类继承"></a>类继承</h2><ul>
+<li>Scala继承类和java一样使用extends关键字</li>
+<li>可以将类、字段或者方法声明为final，确保它们不能被重写</li>
+<li>重写一个非抽象方法必须使用override关键词</li>
+<li>可以将类定义为abstract作为抽象类，子类中重写超类的抽象方法时不需要使用override关键词</li>
+<li>调用超类与Java一致使用super关键词</li>
+<li>只有主构造器才能调用超类的构造器</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>(<span class="params">name: <span class="type">String</span>, age: <span class="type">Int</span></span>) <span class="keyword">extends</span> <span class="title">Person</span>(<span class="params">name, age</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">var</span> score : <span class="type">Int</span> = _</span><br><span class="line">	<span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">getPersonInfo</span></span>: <span class="type">String</span> = &#123;</span><br><span class="line">		<span class="string">s&quot;Name = [<span class="subst">$&#123;name&#125;</span>], Age = [<span class="subst">$&#123;age&#125;</span>], Score = [<span class="subst">$&#123;score&#125;</span>]“</span></span><br><span class="line"><span class="string">	&#125; </span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="单例对象"><a href="#单例对象" class="headerlink" title="单例对象"></a>单例对象</h2><p>Scala中没有静态方法和静态字段，但是可以使用object达到同样的效果</p>
+<p>Account是伴生对象所有的字段和方法都是静态的</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Account</span> </span>&#123;</span><br><span class="line">    <span class="keyword">val</span> id = <span class="type">Account</span>.newUniqueId()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> balance = <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">deposit</span></span>(amount: <span class="type">Double</span>): <span class="type">Unit</span> = &#123;</span><br><span class="line">    	balance += amount</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Account</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> lastId = <span class="number">0</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">newUniqueId</span></span>() = &#123;</span><br><span class="line">        lastId += <span class="number">1</span></span><br><span class="line">        lastId</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="函数式编程思想"><a href="#函数式编程思想" class="headerlink" title="函数式编程思想"></a>函数式编程思想</h2><p>函数式编程关心的是<strong>数据的映射</strong>而命令式编程关心的是解决问题的步骤</p>
+<p>函数式编程提倡</p>
+<ul>
+<li>没有可变的变量<ul>
+<li>例如无论sqrt(x)，这个函数的值只取决于函数的输入的值</li>
+</ul>
+</li>
+<li>没有类似于命令式编程中循环元素</li>
+</ul>
+<p>好处</p>
+<ul>
+<li>不依赖于外部的状态，也不修改外部的状态，使得代码容易推理，单元测试和调试变得十分容易</li>
+<li>由于多个线程之前不共享状态，因此不会造成资源的竞争，可以更好的支持并发</li>
+</ul>
+<h2 id="函数式编程思想Example"><a href="#函数式编程思想Example" class="headerlink" title="函数式编程思想Example"></a>函数式编程思想Example</h2><h3 id="命令式编程"><a href="#命令式编程" class="headerlink" title="命令式编程"></a>命令式编程</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Node</span>(<span class="params">var value: <span class="type">Int</span>, var left: <span class="type">Option</span>[<span class="type">Node</span>], var right: <span class="type">Option</span>[<span class="type">Node</span>]</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Node</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">invertTree</span></span>(root: <span class="type">Option</span>[<span class="type">Node</span>]): <span class="type">Option</span>[<span class="type">Node</span>] = &#123;</span><br><span class="line">        <span class="keyword">if</span> (root isDefined) &#123;</span><br><span class="line">            <span class="keyword">val</span> left = root.get.left</span><br><span class="line">            <span class="keyword">val</span> right = root.get.right</span><br><span class="line">            root.get.left = invertTree(right)</span><br><span class="line">            root.get.right = invertTree(left)</span><br><span class="line">        &#125;</span><br><span class="line">        root</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">        <span class="keyword">val</span> node4 = <span class="keyword">new</span> <span class="type">Node</span>(<span class="number">4</span>, <span class="type">None</span>, <span class="type">None</span>)</span><br><span class="line">        <span class="keyword">val</span> node5 = <span class="keyword">new</span> <span class="type">Node</span>(<span class="number">5</span>, <span class="type">None</span>, <span class="type">None</span>)</span><br><span class="line">        <span class="keyword">val</span> node6 = <span class="keyword">new</span> <span class="type">Node</span>(<span class="number">6</span>, <span class="type">None</span>, <span class="type">None</span>)</span><br><span class="line">        <span class="keyword">val</span> node7 = <span class="keyword">new</span> <span class="type">Node</span>(<span class="number">7</span>, <span class="type">None</span>, <span class="type">None</span>)</span><br><span class="line">        <span class="keyword">val</span> node2 = <span class="keyword">new</span> <span class="type">Node</span>(<span class="number">2</span>, <span class="type">Some</span>(node4), <span class="type">Some</span>(node5))</span><br><span class="line">        <span class="keyword">val</span> node3 = <span class="keyword">new</span> <span class="type">Node</span>(<span class="number">3</span>, <span class="type">Some</span>(node6), <span class="type">Some</span>(node7))</span><br><span class="line">        <span class="keyword">val</span> node1 = <span class="keyword">new</span> <span class="type">Node</span>(<span class="number">1</span>, <span class="type">Some</span>(node2), <span class="type">Some</span>(node3))</span><br><span class="line">        invertTree(<span class="type">Some</span>(node1))</span><br><span class="line">        println(node1)</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="函数式编程"><a href="#函数式编程" class="headerlink" title="函数式编程"></a>函数式编程</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Node</span>(<span class="params">val value: <span class="type">Int</span>, val left: <span class="type">Option</span>[<span class="type">Node</span>], val right: <span class="type">Option</span>[<span class="type">Node</span>]</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Node</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">invertTree</span></span>(root: <span class="type">Option</span>[<span class="type">Node</span>]): <span class="type">Option</span>[<span class="type">Node</span>] = &#123;</span><br><span class="line">        <span class="keyword">if</span> (root isDefined) &#123;</span><br><span class="line">        	<span class="type">Some</span>(<span class="keyword">new</span> <span class="type">Node</span>(root.get.value, </span><br><span class="line">        	invertTree(root.get.right), invertTree(root.get.left)))</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        	<span class="type">None</span></span><br><span class="line">        &#125; </span><br><span class="line">	&#125;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">        <span class="keyword">val</span> node4 = <span class="keyword">new</span> <span class="type">Node</span>(<span class="number">4</span>, <span class="type">None</span>, <span class="type">None</span>)</span><br><span class="line">        <span class="keyword">val</span> node5 = <span class="keyword">new</span> <span class="type">Node</span>(<span class="number">5</span>, <span class="type">None</span>, <span class="type">None</span>)</span><br><span class="line">        <span class="keyword">val</span> node6 = <span class="keyword">new</span> <span class="type">Node</span>(<span class="number">6</span>, <span class="type">None</span>, <span class="type">None</span>)</span><br><span class="line">        <span class="keyword">val</span> node7 = <span class="keyword">new</span> <span class="type">Node</span>(<span class="number">7</span>, <span class="type">None</span>, <span class="type">None</span>)</span><br><span class="line">        <span class="keyword">val</span> node2 = <span class="keyword">new</span> <span class="type">Node</span>(<span class="number">2</span>, <span class="type">Some</span>(node4), <span class="type">Some</span>(node5))</span><br><span class="line">        <span class="keyword">val</span> node3 = <span class="keyword">new</span> <span class="type">Node</span>(<span class="number">3</span>, <span class="type">Some</span>(node6), <span class="type">Some</span>(node7))</span><br><span class="line">        <span class="keyword">val</span> node1 = <span class="keyword">new</span> <span class="type">Node</span>(<span class="number">1</span>, <span class="type">Some</span>(node2), <span class="type">Some</span>(node3))</span><br><span class="line">        <span class="keyword">val</span> newTree = invertTree(<span class="type">Some</span>(node1)).get</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Spark体系结构和源代码解析"><a href="#Spark体系结构和源代码解析" class="headerlink" title="Spark体系结构和源代码解析"></a>Spark体系结构和源代码解析</h1><h2 id="弹性分布式数据集RDD"><a href="#弹性分布式数据集RDD" class="headerlink" title="弹性分布式数据集RDD"></a>弹性分布式数据集RDD</h2><p>Spark将数据缓存在<strong>分布式内存</strong>中</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220221158.png"></p>
+<p>如何实现？RDD</p>
+<ul>
+<li>Spark的核心</li>
+<li>分布式内存抽象</li>
+<li>提供了一个高度受限的共享内存模型</li>
+<li>逻辑上集中但是物理上是存储在集群的多台机器上</li>
+</ul>
+<h2 id="RDD-属性和特点"><a href="#RDD-属性和特点" class="headerlink" title="RDD 属性和特点"></a>RDD 属性和特点</h2><p>只读</p>
+<ul>
+<li>通过HDFS或者其它持久化系统创建RDD</li>
+<li>通过transformation将父RDD转化得到新的RDD</li>
+<li>RDD上保存着前后之间依赖关系</li>
+</ul>
+<p>Partition</p>
+<ul>
+<li><p>基本组成单位，RDD在逻辑上按照Partition分块</p>
+</li>
+<li><p>分布在各个节点上</p>
+</li>
+<li><p>分片数量决定并行计算的粒度</p>
+</li>
+<li><p>RDD中保存如何计算每一个分区的函数</p>
+</li>
+</ul>
+<p>容错</p>
+<ul>
+<li>失败自动重建</li>
+<li>如果发生部分分区数据丢失，可以通过依赖关系重新计算</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220221341.png"></p>
+<h2 id="RDD-scala-解析"><a href="#RDD-scala-解析" class="headerlink" title="RDD.scala 解析"></a>RDD.scala 解析</h2><p>RDD.scala是所有RDD的总得抽象</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Implemented by subclasses to return the set of partitions in this RDD. This method will only</span></span><br><span class="line"><span class="comment">* be called once, so it is safe to implement a time-consuming computation in it.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">getPartitions</span></span>: <span class="type">Array</span>[<span class="type">Partition</span>]</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Implemented by subclasses to return how this RDD depends on parent RDDs. This method will only</span></span><br><span class="line"><span class="comment">* be called once, so it is safe to implement a time-consuming computation in it.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">getDependencies</span></span>: <span class="type">Seq</span>[<span class="type">Dependency</span>[_]] = deps</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* :: DeveloperApi ::</span></span><br><span class="line"><span class="comment">* Implemented by subclasses to compute a given partition.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@DeveloperApi</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compute</span></span>(split: <span class="type">Partition</span>, context: <span class="type">TaskContext</span>): <span class="type">Iterator</span>[<span class="type">T</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="RDD-Example"><a href="#RDD-Example" class="headerlink" title="RDD Example"></a>RDD Example</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> lines = sc.textFile(…)</span><br><span class="line">lines.filter(x =&gt; x.contains(<span class="string">&quot;Error&quot;</span>)).count()</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220221614.png"></p>
+<h2 id="宽依赖和窄依赖"><a href="#宽依赖和窄依赖" class="headerlink" title="宽依赖和窄依赖"></a>宽依赖和窄依赖</h2><ul>
+<li>窄依赖<ul>
+<li>没有数据shuffling</li>
+<li>所有父RDD中的Partition均会和子RDD的Partition关系是一对一</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220221711.png"></p>
+<ul>
+<li>宽依赖<ul>
+<li>有数据shuffling</li>
+<li>所有父RDD中的Partition会被切分，根据key的不同划分到子RDD的Partition中</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220221827.png"></p>
+<h2 id="Stage"><a href="#Stage" class="headerlink" title="Stage"></a>Stage</h2><p>什么是Stage</p>
+<ul>
+<li>一个Job会被拆分为多组Task，每组Task被称为一个Stage</li>
+</ul>
+<p>划分依据</p>
+<ul>
+<li>以shuffle操作作为边界，遇到一个宽依赖就分一个stage</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220222050.png"></p>
+<h2 id="Stage执行优化"><a href="#Stage执行优化" class="headerlink" title="Stage执行优化"></a>Stage执行优化</h2><ul>
+<li><p>对窄依赖可以进行流水线(pipeline)优化</p>
+</li>
+<li><p>不互相依赖的Stage可以并行执行</p>
+</li>
+<li><p>存在依赖的Stage必须在依赖的Stage执行完之后才能执行</p>
+</li>
+<li><p>Stage并行执行程度取决于资源数</p>
+</li>
+</ul>
+<h2 id="Spark执行流程"><a href="#Spark执行流程" class="headerlink" title="Spark执行流程"></a>Spark执行流程</h2><ul>
+<li><p>用户创建Spark程序并提交</p>
+</li>
+<li><p>每个Action会生成一个Job</p>
+<ul>
+<li>包含了一系列RDD以及如何对其进行转换transformation</li>
+</ul>
+</li>
+<li><p>对每个Job生成DAG</p>
+<ul>
+<li>Directed Acyclic Graph</li>
+</ul>
+</li>
+<li><p>对根据宽窄依赖对DAG进行划分Stage</p>
+</li>
+<li><p>对每一个Stage生成一组Task</p>
+<ul>
+<li>一个Partition对应一个Task</li>
+</ul>
+</li>
+<li><p>Spark会以一组Task为单位进行执行计算</p>
+</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> lines = sc.textFile(…)</span><br><span class="line">lines.filter(x =&gt; x.contains(<span class="string">&quot;Error&quot;</span>)).count()</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220222407.png"></p>
+<h2 id="Yarn资源调度过程"><a href="#Yarn资源调度过程" class="headerlink" title="Yarn资源调度过程"></a>Yarn资源调度过程</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-Yarn%E8%B5%84%E6%BA%90%E8%B0%83%E5%BA%A6%E8%BF%87%E7%A8%8B-10.png"></p>
+<h2 id="Spark-on-Yarn"><a href="#Spark-on-Yarn" class="headerlink" title="Spark on Yarn"></a>Spark on Yarn</h2><p>Yarn</p>
+<ul>
+<li><p>ResourceManager：负责整个集群资源管理和分配</p>
+</li>
+<li><p>ApplicationMaster：Yarn中每个Application对应一个AM，负责与ResrouceManager协商获取资源，并告知NodeManager分配启动Container</p>
+</li>
+<li><p>NodeManager：每个节点的资源和任务管理器，负责启动Container，并监视资源使用情况</p>
+</li>
+<li><p>Container：资源抽象</p>
+</li>
+</ul>
+<p>Spark</p>
+<ul>
+<li><p>Application：用户自己编写的Spark程序</p>
+</li>
+<li><p>Driver：运行Application的main函数并创建SparkContext，和ClusterManager通信申请资源，任务分配并监控运行情况</p>
+</li>
+<li><p>ClusterManager：指的是Yarn</p>
+</li>
+<li><p>DAGScheduler：对DAG图划分Stage</p>
+</li>
+<li><p>TaskScheduler：把TaskSet分配给具体的Executor</p>
+</li>
+</ul>
+<p>Spark支持三种运行模式</p>
+<ul>
+<li>standalon, yarn-cluster, yarn-client</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220220223145.png"></p>
+<h1 id="动手操作"><a href="#动手操作" class="headerlink" title="动手操作"></a>动手操作</h1><ol>
+<li><p>使用Scala对数组进行排序，并优雅的给出计算耗时</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">TimeTest</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">time</span></span>[<span class="type">R</span>](block: =&gt; <span class="type">R</span>): <span class="type">R</span> = &#123; <span class="comment">// 这里使用了call-by-name参数</span></span><br><span class="line">    <span class="keyword">val</span> t0 = <span class="type">System</span>.currentTimeMillis()</span><br><span class="line">    <span class="keyword">val</span> result = block</span><br><span class="line">    <span class="keyword">val</span> t1 = <span class="type">System</span>.currentTimeMillis()</span><br><span class="line">    println(<span class="string">&quot;Elapsed time = &quot;</span> + (t1 - t0) + <span class="string">&quot;ms&quot;</span>)</span><br><span class="line">    result</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">method</span></span>(x: <span class="type">Int</span>): <span class="type">Unit</span> = &#123;</span><br><span class="line">        println(<span class="string">&quot;print test = &quot;</span> + x)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">        time(method(<span class="number">100</span>))</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>在CDH集群上进入spark-shell，运行如下代码：</p>
+<ul>
+<li>val lines &#x3D; sc.textFile(hdfs路径xxx)</li>
+<li>lines.filter(x &#x3D;&gt; x.contains(“Error”)).count()</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; <span class="keyword">val</span> lines = sc.textFile(<span class="string">&quot;hdfs:///user/cdh/topK/input&quot;</span>)</span><br><span class="line">lines: org.apache.spark.rdd.<span class="type">RDD</span>[<span class="type">String</span>] = hdfs:<span class="comment">///user/cdh/topK/input MapPartitionsRDD[1] at textFile at &lt;console&gt;:24</span></span><br><span class="line"></span><br><span class="line">scala&gt; lines.filter(x=&gt;x.contains(<span class="string">&quot;品&quot;</span>)).count()</span><br><span class="line">res2: <span class="type">Long</span> = <span class="number">30</span> </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">男士用品,A商品,zhangsan</span><br><span class="line">男士用品,B商品,zhangsan</span><br><span class="line">男士用品,C商品,zhangsan</span><br><span class="line">男士用品,D商品,zhangsan</span><br><span class="line">男士用品,B商品,lisi</span><br><span class="line">男士用品,C商品,lisi</span><br><span class="line">男士用品,D商品,lisi</span><br><span class="line">男士用品,C商品,wangwu</span><br><span class="line">男士用品,D商品,wangwu</span><br><span class="line">男士用品,D商品,zhaoliu</span><br><span class="line">女士用品,Aa商品,zhangsan</span><br><span class="line">女士用品,Ba商品,zhangsan</span><br><span class="line">女士用品,Ca商品,zhangsan</span><br><span class="line">女士用品,Da商品,zhangsan</span><br><span class="line">女士用品,Ba商品,lisi</span><br><span class="line">女士用品,Ca商品,lisi</span><br><span class="line">女士用品,Da商品,lisi</span><br><span class="line">女士用品,Ca商品,wangwu</span><br><span class="line">女士用品,Da商品,wangwu</span><br><span class="line">女士用品,Da商品,zhaoliu</span><br><span class="line">老人用品,Aa商品,zhangsan</span><br><span class="line">老人用品,Ba商品,zhangsan</span><br><span class="line">老人用品,Ca商品,zhangsan</span><br><span class="line">老人用品,Da商品,zhangsan</span><br><span class="line">老人用品,Ba商品,lisi</span><br><span class="line">老人用品,Ca商品,lisi</span><br><span class="line">老人用品,Da商品,lisi</span><br><span class="line">老人用品,Ca商品,wangwu</span><br><span class="line">老人用品,Da商品,wangwu</span><br><span class="line">老人用品,Da商品,zhaoliu</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="常见面试问题"><a href="#常见面试问题" class="headerlink" title="常见面试问题"></a>常见面试问题</h1><ol>
+<li><p>解释一下什么是RDD？</p>
+<p>RDD是Spark的核心，是一个分布式内存抽象，提供了一个高度受限的共享内存模型，逻辑上集中但是物理上是存储在集群的多台机器上。</p>
+<p>RDD的特点是只读、容错。</p>
+<p>只读</p>
+<ul>
+<li>通过HDFS或者其它持久化系统创建RDD</li>
+<li>通过transformation将父RDD转化得到新的RDD</li>
+<li>RDD上保存着前后之间依赖关系</li>
+</ul>
+<p>容错</p>
+<ul>
+<li>失败自动重建</li>
+<li>如果发生部分分区数据丢失，可以通过依赖关系重新计算</li>
+</ul>
+<p>RDD的属性有Partition</p>
+<p>Partition</p>
+<ul>
+<li><p>基本组成单位，RDD在逻辑上按照Partition分块</p>
+</li>
+<li><p>分布在各个节点上</p>
+</li>
+<li><p>分片数量决定并行计算的粒度</p>
+</li>
+<li><p>RDD中保存如何计算每一个分区的函数</p>
+</li>
+</ul>
+</li>
+<li><p>什么是宽依赖什么是窄依赖？如何划分？</p>
+<p>窄依赖</p>
+<ul>
+<li>没有数据shuffling</li>
+<li>所有父RDD中的Partition均会和子RDD的Partition关系是一对一</li>
+</ul>
+<p>宽依赖</p>
+<ul>
+<li>有数据shuffling</li>
+<li>所有父RDD中的Partition会被切分，根据key的不同划分到子RDD的Partition中</li>
+</ul>
+<p>以shuffle操作作为边界，遇到一个宽依赖就分一个stage。一个Job会被拆分为多组Task，每组Task被称为一个Stage</p>
+</li>
+<li><p>Spark和MapReduce分别适合哪些场景？各自的优缺点分别是什么？</p>
+<p><strong>MapReduce计算场景</strong></p>
+<p><strong>数据查找</strong></p>
+<ul>
+<li>分布式Grep</li>
+</ul>
+<p><strong>Web访问日志分析</strong></p>
+<ul>
+<li>词频统计</li>
+<li>网站PV UV统计</li>
+<li>Top K问题</li>
+</ul>
+<p><strong>倒排索引</strong></p>
+<ul>
+<li>建立搜索引擎索引</li>
+</ul>
+<p><strong>分布式排序</strong></p>
+<p><strong>MapReduce优点和缺点</strong></p>
+<p><strong>优点</strong></p>
+<ol>
+<li>模型简单，Map + Reduce</li>
+<li>高伸缩性，支持横向扩展</li>
+<li>灵活，结构化和非结构化数据</li>
+<li>速度快，高吞吐离线处理数据</li>
+<li>并行处理，编程模型天然支持并行处理</li>
+<li>容错能力强</li>
+</ol>
+<p><strong>缺点</strong></p>
+<ol>
+<li>流式数据-MapReduce处理模型就决定了需要静态数据</li>
+<li>实时计算-不适合低延迟数据处理，需要毫秒级别响应</li>
+<li>复杂算法-例如SVM支持向量机</li>
+<li>迭代计算-例如斐波那契数列</li>
+</ol>
+<p><strong>Spark计算场景</strong></p>
+<ul>
+<li>离线批处理</li>
+<li>流式计算</li>
+<li>在线实时分析</li>
+</ul>
+<p><strong>Spark优点和缺点</strong><br><strong>优点</strong></p>
+<ul>
+<li>内存计算<ul>
+<li>支持复杂查询、流式计算、机器学习、图计算</li>
+</ul>
+</li>
+<li>融入Hadoop生态圈<ul>
+<li>兼容HDFS</li>
+<li>兼容Yarn</li>
+</ul>
+</li>
+<li>核心代码由Scala编写</li>
+<li>发展速度快<ul>
+<li>社区活跃</li>
+<li>最新版本3.1.2 (截止2021年06月01日)</li>
+</ul>
+</li>
+</ul>
+<p><strong>缺点</strong></p>
+<ul>
+<li>JVM的内存开销太大，1G的数据通常需要消耗5G的内存</li>
+<li>不同的spark app之间缺乏有效的共享内存机制</li>
+</ul>
+</li>
+<li><p>使用sc.textFile方法读取文件时HDFS Block 和 RDD上Partition之间的对应关系是什么？</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> path = <span class="string">&quot;Current.txt&quot;</span></span><br><span class="line"><span class="keyword">val</span> rdd1 = sc.textFile(path,<span class="number">2</span>)</span><br><span class="line"><span class="keyword">val</span> rdd2=rdd1.filter(line=&gt;line.contains(<span class="string">&quot;error&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<p>首先rdd1的生成是调用了sc.textFile(path,2)，后面的参数2是生成的RDD的最小分区数minPartitions</p>
+<p>textFile会构造一个HadoopRDD，HadoopRDD的分区信息与Hadoop InputFormat有关，HadoopRDD会调用InputFormat的getSplits方法来获取InputFormat的分片信息，一个分片对应一个Spark Partition，因此rdd1的分区数为多少取决于对应的InputFormat 的getSplits返回的分片信息。</p>
+<p>对于textFile来说使用的是TextInputFormat，该Format继承于FileInputFormat，然后具体来看getSplits，getSplits的定义为:public InputSplit[] getSplits(JobConf job, int numSplits),后面的numSplits就是你开始设置的minPartitions，HadoopRDD调用的时候会传进来，计算splits之前会先计算几个size</p>
+<ol>
+<li>goalSize:他的计算逻辑为totalSize &#x2F; (numSplits &#x3D;&#x3D; 0 ? 1 : numSplits)，totalSize为文件总大小，这里就是512M，计算goalSize就应该是256M</li>
+<li>minSize:逻辑为 Math.<em>max</em>(job.getLong(org.apache.hadoop.mapreduce.lib.input.FileInputFormat.SPLIT_MINSIZE, 1), minSplitSize)这就是1</li>
+<li>splitSize:该值为一个分片的大致大小,Math.<em>max</em>(minSize, Math.<em>min</em>(goalSize, blockSize))，在这里blocksize为128M(该size会在遍历文件时获取每个文件的blocksize，根据题主说的这里就认为128),因此splitSize为128M</li>
+</ol>
+<p>计算split：会遍历path里的所有的文件，当文件长度为空时生成一个空的split，当文件不为空时分两种情况，根据isSplitable来区别，意思是该文件是否可以被拆分开(主要是看编码格式)，txt文件是可以拆分的(如果不能拆分则是一个文件一个split），在可拆分的情况下会进入一个while，主要是按照splitSize来截取文件，因此一个文件可能是产生多个分片的，前面的分片是按照splitSize来均切分，但是可能后面有个尾巴不足以splitSize的情况是单独作为一个split的。</p>
+<p>这样split就计算完成了，中间省略了一些计算块元信息等的其余细节，这里不细说。</p>
+<p>再回到问题中来,按照上面的计算，只有一个文件大小512M，splitSize为128M，刚好拆分4次，split数应该是刚好4个split了。并且应该是0+134217728，134217728+134217728，268435456+134217728，402653184+134217728等4个split，因此rdd1分区数为4.</p>
+<p>第二个问题，rdd2由rdd1过滤转换而来，并不会改变分区策略，因此分区数也是4.</p>
+<p>第三个问题，这三句代码不涉及其余的shuffle操作，task个数由HadoopRDD分区多少来决定，也是4.</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/01/01/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/03-Spark/01-Scala%E5%92%8CSpark%E5%9F%BA%E7%A1%80/" data-id="clmcxec74000yu8wa4jzr5474" data-title="Spark" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/01/01/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/02-%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%A6%BB%E7%BA%BF%E5%A4%84%E7%90%86%E4%B8%8E%E6%95%B0%E4%BB%93/01-Hive/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          HIVE
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/01/01/13-%E5%A4%A7%E6%95%B0%E6%8D%AE/03-Spark/02-SparkCore/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Spark</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

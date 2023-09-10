@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>RabbitMQ单机到集群完整搭建 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="RabbitMQ单机到集群完整搭建">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ单机到集群完整搭建">
+<meta property="og:url" content="http://example.com/2020/11/29/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/02-RabbitMQ/06-RabbitMQ%E5%8D%95%E6%9C%BA%E5%88%B0%E9%9B%86%E7%BE%A4%E5%AE%8C%E6%95%B4%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="RabbitMQ单机到集群完整搭建">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-11-29T07:40:00.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:37:48.679Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="RabbitMQ">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-08-消息队列/02-RabbitMQ/06-RabbitMQ单机到集群完整搭建" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/11/29/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/02-RabbitMQ/06-RabbitMQ%E5%8D%95%E6%9C%BA%E5%88%B0%E9%9B%86%E7%BE%A4%E5%AE%8C%E6%95%B4%E6%90%AD%E5%BB%BA/" class="article-date">
+  <time class="dt-published" datetime="2020-11-29T07:40:00.000Z" itemprop="datePublished">2020-11-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/RabbitMQ/">RabbitMQ</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      RabbitMQ单机到集群完整搭建
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>RabbitMQ单机到集群完整搭建</p>
+<span id="more"></span>
+
+<h1 id="RabbitMQ-安装和使用"><a href="#RabbitMQ-安装和使用" class="headerlink" title="RabbitMQ 安装和使用"></a><span name="RabbitMQ安装和使用">RabbitMQ 安装和使用</span></h1><h2 id="一、安装依赖环境"><a href="#一、安装依赖环境" class="headerlink" title="一、安装依赖环境"></a>一、安装依赖环境</h2><ol>
+<li>在 <a target="_blank" rel="noopener" href="http://www.rabbitmq.com/which-erlang.html">http://www.rabbitmq.com/which-erlang.html</a> 页面查看安装rabbitmq需要安装erlang对应的</li>
+</ol>
+<p>版本</p>
+<ol start="2">
+<li>在 <a target="_blank" rel="noopener" href="https://github.com/rabbitmq/erlang-rpm/releases">https://github.com/rabbitmq/erlang-rpm/releases</a> 页面找到需要下载的erlang版本，</li>
+</ol>
+<p>erlang-*.centos.x86_64.rpm 就是centos版本的。</p>
+<ol start="3">
+<li>复制下载地址后，使用wget命令下载</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget -P /home/download https://github.com/rabbitmq/erlang- rpm/releases/download/v21.2.3/erlang-21.2.3-1.el7.centos.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>安装 Erlang</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo rpm -Uvh /home/download/erlang-21.2.3-1.el7.centos.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>安装 socat</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y socat</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="二、安装RabbitMQ"><a href="#二、安装RabbitMQ" class="headerlink" title="二、安装RabbitMQ"></a>二、安装RabbitMQ</h2><ol>
+<li>在<a target="_blank" rel="noopener" href="https://www.rabbitmq.com/download.html">官方下载页面</a>找到CentOS7版本的下载链接，下载rpm安装包</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget -P /home/download https://github.com/rabbitmq/rabbitmq- server/releases/download/v3.7.9/rabbitmq-server-3.7.9-1.el7.noarch.rpm</span><br></pre></td></tr></table></figure>
+
+<p>提示：可以在 <strong><a target="_blank" rel="noopener" href="https://github.com/rabbitmq/rabbitmq-server/tags">https://github.com/rabbitmq/rabbitmq-server/tags</a></strong> 下载历史版本 </p>
+<ol start="2">
+<li>安装RabbitMQ</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo rpm -Uvh /home/download/rabbitmq-server-3.7.9-1.el7.noarch.rpm</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、启动和关闭"><a href="#三、启动和关闭" class="headerlink" title="三、启动和关闭"></a>三、启动和关闭</h2><ul>
+<li><p>启动服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start rabbitmq-server</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看状态</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl status rabbitmq-server</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>停止服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl stop rabbitmq-server</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置开机启动</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl enable rabbitmq-server</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="四、开启Web管理插件"><a href="#四、开启Web管理插件" class="headerlink" title="四、开启Web管理插件"></a>四、开启Web管理插件</h2><ol>
+<li><p>开启插件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-plugins enable rabbitmq_management</span><br></pre></td></tr></table></figure>
+
+<p>说明：rabbitmq有一个默认的guest用户，但只能通过localhost访问，所以需要添加一个能够远程访问的用户。 </p>
+</li>
+<li><p>添加用户</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl add_user admin admin</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为用户分配操作权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl set_user_tags admin administrator</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为用户分配资源权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl set_permissions -p / admin &quot;.*&quot; &quot;.*&quot; &quot;.*&quot;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="五、防火墙添加端口"><a href="#五、防火墙添加端口" class="headerlink" title="五、防火墙添加端口"></a>五、防火墙添加端口</h2><ul>
+<li>RabbitMQ 服务启动后，还不能进行外部通信，需要将端口添加都防火墙</li>
+</ul>
+<ol>
+<li><p>添加端口</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo firewall-cmd --zone=public --add-port=4369/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=5672/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=25672/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=15672/tcp --permanent</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启防火墙</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo firewall-cmd --reload</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="多机多节点集群部署"><a href="#多机多节点集群部署" class="headerlink" title="多机多节点集群部署"></a>多机多节点集群部署</h1><h2 id="一、-环境准备"><a href="#一、-环境准备" class="headerlink" title="一、 环境准备"></a>一、 环境准备</h2><ul>
+<li><p>准备三台安装好RabbitMQ 的机器，安装方法见<a href="#RabbitMQ安装和使用">安装步骤</a></p>
+<ul>
+<li><p>10.10.1.41</p>
+</li>
+<li><p>10.10.1.42</p>
+</li>
+<li><p>10.10.1.43</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>提示：如果使用虚拟机，可以在一台VM上安装好RabbitMQ后，创建快照，从快照创建链接克隆，会节省 很多磁盘空间</p>
+<h2 id="二、修改配置文件"><a href="#二、修改配置文件" class="headerlink" title="二、修改配置文件"></a>二、修改配置文件</h2><ol>
+<li><p>修改 10.10.1.41 机器上的 &#x2F;etc&#x2F;hosts 文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/hosts</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加IP和节点名</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">10.10.1.41 node1 </span><br><span class="line">10.10.1.42 node2 </span><br><span class="line">10.10.1.43 node3</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改对应主机的hostname</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hostnamectl set-hostname node1 </span><br><span class="line">hostnamectl set-hostname node2 </span><br><span class="line">hostnamectl set-hostname node3</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将 10.10.1.41 上的hosts文件复制到另外两台机器上</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo scp /etc/hosts root@node2:/etc/ </span><br><span class="line">sudo scp /etc/hosts root@node3:/etc/</span><br></pre></td></tr></table></figure>
+<p>说明：命令中的root是目标机器的用户名，命令执行后，可能会提示需要输入密码，输入对应用户的密码 就行了</p>
+</li>
+<li><p>将 10.10.1.41 上的 &#x2F;var&#x2F;lib&#x2F;rabbitmq&#x2F;.erlang.cookie 文件复制到另外两台机器上</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scp /var/lib/rabbitmq/.erlang.cookie root@node2:/var/lib/rabbitmq/ </span><br><span class="line">scp /var/lib/rabbitmq/.erlang.cookie root@node3:/var/lib/rabbitmq/</span><br></pre></td></tr></table></figure>
+<p>提示：如果是通过克隆的VM，可以省略这一步</p>
+</li>
+<li><p>配置节点名称 NODENAME：提前 规划好每台机器上的节点名称。rabbitmq集群中的节点名称要求唯一，由两部分构成 前缀@主机名 ； 在配置文件 &#x2F;etc&#x2F;rabbitmq&#x2F;rabbitmq-env.conf 中配置。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/rabbitmq/rabbitmq-env.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">指定节点名</span> </span><br><span class="line">NODENAME=rabbit@node1</span><br></pre></td></tr></table></figure>
+<p>分别配置每个节点。</p>
+</li>
+<li><p>重启rabbitmq服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart rabbitmq-server</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="三、防火墙添加端口"><a href="#三、防火墙添加端口" class="headerlink" title="三、防火墙添加端口"></a>三、防火墙添加端口</h2><ul>
+<li>给每台机器的防火墙添加端口</li>
+</ul>
+<ol>
+<li><p>添加端口</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo firewall-cmd --zone=public --add-port=4369/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=5672/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=25672/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=15672/tcp --permanent</span><br></pre></td></tr></table></figure></li>
+<li><p>重启防火墙</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo firewall-cmd --reload</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="四、启动RabbitMQ"><a href="#四、启动RabbitMQ" class="headerlink" title="四、启动RabbitMQ"></a>四、启动RabbitMQ</h2><ol>
+<li><p>启动每台机器的RabbitMQ</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start rabbitmq-server</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-server -detached</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将 10.10.1.42 加入到集群</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">停止RabbitMQ 应用</span> </span><br><span class="line">rabbitmqctl stop_app </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">重置RabbitMQ 设置</span> </span><br><span class="line">rabbitmqctl reset </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">加入到集群</span> </span><br><span class="line">rabbitmqctl join_cluster rabbit@node1 </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动RabbitMQ 应用</span> </span><br><span class="line">rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看集群状态，看到 running_nodes,[rabbit@node1,rabbit@node2] 表示节点启动成功</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl cluster_status</span><br></pre></td></tr></table></figure>
+
+<p>提示：在管理界面可以更直观的看到集群信息 </p>
+</li>
+<li><p>将 10.10.1.43 加入到集群</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">停止RabbitMQ 应用</span> </span><br><span class="line">rabbitmqctl stop_app </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">重置RabbitMQ 设置</span> </span><br><span class="line">rabbitmqctl reset </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">加入到集群</span> </span><br><span class="line">rabbitmqctl join_cluster rabbit@node1 </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动RabbitMQ 应用</span> </span><br><span class="line">rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重复地3步，查看集群状态</p>
+</li>
+</ol>
+<h1 id="单机多节点部署"><a href="#单机多节点部署" class="headerlink" title="单机多节点部署"></a>单机多节点部署</h1><h2 id="一、-环境准备-1"><a href="#一、-环境准备-1" class="headerlink" title="一、 环境准备"></a>一、 环境准备</h2><ul>
+<li><p>准备一台安装好RabbitMQ 的机器，安装方法见<a href="#RabbitMQ安装和使用">安装步骤</a></p>
+<ul>
+<li>10.10.1.41</li>
+</ul>
+</li>
+</ul>
+<h2 id="二、启动RabbitMQ"><a href="#二、启动RabbitMQ" class="headerlink" title="二、启动RabbitMQ"></a>二、启动RabbitMQ</h2><ol>
+<li><p>在启动前，先修改RabbitMQ 的默认节点名（非必要），在 &#x2F;etc&#x2F;rabbitmq&#x2F;rabbitmq-env.conf增加以下内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">RabbitMQ 默认节点名，默认是rabbit</span> </span><br><span class="line">NODENAME=rabbit1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>RabbitMQ 默认是使用服务的启动的，单机多节点时需要改为手动启动，先停止运行中的RabbitMQ 服务</p>
+</li>
+</ol>
+   <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl stop rabbitmq-server</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><p>启动第一个节点</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-server -detached</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动第二个节点</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">RABBITMQ_NODE_PORT=5673 RABBITMQ_SERVER_START_ARGS=&quot;-rabbitmq_management </span><br><span class="line">listener [&#123;port,15673&#125;]&quot; RABBITMQ_NODENAME=rabbit2 rabbitmq-server -detached</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动第三个节点</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">RABBITMQ_NODE_PORT=5674 RABBITMQ_SERVER_START_ARGS=&quot;-rabbitmq_management</span><br><span class="line">listener [&#123;port,15674&#125;]&quot; RABBITMQ_NODENAME=rabbit3 rabbitmq-server -detached</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将rabbit2加入到集群</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">停止 rabbit2 的应用</span> </span><br><span class="line">rabbitmqctl -n rabbit2 stop_app </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">重置 rabbit2 的设置</span> </span><br><span class="line">rabbitmqctl -n rabbit2 reset </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">rabbit2 节点加入到 rabbit1的集群中</span> </span><br><span class="line">rabbitmqctl -n rabbit2 join_cluster rabbit1 </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动 rabbit2 节点</span> </span><br><span class="line">rabbitmqctl -n rabbit2 start_app</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将rabbit3加入到集群</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">停止 rabbit3 的应用</span> </span><br><span class="line">rabbitmqctl -n rabbit3 stop_app </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">重置 rabbit3 的设置</span> </span><br><span class="line">rabbitmqctl -n rabbit3 reset </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">rabbit3 节点加入到 rabbit1的集群中</span> </span><br><span class="line">rabbitmqctl -n rabbit3 join_cluster rabbit1 </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动 rabbit3 节点</span> </span><br><span class="line">rabbitmqctl -n rabbit3 start_app</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看集群状态，看到 {running_nodes,[rabbit3@node1,rabbit2@node1,rabbit1@node1]} 说明节点已启动成功。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl cluster_status</span><br></pre></td></tr></table></figure>
+
+<p>提示：在管理界面可以更直观的看到集群信息</p>
+</li>
+</ol>
+<h2 id="三、防火墙添加端口-1"><a href="#三、防火墙添加端口-1" class="headerlink" title="三、防火墙添加端口"></a>三、防火墙添加端口</h2><ul>
+<li><p>需要将每个节点的端口都添加到防火墙</p>
+<ol>
+<li><p>添加端口</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sudo firewall-cmd --zone=public --add-port=4369/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=5672/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=25672/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=15672/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=5673/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=25673/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=15673/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=5674/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=25674/tcp --permanent </span><br><span class="line">sudo firewall-cmd --zone=public --add-port=15674/tcp --permanent</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启防火墙</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo firewall-cmd --reload</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+</ul>
+<h1 id="镜像队列模式集群"><a href="#镜像队列模式集群" class="headerlink" title="镜像队列模式集群"></a>镜像队列模式集群</h1><ul>
+<li><p>镜像队列属于RabbitMQ 的高可用方案，见：<a target="_blank" rel="noopener" href="https://www.rabbitmq.com/ha.html#mirroring-arguments">https://www.rabbitmq.com/ha.html#mirroring-arguments</a></p>
+</li>
+<li><p>通过前面的步骤搭建的集群属于普通模式集群，是通过共享元数据实现集群</p>
+</li>
+<li><p>开启镜像队列模式需要在管理页面添加策略，添加方式：</p>
+<ol>
+<li><p>进入管理页面 -&gt; Admin -&gt; Policies（在页面右侧）-&gt; Add &#x2F; update a policy</p>
+</li>
+<li><p>在表单中填入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">name: ha-all </span><br><span class="line">Pattern: ^ </span><br><span class="line">Apply to: Queues </span><br><span class="line">Priority: 0 </span><br><span class="line">Definition: ha-mode = all</span><br></pre></td></tr></table></figure>
+
+<p><strong>参数说明</strong></p>
+<p>name: 策略名称，如果使用已有的名称，保存后将会修改原来的信息</p>
+<p>Apply to：策略应用到什么对象上</p>
+<p>Pattern：策略应用到对象时，对象名称的匹配规则（正则表达式）</p>
+<p>Priority：优先级，数值越大，优先级越高，相同优先级取最后一个</p>
+<p>Defifinition：策略定义的类容，对于镜像队列的配置来说，只需要包含3个部分: ha-mode 、 </p>
+<p>ha-params 和 ha-sync-mode 。其中， ha-sync-mode 是同步的方式，自动还是手动，默认是自动。 ha-mode 和 ha-params 组合使用。组合方式如下：</p>
+<table>
+<thead>
+<tr>
+<th>ha-mode</th>
+<th>ha-params</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>all</td>
+<td>(empty)</td>
+<td>队列镜像到集群类所有节点</td>
+</tr>
+<tr>
+<td>exactly</td>
+<td>count</td>
+<td>队列镜像到集群内指定数量的节点。如果集群内节点数少于此值，队列将会镜像到所有节点。如果大于此值，而且一个包含镜像的节点停止，则新的镜像不会在其它节点创建。</td>
+</tr>
+<tr>
+<td>nodes</td>
+<td>nodename</td>
+<td>队列镜像到指定节点，指定的节点不在集群中不会报错。当队列申明时，如果指定的节点不在线，则队列会被创建在客户端所连接的节点上。</td>
+</tr>
+</tbody></table>
+<ul>
+<li>镜像队列模式相比较普通模式，镜像模式会占用更多的带宽来进行同步，所以镜像队列的吞吐量会低于普通模式</li>
+<li>但普通模式不能实现高可用，某个节点挂了后，这个节点上的消息将无法被消费，需要等待节点启动后才能被消费。</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/11/29/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/02-RabbitMQ/06-RabbitMQ%E5%8D%95%E6%9C%BA%E5%88%B0%E9%9B%86%E7%BE%A4%E5%AE%8C%E6%95%B4%E6%90%AD%E5%BB%BA/" data-id="clmcxed2200b5u8wa8yke5aco" data-title="RabbitMQ单机到集群完整搭建" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/12/12/07-Redis/01-Redis%E5%85%A5%E9%97%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Redis入门
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/11/29/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/03-Kafka/01-Kafka%E5%85%A5%E9%97%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Kafka入门</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

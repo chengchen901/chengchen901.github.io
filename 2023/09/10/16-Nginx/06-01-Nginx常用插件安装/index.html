@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Nginx实用插件安装Nginx由于插件的兼容关系，请使用nginx-1.4.7这个版本 12345cd ~# 下载nginx-1.4.7wget https:&#x2F;&#x2F;nginx.org&#x2F;download&#x2F;nginx-1.4.7.tar.gztar -xvzf nginx-1.4.7.tar.gzsudo mv nginx-1.4.7 &#x2F;usr&#x2F;local&#x2F;    健康检查插件主动检查内部上游的服健康">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/16-Nginx/06-01-Nginx%E5%B8%B8%E7%94%A8%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Nginx实用插件安装Nginx由于插件的兼容关系，请使用nginx-1.4.7这个版本 12345cd ~# 下载nginx-1.4.7wget https:&#x2F;&#x2F;nginx.org&#x2F;download&#x2F;nginx-1.4.7.tar.gztar -xvzf nginx-1.4.7.tar.gzsudo mv nginx-1.4.7 &#x2F;usr&#x2F;local&#x2F;    健康检查插件主动检查内部上游的服健康">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-09-10T03:59:07.829Z">
+<meta property="article:modified_time" content="2022-12-06T15:39:44.203Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-16-Nginx/06-01-Nginx常用插件安装" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/16-Nginx/06-01-Nginx%E5%B8%B8%E7%94%A8%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:07.829Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Nginx实用插件"><a href="#Nginx实用插件" class="headerlink" title="Nginx实用插件"></a>Nginx实用插件</h1><h2 id="安装Nginx"><a href="#安装Nginx" class="headerlink" title="安装Nginx"></a>安装Nginx</h2><p>由于插件的兼容关系，请使用nginx-1.4.7这个版本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd ~</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下载nginx-1.4.7</span></span><br><span class="line">wget https://nginx.org/download/nginx-1.4.7.tar.gz</span><br><span class="line">tar -xvzf nginx-1.4.7.tar.gz</span><br><span class="line">sudo mv nginx-1.4.7 /usr/local/</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="健康检查插件"><a href="#健康检查插件" class="headerlink" title="健康检查插件"></a>健康检查插件</h2><p>主动检查内部上游的服健康状态插件，淘宝开源实现<a target="_blank" rel="noopener" href="https://github.com/yaoweibin/nginx_upstream_check_module">nginx_upstream_check_module</a>。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">cd ~</span><br><span class="line">wget https://github.com/yaoweibin/nginx_upstream_check_module/archive/master.zip \</span><br><span class="line">-O nginx_upstream_check_module-master.zip</span><br><span class="line">unzip nginx_upstream_check_module-master.zip</span><br><span class="line"></span><br><span class="line">cd /usr/local/nginx-1.4.7</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">补丁包</span></span><br><span class="line">sudo patch -p1 &lt; /home/wesley/nginx_upstream_check_module-master/check_1.2.6+.patch</span><br><span class="line"></span><br><span class="line">sudo ./configure \</span><br><span class="line">    --prefix=/usr/local/nginx1.4 \</span><br><span class="line">    --sbin-path=/usr/local/nginx1.4/nginx \</span><br><span class="line">    --conf-path=/usr/local/nginx1.4/conf/nginx.conf \</span><br><span class="line">    --error-log-path=/usr/local/nginx1.4/logs/error.log \</span><br><span class="line">    --pid-path=/usr/local/nginx1.4/pid/nginx.pid \</span><br><span class="line">    --add-module=/home/wesley/echo-nginx-module-0.61 \</span><br><span class="line">    --with-http_stub_status_module \</span><br><span class="line">    --add-module=/home/wesley/nginx_upstream_check_module-master</span><br><span class="line">    </span><br><span class="line">sudo make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>配置Nginx配置文件内容如下：</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    upstream cluster &#123;</span><br><span class="line">        <span class="comment"># simple round-robin</span></span><br><span class="line">        server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">8080</span>;</span><br><span class="line">        server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">8081</span>;</span><br><span class="line"></span><br><span class="line">        check interval=<span class="number">5000</span> rise=<span class="number">1</span> fall=<span class="number">3</span> timeout=<span class="number">4000</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#check interval=3000 rise=2 fall=5 timeout=1000 type=ssl_hello;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#check interval=3000 rise=2 fall=5 timeout=1000 type=http;</span></span><br><span class="line">        <span class="comment">#check_http_send &quot;HEAD / HTTP/1.0\r\n\r\n&quot;;</span></span><br><span class="line">        <span class="comment">#check_http_expect_alive http_2xx http_3xx;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        <span class="keyword">listen</span> <span class="number">80</span>;</span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">            proxy_pass http:<span class="regexp">//</span>cluster;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        location /status &#123;</span><br><span class="line">            check_status;</span><br><span class="line">            access_log   off;</span><br><span class="line">            allow <span class="number">192.168</span>.<span class="number">120.0</span>/<span class="number">255</span>;</span><br><span class="line">            deny all;</span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>指令介绍</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"># 为上游服务添加健康检查，以及相关配置</span><br><span class="line">check</span><br><span class="line">    syntax: *check interval=milliseconds [fall=count] [rise=count]</span><br><span class="line">    [timeout=milliseconds] [default_down=true|false]</span><br><span class="line">    [type=tcp|http|ssl_hello|mysql|ajp|fastcgi]*</span><br><span class="line">    default: *none, if parameters omitted, default parameters are</span><br><span class="line">    interval=30000 fall=5 rise=2 timeout=1000 default_down=true type=tcp*</span><br><span class="line"></span><br><span class="line"># 设置检查上游服务的访问URI</span><br><span class="line">check_http_send</span><br><span class="line">    syntax: *check_http_send http_packet*</span><br><span class="line">    default: *&quot;GET / HTTP/1.0\r\n\r\n&quot;*</span><br><span class="line"></span><br><span class="line"># 展示服务的健康检查状态</span><br><span class="line">check_status</span><br><span class="line">    syntax: *check_status [html|csv|json]*</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+
+<p>更多的参考github的内容。</p>
+<p>启动Nginx服务</p>
+<h3 id="测试验证"><a href="#测试验证" class="headerlink" title="测试验证"></a>测试验证</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://hostname/server/ip</span><br></pre></td></tr></table></figure>
+
+<p>关掉8080端口服务，验证是否还能将请求打到8080上面。</p>
+<h2 id="动态更新后端服务插件"><a href="#动态更新后端服务插件" class="headerlink" title="动态更新后端服务插件"></a>动态更新后端服务插件</h2><h3 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h3><p>首先安装 nginx 动态 upstream 配置模块<a target="_blank" rel="noopener" href="https://github.com/yzprofile/ngx_http_dyups_module">ngx_http_dyups_module</a>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">cd ~</span><br><span class="line">wget https://github.com/yzprofile/ngx_http_dyups_module/archive/v0.2.9.tar.gz \</span><br><span class="line">-O ngx_http_dyups_module-0.2.9.tar.gz</span><br><span class="line">tar -xvzf ngx_http_dyups_module-0.2.9.tar.gz</span><br><span class="line"></span><br><span class="line">cd /usr/local/nginx-1.4.7</span><br><span class="line">sudo ./configure \</span><br><span class="line">    --prefix=/usr/local/nginx1.5 \</span><br><span class="line">    --sbin-path=/usr/local/nginx1.5/nginx \</span><br><span class="line">    --conf-path=/usr/local/nginx1.5/conf/nginx.conf \</span><br><span class="line">    --error-log-path=/usr/local/nginx1.5/logs/error.log \</span><br><span class="line">    --pid-path=/usr/local/nginx1.5/pid/nginx.pid \</span><br><span class="line">    --add-module=/home/wesley/echo-nginx-module-0.61 \</span><br><span class="line">    --with-http_stub_status_module \</span><br><span class="line">    --add-module=/home/wesley/nginx_upstream_check_module-master \</span><br><span class="line">    --add-module=/home/wesley/ngx_http_dyups_module-0.2.9</span><br><span class="line"></span><br><span class="line">sudo make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h3><p>修改nginx的配置文件</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 简单指令以;结尾</span></span><br><span class="line">worker_processes  <span class="number">4</span>;</span><br><span class="line">worker_rlimit_nofile <span class="number">65535</span>;</span><br><span class="line"><span class="comment"># 大括号属于块指令</span></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line">http &#123;</span><br><span class="line">	include upstream.conf;</span><br><span class="line">	<span class="comment"># 默认主机</span></span><br><span class="line">	server &#123;</span><br><span class="line">		<span class="keyword">listen</span> <span class="number">80</span>;</span><br><span class="line">		location / &#123;</span><br><span class="line">			proxy_pass http:<span class="regexp">//</span>$host;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment"># 动态配置 upstream 的接口站点</span></span><br><span class="line">	server &#123;</span><br><span class="line">		<span class="keyword">listen</span> <span class="number">81</span>;</span><br><span class="line">		location / &#123;</span><br><span class="line">			dyups_interface;	<span class="comment"># 这个指令表示这边是接口站点</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment"># upstream 后面的 realserver,2 台 801，,802</span></span><br><span class="line">	server &#123;</span><br><span class="line">		<span class="keyword">listen</span> <span class="number">801</span>;</span><br><span class="line">		location / &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">200</span> <span class="string">&quot;801&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	server &#123;</span><br><span class="line">		<span class="keyword">listen</span> <span class="number">802</span>;</span><br><span class="line">		location / &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">200</span> <span class="string">&quot;802&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>upstream.conf 配置</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">upstream server8<span class="number">0</span> &#123;</span><br><span class="line">	server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">801</span>;</span><br><span class="line">&#125;</span><br><span class="line">upstream server81 &#123;</span><br><span class="line">	server <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">802</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>指令介绍</strong></p>
+<p>语法: dyups_interface<br>默认: none<br>配置段: location<br>启用配置 upstream 的接口</p>
+<p>语法: dyups_read_msg_timeout time<br>默认: 1s<br>配置段: main<br>设置从共享内存中读取 commands 的超时时间，默认为 1 秒</p>
+<p>语法: dyups_shm_zone_size size<br>默认: 2MB<br>配置段: main<br>设置存储 commands 的共享内存</p>
+<p>语法: dyups_upstream_conf path<br>默认: none<br>配置段: main<br>这个指令用来指定 upstream 配置文件的路径,他会在启动的时候加载</p>
+<p>语法: dyups_trylock on | off<br>默认: off<br>配置段: main<br>是否启用锁，如果启用了它，同一时刻有人在修改，那么将会返回 409</p>
+<h3 id="测试验证-1"><a href="#测试验证-1" class="headerlink" title="测试验证"></a>测试验证</h3><p>增删改查后端服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">初次访问，<span class="variable">$host</span>变量设置为dyhost，原有的upstream中没有dyhost</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">所以访问获得错误信息</span></span><br><span class="line">curl -H &quot;host: dyhost&quot; 127.0.0.1:80</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;&lt;title&gt;502 Bad Gateway&lt;/title&gt;&lt;/head&gt;</span><br><span class="line">&lt;body bgcolor=&quot;white&quot;&gt;</span><br><span class="line">&lt;center&gt;&lt;h1&gt;502 Bad Gateway&lt;/h1&gt;&lt;/center&gt;</span><br><span class="line">&lt;hr&gt;&lt;center&gt;nginx/1.3.13&lt;/center&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">添加/修改 一个upstream列表信息，名字为dyhost</span></span><br><span class="line">curl -d &quot;server 127.0.0.1:8080;server 127.0.0.1:8081;&quot; 127.0.0.1:81/upstream/dyhost</span><br><span class="line">success</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">检查dyhost列表服务的状态</span></span><br><span class="line">curl -H &quot;host: dyhost&quot; 127.0.0.1:8080</span><br><span class="line">Welcome to balancer！</span><br><span class="line">curl -H &quot;host: dyhost&quot; 127.0.0.1:8081</span><br><span class="line">Welcome to balancer！</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">通过ngx_http_dyups_module接口查看当前的upstream列表信息</span></span><br><span class="line">curl 127.0.0.1:81/detail</span><br><span class="line">host1</span><br><span class="line">server 127.0.0.1:8088 weight=1 max_conns=0 max_fails=1 fail_timeout=10 backup=0 down=0</span><br><span class="line"></span><br><span class="line">host2</span><br><span class="line">server 127.0.0.1:8089 weight=1 max_conns=0 max_fails=1 fail_timeout=10 backup=0 down=0</span><br><span class="line"></span><br><span class="line">dyhost</span><br><span class="line">server 127.0.0.1:8089 weight=1 max_conns=0 max_fails=1 fail_timeout=10 backup=0 down=0</span><br><span class="line">server 127.0.0.1:8088 weight=1 max_conns=0 max_fails=1 fail_timeout=10 backup=0 down=0</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">再次访问dyhost服务列表信息，成功返回信息</span></span><br><span class="line">curl -H &quot;host: dyhost&quot; 127.0.0.1:80</span><br><span class="line">Welcome to balancer！</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">删除一个upstream</span></span><br><span class="line">curl -i -X DELETE 127.0.0.1:81/upstream/dyhost</span><br><span class="line">success</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">再次查看当前后台服务信息</span></span><br><span class="line">curl 127.0.0.1:81/detail</span><br><span class="line">host1</span><br><span class="line">server 127.0.0.1:8088 weight=1 max_conns=0 max_fails=1 fail_timeout=10 backup=0 down=0</span><br><span class="line"></span><br><span class="line">host2</span><br><span class="line">server 127.0.0.1:8089 weight=1 max_conns=0 max_fails=1 fail_timeout=10 backup=0 down=0</span><br></pre></td></tr></table></figure>
+
+<p>实际使用过程中，可以将$host固定下来，让后通过ngx_http_dyups_module的接口进行修改对应的upstream的列表信息，从而达到动态更新服务列表。</p>
+<h2 id="限流插件"><a href="#限流插件" class="headerlink" title="限流插件"></a>限流插件</h2><p><a target="_blank" rel="noopener" href="https://github.com/cfsego/limit_upload_rate">Limit Upload Rate</a>是淘宝开源的限流插件，针对客户端请求速率的限制。已经集成在tengine中。</p>
+<h3 id="安装-2"><a href="#安装-2" class="headerlink" title="安装"></a>安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">cd ~</span><br><span class="line">wget https://github.com/cfsego/limit_upload_rate/archive/master.zip \</span><br><span class="line">-O limit_upload_rate-master.zip</span><br><span class="line">unzip limit_upload_rate-master.zip</span><br><span class="line"></span><br><span class="line">cd /usr/local/nginx-1.4.7</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">nginx中使用limit_upload_rate需要tengine的input body filter的支持</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">通过path来给nginx打补丁，for-nginx-1.4.4.patch基于nginx 1.4.4，可与nginx 1.5.x一起使用。</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">我们这里是nginx 1.4.7，所以选择for-nginx-1.4.4.patch补丁</span></span><br><span class="line">sudo patch -p1 &lt; /home/wesley/limit_upload_rate-master/for-nginx-1.4.4.patch</span><br><span class="line">sudo ./configure \</span><br><span class="line">    --prefix=/usr/local/nginx1.6 \</span><br><span class="line">    --sbin-path=/usr/local/nginx1.6/nginx \</span><br><span class="line">    --conf-path=/usr/local/nginx1.6/conf/nginx.conf \</span><br><span class="line">    --error-log-path=/usr/local/nginx1.6/logs/error.log \</span><br><span class="line">    --pid-path=/usr/local/nginx1.6/pid/nginx.pid \</span><br><span class="line">    --add-module=/home/wesley/echo-nginx-module-0.61 \</span><br><span class="line">    --with-http_stub_status_module \</span><br><span class="line">    --add-module=/home/wesley/nginx_upstream_check_module-0.3.0 \</span><br><span class="line">    --add-module=/home/wesley/ngx_http_dyups_module-0.2.9 \</span><br><span class="line">    --add-module=/home/wesley/limit_upload_rate-master</span><br><span class="line">	</span><br><span class="line">sudo make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="配置-2"><a href="#配置-2" class="headerlink" title="配置"></a>配置</h3><figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 由淘宝提供，需要limit_upload_rate的支持。</span></span><br><span class="line"><span class="comment"># 限制客户端上传速率，跟limit_rate用法类似</span></span><br><span class="line"><span class="comment"># 可以放在http, server, location, if in location指令块中</span></span><br><span class="line">limit_upload_rate <span class="number">5</span>k;</span><br><span class="line">limit_upload_rate_after <span class="number">50</span>k;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="测验"><a href="#测验" class="headerlink" title="测验"></a>测验</h3><p>通过上传页面检查</p>
+<h2 id="黑白名单插件"><a href="#黑白名单插件" class="headerlink" title="黑白名单插件"></a>黑白名单插件</h2><p><strong>该插件很久没有维护了，而且不能正常使用，可以忽略该插件。</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/codehunte/ngx_white_black_list">ngx_white_black_list</a> 通过配置文件来指定黑白名单内容。</p>
+<p>功能描述：<br>处在黑名单中的 ip 与网络，将无法访问 web 服务。<br>处在白名单中的 ip，访问 web 服务时，将不受 nginx 所有安全模块的限制。<br>支持动态黑名单（需要与 ngx_http_limit_req 配合），需要修改nginx代码这里就不提及了。如有需要，参考给到的ngx_white_black_list链接</p>
+<h3 id="安装-3"><a href="#安装-3" class="headerlink" title="安装"></a>安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/codehunte/ngx_white_black_list/archive/master.zip \</span><br><span class="line">-O ngx_white_black_list-master.zip</span><br><span class="line">unzip ngx_white_black_list-master.zip</span><br><span class="line"></span><br><span class="line">cd /usr/local/nginx-1.4.7</span><br><span class="line">sudo ./configure \</span><br><span class="line">    --prefix=/usr/local/nginx1.7 \</span><br><span class="line">    --sbin-path=/usr/local/nginx1.7/nginx \</span><br><span class="line">    --conf-path=/usr/local/nginx1.7/conf/nginx.conf \</span><br><span class="line">    --error-log-path=/usr/local/nginx1.7/logs/error.log \</span><br><span class="line">    --pid-path=/usr/local/nginx1.7/pid/nginx.pid \</span><br><span class="line">    --add-module=/home/wesley/echo-nginx-module-0.61 \</span><br><span class="line">    --with-http_stub_status_module \</span><br><span class="line">    --add-module=/home/wesley/nginx_upstream_check_module-0.3.0 \</span><br><span class="line">    --add-module=/home/wesley/ngx_http_dyups_module-0.2.9 \</span><br><span class="line">    --add-module=/home/wesley/limit_upload_rate-master \</span><br><span class="line">    --add-module=/home/wesley/ngx_white_black_list-master</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">make的时候ngx_white_black_list会有告警，导致编译不通过。修改Makefile文件，忽略告警。</span></span><br><span class="line">sudo vim objs/Makefile</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g换成下行</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">忽略Makefile中的警告</span></span><br><span class="line">CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Wall -g</span><br><span class="line"></span><br><span class="line">sudo make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="配置-3"><a href="#配置-3" class="headerlink" title="配置"></a>配置</h3><p>准备黑白名单列表文件，参考资料white.list、black.list、</p>
+<p>nginx配置文件内容</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 简单指令以;结尾</span></span><br><span class="line">worker_processes  <span class="number">4</span>;</span><br><span class="line">worker_rlimit_nofile <span class="number">65535</span>;</span><br><span class="line"><span class="comment"># 大括号属于块指令</span></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">	<span class="comment"># 定义 黑名单或白名单文件 空间key</span></span><br><span class="line">	<span class="comment"># 只能在http指令块中</span></span><br><span class="line">	<span class="comment"># white_black_list_conf可以配置多个 只需 zone=value 其中的value不同就可</span></span><br><span class="line">	white_black_list_conf conf/white.list zone=white:<span class="number">2</span>m;</span><br><span class="line">	white_black_list_conf conf/black.list zone=black:<span class="number">4</span>m;</span><br><span class="line"></span><br><span class="line">	<span class="comment"># 启用黑白名单，on/off，启用/关闭。</span></span><br><span class="line">	<span class="comment"># 在http、server、location下使用, 功能默认是关闭</span></span><br><span class="line">	<span class="comment"># 配置在对应的指令块中，对应的指令块上下文生效</span></span><br><span class="line">	white_list white on; <span class="comment">#白名单  white 在整个http&#123;&#125;中都开启</span></span><br><span class="line">	black_list black on; <span class="comment">#黑名单  black 在整个http&#123;&#125;中都开启</span></span><br><span class="line"></span><br><span class="line">	server &#123;</span><br><span class="line">		<span class="keyword">listen</span> <span class="number">80</span>;</span><br><span class="line">		root /data/www/;</span><br><span class="line"></span><br><span class="line">		<span class="comment"># 黑白名单配置调整接口，通过它可以调整配置内容</span></span><br><span class="line">		location /sec_config &#123;</span><br><span class="line">			sec_config on;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="测验-1"><a href="#测验-1" class="headerlink" title="测验"></a>测验</h3><p>查看黑白名单定义内容</p>
+<p>访问<a target="_blank" rel="noopener" href="http://xxx/sec_config">http://xxx/sec_config</a></p>
+<p>查看zone_name 为white 的   list_path中的具体内容</p>
+<p><a target="_blank" rel="noopener" href="http://xxx/sec_config?zone_name=white">http://xxx/sec_config?zone_name=white</a></p>
+<p>向 zone_name 为white 中增加192.168.141.23</p>
+<p><a target="_blank" rel="noopener" href="http://xxx/sec_config?zone_name=white&add_item=192.168.141.23">http://xxx/sec_config?zone_name=white&amp;add_item=192.168.141.23</a></p>
+<p>在 zone_name 为white 中删除192.168.141.23</p>
+<p><a target="_blank" rel="noopener" href="http://xxx/sec_config?zone_name=white&delete_item=192.168.141.23">http://xxx/sec_config?zone_name=white&amp;delete_item=192.168.141.23</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/16-Nginx/06-01-Nginx%E5%B8%B8%E7%94%A8%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85/" data-id="clmcxeccu002zu8wa8sdberyr" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/16-Nginx/07-00-LVS%E5%AE%9E%E7%8E%B0Nginx%E9%9B%86%E7%BE%A4/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/16-Nginx/06-00-Nginx%E5%B8%B8%E7%94%A8%E6%8F%92%E4%BB%B6/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

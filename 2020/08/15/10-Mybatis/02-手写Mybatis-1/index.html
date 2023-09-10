@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>手写Mybatis-1 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="需求分析Mybatis是什么？一个半自动化的orm框架（Object Relation Mapping)。 Mybatis完成什么工作？在面向对象编程中，我们操作的都是对象，Mybatis框架是一个数据访问层的框架，帮我们完成对象在数据库中的存、取工作。 为什么称为半自动化？ 关系型数据库的操作是通过SQL语句来完成的，Mybatis在帮我们做对象的存取时，需要我们提供对应的SQL语句，它不自动帮">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手写Mybatis-1">
+<meta property="og:url" content="http://example.com/2020/08/15/10-Mybatis/02-%E6%89%8B%E5%86%99Mybatis-1/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="需求分析Mybatis是什么？一个半自动化的orm框架（Object Relation Mapping)。 Mybatis完成什么工作？在面向对象编程中，我们操作的都是对象，Mybatis框架是一个数据访问层的框架，帮我们完成对象在数据库中的存、取工作。 为什么称为半自动化？ 关系型数据库的操作是通过SQL语句来完成的，Mybatis在帮我们做对象的存取时，需要我们提供对应的SQL语句，它不自动帮">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920175017.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920175532.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920175637.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920175744.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920181141.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920181214.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920184406.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920190133.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920190656.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920191448.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920191550.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:50:35.086Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Mybatis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920175017.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-10-Mybatis/02-手写Mybatis-1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/10-Mybatis/02-%E6%89%8B%E5%86%99Mybatis-1/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mybatis/">Mybatis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      手写Mybatis-1
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h1><h2 id="Mybatis是什么？"><a href="#Mybatis是什么？" class="headerlink" title="Mybatis是什么？"></a>Mybatis是什么？</h2><p>一个半自动化的orm框架（Object Relation Mapping)。</p>
+<h2 id="Mybatis完成什么工作？"><a href="#Mybatis完成什么工作？" class="headerlink" title="Mybatis完成什么工作？"></a>Mybatis完成什么工作？</h2><p>在面向对象编程中，我们操作的都是对象，Mybatis框架是一个数据访问层的框架，帮我们完成对象在数据库中的存、取工作。</p>
+<p>为什么称为半自动化？</p>
+<p>关系型数据库的操作是通过SQL语句来完成的，Mybatis在帮我们做对象的存取时，需要我们提供对应的SQL语句，它不自动帮我们生成SQL语句，而只帮我们完成：</p>
+<ul>
+<li><strong>对象属性到SQL语句参数的自动填充；</strong></li>
+<li><strong>SQL语句执行结果集到对象的自动提取；</strong></li>
+</ul>
+<p>所以称为半自动的。而我们了解的另一个ORM框架Hibernate则是全自动的。</p>
+<p><strong>半自动化的不足：我们得辛苦一点编写SQL语句。</strong></p>
+<p><strong>半自动化的优点：我们可以完全把控执行的SQL语句，可以随时灵活调整、优化。</strong></p>
+<h2 id="为什么要用Mybatis"><a href="#为什么要用Mybatis" class="headerlink" title="为什么要用Mybatis?"></a>为什么要用Mybatis?</h2><ol>
+<li>mybatis学习、使用简单</li>
+<li>半自动化的优点</li>
+</ol>
+<h2 id="为什么要学好Mybatis"><a href="#为什么要学好Mybatis" class="headerlink" title="为什么要学好Mybatis?"></a>为什么要学好Mybatis?</h2><p>一线互联网公司出于性能、调优、使用简单、完全可控的需要，在数据库访问层都是采用Mybatis。</p>
+<h2 id="为什么要用orm框架？"><a href="#为什么要用orm框架？" class="headerlink" title="为什么要用orm框架？"></a>为什么要用orm框架？</h2><p>都是为了提高生产效率，少写代码，少写重复代码！</p>
+<p>不用orm框架，能用什么来完成数据的存取？</p>
+<p>jdbc</p>
+<p>看看jdbc编程的代码示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserDao</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> DataSource dataSource;</span><br><span class="line">	<span class="comment">// 新增用户保存到数据库</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(User user)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">try</span> (</span><br><span class="line">				<span class="comment">// 1、获取连接</span></span><br><span class="line">				<span class="type">Connection</span> <span class="variable">conn</span> <span class="operator">=</span> DataSourceUtils.getConnection(dataSource);</span><br><span class="line">				<span class="comment">// 2、创建预编译语句对象</span></span><br><span class="line">				<span class="type">PreparedStatement</span> <span class="variable">pst</span> <span class="operator">=</span> conn.prepareStatement(</span><br><span class="line">						<span class="string">&quot;insert into t_user(id,name,sex,age,address,phone,wechat,email,account,password) &quot;</span></span><br><span class="line">								+ <span class="string">&quot; values(?,?,?,?,?,?,?,?,?,?)&quot;</span>);) &#123;</span><br><span class="line">			<span class="comment">// 3、设置参数值</span></span><br><span class="line">			<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">			pst.setString(i++, user.getId());</span><br><span class="line">			pst.setString(i++, user.getName());</span><br><span class="line">			pst.setString(i++, user.getSex());</span><br><span class="line">			pst.setInt(i++, user.getAge());</span><br><span class="line">			pst.setString(i++, user.getAddress());</span><br><span class="line">			pst.setString(i++, user.getPhone());</span><br><span class="line">			pst.setString(i++, user.getWechat());</span><br><span class="line">			pst.setString(i++, user.getEmail());</span><br><span class="line">			pst.setString(i++, user.getAccount());</span><br><span class="line">			pst.setString(i++, user.getPassword());</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 4、执行语句</span></span><br><span class="line">			<span class="type">int</span> <span class="variable">changeRows</span> <span class="operator">=</span> pst.executeUpdate();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 多条件查询用户</span></span><br><span class="line">	<span class="keyword">public</span> List&lt;User&gt; <span class="title function_">queryUsers</span><span class="params">(String likeName, <span class="type">int</span> minAge, <span class="type">int</span> maxAge, String sex)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">		<span class="comment">// 1、根据查询条件动态拼接SQL语句</span></span><br><span class="line">		<span class="type">StringBuffer</span> <span class="variable">sql</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuffer</span>(</span><br><span class="line">				<span class="string">&quot;select id,name,sex,age,address,phone,wechat,email,account,password from t_user where 1 = 1 &quot;</span>);</span><br><span class="line">		<span class="keyword">if</span> (!StringUtils.isEmpty(likeName)) &#123;</span><br><span class="line">			sql.append(<span class="string">&quot; and name like ? &quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (minAge &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">			sql.append(<span class="string">&quot; and age &gt;= ? &quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (maxAge &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">			sql.append(<span class="string">&quot; and age &lt;= ? &quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (!StringUtils.isEmpty(sex)) &#123;</span><br><span class="line">			sql.append(<span class="string">&quot; and sex = ? &quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">try</span> (<span class="type">Connection</span> <span class="variable">conn</span> <span class="operator">=</span> DataSourceUtils.getConnection(dataSource);</span><br><span class="line">				<span class="type">PreparedStatement</span> <span class="variable">pst</span> <span class="operator">=</span> conn.prepareStatement(sql.toString());) &#123;</span><br><span class="line">			<span class="comment">// 2 设置查询语句参数值</span></span><br><span class="line">			<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">			<span class="keyword">if</span> (!StringUtils.isEmpty(likeName)) &#123;</span><br><span class="line">				pst.setString(i++, <span class="string">&quot;%&quot;</span> + likeName + <span class="string">&quot;%&quot;</span>);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (minAge &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">				pst.setInt(i++, minAge);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (maxAge &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">				pst.setInt(i++, maxAge);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (!StringUtils.isEmpty(sex)) &#123;</span><br><span class="line">				pst.setString(i++, sex);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 3 执行查询</span></span><br><span class="line">			<span class="type">ResultSet</span> <span class="variable">rs</span> <span class="operator">=</span> pst.executeQuery();</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 4、提取结果集</span></span><br><span class="line">			List&lt;User&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">			User u;</span><br><span class="line">			<span class="keyword">while</span> (rs.next()) &#123;</span><br><span class="line">				u = <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">				list.add(u);</span><br><span class="line">				u.setId(rs.getString(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">				u.setName(rs.getString(<span class="string">&quot;name&quot;</span>));</span><br><span class="line">				u.setSex(rs.getString(<span class="string">&quot;sex&quot;</span>));</span><br><span class="line">				u.setAge(rs.getInt(<span class="string">&quot;age&quot;</span>));</span><br><span class="line">				u.setPhone(rs.getString(<span class="string">&quot;phone&quot;</span>));</span><br><span class="line">				u.setEmail(rs.getString(<span class="string">&quot;email&quot;</span>));</span><br><span class="line">				u.setWechat(rs.getString(<span class="string">&quot;wechat&quot;</span>));</span><br><span class="line">				u.setAccount(rs.getString(<span class="string">&quot;account&quot;</span>));</span><br><span class="line">				u.setPassword(rs.getString(<span class="string">&quot;password&quot;</span>));</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			rs.close();</span><br><span class="line"></span><br><span class="line">			<span class="keyword">return</span> list;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用JdbcTemplate的代码示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserDaoUseJdbcTemplate</span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> JdbcTemplate jdbcTemplate;</span><br><span class="line">	<span class="comment">// 新增用户</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(User user)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">		<span class="type">String</span> <span class="variable">sql</span> <span class="operator">=</span> <span class="string">&quot;insert into t_user(id,name,sex,age,address,phone,wechat,email,account,password) &quot;</span></span><br><span class="line">				+ <span class="string">&quot; values(?,?,?,?,?,?,?,?,?,?)&quot;</span>;</span><br><span class="line">		jdbcTemplate.update(sql, user.getId(), user.getName(), user.getSex(), user.getAge(), user.getAddress(),</span><br><span class="line">				user.getPhone(), user.getWechat(), user.getEmail(), user.getAccount(), user.getPassword());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 多条件查询用户</span></span><br><span class="line">	<span class="keyword">public</span> List&lt;User&gt; <span class="title function_">queryUsers</span><span class="params">(String likeName, <span class="type">int</span> minAge, <span class="type">int</span> maxAge, String sex)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">		<span class="comment">// 1、根据查询条件动态拼接SQL语句</span></span><br><span class="line">		<span class="type">StringBuffer</span> <span class="variable">sql</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuffer</span>(</span><br><span class="line">				<span class="string">&quot;select id,name,sex,age,address,phone,wechat,email,account,password from t_user where 1 = 1 &quot;</span>);</span><br><span class="line">		List&lt;Object&gt; argList = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">		<span class="keyword">if</span> (!StringUtils.isEmpty(likeName)) &#123;</span><br><span class="line">			sql.append(<span class="string">&quot; and name like ? &quot;</span>);</span><br><span class="line">			argList.add(<span class="string">&quot;%&quot;</span> + likeName + <span class="string">&quot;%&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (minAge &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">			sql.append(<span class="string">&quot; and age &gt;= ? &quot;</span>);</span><br><span class="line">			argList.add(minAge);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (maxAge &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">			sql.append(<span class="string">&quot; and age &lt;= ? &quot;</span>);</span><br><span class="line">			argList.add(maxAge);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (!StringUtils.isEmpty(sex)) &#123;</span><br><span class="line">			sql.append(<span class="string">&quot; and sex = ? &quot;</span>);</span><br><span class="line">			argList.add(sex);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> jdbcTemplate.query(sql.toString(), argList.toArray(), <span class="keyword">new</span> <span class="title class_">RowMapper</span>&lt;User&gt;() &#123;</span><br><span class="line">			<span class="keyword">public</span> User <span class="title function_">mapRow</span><span class="params">(ResultSet rs, <span class="type">int</span> rowNum)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">				<span class="type">User</span> <span class="variable">u</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">				u.setId(rs.getString(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">				u.setName(rs.getString(<span class="string">&quot;name&quot;</span>));</span><br><span class="line">				u.setSex(rs.getString(<span class="string">&quot;sex&quot;</span>));</span><br><span class="line">				u.setAge(rs.getInt(<span class="string">&quot;age&quot;</span>));</span><br><span class="line">				u.setPhone(rs.getString(<span class="string">&quot;phone&quot;</span>));</span><br><span class="line">				u.setEmail(rs.getString(<span class="string">&quot;email&quot;</span>));</span><br><span class="line">				u.setWechat(rs.getString(<span class="string">&quot;wechat&quot;</span>));</span><br><span class="line">				u.setAccount(rs.getString(<span class="string">&quot;account&quot;</span>));</span><br><span class="line">				u.setPassword(rs.getString(<span class="string">&quot;password&quot;</span>));</span><br><span class="line"></span><br><span class="line">				<span class="keyword">return</span> u;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>参数设置代码、结果集处理代码、JDBC过程代码都会大量重复，毫无技术含量！</p>
+<h2 id="框架确切需求"><a href="#框架确切需求" class="headerlink" title="框架确切需求"></a>框架确切需求</h2><ol>
+<li><strong>用户只需定义持久层接口（dao接口）、接口方法对应的SQL语句。</strong></li>
+<li><strong>用户需指明接口方法的参数与语句参数的对应关系。</strong></li>
+<li><strong>用户需指明查询结果集与对象属性的映射关系。</strong></li>
+<li><strong>框架完成接口对象的生成，JDBC执行过程。</strong></li>
+</ol>
+<h1 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h1><h2 id="需求1"><a href="#需求1" class="headerlink" title="需求1"></a>需求1</h2><ol>
+<li>用户只需定义持久层接口（dao接口）、接口方法对应的SQL语句。</li>
+</ol>
+<p>设计问题：</p>
+<ol>
+<li>我们该提供什么样的方式来让用户定义SQL语句？</li>
+<li>SQL语句怎么与接口方法对应？</li>
+<li>这些SQL语句、对应关系我们框架需要获取到，谁来获取？又该如何表示存储</li>
+</ol>
+<h3 id="SQL定义方式"><a href="#SQL定义方式" class="headerlink" title="SQL定义方式"></a>SQL定义方式</h3><p>XML：独立于代码，修改很方便（不需改代码）</p>
+<p>注解：直接加在方法上，零xml配置。</p>
+<p>问题：SQL语句可做增、删、改、查操作，我们是否要对SQL做个区分？</p>
+<p>答：要，因为jdbc中对应有不同的方法 executeQuery executeUpdate</p>
+<p>xml ：设计增删改查的元素：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ELEMENT insert(#PCDATA) &gt;</span><br><span class="line">&lt;!ELEMENT update(#PCDATA) &gt;</span><br><span class="line">&lt;!ELEMENT delete(#PCDATA) &gt;</span><br><span class="line">&lt;!ELEMENT select (#PCDATA) &gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">insert</span>&gt;</span>insert into t_user(id,name,sex,age) values(?,?,?,?)<span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>注解：设计增删改查的注解：@Insert @Update @Delete @Select ，注解项定义SQL</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920175017.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Retention(RUNTIME)</span></span><br><span class="line"><span class="meta">@Target(&#123; METHOD &#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Insert &#123;</span><br><span class="line">String <span class="title function_">value</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert(&quot;insert into t_user(id,name,sex,age) values(?,?,?,?)&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(User user)</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="SQL语句与接口方法对应"><a href="#SQL语句与接口方法对应" class="headerlink" title="SQL语句与接口方法对应"></a>SQL语句与接口方法对应</h3><p><strong>xml方式时，如何来映射SQL语句对应的接口方法？</strong></p>
+<p>为元素定义一个id，id的值为对应的类名.方法名，如何？</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;com.study.mybatis.sample.UserDao.addUser&quot;</span>&gt;</span></span><br><span class="line"> insert into t_user(id,name,sex,age) values(?,?,?,?)</span><br><span class="line"><span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>一个Dao接口中可能会定义很多个数据访问方法，id这么写很长，能不能便捷一点？</p>
+<p>这是在做SQL与接口方法的映射，我们来加一个mapper元素，它可包含多个insert、update、delete、select元素，相当于分组，一个接口中定义的分到一组。在mapper中定义一个属性namespace，指定里面元素的名称空间，namespace的值对应接口类名，里面元素的id对应方法名。</p>
+<p>mybatis-mapper.dtd</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ELEMENT mapper (insert* | update* | delete* | select*)+ &gt;</span><br><span class="line">&lt;!ATTLIST mapper namespace CDATA #IMPLIED &gt;</span><br><span class="line">&lt;!ELEMENT insert(#PCDATA) &gt;</span><br><span class="line">&lt;!ELEMENT update(#PCDATA) &gt;</span><br><span class="line">&lt;!ELEMENT delete(#PCDATA) &gt;</span><br><span class="line">&lt;!ELEMENT select (#PCDATA) &gt;</span><br></pre></td></tr></table></figure>
+
+<p>这个xml文件命名为 userDaoMapper.xml，内容如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.study.mybatis.sample.userDao&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;addUser&quot;</span>&gt;</span></span><br><span class="line">		insert into t_user(id,name,sex,age) values(?,?,?,?)</span><br><span class="line">    <span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="映射关系的获取与表示、存储"><a href="#映射关系的获取与表示、存储" class="headerlink" title="映射关系的获取与表示、存储"></a>映射关系的获取与表示、存储</h3><p>xml方式：</p>
+<p>解析xml来获取</p>
+<p>注解方式：</p>
+<p>读取注解信息</p>
+<p>问题：</p>
+<ol>
+<li><p>怎么表示？</p>
+<p>得设计一个类来表示从xml、注解获得的SQL映射信息。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920175532.png"></p>
+<p>注意：id为唯一id.<br>xml方式：id&#x3D;namespace.id属性值<br>注解方式：id&#x3D;完整类名.方法名</p>
+</li>
+<li><p>怎么存储得到的MappedStatement?</p>
+<p>这些其实就是一个配置信息，我们定义一个Configuration类：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920175637.png"></p>
+<p>注意：key 为MappedStatement的id</p>
+</li>
+<li><p>得有类来负责解析xml</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920175744.png"></p>
+<p>XmlMapperBuilder负责解析xml文档（parse方法的resource参数用来指定inputStream的来源），它调用XMLStatementBuilder来解析里面的xml标签</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">mapper</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mappers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>mapper中可以让用户如何来指定文件位置？</p>
+<p>文件可以是在类目录下，也可是在文件系统目录下。如何区分？</p>
+<p>规定：</p>
+<p>类目录下的方式通过 resource属性指定；</p>
+<p>文件系统文件通过 url属性指定，值采用URL 本地文件格式指定：fifile:&#x2F;&#x2F;&#x2F;</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;com/mybatis/UserMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">url</span>=<span class="string">&quot;file:///var/mappers/CourseMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>定义 mybatis-config.dtd</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ELEMENT configuration (mappers?)+ &gt;</span><br><span class="line">&lt;!ELEMENT mappers (mapper*)&gt;</span><br><span class="line">&lt;!ELEMENT mapper EMPTY&gt;</span><br><span class="line">&lt;!ATTLIST mapper</span><br><span class="line">resource CDATA #IMPLIED</span><br><span class="line">url CDATA #IMPLIED</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>增加了一个config xml文件，就的有类来解析它。</p>
+<p>增加解析 mybatis-config.xml配置文件的类</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920181141.png"></p>
+</li>
+<li><p>注解的方式需要获取SQL映射信息，也得有个类来做这件事</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920181214.png"></p>
+</li>
+<li><p>谁来使用MapperAnnotationBuilder？</p>
+<p>Configuration吧，在它里面持有MapperAnnotationBuilder，增加添加Mapper接口类的方法。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920184406.png"></p>
+</li>
+<li><p>用户如何来指定他们的Mapper接口类？</p>
+<ol>
+<li><p>在mybatis-config.xml的mappers中通过mapper指定？</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;com/mybatis/UserMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">url</span>=<span class="string">&quot;file:///var/mappers/CourseMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如何来区分它是个Mapper接口呢？</p>
+<p>给mapper加一个属性class来专门指定Mapper类名</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;com/mybatis/UserMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">url</span>=<span class="string">&quot;file:///var/mappers/CourseMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">class</span>=<span class="string">&quot;com.study.mybatis.dao.UserDao&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>mybatis-config.dtd</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ELEMENT configuration (mappers?)+ &gt;</span><br><span class="line">&lt;!ELEMENT mappers (mapper*)&gt;</span><br><span class="line">&lt;!ELEMENT mapper EMPTY&gt;</span><br><span class="line">&lt;!ATTLIST mapper</span><br><span class="line">resource CDATA #IMPLIED</span><br><span class="line">url CDATA #IMPLIED</span><br><span class="line">class CDATA #IMPLIED</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+
+<p>问题：</p>
+<ol>
+<li>这样一个一个类来指定，好繁琐？能不能指定一个包名，包含包下所有接口、子孙包下的接口类？</li>
+<li>包含包下所有的接口，好像不是很灵活，能不能让用户指定包下所有某类型的接口？</li>
+</ol>
+<p>如是什么类型的类，或带有某注解的接口。</p>
+<p>好的，这很容易，在mappers元素中增加一个package元素，pacakge元素定义三个属性</p>
+<p>mybatis-config.dtd</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ELEMENT configuration (mappers?)+ &gt;</span><br><span class="line">&lt;!ELEMENT mappers (mapper*,package*)&gt;</span><br><span class="line">&lt;!ELEMENT mapper EMPTY&gt;</span><br><span class="line">&lt;!ATTLIST mapper</span><br><span class="line">resource CDATA #IMPLIED</span><br><span class="line">url CDATA #IMPLIED</span><br><span class="line">class CDATA #IMPLIED</span><br><span class="line">&gt;</span><br><span class="line">&lt;!ELEMENT package EMPTY&gt;</span><br><span class="line">&lt;!ATTLIST package</span><br><span class="line">name CDATA #IMPLIED</span><br><span class="line">type CDATA #IMPLIED</span><br><span class="line">annotation CDATA #IMPLIED</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;com/mybatis/UserMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">url</span>=<span class="string">&quot;file:///var/mappers/CourseMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">class</span>=<span class="string">&quot;com.study.mybatis.dao.UserDao&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">&quot;com.study.mybatis.mapper&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">&quot;com.study.mybatis.mapper&quot;</span> <span class="attr">type</span>=<span class="string">&quot;com.study.mybatis.MapperInterface&quot;</span>/&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">&quot;com.study.mybatis.mapper&quot;</span> <span class="attr">annotation</span>=<span class="string">&quot;com.study.mybatis.mybtis.annotation.Mapper&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">&quot;com.study.mybatis.mapper&quot;</span> <span class="attr">type</span>=<span class="string">&quot;com.study.mybatis.MapperInterface&quot;</span> <span class="attr">annotation</span>=<span class="string">&quot;com.study.mybatis.mybtis.annotation.Mapper&quot;</span>/&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>为了用户使用方便，我们给定义一个@Mapper注解，默认规则：指定包下加了@Mapper注解的接口，如何？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920190133.png"></p>
+<p>加了package元素，又得在Configuration中增加对应的方法了：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920190656.png"></p>
+<p>补充一条，<strong>约定俗成的规则：指定包下扫到的@Mapper接口，例如UserDao，还可以在包下定义 UserDao.xml，会被加载解析。</strong></p>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="需求2"><a href="#需求2" class="headerlink" title="需求2"></a>需求2</h2><p>需求2、用户需指明接口方法的参数与语句参数的对应关系。</p>
+<h3 id="语句参数指定"><a href="#语句参数指定" class="headerlink" title="语句参数指定"></a>语句参数指定</h3><p>看下面的Mapper示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Mapper</span> </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserDao</span> &#123; </span><br><span class="line">    <span class="meta">@Insert(&quot;insert into t_user(id,name,sex,age) values(?,?,?,?)&quot;)</span> </span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(User user)</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>User对象的属性如何与 values(?)对应？</p>
+<p>靠解析 t_user(id,name,sex,age) 可行吗？</p>
+<p>难度太大！</p>
+<p>万一User的name叫xname呢！</p>
+<p>既然靠我们来解析不行，那就请用户指明吧。用户如何来指明呢？</p>
+<p>我们来给定个规则： ？ 用 #{属性名} 代替，我们来解析SQL语句中的 #{属性名} 来决定参数对应。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert(&quot;insert into t_user(id,name,sex,age) values(#&#123;id&#125;,#&#123;name&#125;,#&#123;sex&#125;,#&#123;age&#125;)&quot;)</span> </span><br><span class="line"><span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(User user)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>万一是这种情况呢？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert(&quot;insert into t_user(id,name,sex,age) values(#&#123;id&#125;,#&#123;name&#125;,#&#123;sex&#125;,#&#123;age&#125;)&quot;)</span> </span><br><span class="line"><span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(String id,String xname,String sex,<span class="type">int</span> age)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>完全可以要求用户必须与参数名对应 ：#{xname}。</p>
+<p>为了提高点自由度（及后面方便SQL复用），可以定义一个注解让用户使用，该注解只可用在参数上</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920191448.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert(&quot;insert into t_user(id,name,sex,age) values(#&#123;id&#125;,#&#123;name&#125;,#&#123;sex&#125;,#&#123;age&#125;)&quot;)</span> </span><br><span class="line"><span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(String id,<span class="meta">@Param(&quot;name&quot;)</span>String xname,String sex,<span class="type">int</span> age)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>万一是这种情况呢？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert(&quot;insert into t_user(id,name,sex,age,org_id) values(#&#123;id&#125;,#&#123;name&#125;,#&#123;sex&#125;,#&#123;age&#125;,#&#123;id&#125;)&quot;)</span> </span><br><span class="line"><span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(User user,Org org)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>User和Org中都有id属性，name属性</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920191550.png"></p>
+<p>好办，<strong>如果方法参数是对象，则以 参数名.属性.属性 的方式指定SQL参数：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert(&quot;insert into t_user(id,name,sex,age,org_id) values(#&#123;user.id&#125;,#&#123;user.name&#125;,#&#123;user.sex&#125;,#&#123;user.age&#125;,#&#123;org.id&#125;)&quot;)</span> </span><br><span class="line"><span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(User user,Org org)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>一样也可以使用@Param</p>
+<p>如果方法参数是这种情况呢? </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert(&quot;insert into t_user(id,name,sex,age) values(#&#123;id&#125;,#&#123;name&#125;,#&#123;sex&#125;,#&#123;age&#125;)&quot;)</span> </span><br><span class="line"><span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(Map map)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>对应Map中的key</p>
+<p>如果方法参数是这种情况呢? </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert(&quot;insert into t_user(id,name,sex,age,org_id) values(#&#123;user.id&#125;,#&#123;user.name&#125;,#&#123;user.sex&#125;,#&#123;user.age&#125;,#&#123;org.id&#125;)&quot;)</span> </span><br><span class="line"><span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(Map map,Org org)</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert(&quot;insert into t_user(id,name,sex,age,org_id) values(#&#123;user.id&#125;,#&#123;user.name&#125;,#&#123;user.sex&#125;,#&#123;user.age&#125;,#&#123;org.id&#125;)&quot;)</span> </span><br><span class="line"><span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(<span class="meta">@Param(&quot;user&quot;)</span>Map map,Org org)</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>再来看下下面的场景：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Select(&quot;select id,name,sex from t_user where sex = #&#123;sex&#125; order by #&#123;orderColumn&#125;&quot;)</span> </span><br><span class="line">List&lt;User&gt; <span class="title function_">query</span><span class="params">(String sex, String orderColumn)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>order by #&#123;orderColumn&#125; order by ？</code> 可以吗？</p>
+<p>不可以，也就是说 方法参数不全是用来做SQL语句的预编译参数值的，有些是来构成SQL语句的一部分的。</p>
+<p>那怎么让用户指定呢？</p>
+<p>一样，定义个<strong>规则： ${属性名} 表示这里是字符串替换</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Select(&quot;select id,name,sex from t_user where sex = #&#123;sex&#125; order by $&#123;orderColumn&#125;&quot;)</span> </span><br><span class="line">List&lt;User&gt; <span class="title function_">query</span><span class="params">(String sex, String orderColumn)</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="SQL中参数映射解析"><a href="#SQL中参数映射解析" class="headerlink" title="SQL中参数映射解析"></a>SQL中参数映射解析</h3><p>问题：</p>
+<ol>
+<li><p>SQL中参数映射解析要完成的是什么工作？</p>
+<ul>
+<li>解析出真正的SQL语句</li>
+<li>获得方法参数与语句参数的对应关系 ： 问号N—哪个参数值</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 新增用户保存到数据库 </span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(User user)</span> <span class="keyword">throws</span> SQLException &#123; </span><br><span class="line">    <span class="keyword">try</span> ( </span><br><span class="line">        <span class="comment">// 1、获取连接 </span></span><br><span class="line">        <span class="type">Connection</span> <span class="variable">conn</span> <span class="operator">=</span> dataSource.getConnection(); </span><br><span class="line">        <span class="comment">// 2、创建预编译语句对象 </span></span><br><span class="line">        <span class="type">PreparedStatement</span> <span class="variable">pst</span> <span class="operator">=</span> conn.prepareStatement( <span class="string">&quot;insert into t_user(id,name,sex,age,address,phone,wechat,email,account,password) values(?,?,?,?,?,?,?,?,?,?)&quot;</span>);) </span><br><span class="line">    &#123; </span><br><span class="line">        <span class="comment">// 3、设置参数值 </span></span><br><span class="line">        <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; </span><br><span class="line">        pst.setString(i++, user.getId()); </span><br><span class="line">        pst.setString(i++, user.getName()); </span><br><span class="line">        pst.setString(i++, user.getSex()); </span><br><span class="line">        pst.setInt(i++, user.getAge()); </span><br><span class="line">        pst.setString(i++, user.getAddress()); </span><br><span class="line">        pst.setString(i++, user.getPhone()); </span><br><span class="line">        pst.setString(i++, user.getWechat()); </span><br><span class="line">        pst.setString(i++, user.getEmail()); </span><br><span class="line">        pst.setString(i++, user.getAccount());</span><br><span class="line">        pst.setString(i++, user.getPassword()); </span><br><span class="line">        <span class="comment">// 4、执行语句</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">changeRows</span> <span class="operator">=</span> pst.executeUpdate(); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>怎么解析？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert(&quot;insert into t_user(id,name,sex,age,org_id) values(#&#123;user.id&#125;,#&#123;user.name&#125;,#&#123;user.sex&#125;,#&#123;user.age&#125;,#&#123;org.id&#125;)&quot;)</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(<span class="meta">@Param(&quot;user&quot;)</span>Map map,Org org)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>方式有：</p>
+<ul>
+<li>正则表达式</li>
+<li>antlr</li>
+</ul>
+<p>怎么表示？</p>
+<ul>
+<li>问号的index、值来源</li>
+</ul>
+</li>
+<li><p>这个解析的工作在何时做好？谁来做好？</p>
+<p>还不清楚！</p>
+<p>设计怎么来执行一个Mapper接口了</p>
+<p>SqlSession</p>
+<p>SqlSessionFactory</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/10-Mybatis/02-%E6%89%8B%E5%86%99Mybatis-1/" data-id="clmcxed4800bzu8wa8kfo7xg0" data-title="手写Mybatis-1" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/06-%E7%99%BE%E4%B8%87%E8%BF%9E%E6%8E%A5%E4%BC%98%E5%8C%96%E9%85%8D%E7%BD%AE%E5%8F%8A%E8%AF%B4%E6%98%8E/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          百万连接优化配置及说明
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/10-Mybatis/03-%E6%89%8B%E5%86%99Mybatis-2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">手写Mybatis-2</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

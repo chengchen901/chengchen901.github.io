@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>MQ概述 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="MQ是一种具备接收请求、保存数据、发送数据等功能的网络应用。 和一般网络应用程序的区别是它主要负责数据的接收和传递，所以性能一般都高于普通程序">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MQ概述">
+<meta property="og:url" content="http://example.com/2020/08/15/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/00-MQ%E6%A6%82%E8%BF%B0/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="MQ是一种具备接收请求、保存数据、发送数据等功能的网络应用。 和一般网络应用程序的区别是它主要负责数据的接收和传递，所以性能一般都高于普通程序">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165704115.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165729686.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165759986.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165818064.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165845285.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165906839.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165922107.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165936335.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815200927046.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815200849574.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815200824946.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815201539967.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815203912308.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815204927047.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2022-09-25T14:00:51.912Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="MQ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165704115.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-08-消息队列/00-MQ概述" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/00-MQ%E6%A6%82%E8%BF%B0/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/MQ/">MQ</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      MQ概述
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>MQ是一种具备接收请求、保存数据、发送数据等功能的网络应用。</p>
+<p>和一般网络应用程序的区别是它主要负责数据的接收和传递，所以性能一般都高于普通程序</p>
+<span id="more"></span>
+
+<h1 id="MQ概述"><a href="#MQ概述" class="headerlink" title="MQ概述"></a>MQ概述</h1><h2 id="这是一个协作的世界"><a href="#这是一个协作的世界" class="headerlink" title="这是一个协作的世界"></a>这是一个协作的世界</h2><p>事情紧急：打电话</p>
+<p>​		<strong>同步调用</strong></p>
+<p>事情不急：发短信、微信</p>
+<p>​		<strong>异步传递</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165704115.png" alt="image-20200816165704115"></p>
+<h2 id="同步-异步效果对比理解"><a href="#同步-异步效果对比理解" class="headerlink" title="同步-异步效果对比理解"></a>同步-异步效果对比理解</h2><h3 id="同步-串行"><a href="#同步-串行" class="headerlink" title="同步-串行"></a>同步-串行</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165729686.png" alt="image-20200816165729686"></p>
+<h3 id="同步-并行"><a href="#同步-并行" class="headerlink" title="同步-并行"></a>同步-并行</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165759986.png" alt="image-20200816165759986"></p>
+<h3 id="异步-MQ"><a href="#异步-MQ" class="headerlink" title="异步-MQ"></a>异步-MQ</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165818064.png" alt="image-20200816165818064"></p>
+<h3 id="基于消息中间件的分布式系统架构"><a href="#基于消息中间件的分布式系统架构" class="headerlink" title="基于消息中间件的分布式系统架构"></a>基于消息中间件的分布式系统架构</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165845285.png" alt="image-20200816165845285"></p>
+<h2 id="MQ-消息中间件概述"><a href="#MQ-消息中间件概述" class="headerlink" title="MQ-消息中间件概述"></a>MQ-消息中间件概述</h2><h3 id="什么是Message-Queue消息中间件"><a href="#什么是Message-Queue消息中间件" class="headerlink" title="什么是Message-Queue消息中间件"></a>什么是Message-Queue消息中间件</h3><p>利用高效可靠的消息传递机制进行平台无关的数据交流；</p>
+<p>并基于数据通信来进行分布式系统的集成；</p>
+<p>通过提供消息传递和消息排队模型，它可以在分布式环境下扩展进程间的通信；</p>
+<h3 id="消息中间件的应用场景"><a href="#消息中间件的应用场景" class="headerlink" title="消息中间件的应用场景"></a>消息中间件的应用场景</h3><p>跨系统数据传递、高并发流量削峰、数据异步处理、系统解耦…等等</p>
+<h3 id="常用的消息中间件"><a href="#常用的消息中间件" class="headerlink" title="常用的消息中间件"></a>常用的消息中间件</h3><p>ActiveMQ、RabbitMQ、Kafka、RocketMQ</p>
+<h1 id="MQ学习方式"><a href="#MQ学习方式" class="headerlink" title="MQ学习方式"></a>MQ学习方式</h1><h2 id="消息中间件核心设计"><a href="#消息中间件核心设计" class="headerlink" title="消息中间件核心设计"></a>消息中间件核心设计</h2><h3 id="本质"><a href="#本质" class="headerlink" title="本质"></a>本质</h3><p>一种具备接收请求、保存数据、发送数据等功能的网络应用。</p>
+<p>和一般网络应用程序的区别是它主要负责数据的接收和传递，所以性能一般都高于普通程序</p>
+<h3 id="5大核心组成"><a href="#5大核心组成" class="headerlink" title="5大核心组成"></a>5大核心组成</h3><p>协议</p>
+<p>持久化机制</p>
+<p>消息分发机制</p>
+<p>高可用设计</p>
+<p>高可靠设计</p>
+<h1 id="MQ核心概念"><a href="#MQ核心概念" class="headerlink" title="MQ核心概念"></a>MQ核心概念</h1><h2 id="消息中间件核心概念"><a href="#消息中间件核心概念" class="headerlink" title="消息中间件核心概念"></a>消息中间件核心概念</h2><h3 id="5大核心组成-1"><a href="#5大核心组成-1" class="headerlink" title="5大核心组成"></a>5大核心组成</h3><p>1 协议</p>
+<p>2.持久化机制</p>
+<p>3.消息分发机制</p>
+<p>4.高可用设计</p>
+<p>5.高可靠设计</p>
+<h2 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h2><h3 id="协议是什么"><a href="#协议是什么" class="headerlink" title="协议是什么"></a>协议是什么</h3><p>协议是计算机之间通信时共同遵从的一组约定，都遵守相同的约定，计算机之间才能相互交流</p>
+<p>是对数据格式和计算机之间交换数据时必须遵守的规则的正式描述。</p>
+<h4 id="协议三要素"><a href="#协议三要素" class="headerlink" title="协议三要素"></a>协议三要素</h4><ol>
+<li>语法：即数据与控制信息的接口或格式；</li>
+<li>语义：即需要发出何种控制信息，完成何种动作以及做出何种响应；</li>
+<li>时序（同步）：即事件实现顺序的详细说明</li>
+</ol>
+<h3 id="常见协议"><a href="#常见协议" class="headerlink" title="常见协议"></a>常见协议</h3><p><strong>http协议三要素举例</strong>：</p>
+<p>语法：http规定了请求报文和响应报文的具体格式</p>
+<p>语义：客户端主动发起的操作称为请求</p>
+<p>时序：一个请求对应一个响应</p>
+<p><strong>消息中间件常用的协议：</strong>Openwire、AMQP、MQTT、Kafka、OpenMessage</p>
+<p><strong>为什么消息中间件不直接使用Http协议？</strong></p>
+<p>因为http协议是一个比较重的协议，不适合MQ这种高性能组件。</p>
+<h4 id="AMQP协议"><a href="#AMQP协议" class="headerlink" title="AMQP协议"></a>AMQP协议</h4><p><strong>AMQP</strong>（Advanced Message Queuing Protocol）是高级消息队列协议，04年JPMorgan Chase（摩根大通集团）联合其他公司共同设计。</p>
+<p><strong>特性</strong></p>
+<p>​	事务支持、持久化支持，出生金融行业，在可靠性消息处理上具备天然的优势。</p>
+<p><strong>支持AMQP协议的MQ：</strong>RabbitMQ、ActiveMQ</p>
+<h4 id="MQTT协议"><a href="#MQTT协议" class="headerlink" title="MQTT协议"></a>MQTT协议</h4><p><strong>MQTT</strong>（Message Queuing Telemetry Transport）消息队列遥测传输是IBM开发的一个及时通讯协议，物联网系统架构中的重要组成部分。</p>
+<p><strong>特性</strong></p>
+<p>​	轻量、结构简单、传输快、没有事务支持、没有持久化相关设计</p>
+<p><strong>应用场景</strong></p>
+<p>​	适用于计算能力有限、低带宽、网络不稳定的场景。</p>
+<p><strong>支持MQTT协议的MQ：</strong>RabbitMQ、ActiveMQ</p>
+<h4 id="Open-Message协议"><a href="#Open-Message协议" class="headerlink" title="Open Message协议"></a>Open Message协议</h4><p>OpenMessaging是近一俩年由阿里发起，与雅虎、滴滴出行】Streamlio等公司共同参与创立的分布式消息中间件、流处理领域的应用开发标准。<strong>是国内首个在全球范围内发起的分布式消息领域国际标准。</strong></p>
+<p><strong>特性</strong></p>
+<p>​	结构简单、解析快、有事务设计、有持久化设计</p>
+<p><strong>支持Open Message协议的MQ：</strong>RocketMQ</p>
+<h4 id="Kafka协议"><a href="#Kafka协议" class="headerlink" title="Kafka协议"></a>Kafka协议</h4><p><strong>Kafka</strong>协议是基于TCP的二进制协议。消息内部是通过长度来分隔，由一些基本数据类型组成。</p>
+<p><strong>特性</strong></p>
+<p>结构简单、解析快、无事务设计、有持久化设计</p>
+<p><strong>支持Kafka协议的MQ：</strong>Kafka</p>
+<h2 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h2><h3 id="持久化是什么"><a href="#持久化是什么" class="headerlink" title="持久化是什么"></a>持久化是什么</h3><p>简单来说就是将数据存入磁盘，而不是存在内存中随服务重启而消失，使数据能够永久保存叫做持久化。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165906839.png" alt="image-20200816165906839"></p>
+<h3 id="常用持久化方式"><a href="#常用持久化方式" class="headerlink" title="常用持久化方式"></a>常用持久化方式</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>ActiveMQ</th>
+<th>RabbitMQ</th>
+<th>Kafka</th>
+<th>RocketMQ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文件系统</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>数据库</td>
+<td>支持</td>
+<td>&#x2F;</td>
+<td>&#x2F;</td>
+<td>&#x2F;</td>
+</tr>
+</tbody></table>
+<h2 id="消息分发"><a href="#消息分发" class="headerlink" title="消息分发"></a>消息分发</h2><h3 id="为什么要有消息分发策略"><a href="#为什么要有消息分发策略" class="headerlink" title="为什么要有消息分发策略"></a>为什么要有消息分发策略</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165922107.png" alt="image-20200816165922107"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200816165936335.png" alt="image-20200816165936335"></p>
+<h3 id="常用的消息中间件分发策略"><a href="#常用的消息中间件分发策略" class="headerlink" title="常用的消息中间件分发策略"></a>常用的消息中间件分发策略</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>ActiveMQ</th>
+<th>RabbitMQ</th>
+<th>Kafka</th>
+<th>RocketMQ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>发布订阅</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>轮询分发</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>&#x2F;</td>
+</tr>
+<tr>
+<td>公平分发</td>
+<td>&#x2F;</td>
+<td>支持</td>
+<td>支持</td>
+<td>&#x2F;</td>
+</tr>
+<tr>
+<td>重发</td>
+<td>支持</td>
+<td>支持</td>
+<td>&#x2F;</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>消息拉取</td>
+<td>&#x2F;</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+</tbody></table>
+<h1 id="高可用"><a href="#高可用" class="headerlink" title="高可用"></a>高可用</h1><h2 id="高可用机制"><a href="#高可用机制" class="headerlink" title="高可用机制"></a>高可用机制</h2><p><strong>高可用性</strong>是指产品在规定的条件和规定的时刻或时间区间处于可执行规定功能状态的能力。</p>
+<p>当业务量大时，一台消息中间件服务器可能无法满足需求，所以需要消息中间件能够集群部署，来达到高可用的目的。</p>
+<h2 id="Master-Slave主从共享数据的部署方式"><a href="#Master-Slave主从共享数据的部署方式" class="headerlink" title="Master-Slave主从共享数据的部署方式"></a>Master-Slave主从共享数据的部署方式</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815200927046.png" alt="image-20200815200927046"></p>
+<h2 id="Master-Slave主从同步部署方式"><a href="#Master-Slave主从同步部署方式" class="headerlink" title="Master-Slave主从同步部署方式"></a>Master-Slave主从同步部署方式</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815200849574.png" alt="image-20200815200849574"></p>
+<h2 id="Broker-Cluster多主集群同步部署方式"><a href="#Broker-Cluster多主集群同步部署方式" class="headerlink" title="Broker-Cluster多主集群同步部署方式"></a>Broker-Cluster多主集群同步部署方式</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815200824946.png" alt="image-20200815200824946"></p>
+<h2 id="Broker-Cluster多主集群转发部署方式"><a href="#Broker-Cluster多主集群转发部署方式" class="headerlink" title="Broker-Cluster多主集群转发部署方式"></a>Broker-Cluster多主集群转发部署方式</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815201539967.png" alt="image-20200815201539967"></p>
+<h2 id="Master-Slave与Bloker-Cluster结合"><a href="#Master-Slave与Bloker-Cluster结合" class="headerlink" title="Master-Slave与Bloker-Cluster结合"></a>Master-Slave与Bloker-Cluster结合</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815203912308.png" alt="image-20200815203912308"></p>
+<h1 id="高可靠"><a href="#高可靠" class="headerlink" title="高可靠"></a>高可靠</h1><h2 id="高可靠是什么"><a href="#高可靠是什么" class="headerlink" title="高可靠是什么"></a>高可靠是什么</h2><p>高可靠性是指系统可以无故障地持续运行。比如一个系统从来不崩溃、报错，或者崩溃、报错的几率较低，那就是高可靠。</p>
+<p>在并发业务场景下，如果不能保证系统的高可靠，那造成的损失将会非常严重。</p>
+<p>保证消息中间件的高可靠性，可以从以下几方面考虑</p>
+<p><strong>消息传输可靠：</strong>通过协议来保证系统间数据解析的正确性。</p>
+<p><strong>消息存储可靠：</strong>通过持久化来保证消息的存储可靠性。</p>
+<h1 id="MQ中间件学习目标"><a href="#MQ中间件学习目标" class="headerlink" title="MQ中间件学习目标"></a>MQ中间件学习目标</h1><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20200815204927047.png" alt="image-20200815204927047"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/00-MQ%E6%A6%82%E8%BF%B0/" data-id="clmcxed0j00abu8wa52uafrds" data-title="MQ概述" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/10-Mybatis/01-Mybatis%E8%BF%9B%E9%98%B6/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Mybatis简介
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/01-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">网络编程入门</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

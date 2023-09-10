@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>网络编程入门 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="TCP&#x2F;UDP协议OSI网络七层模型​	为使不同计算机厂家的计算机能够互相通信，以便在更大的范围内建立计算机网络，有 必要建立一个国际范围的网络体系结构标准。   各层的主要功能 TCP协议​	TCP协议(传输控制协议)，是 Internet一个重要的传输层协议。TCP提供面向连接、可靠、有序、字节流传输服务。应用程序在使用TCP之前，必须先建立TCP连接。  TCP握手机制 为什么要三">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络编程入门">
+<meta property="og:url" content="http://example.com/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/01-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="TCP&#x2F;UDP协议OSI网络七层模型​	为使不同计算机厂家的计算机能够互相通信，以便在更大的范围内建立计算机网络，有 必要建立一个国际范围的网络体系结构标准。   各层的主要功能 TCP协议​	TCP协议(传输控制协议)，是 Internet一个重要的传输层协议。TCP提供面向连接、可靠、有序、字节流传输服务。应用程序在使用TCP之前，必须先建立TCP连接。  TCP握手机制 为什么要三">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%A0%87%E5%87%86.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/%E7%BD%91%E7%BB%9C%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211009092604.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/TCP%E6%8F%A1%E6%89%8B%E6%9C%BA%E5%88%B6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/UDP%E5%8D%8F%E8%AE%AE.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/socketAPI%E5%8F%8A%E5%85%B6%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/NIO-Buffer%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.gif">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/Channel%E9%80%9A%E9%81%93.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/Selector%E9%80%89%E6%8B%A9%E5%99%A8.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/BIO%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/NIO%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2023-02-01T02:46:30.800Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Socker">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%A0%87%E5%87%86.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-09-网络编程/01-网络编程入门" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/01-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Socker/">Socker</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      网络编程入门
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="TCP-UDP协议"><a href="#TCP-UDP协议" class="headerlink" title="TCP&#x2F;UDP协议"></a>TCP&#x2F;UDP协议</h1><h2 id="OSI网络七层模型"><a href="#OSI网络七层模型" class="headerlink" title="OSI网络七层模型"></a>OSI网络七层模型</h2><p>​	为使不同计算机厂家的计算机能够互相通信，以便在更大的范围内建立计算机网络，有 必要建立一个国际范围的网络体系结构标准。 </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E6%A0%87%E5%87%86.png" alt="网络体系结构标准.png"></p>
+<h2 id="各层的主要功能"><a href="#各层的主要功能" class="headerlink" title="各层的主要功能"></a>各层的主要功能</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/%E7%BD%91%E7%BB%9C%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B.png" alt="网络七层模型.png"></p>
+<h2 id="TCP协议"><a href="#TCP协议" class="headerlink" title="TCP协议"></a>TCP协议</h2><p>​	TCP协议(传输控制协议)，是 Internet一个重要的传输层协议。TCP提供面向连接、可靠、有序、字节流传输服务。应用程序在使用TCP之前，必须先建立TCP连接。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211009092604.png" alt="TCP协议.png"></p>
+<h2 id="TCP握手机制"><a href="#TCP握手机制" class="headerlink" title="TCP握手机制"></a>TCP握手机制</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/TCP%E6%8F%A1%E6%89%8B%E6%9C%BA%E5%88%B6.png" alt="TCP握手机制.png"></p>
+<p><strong>为什么要三次握手？</strong></p>
+<p>三次握手最主要的目的就是建立可靠的通信信道，双方确认自己与对方的数据发送与接收是正常的。Server端处于监听状态，双方的数据收发是串行的。</p>
+<p>• 第一次握手，Client 什么都不能确认；Server 能确认对方发送正常，自己接收正常</p>
+<p>• 第二次握手，Client 能确认自己和对方，发送、接收正常；Server 能确认对方发送正常，自己接收正常</p>
+<p>• 第三次握手，Client 能确认自己和对方，发送、接收正常；Server 能确认自己和对方，发送、接收都正常</p>
+<p>所以三次握手就能确认双发收发功能都正常，缺一不可。</p>
+<p><strong>为什么要四次挥手？</strong></p>
+<p>四次挥手时TCP连接时两端可以同时接受和发送数据，因此，每个端都必须要单独进行关闭。主要目的也是为了可靠的通信。</p>
+<p>• 第一次挥手，Client表示没有数据发送了，但是还能接受Server发来的数据。</p>
+<p>• 第二次挥手，Server告诉Client你的意思我知道了，但是我还能发送数据给你，整个连接就处于半关闭了。</p>
+<p>• 第三次挥手，Server数据发送完毕，告诉Client我也可以关闭连接了。</p>
+<p>• 第四次挥手，你的数据我接受完了，都关闭连接吧。</p>
+<p>中间少一次，就会造成数据传输的不可靠。</p>
+<h2 id="UDP协议"><a href="#UDP协议" class="headerlink" title="UDP协议"></a>UDP协议</h2><p>用户数据报协议UDP是 Internet传输层协议。提供无连接、不可靠、数据报尽力传输服务。 </p>
+<p>开发应用人员在<span style="color:red">UDP上构建应用，关注以下几点：</span></p>
+<ol>
+<li><p>应用进程更容易控制发送什么数据以及何时发送 </p>
+</li>
+<li><p>无需建立连接 </p>
+</li>
+<li><p>无连接状态 </p>
+</li>
+<li><p>首部开销小</p>
+</li>
+</ol>
+<p> </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/UDP%E5%8D%8F%E8%AE%AE.png" alt="UDP协议"></p>
+<h2 id="UDP和TCP比较"><a href="#UDP和TCP比较" class="headerlink" title="UDP和TCP比较"></a>UDP和TCP比较</h2><table>
+<thead>
+<tr>
+<th>TCP</th>
+<th>UDP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>面向连接</td>
+<td>无连接</td>
+</tr>
+<tr>
+<td>提供可靠性保证</td>
+<td>不可靠</td>
+</tr>
+<tr>
+<td>慢</td>
+<td>快</td>
+</tr>
+<tr>
+<td>资源占用多</td>
+<td>资源占用少</td>
+</tr>
+</tbody></table>
+<h1 id="Socket网络编程"><a href="#Socket网络编程" class="headerlink" title="Socket网络编程"></a>Socket网络编程</h1><ul>
+<li><p>Internet中应用最广泛的网络应用编程接口，实现与3种底层协议的交互：</p>
+<ul>
+<li>数据报类型套接字SOCK_DGRAM(面向UDP接口)</li>
+<li>流式套接字SOCK_STREAM(面向TCP接口) </li>
+<li>原始套接字SOCK_RAW(面向网络层协议接口IP、ICMP等)</li>
+</ul>
+<p>  </p>
+</li>
+<li><p>主要socketAPI及其调用过程<br><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/socketAPI%E5%8F%8A%E5%85%B6%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B.png" alt="socketAPI及其调用过程.png"></p>
+</li>
+<li><p>Socket API函数定义</p>
+<ul>
+<li> listen()、accept()函数只能用于服务器端</li>
+<li>connect()函数只能用于客户端</li>
+<li> socket()、bind()、send()、recv()、sendto()、recvfrom()、close()</li>
+</ul>
+</li>
+</ul>
+<h1 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a>HTTP协议</h1><h2 id="HTTP协议-请求数据包解析"><a href="#HTTP协议-请求数据包解析" class="headerlink" title="HTTP协议 - 请求数据包解析"></a>HTTP协议 - 请求数据包解析</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">POST / HTTP/1.1</span><br><span class="line">User-Agent: PostmanRuntime/7.28.0</span><br><span class="line">Accept: */*</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Postman-Token: f51b41c0-2e7c-435b-b039-ebc1644b33ea</span><br><span class="line">Host: localhost:8080</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Content-Type: multipart/form-data; boundary=--------------------------957650536978685773102717</span><br><span class="line">Content-Length: 371</span><br><span class="line"></span><br><span class="line">--------------------------957650536978685773102717</span><br><span class="line">Content-Disposition:form-data;name=&quot;name&quot;</span><br><span class="line"></span><br><span class="line">hello</span><br><span class="line">--------------------------957650536978685773102717</span><br><span class="line">Content-Disposition:form-data;name=&quot;age&quot;</span><br><span class="line"></span><br><span class="line">18</span><br><span class="line">--------------------------957650536978685773102717</span><br><span class="line">Content-Disposition:form-data;name=&quot;sex&quot;</span><br><span class="line"></span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<p>第一部分∶请求行，请求类型，资源路径以及HTTP版本。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">POST / HTTP/1.1</span><br></pre></td></tr></table></figure>
+
+<p>第二部分∶请求头部，紧接着请求行(即第一行)之后的部分，用来说明服务器要使用的附加信息 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">User-Agent: PostmanRuntime/7.28.0</span><br><span class="line">Accept: */*</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Postman-Token: f51b41c0-2e7c-435b-b039-ebc1644b33ea</span><br><span class="line">Host: localhost:8080</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Content-Type: multipart/form-data; boundary=--------------------------957650536978685773102717</span><br><span class="line">Content-Length: 371</span><br></pre></td></tr></table></figure>
+
+<p>第三部分∶ 空行，请求头部后面的空行是必须的请求头部和数据主体之间必须有换行 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>第四部分∶ 请求数据也叫主体，可以添加任意的数据。	这个例子的请求数据为空。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">--------------------------957650536978685773102717</span><br><span class="line">Content-Disposition:form-data;name=&quot;name&quot;</span><br><span class="line"></span><br><span class="line">hello</span><br><span class="line">--------------------------957650536978685773102717</span><br><span class="line">Content-Disposition:form-data;name=&quot;age&quot;</span><br><span class="line"></span><br><span class="line">18</span><br><span class="line">--------------------------957650536978685773102717</span><br><span class="line">Content-Disposition:form-data;name=&quot;sex&quot;</span><br><span class="line"></span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<h2 id="HTTP协议-响应数据包解析"><a href="#HTTP协议-响应数据包解析" class="headerlink" title="HTTP协议 - 响应数据包解析"></a>HTTP协议 - 响应数据包解析</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1.200</span><br><span class="line">Content-Type:text/plain;charset=UTF-8</span><br><span class="line">Content-Length:8</span><br><span class="line">Date:Mon Jun 14 20:59:29 CST 2021</span><br><span class="line"></span><br><span class="line">Hello World</span><br></pre></td></tr></table></figure>
+
+<p>第一部分∶状态行。HTTP版本、状态码、状态消息。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1.200</span><br></pre></td></tr></table></figure>
+
+<p>第二部分∶响应报头部，紧接着请求行(即第一行)之后的部分，用来说明服务器要使用的附加信息 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Content-Type:text/plain;charset=UTF-8</span><br><span class="line">Content-Length:8</span><br><span class="line">Date:Mon Jun 14 20:59:29 CST 2021</span><br></pre></td></tr></table></figure>
+
+<p>第三部分∶ 空行，头部后面的空行是必须的 头部和数据主体之间必须有换行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p> 第四部分∶响应正文。可以添加任意的数据。 这个例子的响应正文为”Hello World”。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hello World</span><br></pre></td></tr></table></figure>
+
+<h2 id="HTTP协议-响应状态码"><a href="#HTTP协议-响应状态码" class="headerlink" title="HTTP协议 - 响应状态码"></a>HTTP协议 - 响应状态码</h2><ul>
+<li><p>1xx(临时响应) <br>表示临时响应并需要请求者继续执行操作的状态代码</p>
+</li>
+<li><p>2xx(成功)<br> 表示成功处理了请求的状态代码。</p>
+</li>
+<li><p>3xx (重定向)<br> 表示要完成请求，需要进一步操作。 通常，这些状态代码用来重定向。</p>
+</li>
+<li><p> 4x(请求错误) <br>这些状态代码表示请求可能出错，妨碍了服务器的处理。 </p>
+</li>
+<li><p>5xx(服务器错误)<br> 这些状态代码表示服务器在尝试处理请求时发生内部错误。 这些错误可能是服务器本身的错误，而不是请求出错。</p>
+</li>
+</ul>
+<p>  </p>
+<h2 id="BIO-阻塞IO的含义"><a href="#BIO-阻塞IO的含义" class="headerlink" title="BIO - 阻塞IO的含义"></a>BIO - 阻塞IO的含义</h2><p>阻塞(blocking)lO∶资源不可用时，IO请求一直阻塞，直到反馈结果(有数据或超时)。</p>
+<p>非阻塞(non-blocking)IO∶ 资源不可用时，IO请求离开返回，返回数据标识资源不可用。</p>
+<p> 同步(synchronous)IO∶ 应用阻塞在发送或接收数据的状态，直到数据成功传输或返回失败。</p>
+<p>异步(asynchronous)IO∶ 应用发送或接收数据后立刻返回，实际处理是异步执行的。  </p>
+<p>​	阻塞和非阻塞是获取资源的方式，同步&#x2F;异步是程序如何处理资源的逻辑设计。 代码中使用的API：ServerSocket#accept、InputStream#read 都是阻塞的API。操作系统底层API中，默认Socket操作都是Blocking型，send&#x2F;recv等接口都是阻塞的。</p>
+<p>​	带来的问题∶阻塞导致在处理网络I&#x2F;O时，一个线程只能处理一个网络连接。  </p>
+<h1 id="NIO"><a href="#NIO" class="headerlink" title="NIO"></a>NIO</h1><h2 id="JAVA-NIO"><a href="#JAVA-NIO" class="headerlink" title="JAVA NIO"></a>JAVA NIO</h2><p>始于Java 1.4，提供了新的JAVAIO操作非阻塞API用意是替代Java IO和 Java Networking相关的API。</p>
+<p>NIO中有三个核心组件∶</p>
+<ul>
+<li> Buffer缓冲区 </li>
+<li>Channel通道 </li>
+<li>Selector选择器</li>
+</ul>
+<h2 id="Buffer缓冲区"><a href="#Buffer缓冲区" class="headerlink" title="Buffer缓冲区"></a>Buffer缓冲区</h2><p>缓冲区本质上是一个可以写入数据的内存块(类似数组)，然后可以再次读取。此内存块包含在NIO Buffer对象中，该对象提供了一组方法，可以更轻松地使用内存块。</p>
+<p>相比较直接对数组的操作，Buffer API更加容易操作和管理。 </p>
+<p>使用Buffer进行数据写入与读取，需要进行如下四个步骤：</p>
+<ol>
+<li>将数据写入缓冲区<br>  2. 调用buffer.flip()，转换为读取模式<br>  3. 缓冲区读取数据 <br>  4. 调用buffer.clear()或buffer.compact()转为写模式</li>
+</ol>
+<p><span style="color:red">注意：buffer与inputStream、outputStream的区别是buffer可以读可以写，inputStream、outputStream只能读或写</span></p>
+<h2 id="Buffer工作原理"><a href="#Buffer工作原理" class="headerlink" title="Buffer工作原理"></a>Buffer工作原理</h2><p>Buffer三个重要属性：</p>
+<ul>
+<li><p> capacity 容量：作为一个内存块，Buffer具有一定的固定大小，也称为”容量”。</p>
+</li>
+<li><p>position 位置：写入模式时代表写数据的位置。读取模式时代表读取数据的位置。</p>
+</li>
+<li><p>limit限制：写入模式，限制等于buffer的容量。读取模式下，limit等于写入的数据量。</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/NIO-Buffer%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.gif" alt="NIO-Buffer工作原理.gif"></p>
+<h2 id="ByteBuffer内存模型"><a href="#ByteBuffer内存模型" class="headerlink" title="ByteBuffer内存模型"></a>ByteBuffer内存模型</h2><p>ByteBuffer为性能关键型代码提供了直接内存(direct堆外)和非直接内存(heap堆)两种实现 。</p>
+<p>堆外内存获取的方式∶ ByteBuffer directByteBuffer&#x3D;ByteBuffer.allocateDirect(noBytes);</p>
+<p>好处：</p>
+<ol>
+<li>进行网络IO或者文件IO时比heapBuffer少一次拷贝。(file&#x2F;socket — OS memory — jvm heap) GC会移动对象内存，在写file或socket的过程中，JVM的实现中，会先把数据复制到堆外，再进行写入</li>
+<li>GC范围之外，降低GC压力，但实现了自动管理。DirectByteBuffer中有一个Cleaner对象 (PhantomReference)，Cleaner被GC前会执行clean方法，触发DirectByteBuffer中定义的Deallocator</li>
+</ol>
+<p> </p>
+<p>建议：</p>
+<ol>
+<li>性能确实可观的时候才去使用;分配给大型、长寿命; (网络传输、文件读写场景)</li>
+<li>通过虚拟机参数MaxDirectMemorySize限制大小，防止耗尽整个机器的内存;</li>
+</ol>
+<p> </p>
+<h2 id="Channel通道"><a href="#Channel通道" class="headerlink" title="Channel通道"></a>Channel通道</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/Channel%E9%80%9A%E9%81%93.png" alt="Channel通道.png"></p>
+<p>Channel的API涵盖了UDP&#x2F;TCP网络和文件IO</p>
+<ul>
+<li><p>FileChannel</p>
+</li>
+<li><p>DatagramChannel</p>
+</li>
+<li><p>SocketChannel</p>
+</li>
+<li><p>ServerSocketChannel</p>
+</li>
+</ul>
+<p>  </p>
+<p>和标准IO Stream操作的区别：</p>
+<ul>
+<li><p>在一个通道内进行读取和写入</p>
+</li>
+<li><p>stream通常是单向的(input或output)</p>
+</li>
+<li><p>可以非阻塞读取和写入通道</p>
+</li>
+<li><p>通道始终读取或写入缓冲区</p>
+</li>
+</ul>
+<h2 id="SocketChannel"><a href="#SocketChannel" class="headerlink" title="SocketChannel"></a>SocketChannel</h2><p>SocketChannel用于建立TCP网络连接，类似java.net.Socket。有两种创建socketChannel形式：</p>
+<ol>
+<li>客户端主动发起和服务器的连接。</li>
+<li>服务端获取的新连接。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 客户端主动发起连接的方式</span></span><br><span class="line"><span class="type">SocketChannel</span> <span class="variable">socketChannel</span> <span class="operator">=</span> SocketChannel.open();</span><br><span class="line">socketChannel.configureBlocking(<span class="literal">false</span>); <span class="comment">// 设置为非阻塞模式</span></span><br><span class="line">socketChannel.connect(<span class="keyword">new</span> <span class="title class_">InetSocketAddress</span>(<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">8080</span>));</span><br><span class="line">socketChannel.write(buffer); <span class="comment">// 发送请求数据 - 向通道写入数据</span></span><br><span class="line"><span class="type">int</span> <span class="variable">bytesRead</span> <span class="operator">=</span> socketChannel.read(requestBuffer); <span class="comment">// 读取服务端返回 - 读取缓冲区的数据</span></span><br><span class="line">socketChannel.close(); <span class="comment">// 关闭连接</span></span><br></pre></td></tr></table></figure>
+
+<p>write写∶ write()在尚未写入任何内容时就可能返回了。需要在循环中调用write()。</p>
+<p> read读∶read()方法可能直接返回而根本不读取任何数据，根据返回的int值判断读取了多少字节。</p>
+<h2 id="ServerSocketChannel"><a href="#ServerSocketChannel" class="headerlink" title="ServerSocketChannel"></a>ServerSocketChannel</h2><p>ServerSocketChannel可以监听新建的TCP连接通道，类似ServerSocket。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建网络服务端</span></span><br><span class="line"><span class="type">ServerSocketChannel</span> <span class="variable">serverSocketChannel</span> <span class="operator">=</span> ServerSocketChannel.open();</span><br><span class="line">serverSocketChannel.configureBlocking(<span class="literal">false</span>); <span class="comment">// 设置为非阻塞模式</span></span><br><span class="line">serverSocketChannel.socket().bind(<span class="keyword">new</span> <span class="title class_">InetSocketAddress</span>(<span class="number">8080</span>)); <span class="comment">// 绑定端口</span></span><br><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="type">SocketChannel</span> <span class="variable">socketChannel</span> <span class="operator">=</span> serverSocketChannel.accept(); <span class="comment">// 获取新tcp连接通道</span></span><br><span class="line">    <span class="keyword">if</span> (socketChannel != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// tcp请求 读取/响应</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>serverSocketChannel.accept()∶如果该通道处于非阻塞模式，那么如果没有挂起的连接，该方法将立即返回null。 必须检查返回的 SocketChannel是否为null。</p>
+<h2 id="Selector选择器"><a href="#Selector选择器" class="headerlink" title="Selector选择器"></a>Selector选择器</h2><p>​	Selector是一个Java NIO组件，可以检查一个或多个NIO通道，并确定哪些通道已准备好进行读取或写入。实现单个线程可以管理多个通道，从而管理多个网络连接。</p>
+<p>一个线程使用Selector监听多个channel的不同事件∶四个事件分别对应SelectionKey四个常量。 </p>
+<ol>
+<li>Connect连接（SelectionKey.OP_CONNECT） </li>
+<li>Accept 准备就绪（OP_ACCEPT） </li>
+<li>Read 读取（OP_READ）</li>
+<li>Write 写入（OP_WRITE）</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/Selector%E9%80%89%E6%8B%A9%E5%99%A8.png" alt="Selector选择器.png"></p>
+<p>​	实现一个线程处理多个通道的核心概念理解∶事件驱动机制。 非阻塞的网络通道下，开发者通过Selector注册对于通道感兴趣的事件类型，线程通过监听事件来触发相应的代码执行。 （拓展∶ 更底层是操作系统的多路复用机制）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Selector</span> <span class="variable">selector</span> <span class="operator">=</span> Selector.open();</span><br><span class="line">channel.configureBlocking(<span class="literal">false</span>); <span class="comment">// 设置为非阻塞模式</span></span><br><span class="line">channel.register(selector, SelectionKey.OP_READ);<span class="comment">// 注册感兴趣的事件</span></span><br><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>) &#123; <span class="comment">// 由accept轮询，变成了事件通知的方式。</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">readyChannels</span> <span class="operator">=</span> selector.select(); <span class="comment">// select收到新的事件，方法才会返回</span></span><br><span class="line">    <span class="keyword">if</span>(readyChannels == <span class="number">0</span>) <span class="keyword">continue</span>;</span><br><span class="line">    Set&lt;SelectionKey&gt; selectedKeys = selector.selectedKeys();<span class="comment">// 获取被触发的事件集合</span></span><br><span class="line">    Iterator&lt;SelectionKey&gt; keyIterator = selectedKeys.iterator();</span><br><span class="line">    <span class="keyword">while</span>(keyIterator.hasNext()) &#123;</span><br><span class="line">        <span class="type">SelectionKey</span> <span class="variable">key</span> <span class="operator">=</span> keyIterator.next();</span><br><span class="line">        <span class="comment">// 判断不同的事件类型，执行对应的逻辑处理</span></span><br><span class="line">        <span class="comment">// key.isAcceptable() key.isConnectable() key.isReadable() key.isWritable()</span></span><br><span class="line">        keyIterator.remove(); <span class="comment">// 将已处理的事件移除</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><span style="color:red">注意：selector同一时间只能监听一个事件</span></p>
+<h2 id="NIO对比BIO"><a href="#NIO对比BIO" class="headerlink" title="NIO对比BIO"></a>NIO对比BIO</h2><p><strong>BIO</strong></p>
+<ol>
+<li><p>阻塞IO，线程等待时间长</p>
+</li>
+<li><p>一个线程负责一个连接处理</p>
+</li>
+<li><p>线程多且利用率低</p>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/BIO%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B.png" alt="BIO线程模型.png"></p>
+<p><strong>NIO</strong></p>
+<ol>
+<li><p>非阻塞IO，线程利用率更高</p>
+</li>
+<li><p>一个线程处理多个连接事件</p>
+</li>
+<li><p>性能更强大</p>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/NIO%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B.png" alt="NIO线程模型.png"></p>
+<p>如果你的程序需要支撑大量的连接，使用NIO是最好的方式。</p>
+<p> Tomcat8中，已经完全去除BIO相关的网络处理代码，默认采用NIO进行网络处理。</p>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>​	NIO为开发者提供了功能丰富及强大的IO处理API，但是在应用于网络应用开发的过程中，直接使用 JDK提供的API，比较繁琐。而且要想将性能进行提升，光有NIO还不够，还需要将多线程技术与之结合起来。 </p>
+<p>​	因为网络编程本身的复杂性，以及JDKAPI开发的使用难度较高，所以在开源社区中，涌出来很多对JDK NIO进行封装、增强后的网络编程框架，例如∶ Netty、Mina等。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/01-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8/" data-id="clmcxed2i00bdu8waft8a7pjc" data-title="网络编程入门" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/08-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/00-MQ%E6%A6%82%E8%BF%B0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          MQ概述
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/09-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/02-Netty%E5%85%A5%E9%97%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Netty入门</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

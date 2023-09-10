@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>手写Spring配置 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="配置分析为什么要提供配置的方式？框架为什么提供配置方式？  实用简单、改动灵活 不需要改动代码    配置方式的工作过程能用什么样的配置方式？ XML和注解 各自的配置方式工作过程如图：  配置工作过程定义xml标记、注解 Bean定义需要指定哪些信息？BeanDefinition接口告诉我们相关信息 ![image-20210810221249952](C:\Users\chen cheng\A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手写Spring配置">
+<meta property="og:url" content="http://example.com/2021/05/07/02-Spring/04-%E6%89%8B%E5%86%99Spring%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="配置分析为什么要提供配置的方式？框架为什么提供配置方式？  实用简单、改动灵活 不需要改动代码    配置方式的工作过程能用什么样的配置方式？ XML和注解 各自的配置方式工作过程如图：  配置工作过程定义xml标记、注解 Bean定义需要指定哪些信息？BeanDefinition接口告诉我们相关信息 ![image-20210810221249952](C:\Users\chen cheng\A">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810215118.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810214907.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810220201.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810221020.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810214907.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810222619.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810223055.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814192652.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814192937.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814193341.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814193458.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814193747.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814194039.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814194401.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814194704.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814195818.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814200049.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814201603.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814201832.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814202225.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814202505.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814202936.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814203158.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814203645.png">
+<meta property="article:published_time" content="2021-05-07T14:36:30.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:15:12.498Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Spring">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810215118.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-02-Spring/04-手写Spring配置" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/02-Spring/04-%E6%89%8B%E5%86%99Spring%E9%85%8D%E7%BD%AE/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spring/">Spring</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      手写Spring配置
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="配置分析"><a href="#配置分析" class="headerlink" title="配置分析"></a>配置分析</h1><h2 id="为什么要提供配置的方式？"><a href="#为什么要提供配置的方式？" class="headerlink" title="为什么要提供配置的方式？"></a>为什么要提供配置的方式？</h2><p><strong>框架为什么提供配置方式？</strong></p>
+<ol>
+<li>实用简单、改动灵活</li>
+<li>不需要改动代码</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810215118.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810214907.png"></p>
+<h2 id="配置方式的工作过程"><a href="#配置方式的工作过程" class="headerlink" title="配置方式的工作过程"></a>配置方式的工作过程</h2><p>能用什么样的配置方式？</p>
+<p>XML和注解</p>
+<p>各自的配置方式工作过程如图：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810220201.png"></p>
+<h1 id="配置工作过程"><a href="#配置工作过程" class="headerlink" title="配置工作过程"></a>配置工作过程</h1><h2 id="定义xml标记、注解"><a href="#定义xml标记、注解" class="headerlink" title="定义xml标记、注解"></a>定义xml标记、注解</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810221020.png"></p>
+<h2 id="Bean定义需要指定哪些信息？"><a href="#Bean定义需要指定哪些信息？" class="headerlink" title="Bean定义需要指定哪些信息？"></a>Bean定义需要指定哪些信息？</h2><p><strong>BeanDefinition接口告诉我们相关信息</strong></p>
+<p>![image-20210810221249952](C:\Users\chen cheng\AppData\Roaming\Typora\typora-user-images\image-20210810221249952.png)</p>
+<p>Xml需要哪些标记信息？</p>
+<p>我们需要为此定义一个DTD或者XSD文档</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810214907.png"></p>
+<p>需要定义些什么注解？</p>
+<p>@Component</p>
+<ol>
+<li>指定类</li>
+<li>指定beanName</li>
+<li>指定scope</li>
+<li>指定工厂方法</li>
+<li>指定工厂bean</li>
+<li>指定init method</li>
+<li>指定 destory method</li>
+</ol>
+<p>@Autowired @Qualifier</p>
+<ol>
+<li>指定构造参数依赖</li>
+</ol>
+<p>@Value</p>
+<ol>
+<li>指定属性依赖</li>
+</ol>
+<h2 id="如何指定配置？"><a href="#如何指定配置？" class="headerlink" title="如何指定配置？"></a>如何指定配置？</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810222619.png"></p>
+<p>需要为用户提供一种方式？</p>
+<h2 id="Bean配置解析应当在哪里完成？"><a href="#Bean配置解析应当在哪里完成？" class="headerlink" title="Bean配置解析应当在哪里完成？"></a>Bean配置解析应当在哪里完成？</h2><p><strong>该放在BeanFactory中吗？</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210810223055.png"></p>
+<p>方框中所做的事情是解析bean配置，向beanFactory注册bean定义。它不是beanFactory的事情。</p>
+<p>应单独定义接口、类来完成这件事</p>
+<h2 id="ApplicationContext接口设计"><a href="#ApplicationContext接口设计" class="headerlink" title="ApplicationContext接口设计"></a>ApplicationContext接口设计</h2><p><strong>ApplicationContext用来完成Bean配置解析</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814192652.png"></p>
+<p><strong>Xml配置方式的实现</strong></p>
+<p>Xml源可能是多个</p>
+<p>完成的工作：加载、解析、创建、注册</p>
+<p><strong>注解配置方式的实现</strong></p>
+<p>扫描的包多个：list</p>
+<p>完成工作：扫描、获取、创建、注册</p>
+<p><strong>它们都将要使用BeanFactory&#x2F;BeanDefinitionRegistry，将BeanFactory抽出来放到父类中</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814192937.png"></p>
+<p><strong>用户要使用我们的框架需要知道哪些接口、类？</strong></p>
+<ol>
+<li>指定配置相关，xml、annotation</li>
+<li>获取bean相关，BeanFactory</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814193341.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814193458.png"></p>
+<p>外观模式应用：让用户只需要知道ApplicationContext及其子类是否对用户更简单？如何完成？</p>
+<p><strong>提供一个新的外观（外观模式应用）</strong></p>
+<p>ApplicationContext继承自BeanFactory，两个接口合并到一起</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814193747.png"></p>
+<h1 id="实现配置过程"><a href="#实现配置过程" class="headerlink" title="实现配置过程"></a>实现配置过程</h1><h2 id="配置怎么加载及扫描？"><a href="#配置怎么加载及扫描？" class="headerlink" title="配置怎么加载及扫描？"></a>配置怎么加载及扫描？</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814194039.png"></p>
+<h2 id="XML文件来源处理"><a href="#XML文件来源处理" class="headerlink" title="XML文件来源处理"></a>XML文件来源处理</h2><p><strong>Xml配置文件来源会有多种吗？</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814194401.png"></p>
+<p><strong>它们的加载方式一样吗？</strong></p>
+<p>不一样</p>
+<p><strong>对于XML解析来说，从加载过程它希望获得的是什么？</strong></p>
+<p>InputStream</p>
+<p>我们希望能加载不同来源的xml,向解析提供一致的使用接口。如何做？如何设计接口、类？</p>
+<p><strong>Xml配置文件接口类的设计</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814194704.png"></p>
+<p>问题：这里我们定义不同的Resource类对应不同来源的xml资源，谁去负责分辨创建它们的对象？</p>
+<p>因为用户给定时是一个个的字符串（这对他们是最简单的方式）。</p>
+<h2 id="XML资源加载器"><a href="#XML资源加载器" class="headerlink" title="XML资源加载器"></a>XML资源加载器</h2><p><strong>用户使用字符串定义资源，需要一个资源加载器分辨不同的资源</strong></p>
+<p>分辨字符串，创建对应的Resource对象的工作就是加载，由ApplicationContext来做。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814195818.png"></p>
+<p>如何区分不同的字符串代表不同的资源？</p>
+<p>定义字符创规则</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814200049.png"></p>
+<p>这里有需要应用工厂模式的味道：根据不同的字符串前缀创建不同的资源对象</p>
+<h2 id="注解如何扫描？"><a href="#注解如何扫描？" class="headerlink" title="注解如何扫描？"></a>注解如何扫描？</h2><p><strong>到指定的包目录下找出所有的类文件（包含子孙包下的）</strong></p>
+<p>![image-20210814201431315](C:\Users\chen cheng\AppData\Roaming\Typora\typora-user-images\image-20210814201431315.png)</p>
+<p>思考：如果要扫描的是com.study下所有service包下的类，这个逻辑满足吗？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// ant path</span><br><span class="line">com/study/**/service/*</span><br></pre></td></tr></table></figure>
+
+<p>该怎么办？</p>
+<p>定义一个资源路径匹配行为</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814201603.png"></p>
+<h2 id="扫描的最终结果"><a href="#扫描的最终结果" class="headerlink" title="扫描的最终结果"></a>扫描的最终结果</h2><p>扫到了指定包下的所有class文件，我们最终需要的是什么？</p>
+<p><strong>我们需要的是类名</strong></p>
+<p>这里我们需要定义什么样的接口、类？</p>
+<p>最终扫描到的是class文件，File即可</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814201832.png"></p>
+<h2 id="Annotation扫描工作"><a href="#Annotation扫描工作" class="headerlink" title="Annotation扫描工作"></a>Annotation扫描工作</h2><p>扫描的事情是由AnnotationApplicationContext来做还是外包给其他类来做？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814202225.png"></p>
+<p>在哪里启动扫描？</p>
+<p>AnnotationApplicationContext 构造方法中</p>
+<h2 id="配置解析"><a href="#配置解析" class="headerlink" title="配置解析"></a>配置解析</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814202505.png"></p>
+<p>加载和扫描的输出是什么？</p>
+<p>Resource</p>
+<h1 id="配置的最终结果"><a href="#配置的最终结果" class="headerlink" title="配置的最终结果"></a>配置的最终结果</h1><h2 id="扫描结果与BeanDefinition"><a href="#扫描结果与BeanDefinition" class="headerlink" title="扫描结果与BeanDefinition"></a>扫描结果与BeanDefinition</h2><p>XML和注解最终的输出都是Resource，这个Resource如何解析成BeanDefinition？怎么设计？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814202936.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814203158.png"></p>
+<h2 id="最终完整类图"><a href="#最终完整类图" class="headerlink" title="最终完整类图"></a>最终完整类图</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210814203645.png"></p>
+<h1 id="代码地址"><a href="#代码地址" class="headerlink" title="代码地址"></a>代码地址</h1><p><a target="_blank" rel="noopener" href="https://github.com/chengchen901/spring-custom-study.git">https://github.com/chengchen901/spring-custom-study.git</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/02-Spring/04-%E6%89%8B%E5%86%99Spring%E9%85%8D%E7%BD%AE/" data-id="clmcxecsi006su8wa9nffd9tq" data-title="手写Spring配置" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/05/07/02-Spring/03-%E6%89%8B%E5%86%99SpringAOP/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          手写SpringAOP
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/05/07/02-Spring/05-Spring%E6%BA%90%E7%A0%81-IOC%E5%AE%B9%E5%99%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Spring源码-IOC容器初始化过程</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

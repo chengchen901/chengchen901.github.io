@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>MySQL调优 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="性能分析SQL性能剖析对MySQL查询进行性能剖析有两种方式：  剖析整个数据库服务器，这样可以分析出哪些查询是主要的压力来源。  定位具体需要优化的查询后，可以对这些查询进行单独的剖析，分析哪些子任务是影响时间的主要消耗者。  MySQL慢查询日志： 123456789101112131415#是否开启慢查询日志，1&#x2F;on表示开启，0&#x2F;off表示关闭 SHOW VARIABLES like &amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL调优">
+<meta property="og:url" content="http://example.com/2020/08/15/11-MySQL/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/04-MySQL%E8%B0%83%E4%BC%98/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="性能分析SQL性能剖析对MySQL查询进行性能剖析有两种方式：  剖析整个数据库服务器，这样可以分析出哪些查询是主要的压力来源。  定位具体需要优化的查询后，可以对这些查询进行单独的剖析，分析哪些子任务是影响时间的主要消耗者。  MySQL慢查询日志： 123456789101112131415#是否开启慢查询日志，1&#x2F;on表示开启，0&#x2F;off表示关闭 SHOW VARIABLES like &amp;#">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211004174644.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211004175124.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211004175857.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211004180025.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211004180402.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2023-03-05T12:13:22.804Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211004174644.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-11-MySQL/01-基础及安装/04-MySQL调优" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/11-MySQL/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/04-MySQL%E8%B0%83%E4%BC%98/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/MySQL/">MySQL</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      MySQL调优
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="性能分析"><a href="#性能分析" class="headerlink" title="性能分析"></a>性能分析</h1><h2 id="SQL性能剖析"><a href="#SQL性能剖析" class="headerlink" title="SQL性能剖析"></a>SQL性能剖析</h2><p><strong>对MySQL查询进行性能剖析有两种方式：</strong></p>
+<ol>
+<li>剖析整个数据库服务器，这样可以分析出哪些查询是主要的压力来源。 </li>
+<li>定位具体需要优化的查询后，可以对这些查询进行单独的剖析，分析哪些子任务是影响时间的主要消耗者。</li>
+</ol>
+<p><strong>MySQL慢查询日志：</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#是否开启慢查询日志，<span class="number">1</span><span class="operator">/</span><span class="keyword">on</span>表示开启，<span class="number">0</span><span class="operator">/</span>off表示关闭 </span><br><span class="line"><span class="keyword">SHOW</span> VARIABLES <span class="keyword">like</span> <span class="string">&#x27;slow_query_log&#x27;</span>; </span><br><span class="line">#开启慢查询日志</span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> slow_query_log<span class="operator">=</span><span class="keyword">on</span>;</span><br><span class="line"></span><br><span class="line">#未使用索引的查询也被记录到慢查询日志中，<span class="keyword">on</span>表示开启，off表示关闭 </span><br><span class="line"><span class="keyword">SHOW</span> VARIABLES <span class="keyword">like</span> <span class="string">&#x27;log_queries_not_using_indexes&#x27;</span>; </span><br><span class="line"></span><br><span class="line">#慢查询阈值（秒级），当查询时间大于设定的阈值时，记录日志 </span><br><span class="line"><span class="keyword">SHOW</span> VARIABLES <span class="keyword">like</span> <span class="string">&#x27;long_query_time&#x27;</span>; </span><br><span class="line">#设置多长时间算慢查询</span><br><span class="line"><span class="keyword">set</span> long_query_time<span class="operator">=</span><span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">#慢查询日志存储路径 </span><br><span class="line"><span class="keyword">SHOW</span> VARIABLES <span class="keyword">like</span> <span class="string">&#x27;slow_query_log_file&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="性能剖析工具——PT-QUERY-DIGEST"><a href="#性能剖析工具——PT-QUERY-DIGEST" class="headerlink" title="性能剖析工具——PT-QUERY-DIGEST"></a>性能剖析工具——PT-QUERY-DIGEST</h2><h3 id="Linux环境pt-query-digest安装"><a href="#Linux环境pt-query-digest安装" class="headerlink" title="Linux环境pt-query-digest安装"></a>Linux环境pt-query-digest安装</h3><ol>
+<li><p>下载安装工具</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget percona.com/get/pt-query-digest</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>授予用户执行权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod u+x pt-query-digest</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>移动位置，注意pt-query-digest安装位置不一定在&#x2F;目录下，也可能在&#x2F;root&#x2F;目录下，根据实际情况调整</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mv /pt-query-digest /usr/bin/</span><br><span class="line">或</span><br><span class="line">mv /root/pt-query-digest /usr/bin/</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">分析慢查询日志中SQL的统计结果</span> </span><br><span class="line">pt-query-digest /var/lib/mysql/localhost-slow.log | more </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">分析<span class="keyword">select</span>语句统计结果</span> </span><br><span class="line">pt-query-digest --filter &#x27;$event-&gt;&#123;fingerprint&#125; =~ m/^select/i&#x27; /var/lib/mysql/localhost-slow.log | more </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">查询指定用户(root)访问的查询</span> </span><br><span class="line">pt-query-digest --filter &#x27;($event-&gt;&#123;user&#125;) =~ m/^root/i&#x27; /var/lib/mysql/localhost-slow.log | more </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">分析所有全表扫描语句的统计结果</span> </span><br><span class="line">pt-query-digest --filter &#x27;(($event-&gt;&#123;Full_scan&#125; || &quot;&quot;) eq &quot;yes&quot;)&#x27; /var/lib/mysql/localhost-slow.log | more </span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">分析所有Full <span class="built_in">join</span>语句的统计结果</span> </span><br><span class="line">pt-query-digest --filter &#x27;(($event-&gt;&#123;Full_join&#125; || &quot;&quot;) eq &quot;yes&quot;)&#x27; /var/lib/mysql/localhost-slow.log | more</span><br></pre></td></tr></table></figure>
+
+<h3 id="PT-QUERY-DIGEST第一部分：总体统计结果"><a href="#PT-QUERY-DIGEST第一部分：总体统计结果" class="headerlink" title="PT-QUERY-DIGEST第一部分：总体统计结果"></a>PT-QUERY-DIGEST第一部分：总体统计结果</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 90ms user time, 60ms system time, 4.00k rss, 11.00k vsz</span><br><span class="line"># Current date: Mon Oct  4 11:33:21 2021</span><br><span class="line"># Hostname: f5219a257061</span><br><span class="line"># Files: /var/lib/mysql/f5219a257061-slow.log</span><br><span class="line"># Overall: 178 total, 20 unique, 0.27 QPS, 0.01x concurrency _____________</span><br><span class="line"># Time range: 2021-10-04T11:21:37 to 2021-10-04T11:32:33</span><br><span class="line"># Attribute          total     min     max     avg     95%  stddev  median</span><br><span class="line"># ============     ======= ======= ======= ======= ======= ======= =======</span><br><span class="line"># Exec time             3s   145us      1s    19ms     2ms   134ms   839us</span><br><span class="line"># Lock time           41ms       0    11ms   231us   273us   838us   159us</span><br><span class="line"># Rows sent         36.38k       0     481  209.28  463.90  224.08   17.65</span><br><span class="line"># Rows examine       4.51M       0   1.49M  25.96k  463.90 191.92k  258.32</span><br><span class="line"># Query size        11.12k      11     331   63.97  212.52   73.66   16.81</span><br></pre></td></tr></table></figure>
+
+<h3 id="PT-QUERY-DIGEST第二部分：查询分组统计结果"><a href="#PT-QUERY-DIGEST第二部分：查询分组统计结果" class="headerlink" title="PT-QUERY-DIGEST第二部分：查询分组统计结果"></a>PT-QUERY-DIGEST第二部分：查询分组统计结果</h3><p>Rank：所有语句的排名，默认按查询时间降序排列，通过–order-by指定<br>Query ID：语句的ID，（去掉空格和查询条件中的文本值，计算hash值）<br>Response：总的响应时间<br>time：该查询在本次分析中总的时间占比<br>calls：执行次数，即本次分析总共有多少条这种类型的查询语句<br>R&#x2F;Call：平均每次执行的响应时间<br>V&#x2F;M：方差均值比（Variance-to-mean），也就是常说的离差指数。<br>Item：查询对象</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Profile</span><br><span class="line"># Rank Query ID                            Response time Calls R/Call V/M</span><br><span class="line"># ==== =================================== ============= ===== ====== ====</span><br><span class="line">#    1 0x32ED5C9778AE953ADA1880FADC2A6340   3.1769 94.4%     3 1.0590  0.00 SELECT sakila.ticket_info sakila.film</span><br><span class="line">#    2 0xF9734574CDDDC5D231DA25F95494CA95   0.0733  2.2%    75 0.0010  0.00 SHOW STATUS</span><br><span class="line"># MISC 0xMISC</span><br></pre></td></tr></table></figure>
+
+<h3 id="PT-QUERY-DIGEST第三部分：每一种查询的详细统计结果"><a href="#PT-QUERY-DIGEST第三部分：每一种查询的详细统计结果" class="headerlink" title="PT-QUERY-DIGEST第三部分：每一种查询的详细统计结果"></a>PT-QUERY-DIGEST第三部分：每一种查询的详细统计结果</h3><p>查询各项数据的百分比、总数、最小、最大、平均、95%等各项目的统计，包括SQL执行次数、执行时间、锁占 用时间、发送行数、扫描行数、查询字符数，表格中也统计了查询涉及的数据库、查询时间直方图等信息。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"># Query 1: 0.01 QPS, 0.01x concurrency, ID 0x32ED5C9778AE953ADA1880FADC2A6340 at byte 10564</span><br><span class="line"># This item is included in the report because it matches --limit.</span><br><span class="line"># Scores: V/M = 0.00</span><br><span class="line"># Time range: 2021-10-04T11:21:42 to 2021-10-04T11:25:38</span><br><span class="line"># Attribute    pct   total     min     max     avg     95%  stddev  median</span><br><span class="line"># ============ === ======= ======= ======= ======= ======= ======= =======</span><br><span class="line"># Count          1       3</span><br><span class="line"># Exec time     94      3s      1s      1s      1s      1s    42ms      1s</span><br><span class="line"># Lock time      1   657us   210us   226us   219us   224us     8us   214us</span><br><span class="line"># Rows sent      0      60      20      20      20      20       0      20</span><br><span class="line"># Rows examine  98   4.46M   1.49M   1.49M   1.49M   1.49M       0   1.49M</span><br><span class="line"># Query size     4     555     185     185     185     185       0     185</span><br><span class="line"># String:</span><br><span class="line"># Databases    sakila</span><br><span class="line"># Hosts        172.17.0.1</span><br><span class="line"># Users        root</span><br><span class="line"># Query_time distribution</span><br><span class="line">#   1us</span><br><span class="line">#  10us</span><br><span class="line"># 100us</span><br><span class="line">#   1ms</span><br><span class="line">#  10ms</span><br><span class="line"># 100ms</span><br><span class="line">#    1s  ################################################################</span><br><span class="line">#  10s+</span><br><span class="line"># Tables</span><br><span class="line">#    SHOW TABLE STATUS FROM `sakila` LIKE &#x27;ticket_info&#x27;\G</span><br><span class="line">#    SHOW CREATE TABLE `sakila`.`ticket_info`\G</span><br><span class="line">#    SHOW TABLE STATUS FROM `sakila` LIKE &#x27;film&#x27;\G</span><br><span class="line">#    SHOW CREATE TABLE `sakila`.`film`\G</span><br><span class="line"># EXPLAIN /*!50100 PARTITIONS*/</span><br><span class="line">select b.film_id, b.title, a.date, count(1)</span><br><span class="line">   from sakila.ticket_info a</span><br><span class="line">         left join sakila.film b</span><br><span class="line">         on a.film_id = b.film_id</span><br><span class="line">where b.`status` = 1</span><br><span class="line">GROUP BY b.film_id,b.title,a.date\G</span><br></pre></td></tr></table></figure>
+
+<h2 id="性能剖析工具——SHOW-PROFILE"><a href="#性能剖析工具——SHOW-PROFILE" class="headerlink" title="性能剖析工具——SHOW PROFILE"></a>性能剖析工具——SHOW PROFILE</h2><p>定位到需要优化的单条查询后，可以针对此查询进行进一步分析，获取更多信息，确认为什么会花费这么长时间，以及需要如何去优化。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">#开启工具：</span><br><span class="line"><span class="keyword">SET</span> profiling <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">#查看开启工具后的每条<span class="keyword">SQL</span>执行总体情况 </span><br><span class="line"><span class="keyword">SHOW</span> PROFILES; </span><br><span class="line"></span><br><span class="line">#根据query_id查看某个查询的详细时间耗费 </span><br><span class="line"><span class="keyword">SHOW</span> PROFILE <span class="keyword">FOR</span> QUERY <span class="number">1</span>; </span><br><span class="line"></span><br><span class="line">#查看cpu、IO等信息 </span><br><span class="line"><span class="keyword">SHOW</span> PROFILE BLOCK IO,CPU <span class="keyword">FOR</span> QUERY <span class="number">1</span>; </span><br><span class="line"></span><br><span class="line">#查询哪些开销花费了多少时间 </span><br><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">	state,</span><br><span class="line">	<span class="built_in">SUM</span>( duration ) <span class="keyword">AS</span> Total_R,</span><br><span class="line">	ROUND( <span class="number">100</span> <span class="operator">*</span> <span class="built_in">SUM</span>( duration ) <span class="operator">/</span> ( <span class="keyword">SELECT</span> <span class="built_in">SUM</span>( duration ) <span class="keyword">FROM</span> information_schema.profiling <span class="keyword">WHERE</span> query_id <span class="operator">=</span> <span class="number">1</span> ), <span class="number">2</span> ) <span class="keyword">AS</span> Pct_R,</span><br><span class="line">	<span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> Calls,</span><br><span class="line">	<span class="built_in">SUM</span>( duration ) <span class="operator">/</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">AS</span> &quot;R/Call&quot; </span><br><span class="line"><span class="keyword">FROM</span> information_schema.profiling </span><br><span class="line"><span class="keyword">WHERE</span> query_id <span class="operator">=</span> <span class="number">1</span> <span class="keyword">GROUP</span> <span class="keyword">BY</span> state <span class="keyword">ORDER</span> <span class="keyword">BY</span> total_r <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="执行计划——EXPLAIN"><a href="#执行计划——EXPLAIN" class="headerlink" title="执行计划——EXPLAIN"></a>执行计划——EXPLAIN</h2><p><strong>执行计划中的列：</strong> </p>
+<p>id：如果id相同执行顺序由上至下。如果id不相同，id的序号会递增，id值越大优先级越高，越先被执行。(一般有子查询的SQL语句id就会不同)<br>table：对应的表<br>type：连接类型（system、const、eq_ref、ref、range、index、all）<br>possible_keys：可能使用的索引<br>key：实际使用的索引<br>key_len：使用索引长度<br>rows：预计扫描行数<br>Extra：解析查询的额外信息（using index、using where、using temporary、using filesort）</p>
+<p><strong>连接类型（type）</strong><br>ALL：全表扫描<br>index：按索引顺序进行全表扫描<br>range：按索引范围查找<br>ref：是一种索引访问，返回所有匹配某个值的行<br>eq_ref：是一种索引访问，一般在关联查询时<br>const\system：使用常量对主键索引或唯一索引扫描</p>
+<p><strong>MySQL解析额外信息（Extra）</strong> </p>
+<ol>
+<li>Using index：列数据仅仅使用了索引中的信息而没有读取实际的表 </li>
+<li>Using where：MySQL服务器将在存储引擎检索行后，通过Where子句条件进行过滤 </li>
+<li>Using temporary：MYSQL需要创建一个临时表来存储结果，用于排序 </li>
+<li>Using filesort：MySQL将对结果进行外部排序</li>
+</ol>
+<h1 id="索引原理"><a href="#索引原理" class="headerlink" title="索引原理"></a>索引原理</h1><h2 id="索引究竟是怎么回事？"><a href="#索引究竟是怎么回事？" class="headerlink" title="索引究竟是怎么回事？"></a>索引究竟是怎么回事？</h2><p>在MySQL中，索引是在存储引擎层而不是服务器层实现的。所以，并没有统一的索引标准：不同存储引擎下索引的工作方式并不一样，也不是所有的存储引擎都支持所有类型的索引。即使多个存储引擎支持同一种类型的索引，其底层的实现也可能不同。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211004174644.png"></p>
+<h2 id="BTree索引结构"><a href="#BTree索引结构" class="headerlink" title="BTree索引结构"></a>BTree索引结构</h2><p>btree树在线演示网站：<a target="_blank" rel="noopener" href="https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html">https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html</a></p>
+<p>BTree索引结构中每一个值都是按顺序存储，并且每一个叶子页到根的距离相同。在B+Tree中每一个叶子页都包含指向下一个叶子页的指针，从而方便范围查询。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211004175124.png"></p>
+<h2 id="BTree索引的有效利用与限制"><a href="#BTree索引的有效利用与限制" class="headerlink" title="BTree索引的有效利用与限制"></a>BTree索引的有效利用与限制</h2><p>全值匹配我最爱，最左前缀要遵守；<br>带头大哥不能死，中间兄弟不能断；<br>索引列上少计算，范围之后全失效（大于、小于会失效，大于等于、小于等于不会失效）；<br>Like百分写最右，覆盖索引不写星；<br>不等空值还有or，索引失效要少用。</p>
+<p><strong>索引生效的情况：</strong></p>
+<ul>
+<li>匹配最左前缀</li>
+<li>全值匹配 </li>
+<li>匹配列前缀</li>
+<li>匹配范围值</li>
+<li>精确匹配某列并范围匹配另外一列</li>
+</ul>
+<p><strong>BTree索引的限制：</strong></p>
+<ul>
+<li>如果不是按照索引的最左列开始查找，则无法使用索引</li>
+<li>不能跳过索引中的列</li>
+<li>如果查询中有某个列的范围查询，则其右边所有列都无法使用索引优化查找</li>
+</ul>
+<h2 id="聚簇索引"><a href="#聚簇索引" class="headerlink" title="聚簇索引"></a>聚簇索引</h2><p>聚簇索引是一种数据存储方式，因为是存储引擎负责实现索引，因此不是所有的存储引擎都支持聚簇索引。InnoDB将通过主键聚集数据，如果没有定义主键，InnoDB会选择一个唯一的非空索引代替。如果没有这样的索引，InnoDB会隐式定义一个主键来作为聚簇索引。</p>
+<p><strong>索引和数据存储在一起</strong></p>
+<h3 id="主键索引"><a href="#主键索引" class="headerlink" title="主键索引"></a>主键索引</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211004175857.png"></p>
+<p><strong>聚簇索引优点：</strong></p>
+<ul>
+<li>可以把相关数据保存在一起 </li>
+<li>数据访问性能更快</li>
+<li>覆盖索引查询只需要扫描该索引树</li>
+</ul>
+<h3 id="非主键索引"><a href="#非主键索引" class="headerlink" title="非主键索引"></a>非主键索引</h3><p>非主键索引叶子节点挂载主键索引的列，查询时先查询到主键索引列，再根据主键索引查询数据</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211004180025.png"></p>
+<h2 id="非聚簇索引"><a href="#非聚簇索引" class="headerlink" title="非聚簇索引"></a>非聚簇索引</h2><p>MyISAM存储引擎为非聚簇索引，没有聚簇索引</p>
+<p>非聚簇索引页子节点存储数据对应的地址，索引和地址是分别存储的</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20211004180402.png"></p>
+<h2 id="InnoDB引擎表中的主键"><a href="#InnoDB引擎表中的主键" class="headerlink" title="InnoDB引擎表中的主键"></a>InnoDB引擎表中的主键</h2><p>主键的值是顺序的，所以InnoDB把每一条记录都存储在上一条记录的后面。当达到页的最大填充因子时，下一条记录就会写入新的页中。一旦数据按照这种顺序的方式加载，主键页就会近似于被顺序的记录填满，这也正是所期望的结果。</p>
+<p>非递增的主键插入数据会导致页分裂。因为新的记录可能插入到之前记录的中间，导致需要强制移动之前的记录，如果新纪录要插入的位置所在的页被写满且已经被刷新到磁盘上，会导致重新从磁盘读取该页。InnoDB引擎表中非递增主键的一些缺点：</p>
+<ul>
+<li>可能导致大量的随机I&#x2F;O</li>
+<li>频繁的页分裂操作</li>
+<li>不规则填充导致产生数据碎片</li>
+</ul>
+<h2 id="索引的优点"><a href="#索引的优点" class="headerlink" title="索引的优点"></a>索引的优点</h2><p><strong>索引有如下三个优点：</strong></p>
+<ul>
+<li>索引大大减少了服务器需要扫描的数据量</li>
+<li>索引可以帮助服务器避免排序和临时表</li>
+<li>索引可以将随机I&#x2F;O变为顺序I&#x2F;O</li>
+</ul>
+<h2 id="索引的高效策略"><a href="#索引的高效策略" class="headerlink" title="索引的高效策略"></a>索引的高效策略</h2><ul>
+<li><strong>组合索引：</strong>在多个列上建立独立的单列索引，大部分情况下并不能提高MySQL的查询性能； </li>
+<li><strong>独立的列：</strong>如果查询中的列不是独立的，则MySQL就不会使用索引； </li>
+<li><strong>前缀索引：</strong>非常长的列会使索引变得大且慢，通常可以使用列的开始部分字符作为索引； </li>
+<li><strong>合适的索引列顺序：</strong>在一个组合索引中，索引列的顺序意味着索引首先按照最左列进行排序，其次是第二列； </li>
+<li><strong>覆盖索引：</strong>如果一个索引包含所有需要查询的字段值，则称之为”覆盖索引”。</li>
+</ul>
+<h2 id="索引创建的选择"><a href="#索引创建的选择" class="headerlink" title="索引创建的选择"></a>索引创建的选择</h2><ul>
+<li>频繁更新的字段不适合建立索引； </li>
+<li>参与列计算的列不适合建索引； </li>
+<li>数据重复且唯一性太差的字段不适合建立索引，例如：性别，真假值； </li>
+<li>表数据可以确定比较少的不需要建索引； </li>
+<li>WHERE条件中用不到的字段不适合建立索引。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/11-MySQL/01-%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%AE%89%E8%A3%85/04-MySQL%E8%B0%83%E4%BC%98/" data-id="clmcxed5h00cdu8wa6crngcir" data-title="MySQL调优" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/10-Mybatis/05-Mybatis%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Mybatis源码解读
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

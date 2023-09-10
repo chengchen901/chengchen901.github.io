@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="NoSQL数据库及排名什么是NoSQLSQL：结构化查询语言，这里泛指关系型数据库 NoSQL(NoSQL &#x3D; Not Only SQL )，意即“不仅仅是SQL”，泛指不提供SQL功能的非关系型数据库。不遵循，SQL标准、ACID特性、表结构。这个概念很早就有人提出，当时做Not SQL解释，逐渐发展到今天的Not Only SQL。 为什么需要NoSQL 现代网站服务，是超大规模和高">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/18-MongoDB/01-%E4%BB%8E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%B0MongoDB%E7%89%B9%E6%80%A7%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="NoSQL数据库及排名什么是NoSQLSQL：结构化查询语言，这里泛指关系型数据库 NoSQL(NoSQL &#x3D; Not Only SQL )，意即“不仅仅是SQL”，泛指不提供SQL功能的非关系型数据库。不遵循，SQL标准、ACID特性、表结构。这个概念很早就有人提出，当时做Not SQL解释，逐渐发展到今天的Not Only SQL。 为什么需要NoSQL 现代网站服务，是超大规模和高">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230128125820.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230128130628.png">
+<meta property="article:published_time" content="2023-09-10T03:59:07.938Z">
+<meta property="article:modified_time" content="2023-01-29T11:53:33.237Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230128125820.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-18-MongoDB/01-从关系型数据库到MongoDB特性入门" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/18-MongoDB/01-%E4%BB%8E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%B0MongoDB%E7%89%B9%E6%80%A7%E5%85%A5%E9%97%A8/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:07.938Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="NoSQL数据库及排名"><a href="#NoSQL数据库及排名" class="headerlink" title="NoSQL数据库及排名"></a>NoSQL数据库及排名</h1><h2 id="什么是NoSQL"><a href="#什么是NoSQL" class="headerlink" title="什么是NoSQL"></a>什么是NoSQL</h2><p><strong>SQL</strong>：结构化查询语言，这里泛指关系型数据库</p>
+<p><strong>NoSQL</strong>(NoSQL &#x3D; Not Only SQL )，意即“不仅仅是SQL”，泛指不提供SQL功能的非关系型数据库。不遵循，SQL标准、ACID特性、表结构。这个概念很早就有人提出，当时做Not SQL解释，逐渐发展到今天的Not Only SQL。</p>
+<h2 id="为什么需要NoSQL"><a href="#为什么需要NoSQL" class="headerlink" title="为什么需要NoSQL"></a>为什么需要NoSQL</h2><ul>
+<li>现代网站服务，是超大规模和高并发的SNS类型的web2.0纯动态网站</li>
+<li>传统关系型数据库遇到了性能、扩展瓶颈</li>
+<li>NoSQL数据库为了解决大规模数据集合、多重数据种类带来的挑战而产生</li>
+<li>应用在大数据应用难题，包括超大规模数据的存储</li>
+</ul>
+<h2 id="四大类NoSQL数据库"><a href="#四大类NoSQL数据库" class="headerlink" title="四大类NoSQL数据库"></a>四大类NoSQL数据库</h2><table>
+<thead>
+<tr>
+<th>分类</th>
+<th>优势</th>
+<th>劣势</th>
+<th>场景</th>
+<th>代表</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>键值对</td>
+<td>查找速度快</td>
+<td>数据无结构化，通常只被当做字符串或者二进制数据</td>
+<td>内容缓存，主要用于处理大量数据的高频访问负载</td>
+<td>Redis</td>
+</tr>
+<tr>
+<td>列式存储</td>
+<td>查找速度快，支持分布式横向扩展，数据压缩率高</td>
+<td>功能相对受限</td>
+<td>分布式文件系统</td>
+<td>Hbase<br />Cassandra</td>
+</tr>
+<tr>
+<td>文档存储</td>
+<td>数据结构要求不严格，表结构可变</td>
+<td>查询性能不高，缺乏统一的查询语法</td>
+<td>web应用</td>
+<td>MongoDB</td>
+</tr>
+<tr>
+<td>图数据库</td>
+<td>可利用图结构相关算法</td>
+<td>可能需要对整个图做计算，不利于图数据分布式存储</td>
+<td>社交网络、推荐系统、意向图、消费图、兴趣图、关系图谱等</td>
+<td>Neo4J<br />CouchDB</td>
+</tr>
+</tbody></table>
+<h2 id="数据库排名"><a href="#数据库排名" class="headerlink" title="数据库排名"></a>数据库排名</h2><p>数据库整体排名：<a target="_blank" rel="noopener" href="https://db-engines.com/en/ranking">https://db-engines.com/en/ranking</a></p>
+<p>关系型数据库排名：<a target="_blank" rel="noopener" href="https://db-engines.com/en/ranking/relational+dbms">https://db-engines.com/en/ranking/relational+dbms</a></p>
+<p>键值对数据库排名：<a target="_blank" rel="noopener" href="https://db-engines.com/en/ranking/key-value+store">https://db-engines.com/en/ranking/key-value+store</a></p>
+<p>搜索引擎排名：<a target="_blank" rel="noopener" href="https://db-engines.com/en/ranking/search+engine">https://db-engines.com/en/ranking/search+engine</a></p>
+<p>图形数据库排名：<a target="_blank" rel="noopener" href="https://db-engines.com/en/ranking/graph+dbms">https://db-engines.com/en/ranking/graph+dbms</a></p>
+<p>文档型数据库排名：<a target="_blank" rel="noopener" href="https://db-engines.com/en/ranking/document+store">https://db-engines.com/en/ranking/document+store</a></p>
+<h2 id="NoSQL关系型数据库对比"><a href="#NoSQL关系型数据库对比" class="headerlink" title="NoSQL关系型数据库对比"></a>NoSQL关系型数据库对比</h2><table>
+<thead>
+<tr>
+<th>特点</th>
+<th>NoSQL</th>
+<th>关系型数据库</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>强一致性和弱一致性</td>
+<td>CAP定理，最终一致性，而非ACID属性</td>
+<td>严格的一致性，ACID</td>
+</tr>
+<tr>
+<td>二维和多维表</td>
+<td>键 - 值对存储，列存储，文档存储，图形数据库</td>
+<td>二维表，数据和关系都存储在单独的表中</td>
+</tr>
+<tr>
+<td>结构化和非结构化</td>
+<td>非结构化、半结构化，没有声明性查询语言</td>
+<td>高度组织化结构化数据，结构化查询语言（SQL）</td>
+</tr>
+<tr>
+<td>强事务和弱事务</td>
+<td>弱化事务</td>
+<td>基础事务</td>
+</tr>
+<tr>
+<td>Join强与弱</td>
+<td>弱，没有预定义的模式</td>
+<td>强，数据操纵语言，数据定义语言</td>
+</tr>
+<tr>
+<td>成本代价</td>
+<td>低</td>
+<td>高</td>
+</tr>
+<tr>
+<td>扩展性</td>
+<td>强，高性能，高可用性和可伸缩性</td>
+<td>弱</td>
+</tr>
+</tbody></table>
+<h1 id="Mongo核心概念"><a href="#Mongo核心概念" class="headerlink" title="Mongo核心概念"></a>Mongo核心概念</h1><h2 id="什么是MongoDB？"><a href="#什么是MongoDB？" class="headerlink" title="什么是MongoDB？"></a>什么是MongoDB？</h2><p>MongoDB是一个基于C++开发的NoSQL开源文档数据库，具有所需的可伸缩性和灵活性，可用于所需的查询和索引编制。最像关系数据库，功能最丰富的NoSQL数据库。</p>
+<p><strong>特性</strong></p>
+<ul>
+<li>面向集合文档的存储：适合存储Bson（json的扩展）形式的数据；</li>
+<li>格式自由，数据格式不固定，生产环境下修改结构都可以不影响程序运行；</li>
+<li>强大的查询语句，面向对象的查询语言，基本覆盖sql语言所有能力；</li>
+<li>完整的索引支持，支持查询计划；</li>
+<li>支持复制和自动故障转移；</li>
+<li>支持二进制数据及大型对象（文件）的高效存储；</li>
+<li>使用分片集群提升系统扩展性；</li>
+<li>使用内存映射存储引擎，把磁盘的IO操作转换成为内存的操作；</li>
+</ul>
+<p>官方文档：<a target="_blank" rel="noopener" href="https://docs.mongodb.com/">https://docs.mongodb.com/</a></p>
+<h2 id="为什么要学习MongoDB？"><a href="#为什么要学习MongoDB？" class="headerlink" title="为什么要学习MongoDB？"></a>为什么要学习MongoDB？</h2><p>国内外知名互联网公司都在使用</p>
+<p>MongoDB应用的行业领域非常多，面向未来大量数据存储，向钱看，MongoDB必学。</p>
+<h2 id="如何考虑是否选择MongoDB？"><a href="#如何考虑是否选择MongoDB？" class="headerlink" title="如何考虑是否选择MongoDB？"></a>如何考虑是否选择MongoDB？</h2><p>没有某个业务场景必须要使用MongoDB才能解决，但使用MongoDB通常能让你以更低的成本解决问题（包括学习、开发、运维等成本）</p>
+<p><strong>应用需求和特点</strong></p>
+<ul>
+<li>不需要事务及复杂join支持</li>
+<li>新应用，需求会变，数据模型不确定，想快速迭代开发</li>
+<li>要应对2000-3000以上的读写QPS（或更高）</li>
+<li>要存储TB甚至PB级别数据</li>
+<li>应用发展迅速，能快速水平扩展</li>
+<li>要求存储的数据不丢失</li>
+<li>要求99.999%高可用</li>
+<li>有大量的地理位置查询、文本查询</li>
+</ul>
+<p><strong>只要有一项需求满足就可以考虑，匹配越多，选择MongoDB越合适</strong></p>
+<h2 id="MongoDB的使用场景"><a href="#MongoDB的使用场景" class="headerlink" title="MongoDB的使用场景"></a>MongoDB的使用场景</h2><p>MongoDB 的应用已经渗透到各个领域，比如游戏、物流、电商、内容管理、社交、物联网、视频直播等，以下是几个实际的应用案例：</p>
+<ul>
+<li>游戏场景，使用 MongoDB 存储游戏用户信息，用户的装备、积分等直接以内嵌文档的形式存储，方便查询、更新</li>
+<li>物流场景，使用 MongoDB 存储订单信息，订单状态在运送过程中会不断更新，以MongoDB 内嵌数组的形式来存储，一次查询就能将订单所有的变更读取出来。</li>
+<li>社交场景，使用 MongoDB 存储存储用户信息，以及用户发表的朋友圈信息，通过地理位置索引实现附近的人、地点等功能</li>
+<li>物联网场景，使用 MongoDB 存储所有接入的智能设备信息，以及设备汇报的日志信息，并对这些信息进行多维度的分析</li>
+<li>视频直播，使用 MongoDB 存储用户信息、礼物信息等</li>
+</ul>
+<h2 id="什么场景不适合使用MongoDB？"><a href="#什么场景不适合使用MongoDB？" class="headerlink" title="什么场景不适合使用MongoDB？"></a>什么场景不适合使用MongoDB？</h2><ol>
+<li>高度事务性系统：例如银行、财务等系统。MongoDB对事物的支持较弱；</li>
+<li>传统的商业智能应用：特定问题的数据分析，多数据实体关联，涉及到复杂的、高度优化的查询方式；</li>
+<li>使用sql方便的时候；数据结构相对固定，使用sql进行查询统计更加便利的时候；</li>
+</ol>
+<h2 id="MongoDB中的基本概念"><a href="#MongoDB中的基本概念" class="headerlink" title="MongoDB中的基本概念"></a>MongoDB中的基本概念</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230128125820.png"></p>
+<ul>
+<li><strong>实例：</strong>系统上运行库的进程及节点集，一个实例可以有多个库</li>
+<li><strong>库：</strong>多个集合组成数据库，每个数据库都是完全独立的，有自己<br>的用户、权限信息，独立的存储文件集</li>
+<li><strong>集合：</strong>即一组文档的集合，文档是存放的数据。集合内的文档结<br>构可以不同</li>
+<li><strong>文档：</strong>MongoDB数据库的最小数据集单位，其基本概念为：多个<br>键值对有序组合在一起的数据单元</li>
+</ul>
+<h2 id="与关系型数据库对比"><a href="#与关系型数据库对比" class="headerlink" title="与关系型数据库对比"></a>与关系型数据库对比</h2><p>可执行文件名对比</p>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>MongoDB</th>
+<th>MySQL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>服务</td>
+<td>mongod</td>
+<td>mysqld</td>
+</tr>
+<tr>
+<td>客户端</td>
+<td>mongo</td>
+<td>mysql</td>
+</tr>
+</tbody></table>
+<p>概念对比</p>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>MongoDB</th>
+<th>关系型数据库</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据库</td>
+<td>dataBase</td>
+<td>dataBase</td>
+</tr>
+<tr>
+<td>表</td>
+<td>collection</td>
+<td>table</td>
+</tr>
+<tr>
+<td>数据行</td>
+<td>document</td>
+<td>row data</td>
+</tr>
+<tr>
+<td>字段</td>
+<td>field</td>
+<td>column</td>
+</tr>
+<tr>
+<td>索引</td>
+<td>index</td>
+<td>index</td>
+</tr>
+<tr>
+<td>表关联</td>
+<td>embedding&amp;linkding</td>
+<td>join</td>
+</tr>
+<tr>
+<td>分片&#x2F;分区</td>
+<td>shard</td>
+<td>partition</td>
+</tr>
+<tr>
+<td>分区键</td>
+<td>sharding Key</td>
+<td>partition key</td>
+</tr>
+</tbody></table>
+<h2 id="MongoDB中的文档"><a href="#MongoDB中的文档" class="headerlink" title="MongoDB中的文档"></a>MongoDB中的文档</h2><p>MongoDB文档类似于JSON对象，称为BSON。字段的值可以包括其他文档，数组和文档数组。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20230128130628.png"></p>
+<p><strong>使用文档存储的优点：</strong> </p>
+<ul>
+<li>文档（即对象）对应于许多编程语言中的本机数据类型</li>
+<li>嵌入式文档和数组减少了对连接的需求</li>
+<li>动态模式支持流畅的多态性</li>
+</ul>
+<h2 id="MongoDB中的Bson数据类型"><a href="#MongoDB中的Bson数据类型" class="headerlink" title="MongoDB中的Bson数据类型"></a>MongoDB中的Bson数据类型</h2><p>Bson是JSON文档的二进制表示形式，它包含比JSON更多的数据类型。</p>
+<p>MongoDB中，一个BSON文档最大大小为16M，文档嵌套的级别不超过100</p>
+<p>Bson文档规范：<a target="_blank" rel="noopener" href="http://bsonspec.org/spec.html">http://bsonspec.org/spec.html</a></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Number</th>
+<th>Alias</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Double</td>
+<td>1</td>
+<td>双精度浮点值。用于存储浮点值</td>
+<td></td>
+</tr>
+<tr>
+<td>String</td>
+<td>2</td>
+<td>字符串。存储数据常用的数据类型。在 MongoDB 中，UTF-8 编码的字符串才是合法的。</td>
+<td></td>
+</tr>
+<tr>
+<td>Object</td>
+<td>3</td>
+<td>用于内嵌文档</td>
+<td></td>
+</tr>
+<tr>
+<td>Array</td>
+<td>4</td>
+<td>用于将数组或列表或多个值存储为一个键</td>
+<td></td>
+</tr>
+<tr>
+<td>Binary data</td>
+<td>5</td>
+<td>二进制数据。用于存储二进制数据</td>
+<td></td>
+</tr>
+<tr>
+<td>Undefined</td>
+<td>6</td>
+<td>“undefined”</td>
+<td>Deprecated.</td>
+</tr>
+<tr>
+<td>ObjectId</td>
+<td>7</td>
+<td>对象 ID，用于创建文档的 ID。</td>
+<td></td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>8</td>
+<td>“bool”</td>
+<td></td>
+</tr>
+<tr>
+<td>Date</td>
+<td>9</td>
+<td>日期时间。用 UNIX 时间格式来存储当前日期或时间。可以指定自己的日期时间：创建 Date 对象，传入年月日信息。</td>
+<td></td>
+</tr>
+<tr>
+<td>Null</td>
+<td>10</td>
+<td>用于创建空值</td>
+<td></td>
+</tr>
+<tr>
+<td>Regular Expression</td>
+<td>11</td>
+<td>正则表达式类型。用于存储正则表达式。</td>
+<td></td>
+</tr>
+<tr>
+<td>DBPointer</td>
+<td>12</td>
+<td>“dbPointer”</td>
+<td>Deprecated.</td>
+</tr>
+<tr>
+<td>JavaScript</td>
+<td>13</td>
+<td>“javascript”</td>
+<td></td>
+</tr>
+<tr>
+<td>Symbol</td>
+<td>14</td>
+<td>“symbol”</td>
+<td>Deprecated.</td>
+</tr>
+<tr>
+<td>JavaScript (with scope)</td>
+<td>15</td>
+<td>“javascriptWithScope”</td>
+<td></td>
+</tr>
+<tr>
+<td>32-bit integer</td>
+<td>16</td>
+<td>“int”</td>
+<td></td>
+</tr>
+<tr>
+<td>Timestamp</td>
+<td>17</td>
+<td>MongoDB复制和Sharing使用的特殊内部类型。前4个字节是增量，第二4字节是时间戳。</td>
+<td></td>
+</tr>
+<tr>
+<td>64-bit integer</td>
+<td>18</td>
+<td>“long”</td>
+<td></td>
+</tr>
+<tr>
+<td>Decimal128</td>
+<td>19</td>
+<td>“decimal”</td>
+<td>New in version 3.4.</td>
+</tr>
+<tr>
+<td>Min key</td>
+<td>-1</td>
+<td>比所有其他可能的BSON元素值都低的特殊类型。</td>
+<td></td>
+</tr>
+<tr>
+<td>Max key</td>
+<td>127</td>
+<td>比所有其他可能的BSON元件值更高的特殊类型。</td>
+<td></td>
+</tr>
+</tbody></table>
+<h1 id="MongoDB操作语法"><a href="#MongoDB操作语法" class="headerlink" title="MongoDB操作语法"></a>MongoDB操作语法</h1><h2 id="使用MongoDB"><a href="#使用MongoDB" class="headerlink" title="使用MongoDB"></a>使用MongoDB</h2><p>通过Mongo shell操作学习如何使用MongoDB相关内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./mongo</span><br></pre></td></tr></table></figure>
+
+<p>操作数据库、集合</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">db <span class="comment"># 显示当前数据库</span></span><br><span class="line">use dataBaseName <span class="comment"># 如果dataBaseName不存在，在插入数据时将会创建数据库</span></span><br><span class="line">show dbs <span class="comment"># 显示当前实例中的数据库</span></span><br><span class="line">db.dropDatabase() <span class="comment"># 删除当前选择的库</span></span><br><span class="line">db.createCollection(<span class="string">&quot;runoob&quot;</span>) <span class="comment"># 显式的创建runoob集合</span></span><br><span class="line">show tables <span class="comment"># 显示当前数据库中的集合信息</span></span><br><span class="line">show collections</span><br><span class="line">db.runoob.drop() <span class="comment"># 删除runoob集合</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="新建操作语法"><a href="#新建操作语法" class="headerlink" title="新建操作语法"></a>新建操作语法</h2><p><strong>新建文档</strong></p>
+<p>新文档添加到集合中。如果该集合当前不存在，则插入操作将创建该集合。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.collection.insertOne() <span class="comment">#插入单个文档</span></span><br><span class="line">db.collection.insertMany() <span class="comment">#插入多个文档</span></span><br><span class="line">db.collection.insert() <span class="comment">#插入单条或多个文档</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>插入操作行为影响：</strong></p>
+<ul>
+<li>自动创建不存在的集合、数据库，例如这里的inventory集合</li>
+<li>如果不指定，自动生成主键_id及其值</li>
+<li>写操作都是基于单个文档级别的原子操作<br>注意：3.0基于单个集合级别的原子操作，4.0基于单个文档级别的原子操作</li>
+<li>确认写操作级别，在分片集群中我们需要关注，目前忽略</li>
+</ul>
+<h2 id="新建文档摘要"><a href="#新建文档摘要" class="headerlink" title="新建文档摘要"></a>新建文档摘要</h2><p>MongoDB下新建文档的语法如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">db.collection.insert(</span><br><span class="line">    &lt;document or array of documents&gt;,</span><br><span class="line">    &#123;</span><br><span class="line">    	writeConcern: &lt;document&gt;,</span><br><span class="line">    	ordered: &lt;boolean&gt;</span><br><span class="line">    &#125; </span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>documents：必填，表示需要插入的文档，可以是多个文档</p>
+<p>writeConcern：可选项，写策略，后面学习集群时我们再关注</p>
+<p>ordered：可选，表示多个文档是否按照文档顺序插入</p>
+<h2 id="查询操作"><a href="#查询操作" class="headerlink" title="查询操作"></a>查询操作</h2><p>在inventory集合中，查询我们插入的记录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># SELECT * FROM inventory WHERE item = &quot;canvas&quot;</span></span><br><span class="line">db.inventory.find( &#123; item: <span class="string">&quot;canvas&quot;</span> &#125; ).pretty()</span><br><span class="line"></span><br><span class="line"><span class="comment"># SELECT * FROM inventory WHERE status = &quot;A&quot; AND ( qty &lt; 30 OR item LIKE &quot;p%&quot;)</span></span><br><span class="line">db.inventory.find( &#123;</span><br><span class="line">    status: <span class="string">&quot;A&quot;</span>,</span><br><span class="line">    <span class="variable">$or</span>: [ &#123; qty: &#123; <span class="variable">$lt</span>: 30 &#125; &#125;, &#123; item: /^p/ &#125; ]</span><br><span class="line">&#125; )</span><br></pre></td></tr></table></figure>
+
+<p>MongoDB 查询数据的语法格式如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.collection.find(query, projection)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>query ：可选，使用查询操作符指定查询条件</li>
+<li>projection ：可选，使用投影操作符指定返回的键。查询时返回文档中所有键值， 只需省略该参数即可（默认省略）。</li>
+<li>需要以易读的方式来读取数据，可以使用 pretty() 方法；</li>
+</ul>
+<h2 id="查询操作符"><a href="#查询操作符" class="headerlink" title="查询操作符"></a>查询操作符</h2><table>
+<thead>
+<tr>
+<th>操作符类型</th>
+<th>运算符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>比较</td>
+<td>$eq</td>
+<td>等于</td>
+</tr>
+<tr>
+<td></td>
+<td>$lt</td>
+<td>小于</td>
+</tr>
+<tr>
+<td></td>
+<td>$lte</td>
+<td>小于等于</td>
+</tr>
+<tr>
+<td></td>
+<td>$gt</td>
+<td>大于</td>
+</tr>
+<tr>
+<td></td>
+<td>$gte</td>
+<td>大于等于</td>
+</tr>
+<tr>
+<td></td>
+<td>$in</td>
+<td>判断元素是否在指定的集合范围里</td>
+</tr>
+<tr>
+<td></td>
+<td>$all</td>
+<td>判断数组中是否包含某几个元素,无关顺序</td>
+</tr>
+<tr>
+<td></td>
+<td>$nin</td>
+<td>判断元素是否不在指定的集合范围里</td>
+</tr>
+<tr>
+<td>逻辑运算</td>
+<td>$ne</td>
+<td>不等于</td>
+</tr>
+<tr>
+<td></td>
+<td>$not</td>
+<td>不匹配结果</td>
+</tr>
+<tr>
+<td></td>
+<td>$or</td>
+<td>有一个条件成立则匹配</td>
+</tr>
+<tr>
+<td></td>
+<td>$nor</td>
+<td>所有条件都不匹配</td>
+</tr>
+<tr>
+<td></td>
+<td>$and</td>
+<td>所有条件都必须匹配</td>
+</tr>
+<tr>
+<td></td>
+<td>$exists</td>
+<td>判断元素是否存在</td>
+</tr>
+<tr>
+<td>其他</td>
+<td>.</td>
+<td>子文档匹配</td>
+</tr>
+<tr>
+<td></td>
+<td>$regex</td>
+<td>正则表达式匹配</td>
+</tr>
+</tbody></table>
+<h2 id="查询其他操作"><a href="#查询其他操作" class="headerlink" title="查询其他操作"></a>查询其他操作</h2><p><strong>映射</strong></p>
+<ul>
+<li>字段选择：db.inventory.find({},{‘item’:1}) </li>
+<li>字段排除： db.inventory.find({},{‘item’:0}) </li>
+<li>数组子元素选择：db.inventory.find({},{‘tags’:{‘$slice’:[1,2]},’tags’:1}) $slice可以取两个元素数组,分别表示跳过和限制的条数；</li>
+</ul>
+<p><strong>排序</strong></p>
+<ul>
+<li>sort()：db.orders.find().sort({‘orderTime’:1,’price’:1})<br>1：升序 2：降序</li>
+</ul>
+<p><strong>跳过和限制</strong></p>
+<ul>
+<li><p>skip(n)：跳过n条数据</p>
+</li>
+<li><p>limit(n)：限制n条数据</p>
+<p>e.g：db.orders.find().sort({‘orderTime’:-1}).limit(5).skip(5)</p>
+</li>
+</ul>
+<p><strong>查询唯一值</strong></p>
+<ul>
+<li><p>distinct()：查询指定字段的唯一值</p>
+<p>e.g：db.users.distinct(“age”)</p>
+</li>
+</ul>
+<h2 id="更新操作语法"><a href="#更新操作语法" class="headerlink" title="更新操作语法"></a>更新操作语法</h2><p>更新文档的几种方式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.collection.updateOne() <span class="comment"># 直接修改原数据</span></span><br><span class="line">db.collection.updateMany()</span><br><span class="line">db.collection.replaceOne() <span class="comment"># 先删除后新增，性能低</span></span><br></pre></td></tr></table></figure>
+
+<p>更新操作行为：</p>
+<ul>
+<li><p>所有写操作都是单个文档级别的原子操作</p>
+</li>
+<li><p>_id无法被修改</p>
+</li>
+<li><p>更新操作对字段顺序的影响，一般都保留文档字段的原始顺序</p>
+<p>_id字段始终是文档中的第一个字段</p>
+<p>更改字段名，可能导致字段顺序发生变化</p>
+</li>
+</ul>
+<h2 id="更新摘要"><a href="#更新摘要" class="headerlink" title="更新摘要"></a>更新摘要</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">db.collection.update(</span><br><span class="line">    &lt;query&gt;,</span><br><span class="line">    &lt;update&gt;,</span><br><span class="line">    &#123;</span><br><span class="line">        upsert: &lt;boolean&gt;,</span><br><span class="line">        multi: &lt;boolean&gt;,</span><br><span class="line">        writeConcern: &lt;document&gt;,</span><br><span class="line">        collation: &lt;document&gt;,</span><br><span class="line">        arrayFilters: [ &lt;filterdocument1&gt;, ... ],</span><br><span class="line">        hint: &lt;document|string&gt; // MongoDB 4.2中支持的功能</span><br><span class="line">    &#125; </span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>query，查询条件，类似sql update查询的where</li>
+<li>update,update的对象和一些更新的操作符（如$,$inc…）等，类似sql update查询的set</li>
+<li>upsert,可选，表示如果记录不存在，是否插新文档,true为插入，默认false，不插入</li>
+<li>multi,可选，默认false,只更新找到的第一条记录。true,匹配的多条记录全部更新</li>
+<li>writeConcern,可选，写策略</li>
+<li>collation,可选，索引语言规则</li>
+<li>arrayFilters,可选，过滤文档数组，用于确定更新操作要修改数组中的具体元素</li>
+<li>hint,可选的，指定查询希望使用的索引字段，如果没有这个索引就会报错</li>
+</ul>
+<h2 id="更新操作符"><a href="#更新操作符" class="headerlink" title="更新操作符"></a>更新操作符</h2><table>
+<thead>
+<tr>
+<th>操作符类型</th>
+<th>运算符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>更新操作</td>
+<td>$inc</td>
+<td>指定值加n</td>
+</tr>
+<tr>
+<td></td>
+<td>$set</td>
+<td>替换掉指定字段的值</td>
+</tr>
+<tr>
+<td></td>
+<td>$unset</td>
+<td>将指定字段删除</td>
+</tr>
+<tr>
+<td></td>
+<td>$rename</td>
+<td>更新字段名称</td>
+</tr>
+<tr>
+<td></td>
+<td>$setOnInsert</td>
+<td>更新导致新增文档，则设置字段的值。文档存在不影响。</td>
+</tr>
+<tr>
+<td></td>
+<td>$currentDate</td>
+<td>指定字段赋值为当前时间值</td>
+</tr>
+<tr>
+<td></td>
+<td>$min</td>
+<td>指定值小于现有字段值时才更新字段</td>
+</tr>
+<tr>
+<td></td>
+<td>$max</td>
+<td>指定值大于现有字段值时才更新字段</td>
+</tr>
+<tr>
+<td></td>
+<td>$mul</td>
+<td>将字段的值乘以指定的金额</td>
+</tr>
+<tr>
+<td>数组操作</td>
+<td>$</td>
+<td>定位到某一个元素</td>
+</tr>
+<tr>
+<td></td>
+<td>$push</td>
+<td>添加值到数组中</td>
+</tr>
+<tr>
+<td></td>
+<td>$addToSet</td>
+<td>添加值到数组中，有重复则不处理</td>
+</tr>
+<tr>
+<td></td>
+<td>$pop</td>
+<td>删除数组第一个或者最后一个</td>
+</tr>
+<tr>
+<td></td>
+<td>$pull</td>
+<td>从数组中删除匹配查询条件的值</td>
+</tr>
+<tr>
+<td></td>
+<td>$pullAll</td>
+<td>从数组中删除多个值</td>
+</tr>
+<tr>
+<td></td>
+<td>$each</td>
+<td></td>
+</tr>
+<tr>
+<td>数组运算修饰</td>
+<td>$each</td>
+<td>每一个</td>
+</tr>
+<tr>
+<td></td>
+<td>$slice</td>
+<td>分割</td>
+</tr>
+<tr>
+<td></td>
+<td>$sort</td>
+<td>往数组添加元素的排序</td>
+</tr>
+<tr>
+<td>位更新</td>
+<td>$bit</td>
+<td>执行整数值的按位AND、OR和XOR更新</td>
+</tr>
+</tbody></table>
+<h2 id="更新操作示例"><a href="#更新操作示例" class="headerlink" title="更新操作示例"></a>更新操作示例</h2><p><strong>更新字段</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.inventory.updateOne(&#123;<span class="string">&quot;item&quot;</span>:<span class="string">&quot;map&quot;</span>&#125;,&#123;<span class="string">&quot;<span class="variable">$unset</span>&quot;</span>:&#123;<span class="string">&quot;status&quot;</span>:<span class="string">&quot;&quot;</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>更新字段名称</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.inventory.updateMany(&#123;<span class="string">&quot;item&quot;</span>:<span class="string">&quot;map&quot;</span>&#125;,&#123;<span class="string">&quot;<span class="variable">$rename</span>&quot;</span>:&#123;<span class="string">&quot;lastModified&quot;</span>:<span class="string">&quot;updateTime&quot;</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>$each作用</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.inventory.update(</span><br><span class="line">    &#123; item: <span class="string">&quot;mobile&quot;</span> &#125;,</span><br><span class="line">    &#123; <span class="variable">$push</span>: &#123; scores: &#123; <span class="variable">$each</span>: [ 90, 92, 85 ] &#125; &#125; &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><strong>数组更新</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.inventory.updateMany(&#123;<span class="string">&quot;item&quot;</span>:<span class="string">&quot;mobile&quot;</span>&#125;,&#123;<span class="variable">$addToSet</span>:&#123;tags:<span class="string">&quot;c&quot;</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="删除文档"><a href="#删除文档" class="headerlink" title="删除文档"></a>删除文档</h2><p>删除文档的两种方式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">db.collection.deleteMany()</span><br><span class="line">db.collection.deleteOne()</span><br></pre></td></tr></table></figure>
+
+<p>删除操作行为影响：</p>
+<ul>
+<li>集合中的所有文档都被删除，索引不会删除</li>
+<li>写操作都是单个文档级别的原子操作</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除所有文档</span></span><br><span class="line">db.inventory.deleteMany(&#123;&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除单个文档</span></span><br><span class="line">db.inventory.deleteOne( &#123; status: <span class="string">&quot;D&quot;</span> &#125; )</span><br></pre></td></tr></table></figure>
+
+<h2 id="图形化客户端"><a href="#图形化客户端" class="headerlink" title="图形化客户端"></a>图形化客户端</h2><p>除了Shell还有两种图形化客户</p>
+<ul>
+<li>MongoDB自带的图形化客户端：Compass Community</li>
+<li>第三方mongoDB的图形化客户端：robomongo</li>
+</ul>
+<p>两种产品功能支持度</p>
+<table>
+<thead>
+<tr>
+<th>客户端产品</th>
+<th>DDL</th>
+<th>DML</th>
+<th>脚本</th>
+<th>查询计划</th>
+<th>索引管理</th>
+<th>支持版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Compass</td>
+<td>支持</td>
+<td>支持，比较人性化</td>
+<td>不支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>4.2.1</td>
+</tr>
+<tr>
+<td>Robomongo</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>不支持</td>
+<td>支持</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="MongoDB-操作笔记"><a href="#MongoDB-操作笔记" class="headerlink" title="MongoDB 操作笔记"></a>MongoDB 操作笔记</h2><h3 id="基础新增和查询"><a href="#基础新增和查询" class="headerlink" title="基础新增和查询"></a>基础新增和查询</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 新增操作</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">insertOne</span>(</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;canvas&quot;</span>, <span class="attr">qty</span>: <span class="number">100</span>, <span class="attr">tags</span>: [<span class="string">&quot;cotton&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">28</span>, <span class="attr">w</span>: <span class="number">35.5</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125; &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">insertMany</span>([</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;journal&quot;</span>, <span class="attr">qty</span>: <span class="number">25</span>, <span class="attr">tags</span>: [<span class="string">&quot;blank&quot;</span>, <span class="string">&quot;red&quot;</span>, <span class="string">&quot;small&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">14</span>, <span class="attr">w</span>: <span class="number">21</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125; &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;mat&quot;</span>, <span class="attr">qty</span>: <span class="number">85</span>, <span class="attr">tags</span>: [<span class="string">&quot;gray&quot;</span>, <span class="string">&quot;yellow&quot;</span>, <span class="string">&quot;green&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">27.9</span>, <span class="attr">w</span>: <span class="number">35.5</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125; &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;mousepad&quot;</span>, <span class="attr">qty</span>: <span class="number">25</span>, <span class="attr">tags</span>: [<span class="string">&quot;gel&quot;</span>, <span class="string">&quot;blue&quot;</span>, <span class="string">&quot;big&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">19</span>, <span class="attr">w</span>: <span class="number">22.85</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125; &#125;</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 查询操作</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">insertMany</span>([</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;journal&quot;</span>, <span class="attr">qty</span>: <span class="number">25</span>, <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">14</span>, <span class="attr">w</span>: <span class="number">21</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;notebook&quot;</span>, <span class="attr">qty</span>: <span class="number">50</span>, <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">8.5</span>, <span class="attr">w</span>: <span class="number">11</span>, <span class="attr">uom</span>: <span class="string">&quot;in&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;paper&quot;</span>, <span class="attr">qty</span>: <span class="number">100</span>, <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">8.5</span>, <span class="attr">w</span>: <span class="number">11</span>, <span class="attr">uom</span>: <span class="string">&quot;in&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;D&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;planner&quot;</span>, <span class="attr">qty</span>: <span class="number">75</span>, <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">22.85</span>, <span class="attr">w</span>: <span class="number">30</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;D&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;postcard&quot;</span>, <span class="attr">qty</span>: <span class="number">45</span>, <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">10</span>, <span class="attr">w</span>: <span class="number">15.25</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;</span><br><span class="line">]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 精确匹配</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; <span class="attr">item</span>: <span class="string">&quot;canvas&quot;</span> &#125; )</span><br><span class="line"></span><br><span class="line"><span class="comment">// 逻辑操作</span></span><br><span class="line"><span class="comment">// SELECT * FROM inventory WHERE status = &quot;A&quot; AND ( qty &lt; 30 OR item LIKE &quot;p%&quot;)</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123;</span><br><span class="line">     <span class="attr">status</span>: <span class="string">&quot;A&quot;</span>,</span><br><span class="line">     <span class="attr">$or</span>: [ &#123; <span class="attr">qty</span>: &#123; <span class="attr">$lt</span>: <span class="number">30</span> &#125; &#125;, &#123; <span class="attr">item</span>: <span class="regexp">/^p/</span> &#125; ]</span><br><span class="line">&#125; )</span><br><span class="line"></span><br><span class="line"><span class="comment">// SELECT * FROM inventory WHERE status in (&quot;A&quot;, &quot;D&quot;)</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; <span class="attr">status</span>: &#123; <span class="attr">$in</span>: [ <span class="string">&quot;A&quot;</span>, <span class="string">&quot;D&quot;</span> ] &#125; &#125; )</span><br></pre></td></tr></table></figure>
+
+<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 准备数据 */</span></span><br><span class="line">use test</span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">drop</span>()</span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">insertMany</span>([</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;journal&quot;</span>, <span class="attr">qty</span>: <span class="number">25</span>, <span class="attr">tags</span>: [<span class="string">&quot;blank&quot;</span>, <span class="string">&quot;red&quot;</span>, <span class="string">&quot;small&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">14</span>, <span class="attr">w</span>: <span class="number">21</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;notebook&quot;</span>, <span class="attr">qty</span>: <span class="number">50</span>, <span class="attr">tags</span>: [<span class="string">&quot;gray&quot;</span>, <span class="string">&quot;yellow&quot;</span>, <span class="string">&quot;green&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">8.5</span>, <span class="attr">w</span>: <span class="number">11</span>, <span class="attr">uom</span>: <span class="string">&quot;in&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;paper&quot;</span>, <span class="attr">qty</span>: <span class="number">100</span>, <span class="attr">tags</span>: [<span class="string">&quot;gray&quot;</span>, <span class="string">&quot;yellow&quot;</span>, <span class="string">&quot;green&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">8.5</span>, <span class="attr">w</span>: <span class="number">11</span>, <span class="attr">uom</span>: <span class="string">&quot;in&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;D&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;planner&quot;</span>, <span class="attr">qty</span>: <span class="number">75</span>, <span class="attr">tags</span>: [<span class="string">&quot;gray&quot;</span>, <span class="string">&quot;yellow&quot;</span>, <span class="string">&quot;green&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">22.85</span>, <span class="attr">w</span>: <span class="number">30</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;D&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;postcard&quot;</span>, <span class="attr">qty</span>: <span class="number">45</span>, <span class="attr">tags</span>: [<span class="string">&quot;gray&quot;</span>, <span class="string">&quot;yellow&quot;</span>, <span class="string">&quot;green&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">10</span>, <span class="attr">w</span>: <span class="number">15.25</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;mat&quot;</span>, <span class="attr">qty</span>: <span class="number">85</span>, <span class="attr">tags</span>: [<span class="string">&quot;gray&quot;</span>, <span class="string">&quot;yellow&quot;</span>, <span class="string">&quot;green&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">27.9</span>, <span class="attr">w</span>: <span class="number">35.5</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;mousepad&quot;</span>, <span class="attr">qty</span>: <span class="number">25</span>, <span class="attr">tags</span>: [<span class="string">&quot;gel&quot;</span>, <span class="string">&quot;blue&quot;</span>, <span class="string">&quot;big&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">19</span>, <span class="attr">w</span>: <span class="number">22.85</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;mobile&quot;</span>, <span class="attr">qty</span>: <span class="number">250</span>, <span class="attr">tags</span>: [<span class="string">&quot;red&quot;</span>, <span class="string">&quot;big&quot;</span>], <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;map&quot;</span>, <span class="attr">qty</span>: <span class="number">250</span>, <span class="attr">length</span>: [<span class="number">129</span>, <span class="number">500</span>, <span class="number">1000</span>], <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;apple&quot;</span>, <span class="attr">qty</span>: <span class="number">250</span>, <span class="attr">length</span>: [<span class="number">29</span>, <span class="number">50</span>, <span class="number">90</span>], <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;banana&quot;</span>, <span class="attr">qty</span>: <span class="number">150</span>, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;orange&quot;</span>, <span class="attr">qty</span>: <span class="number">90</span>, <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">19</span>, <span class="attr">w</span>: <span class="number">22.85</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;</span><br><span class="line">]);</span><br><span class="line"></span><br><span class="line"><span class="comment">/* ======================= 查询操作示例 ======================= */</span></span><br><span class="line"><span class="comment">// 内嵌文档单字段精确匹配</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; <span class="string">&quot;size.uom&quot;</span>: <span class="string">&quot;in&quot;</span> &#125; )</span><br><span class="line"></span><br><span class="line"><span class="comment">// 内嵌文档多个字段匹配</span></span><br><span class="line"><span class="comment">// 下面两个语句查询效果不一样，因为查询的字段顺序不一样</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">14</span>, <span class="attr">w</span>: <span class="number">21</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125; &#125; )</span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; <span class="attr">size</span>: &#123; <span class="attr">w</span>: <span class="number">21</span>, <span class="attr">h</span>: <span class="number">14</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125; &#125; )</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数组查询</span></span><br><span class="line"><span class="comment">// 匹配确切的数组内容，包括元素顺序</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; <span class="attr">tags</span>: [<span class="string">&quot;blank&quot;</span>, <span class="string">&quot;red&quot;</span>, <span class="string">&quot;small&quot;</span>] &#125; )</span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; <span class="attr">tags</span>: [<span class="string">&quot;red&quot;</span>, <span class="string">&quot;blank&quot;</span>] &#125; )</span><br><span class="line"><span class="comment">// 不考虑顺序和其他元素，只要tags包含red和blank这俩个值就可以查询到</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; <span class="attr">tags</span>: &#123; <span class="attr">$all</span>: [<span class="string">&quot;red&quot;</span>, <span class="string">&quot;blank&quot;</span>] &#125; &#125; )</span><br><span class="line"><span class="comment">// length数组中至少有一个元素，满足$elemMatch的条件</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; <span class="attr">length</span>: &#123; <span class="attr">$elemMatch</span>: &#123;<span class="attr">$gte</span>:<span class="number">30</span>, <span class="attr">$lt</span>:<span class="number">80</span>&#125; &#125; &#125; )</span><br><span class="line"><span class="comment">// tags数组大小为3的记录</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; <span class="string">&quot;tags&quot;</span>: &#123; <span class="attr">$size</span>: <span class="number">3</span> &#125; &#125; )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// $slice的使用，限制数组返回的内容</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>(&#123;<span class="attr">item</span>:&#123;$eq : <span class="string">&quot;journal&quot;</span>&#125;, <span class="attr">$comment</span>: <span class="string">&quot;匹配刊物文档&quot;</span>&#125;)</span><br><span class="line"><span class="comment">// 切割tags数组中的元素个数，返回第一个元素</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>(&#123;<span class="string">&quot;item&quot;</span> : <span class="string">&quot;journal&quot;</span>&#125;, &#123;<span class="attr">tags</span>:&#123;<span class="attr">$slice</span>:<span class="number">1</span>&#125;&#125;)</span><br><span class="line"><span class="comment">// 返回tags数组从下标1开始，后面的3个元素</span></span><br><span class="line"><span class="comment">// $slice: [index, lenth]</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>(&#123;<span class="string">&quot;item&quot;</span> : <span class="string">&quot;journal&quot;</span>&#125;, &#123;<span class="attr">tags</span>:&#123;<span class="attr">$slice</span>:[<span class="number">1</span>,<span class="number">3</span>]&#125;&#125;)</span><br><span class="line"><span class="comment">// 返回tags数组最后一个元素</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>(&#123;<span class="string">&quot;item&quot;</span> : <span class="string">&quot;journal&quot;</span>&#125;, &#123;<span class="attr">tags</span>:&#123;<span class="attr">$slice</span>:[-<span class="number">1</span>,<span class="number">1</span>]&#125;&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询指定字段</span></span><br><span class="line"><span class="comment">// SELECT _id, item, status from inventory WHERE status = &quot;A&quot;</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;, &#123; <span class="attr">item</span>: <span class="number">1</span>, <span class="attr">status</span>: <span class="number">1</span> &#125; )</span><br><span class="line"><span class="comment">// 查询默认显示_id字段如果需要屏蔽，需要显示指定</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;, &#123; <span class="attr">item</span>: <span class="number">1</span>, <span class="attr">status</span>: <span class="number">1</span>, <span class="attr">_id</span>: <span class="number">0</span> &#125; )</span><br><span class="line"></span><br><span class="line"><span class="comment">// 匹配null或不存在的字段</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; <span class="attr">tags</span>: <span class="literal">null</span> &#125; )</span><br><span class="line"><span class="comment">// db.inventory.find( &#123; tags : &#123; $type: 10 &#125; &#125; ) // 官方有列出，但实际没有效果</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; tags : &#123; <span class="attr">$exists</span>: <span class="literal">false</span> &#125; &#125; )</span><br><span class="line"></span><br><span class="line"><span class="comment">// 遍历游标迭代子</span></span><br><span class="line"><span class="keyword">var</span> cursor = db.<span class="property">inventory</span>.<span class="title function_">find</span>();</span><br><span class="line"><span class="keyword">while</span> ( cursor.<span class="title function_">hasNext</span>() ) &#123;</span><br><span class="line">   <span class="title function_">printjson</span>( cursor.<span class="title function_">next</span>() );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 分页查询，并排序</span></span><br><span class="line"><span class="comment">// offset limit</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>().<span class="title function_">skip</span>(<span class="number">2</span>).<span class="title function_">limit</span>(<span class="number">2</span>).<span class="title function_">sort</span>(&#123;<span class="attr">qty</span>:<span class="number">1</span>&#125;);</span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>().<span class="title function_">sort</span>(&#123;<span class="attr">qty</span>:<span class="number">1</span>&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 聚合查询</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 单用途聚合操作</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">distinct</span>(<span class="string">&quot;status&quot;</span>);</span><br><span class="line"><span class="comment">// 要避免不通过查询器，直接使用count方法，会导致近似计数。</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>(&#123; <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;).<span class="title function_">count</span>();  <span class="comment">// 4.0弃用</span></span><br><span class="line"><span class="comment">// 基于count方法而来，估算集合中的文档数</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">estimatedDocumentCount</span>(&#123;&#125;);</span><br><span class="line"><span class="comment">// 通过对数据进行统计的，返回准确的计数，通过聚合计算而来</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">countDocuments</span>(&#123; <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 统计集合中状态为A的文档数</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">aggregate</span>([</span><br><span class="line">   &#123; <span class="attr">$match</span>: &#123; <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125; &#125;,</span><br><span class="line">   &#123; <span class="attr">$group</span>: &#123; <span class="attr">_id</span>: <span class="literal">null</span>, <span class="attr">totalStatusADoc</span>: &#123; <span class="attr">$sum</span>: <span class="number">1</span> &#125; &#125; &#125;</span><br><span class="line">])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 准备数据 */</span></span><br><span class="line">use test</span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">drop</span>()</span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">insertMany</span>([</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;canvas&quot;</span>, <span class="attr">qty</span>: <span class="number">100</span>, <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">28</span>, <span class="attr">w</span>: <span class="number">35.5</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;journal&quot;</span>, <span class="attr">qty</span>: <span class="number">25</span>, <span class="attr">tags</span>: [<span class="string">&quot;blank&quot;</span>, <span class="string">&quot;red&quot;</span>, <span class="string">&quot;small&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">14</span>, <span class="attr">w</span>: <span class="number">21</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;notebook&quot;</span>, <span class="attr">qty</span>: <span class="number">50</span>, <span class="attr">tags</span>: [<span class="string">&quot;gray&quot;</span>, <span class="string">&quot;yellow&quot;</span>, <span class="string">&quot;green&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">8.5</span>, <span class="attr">w</span>: <span class="number">11</span>, <span class="attr">uom</span>: <span class="string">&quot;in&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;paper&quot;</span>, <span class="attr">qty</span>: <span class="number">100</span>, <span class="attr">tags</span>: [<span class="string">&quot;gray&quot;</span>, <span class="string">&quot;yellow&quot;</span>, <span class="string">&quot;green&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">8.5</span>, <span class="attr">w</span>: <span class="number">11</span>, <span class="attr">uom</span>: <span class="string">&quot;in&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;D&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;planner&quot;</span>, <span class="attr">qty</span>: <span class="number">75</span>, <span class="attr">tags</span>: [<span class="string">&quot;gray&quot;</span>, <span class="string">&quot;yellow&quot;</span>, <span class="string">&quot;green&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">22.85</span>, <span class="attr">w</span>: <span class="number">30</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;D&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;postcard&quot;</span>, <span class="attr">qty</span>: <span class="number">45</span>, <span class="attr">tags</span>: [<span class="string">&quot;gray&quot;</span>, <span class="string">&quot;yellow&quot;</span>, <span class="string">&quot;green&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">10</span>, <span class="attr">w</span>: <span class="number">15.25</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;sketchbook&quot;</span>, <span class="attr">qty</span>: <span class="number">80</span>, <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">14</span>, <span class="attr">w</span>: <span class="number">21</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;sketch pad&quot;</span>, <span class="attr">qty</span>: <span class="number">95</span>, <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">22.85</span>, <span class="attr">w</span>: <span class="number">30.5</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;mat&quot;</span>, <span class="attr">qty</span>: <span class="number">85</span>, <span class="attr">tags</span>: [<span class="string">&quot;gray&quot;</span>, <span class="string">&quot;yellow&quot;</span>, <span class="string">&quot;green&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">27.9</span>, <span class="attr">w</span>: <span class="number">35.5</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;mousepad&quot;</span>, <span class="attr">qty</span>: <span class="number">25</span>, <span class="attr">tags</span>: [<span class="string">&quot;gel&quot;</span>, <span class="string">&quot;blue&quot;</span>, <span class="string">&quot;big&quot;</span>], <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">19</span>, <span class="attr">w</span>: <span class="number">22.85</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;mobile&quot;</span>, <span class="attr">qty</span>: <span class="number">250</span>, <span class="attr">tags</span>: [<span class="string">&quot;red&quot;</span>, <span class="string">&quot;big&quot;</span>], <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;map&quot;</span>, <span class="attr">qty</span>: <span class="number">250</span>, <span class="attr">length</span>: [<span class="number">129</span>, <span class="number">500</span>, <span class="number">1000</span>], <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;apple&quot;</span>, <span class="attr">qty</span>: <span class="number">250</span>, <span class="attr">length</span>: [<span class="number">29</span>, <span class="number">50</span>, <span class="number">90</span>], <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;banana&quot;</span>, <span class="attr">qty</span>: <span class="number">150</span>, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;orange&quot;</span>, <span class="attr">qty</span>: <span class="number">90</span>, <span class="attr">size</span>: &#123; <span class="attr">h</span>: <span class="number">19</span>, <span class="attr">w</span>: <span class="number">22.85</span>, <span class="attr">uom</span>: <span class="string">&quot;cm&quot;</span> &#125;, <span class="attr">status</span>: <span class="string">&quot;A&quot;</span> &#125;</span><br><span class="line">]);</span><br><span class="line"></span><br><span class="line"><span class="comment">/* ======================= 更新操作示例 ======================= */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 更新单个文档，会更新第一个匹配到的文档</span></span><br><span class="line"><span class="comment">// UPDATE inventory SET size.uom=&#x27;cm&#x27;, status=&#x27;P&#x27;, lastModified=now() WHERE item = &quot;paper&quot; </span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">updateOne</span>(</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;paper&quot;</span> &#125;,</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="attr">$set</span>: &#123; <span class="string">&quot;size.uom&quot;</span>: <span class="string">&quot;cm&quot;</span>, <span class="attr">status</span>: <span class="string">&quot;P&quot;</span> &#125;,</span><br><span class="line">     <span class="attr">$currentDate</span>: &#123; <span class="attr">lastModified</span>: <span class="literal">true</span> &#125;</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 批量更新</span></span><br><span class="line"><span class="comment">// UPDATE inventory SET size.uom=&#x27;in&#x27;, status=&#x27;P&#x27;, lastModified=now() WHERE qty &lt; 50</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">updateMany</span>(</span><br><span class="line">   &#123; <span class="string">&quot;qty&quot;</span>: &#123; <span class="attr">$lt</span>: <span class="number">50</span> &#125; &#125;,</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="attr">$set</span>: &#123; <span class="string">&quot;size.uom&quot;</span>: <span class="string">&quot;in&quot;</span>, <span class="attr">status</span>: <span class="string">&quot;P&quot;</span> &#125;,</span><br><span class="line">     <span class="attr">$currentDate</span>: &#123; <span class="attr">lastModified</span>: <span class="literal">true</span> &#125;</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 替换</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">replaceOne</span>(</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;paper&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;paper&quot;</span>, <span class="attr">instock</span>: [ &#123; <span class="attr">warehouse</span>: <span class="string">&quot;A&quot;</span>, <span class="attr">qty</span>: <span class="number">60</span> &#125;, &#123; <span class="attr">warehouse</span>: <span class="string">&quot;B&quot;</span>, <span class="attr">qty</span>: <span class="number">40</span> &#125; ] &#125;</span><br><span class="line">)</span><br><span class="line"><span class="comment">// 可以支持任意修改已存在字段的数据类型</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">updateOne</span>(</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;paper&quot;</span> &#125;,</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="attr">$set</span>: &#123; <span class="string">&quot;instock&quot;</span>: <span class="number">1000</span> &#125;,</span><br><span class="line">     <span class="attr">$currentDate</span>: &#123; <span class="attr">lastModified</span>: <span class="literal">true</span> &#125;</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除字段</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>(&#123;<span class="string">&quot;item&quot;</span>:<span class="string">&quot;map&quot;</span>&#125;)</span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">updateOne</span>(&#123;<span class="string">&quot;item&quot;</span>:<span class="string">&quot;map&quot;</span>&#125;,&#123;<span class="string">&quot;$unset&quot;</span>:&#123;<span class="string">&quot;status&quot;</span>:<span class="string">&quot;&quot;</span>&#125;&#125;)</span><br><span class="line"><span class="comment">// 把字段加回来</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">updateOne</span>(</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;map&quot;</span> &#125;,</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="attr">$set</span>: &#123;<span class="attr">status</span>: <span class="string">&quot;P&quot;</span> &#125;,</span><br><span class="line">     <span class="attr">$currentDate</span>: &#123; <span class="attr">lastModified</span>: <span class="literal">true</span> &#125;</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 更新字段名</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">updateMany</span>(&#123;<span class="string">&quot;item&quot;</span>:<span class="string">&quot;map&quot;</span>&#125;,&#123;<span class="string">&quot;$rename&quot;</span>:&#123;<span class="string">&quot;lastModified&quot;</span>:<span class="string">&quot;updateTime&quot;</span>&#125;&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数组操作</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>(&#123;<span class="string">&quot;item&quot;</span>:<span class="string">&quot;mobile&quot;</span>&#125;)</span><br><span class="line"><span class="comment">// 往tags数组中增加元素，如果tags字段不存在则会新增该字段，如果值有重复就不处理</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">updateMany</span>(&#123;<span class="string">&quot;item&quot;</span>:<span class="string">&quot;mobile&quot;</span>&#125;,&#123;<span class="attr">$addToSet</span>:&#123;<span class="attr">tags</span>:<span class="string">&quot;c&quot;</span>&#125;&#125;) </span><br><span class="line"><span class="comment">// 数组中添加数组元素，并不是添加多个值</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">updateMany</span>(&#123;<span class="string">&quot;item&quot;</span>:<span class="string">&quot;mobile&quot;</span>&#125;,&#123;<span class="attr">$addToSet</span>:&#123;<span class="attr">tags</span>:[<span class="string">&quot;o&quot;</span>,<span class="string">&quot;p&quot;</span>]&#125;&#125;) </span><br><span class="line"><span class="comment">// 通过$each，往数组中添加多个值</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">update</span>(</span><br><span class="line">   &#123; <span class="attr">item</span>: <span class="string">&quot;mobile&quot;</span> &#125;,</span><br><span class="line">   &#123; <span class="attr">$push</span>: &#123; <span class="attr">scores</span>: &#123; <span class="attr">$each</span>: [ <span class="number">90</span>, <span class="number">92</span>, <span class="number">85</span> ] &#125; &#125; &#125;</span><br><span class="line">)</span><br><span class="line"><span class="comment">// 往数组添加三个元素，但是只保留最后三个</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">update</span>(</span><br><span class="line">   &#123;<span class="attr">item</span>:<span class="string">&quot;mobile&quot;</span>&#125;,</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="attr">$push</span>: &#123;</span><br><span class="line">       <span class="attr">scores</span>: &#123;</span><br><span class="line">         <span class="attr">$each</span>: [ <span class="number">80</span>, <span class="number">78</span>, <span class="number">86</span> ],</span><br><span class="line">         <span class="attr">$slice</span>: -<span class="number">4</span></span><br><span class="line">       &#125;</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 更新所有记录，删除tags数组的red、big元素</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>(&#123; <span class="attr">tags</span>: &#123; <span class="attr">$in</span>: [<span class="string">&quot;red&quot;</span>, <span class="string">&quot;big&quot;</span>] &#125; &#125;)</span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">update</span>(</span><br><span class="line">    &#123; &#125;,</span><br><span class="line">    &#123; <span class="attr">$pull</span>: &#123; <span class="attr">tags</span>: &#123; <span class="attr">$in</span>: [ <span class="string">&quot;red&quot;</span>, <span class="string">&quot;big&quot;</span> ] &#125;&#125; &#125;,</span><br><span class="line">    &#123; <span class="attr">multi</span>: <span class="literal">true</span> &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 删除length数组中包含50/90的元素</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">update</span>( &#123; <span class="attr">item</span>: <span class="string">&quot;apple&quot;</span> &#125;, &#123; <span class="attr">$pullAll</span>: &#123; <span class="attr">length</span>: [ <span class="number">150</span>, <span class="number">390</span> ] &#125; &#125; )</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从前弹出一个元素，类似队列的pop api</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">update</span>( &#123; <span class="attr">item</span>:<span class="string">&quot;mobile&quot;</span>&#125;, &#123; <span class="attr">$pop</span>: &#123; <span class="attr">scores</span>: -<span class="number">1</span> &#125; &#125; )</span><br><span class="line"><span class="comment">// 从后弹出两个元素</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">update</span>( &#123; <span class="attr">item</span>:<span class="string">&quot;mobile&quot;</span>&#125;, &#123; <span class="attr">$pop</span>: &#123; <span class="attr">scores</span>: <span class="number">2</span> &#125; &#125; )</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数组元素过滤</span></span><br><span class="line"><span class="comment">// 将length数组中大于100的元素，调整为100</span></span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">find</span>( &#123; <span class="attr">length</span>: &#123;<span class="attr">$gte</span>:<span class="number">100</span>&#125; &#125; )</span><br><span class="line">db.<span class="property">inventory</span>.<span class="title function_">update</span>(</span><br><span class="line">   &#123;<span class="string">&quot;item&quot;</span> : <span class="string">&quot;map&quot;</span>&#125;,</span><br><span class="line">   &#123; <span class="attr">$set</span>: &#123; <span class="string">&quot;length.$[element]&quot;</span> : <span class="number">100</span> &#125; &#125;,</span><br><span class="line">   &#123; <span class="attr">multi</span>: <span class="literal">true</span>,</span><br><span class="line">     <span class="attr">arrayFilters</span>: [ &#123; <span class="string">&quot;element&quot;</span>: &#123; <span class="attr">$gte</span>: <span class="number">100</span> &#125; &#125; ]</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 批量写入操作</span></span><br><span class="line"><span class="comment">// 准备数据</span></span><br><span class="line">db.<span class="property">characters</span>.<span class="title function_">insertMany</span>([</span><br><span class="line">   &#123; <span class="string">&quot;_id&quot;</span> : <span class="number">1</span>, <span class="string">&quot;char&quot;</span> : <span class="string">&quot;Brisbane&quot;</span>, <span class="string">&quot;class&quot;</span> : <span class="string">&quot;monk&quot;</span>, <span class="string">&quot;lvl&quot;</span> : <span class="number">4</span> &#125;,</span><br><span class="line">   &#123; <span class="string">&quot;_id&quot;</span> : <span class="number">2</span>, <span class="string">&quot;char&quot;</span> : <span class="string">&quot;Eldon&quot;</span>, <span class="string">&quot;class&quot;</span> : <span class="string">&quot;alchemist&quot;</span>, <span class="string">&quot;lvl&quot;</span> : <span class="number">3</span> &#125;,</span><br><span class="line">   &#123; <span class="string">&quot;_id&quot;</span> : <span class="number">3</span>, <span class="string">&quot;char&quot;</span> : <span class="string">&quot;Meldane&quot;</span>, <span class="string">&quot;class&quot;</span> : <span class="string">&quot;ranger&quot;</span>, <span class="string">&quot;lvl&quot;</span> : <span class="number">3</span> &#125;</span><br><span class="line">]);</span><br><span class="line"><span class="comment">// 批量操作动作</span></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">   db.<span class="property">characters</span>.<span class="title function_">bulkWrite</span>(</span><br><span class="line">      [</span><br><span class="line">         &#123; insertOne :</span><br><span class="line">            &#123;</span><br><span class="line">               <span class="string">&quot;document&quot;</span> :</span><br><span class="line">               &#123;</span><br><span class="line">                  <span class="string">&quot;_id&quot;</span> : <span class="number">4</span>, <span class="string">&quot;char&quot;</span> : <span class="string">&quot;Dithras&quot;</span>, <span class="string">&quot;class&quot;</span> : <span class="string">&quot;barbarian&quot;</span>, <span class="string">&quot;lvl&quot;</span> : <span class="number">4</span></span><br><span class="line">               &#125;</span><br><span class="line">            &#125;</span><br><span class="line">         &#125;,</span><br><span class="line">         &#123; insertOne :</span><br><span class="line">            &#123;</span><br><span class="line">               <span class="string">&quot;document&quot;</span> :</span><br><span class="line">               &#123;</span><br><span class="line">                  <span class="string">&quot;_id&quot;</span> : <span class="number">5</span>, <span class="string">&quot;char&quot;</span> : <span class="string">&quot;Taeln&quot;</span>, <span class="string">&quot;class&quot;</span> : <span class="string">&quot;fighter&quot;</span>, <span class="string">&quot;lvl&quot;</span> : <span class="number">3</span></span><br><span class="line">               &#125;</span><br><span class="line">            &#125;</span><br><span class="line">         &#125;,</span><br><span class="line">         &#123; updateOne :</span><br><span class="line">            &#123;</span><br><span class="line">               <span class="string">&quot;filter&quot;</span> : &#123; <span class="string">&quot;char&quot;</span> : <span class="string">&quot;Eldon&quot;</span> &#125;,</span><br><span class="line">               <span class="string">&quot;update&quot;</span> : &#123; $set : &#123; <span class="string">&quot;status&quot;</span> : <span class="string">&quot;Critical Injury&quot;</span> &#125; &#125;</span><br><span class="line">            &#125;</span><br><span class="line">         &#125;,</span><br><span class="line">         &#123; deleteOne :</span><br><span class="line">            &#123; <span class="string">&quot;filter&quot;</span> : &#123; <span class="string">&quot;char&quot;</span> : <span class="string">&quot;Brisbane&quot;</span>&#125; &#125;</span><br><span class="line">         &#125;,</span><br><span class="line">         &#123; replaceOne :</span><br><span class="line">            &#123;</span><br><span class="line">               <span class="string">&quot;filter&quot;</span> : &#123; <span class="string">&quot;char&quot;</span> : <span class="string">&quot;Meldane&quot;</span> &#125;,</span><br><span class="line">               <span class="string">&quot;replacement&quot;</span> : &#123; <span class="string">&quot;char&quot;</span> : <span class="string">&quot;Tanys&quot;</span>, <span class="string">&quot;class&quot;</span> : <span class="string">&quot;oracle&quot;</span>, <span class="string">&quot;lvl&quot;</span> : <span class="number">4</span> &#125;</span><br><span class="line">            &#125;</span><br><span class="line">         &#125;</span><br><span class="line">      ]</span><br><span class="line">   );</span><br><span class="line">&#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">   <span class="title function_">print</span>(e);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="JAVA客户端使用"><a href="#JAVA客户端使用" class="headerlink" title="JAVA客户端使用"></a>JAVA客户端使用</h1><h2 id="MongoDB客户端驱动"><a href="#MongoDB客户端驱动" class="headerlink" title="MongoDB客户端驱动"></a>MongoDB客户端驱动</h2><p>客户端驱动标准URI连接语法</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[datab</span><br><span class="line">ase][?options]]</span><br></pre></td></tr></table></figure>
+
+<p>MongoDB支持的客户端语言驱动</p>
+<p>C&#x2F;C++、C#、GO、<strong>Java</strong>、NodeJs、Perl等主流编程语言</p>
+<p>Java语言可以通过下面两种方式开发</p>
+<ol>
+<li>MongoDB原生客户端</li>
+<li>spring-data-mongodb</li>
+</ol>
+<h2 id="MongoDB-CRUD操作"><a href="#MongoDB-CRUD操作" class="headerlink" title="MongoDB CRUD操作"></a>MongoDB CRUD操作</h2><p>原生客户端基础操作</p>
+<p>连接到MongoDB；选择数据库、集合；创建索引；增删改查。<br>代码示例：<a target="_blank" rel="noopener" href="https://github.com/chengchen901/mongo-study/blob/master/src/test/java/com/study/mongo/lesson01_quickstart/SyncBsonDocTest.java">Bson文档</a>、<a target="_blank" rel="noopener" href="https://github.com/chengchen901/mongo-study/blob/master/src/test/java/com/study/mongo/lesson01_quickstart/SyncJavaPojoTest.java">Java Pojo</a>操作</p>
+<p>POM文件</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mongodb<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mongodb-driver-sync<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;mongodb.driver.sync&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="批量写操作"><a href="#批量写操作" class="headerlink" title="批量写操作"></a>批量写操作</h2><p>MongoDB服务器以允许驱动程序为BulkWriteResult和BulkWriteException实现正确语义的方式，支持用于插入，更新和删除的批量写入命令</p>
+<p>批量操作有两种类型，有序和无序批量操作。</p>
+<ol>
+<li>有序批量操作按顺序执行所有操作，并在第一个写入错误时出错。</li>
+<li>无序批量操作将执行所有操作并报告所有错误。无序批量操作不能保证执行顺序</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://github.com/chengchen901/mongo-study/blob/master/src/test/java/com/study/mongo/lesson02_advance/BulkWriteTest.java">参考代码示例</a></p>
+<h2 id="Spring对MongoDB的支持"><a href="#Spring对MongoDB的支持" class="headerlink" title="Spring对MongoDB的支持"></a>Spring对MongoDB的支持</h2><p>Spring使用MongoDB</p>
+<ol>
+<li>pom引入spring-data-mongodb依赖</li>
+<li>配置mongodb信息</li>
+<li>类中引用MongoOperations接口</li>
+<li>使用MongoOperations完成</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.data<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-data-mongodb<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2.0.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://github.com/chengchen901/mongo-study/blob/master/src/test/java/com/study/mongo/lesson01_quickstart/SpringWithMongoTest.java">参考代码示例</a></p>
+<p>Spring对MongoDB的支持，参考<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-data/mongodb/docs/2.2.0.RELEASE/reference/html/#reference">spring官网链接</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/18-MongoDB/01-%E4%BB%8E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%B0MongoDB%E7%89%B9%E6%80%A7%E5%85%A5%E9%97%A8/" data-id="clmcxecau002gu8wafz7jgpr8" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/18-MongoDB/02-MongoDB%E9%AB%98%E7%BA%A7%E7%94%A8%E6%B3%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/17-%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/06-01-ELK%E5%AE%89%E8%A3%85%E6%96%87%E6%A1%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Spring中的扩展点总结 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Spring中的扩展节点定义解析与ImportBeanDefinitionRegistrar、ImportSelector 定义加载与BeanFactoryPostProcessor、BeanDefinitionRegistryPostProcessor 实例化与InstantiationAwareBeanPostProcessor 初始化与Aware、BeanPostProcessor、Init">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring中的扩展点总结">
+<meta property="og:url" content="http://example.com/2021/05/07/02-Spring/13-Spring%E6%BA%90%E7%A0%81-%E6%89%A9%E5%B1%95%E7%82%B9%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Spring中的扩展节点定义解析与ImportBeanDefinitionRegistrar、ImportSelector 定义加载与BeanFactoryPostProcessor、BeanDefinitionRegistryPostProcessor 实例化与InstantiationAwareBeanPostProcessor 初始化与Aware、BeanPostProcessor、Init">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210909134701.png">
+<meta property="article:published_time" content="2021-05-07T14:36:30.000Z">
+<meta property="article:modified_time" content="2022-09-25T12:26:07.149Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Spring">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210909134701.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-02-Spring/13-Spring源码-扩展点总结" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/02-Spring/13-Spring%E6%BA%90%E7%A0%81-%E6%89%A9%E5%B1%95%E7%82%B9%E6%80%BB%E7%BB%93/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Spring/">Spring</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Spring中的扩展点总结
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Spring中的扩展节点"><a href="#Spring中的扩展节点" class="headerlink" title="Spring中的扩展节点"></a>Spring中的扩展节点</h1><p>定义解析与ImportBeanDefinitionRegistrar、ImportSelector</p>
+<p>定义加载与BeanFactoryPostProcessor、BeanDefinitionRegistryPostProcessor</p>
+<p>实例化与InstantiationAwareBeanPostProcessor</p>
+<p>初始化与Aware、BeanPostProcessor、InitializingBean</p>
+<p>销毁与DisposableBean</p>
+<h2 id="Spring中Bean的生命周期"><a href="#Spring中Bean的生命周期" class="headerlink" title="Spring中Bean的生命周期"></a>Spring中Bean的生命周期</h2><h3 id="Spring-Bean生命周期的5个阶段"><a href="#Spring-Bean生命周期的5个阶段" class="headerlink" title="Spring Bean生命周期的5个阶段"></a>Spring Bean生命周期的5个阶段</h3><ol>
+<li><p>注册bean定义 Definition</p>
+</li>
+<li><p>实例化 Instantiation</p>
+</li>
+<li><p>属性赋值 Populate</p>
+</li>
+<li><p>初始化 Initialization</p>
+</li>
+<li><p>销毁 Destruction</p>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210909134701.png"></p>
+<p>注册bean定义-&gt;实例化 -&gt; 属性赋值 -&gt; 初始化 -&gt; 销毁</p>
+<p>完整的来说Spring Bean的生命周期有五个阶段，把这五个阶段和每个阶段对应的扩展点糅合在一起虽然没有问题，但是这样非常凌乱，难以理解。</p>
+<p>要彻底搞清楚Spring的生命周期，首先要把这五个阶段牢牢记住。实例化和属性赋值对应构造方法和setter方法的注入，初始化和销毁是用户能自定义扩展的两个阶段。在这五步之间穿插的各种扩展点。</p>
+<h3 id="registerBeanDefinition方法"><a href="#registerBeanDefinition方法" class="headerlink" title="registerBeanDefinition方法"></a>registerBeanDefinition方法</h3><p><code>BeanDefinitionReaderUtils#registerBeanDefinition</code> 最终通过<code>BeanDefinitionRegistry.registerBeanDefinition</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">registerBeanDefinition</span><span class="params">(</span></span><br><span class="line"><span class="params">    BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry)</span></span><br><span class="line">    <span class="keyword">throws</span> BeanDefinitionStoreException &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Register bean definition under primary name.</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">beanName</span> <span class="operator">=</span> definitionHolder.getBeanName();</span><br><span class="line">    registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Register aliases for bean name, if any.</span></span><br><span class="line">    String[] aliases = definitionHolder.getAliases();</span><br><span class="line">    <span class="keyword">if</span> (aliases != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (String alias : aliases) &#123;</span><br><span class="line">            registry.registerAlias(beanName, alias);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="doCreateBean方法"><a href="#doCreateBean方法" class="headerlink" title="doCreateBean方法"></a>doCreateBean方法</h3><p><code>AbstractAutowireCapableBeanFactory#doCreateBean </code>，主要逻辑都在doCreate()方法中，逻辑很清晰，就是顺序调用以下三个方法，这三个方法与三个生命周期阶段一一对应，非常重要，在后续扩展接口分析中也会涉及。</p>
+<ol>
+<li><p>createBeanInstance() -&gt; 实例化</p>
+</li>
+<li><p>populateBean() -&gt; 属性赋值</p>
+</li>
+<li><p>initializeBean() -&gt; 初始化</p>
+</li>
+<li><p>registerDisposableBeanIfNecessary-&gt;注册销毁回调</p>
+</li>
+</ol>
+<p>源码如下，能证明实例化，属性赋值和初始化这三个生命周期的存在。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 忽略了无关代码</span></span><br><span class="line"><span class="keyword">protected</span> Object <span class="title function_">doCreateBean</span><span class="params">(String beanName, RootBeanDefinition mbd, <span class="meta">@Nullable</span> Object[] args)</span></span><br><span class="line">    <span class="keyword">throws</span> BeanCreationException &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Instantiate the bean.</span></span><br><span class="line">    <span class="type">BeanWrapper</span> <span class="variable">instanceWrapper</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">if</span> (instanceWrapper == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 实例化阶段！</span></span><br><span class="line">        instanceWrapper = createBeanInstance(beanName, mbd, args);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Initialize the bean instance.</span></span><br><span class="line">    <span class="type">Object</span> <span class="variable">exposedObject</span> <span class="operator">=</span> bean;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 属性赋值阶段！</span></span><br><span class="line">        populateBean(beanName, mbd, instanceWrapper);</span><br><span class="line">        <span class="comment">// 初始化阶段！</span></span><br><span class="line">        exposedObject = initializeBean(beanName, exposedObject, mbd);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 注册销毁方法接口</span></span><br><span class="line">    registerDisposableBeanIfNecessary(beanName, bean, mbd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="close方法"><a href="#close方法" class="headerlink" title="close方法"></a>close方法</h3><p>销毁回调，是在容器关闭时调用的，详见<code> AbstractApplicationContext#close</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">close</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="built_in">this</span>.startupShutdownMonitor) &#123;</span><br><span class="line">        doClose();</span><br><span class="line">        <span class="comment">// If we registered a JVM shutdown hook, we don&#x27;t need it anymore now:</span></span><br><span class="line">        <span class="comment">// We&#x27;ve already explicitly closed the context.</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span>.shutdownHook != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Runtime.getRuntime().removeShutdownHook(<span class="built_in">this</span>.shutdownHook);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span> (IllegalStateException ex) &#123;</span><br><span class="line">                <span class="comment">// ignore - VM is already shutting down</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="扩展点"><a href="#扩展点" class="headerlink" title="扩展点"></a>扩展点</h2><p>Spring生命周期相关的常用扩展点非常多，大家以后可能不是不知道，而是容易忘记，这里通过Spring的生命周期及源码的方式帮大家理解记忆。</p>
+<h3 id="bean定义Definition"><a href="#bean定义Definition" class="headerlink" title="bean定义Definition"></a>bean定义Definition</h3><p>在这个阶段包含了4个扩展点，他们的被调用顺序是</p>
+<p>BeanDefinitionRegistryPostProcessor→ImportSelector→ImportBeanDefinitionRegistrar→BeanFactoryPostProcessor</p>
+<h4 id="BeanDefinitionRegistryPostProcessor"><a href="#BeanDefinitionRegistryPostProcessor" class="headerlink" title="BeanDefinitionRegistryPostProcessor"></a>BeanDefinitionRegistryPostProcessor</h4><p>BeanDefinitionRegistryPostProcessor是BeanFactoryPostProcessor的子接口，所以不仅有自身的方法，还有BeanFactoryPostProcessor的方法，这个方法是在初始化bean工厂时调用的，这个时候还没有将所有bd注册进bean工厂，而它的工作也是对绝大部分bd的注册。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 首先触发DefinitonRegistryPostProcessor，后面才是BeanFactoryPostProcessor</span></span><br><span class="line">postProcessBeanDefinitionRegistry(BeanDefinitionRegistry):<span class="number">20</span>, MyBeanDefinitonRegistryPostProcessor (com.study.spring.ext.bean_factory_post_processor)</span><br><span class="line"><span class="comment">// 真正执行的地方</span></span><br><span class="line">invokeBeanDefinitionRegistryPostProcessors(Collection, BeanDefinitionRegistry):<span class="number">280</span>, PostProcessorRegistrationDelegate (org.springframework.context.support)</span><br><span class="line">invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory, List):<span class="number">126</span>, PostProcessorRegistrationDelegate (org.springframework.context.support)</span><br><span class="line"><span class="comment">// AbstractApplicationContext.refresh的invokeBeanFactoryPostProcessors方法</span></span><br><span class="line">invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory):<span class="number">707</span>, AbstractApplicationContext (org.springframework.context.support)</span><br><span class="line"><span class="comment">// refresh</span></span><br><span class="line">refresh():<span class="number">533</span>, AbstractApplicationContext (org.springframework.context.support)</span><br><span class="line">&lt;init&gt;(String[]):<span class="number">101</span>, AnnotationConfigApplicationContext (org.springframework.context.annotation)</span><br><span class="line">main(String[]):<span class="number">9</span>, AnnotationConfig (com.study.spring.runner)</span><br></pre></td></tr></table></figure>
+
+<p>调用处理顺序主要在下面的方法中进行</p>
+<p>PostProcessorRegistrationDelegate#invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory, List<BeanFactoryPostProcessor>)</p>
+<p>BeanDefinitionRegistryPostProcessor接口有一个重要的实现类，也是spring内部的实现类，名字是ConfigurationClassPostProcessor，它在spring上下文对象的构造方法中就注册进了bean工厂，它的postProcessBeanDefinitionRegistry方法，也是BeanDefinitionRegistryPostProcessor特有的实现方法完成了对包的扫描并注册和对@Import注解的处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ConfigurationClassPostProcessor</span> <span class="keyword">implements</span> <span class="title class_">BeanDefinitionRegistryPostProcessor</span>,</span><br><span class="line">		PriorityOrdered, ResourceLoaderAware, BeanClassLoaderAware, EnvironmentAware &#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">postProcessBeanDefinitionRegistry</span><span class="params">(BeanDefinitionRegistry registry)</span> &#123;</span><br><span class="line">		<span class="comment">// 省略其他代码</span></span><br><span class="line">		processConfigBeanDefinitions(registry);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">processConfigBeanDefinitions</span><span class="params">(BeanDefinitionRegistry registry)</span> &#123;</span><br><span class="line">		<span class="comment">// 省略其他代码</span></span><br><span class="line">		<span class="comment">// Parse each @Configuration class</span></span><br><span class="line">		<span class="type">ConfigurationClassParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ConfigurationClassParser</span>(</span><br><span class="line">				<span class="built_in">this</span>.metadataReaderFactory, <span class="built_in">this</span>.problemReporter, <span class="built_in">this</span>.environment,</span><br><span class="line">				<span class="built_in">this</span>.resourceLoader, <span class="built_in">this</span>.componentScanBeanNameGenerator, registry);</span><br><span class="line">        parser.parse(candidates);</span><br><span class="line">		<span class="comment">// 省略其他代码</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ConfigurationClassParser的parse方法实现了ImpotSelector和ImportBeanDefinitionRegistrar的扩展调用，也决定了它们的执行顺序。</p>
+<p>Mybatis中MapperScannerConfigurer实现了该接口，在只有接口没有实现类的情况下找到接口方法与sql之间的联系从而生成BeanDefinition并注册。</p>
+<h4 id="ImportSelector"><a href="#ImportSelector" class="headerlink" title="ImportSelector"></a>ImportSelector</h4><p>这个接口的实现类因为是在@Import中注入的，所以自然这个类的回调方法也在BeanDefinitionRegistryPostProcessor的后调方法中执行的，它也是在初始化bean工厂时期调用的。</p>
+<p>这个实现类的回调方法比ImportBeanDefinitionRegistrar会稍微早一点，但是区别只是属于第一个判断而已，几乎同时期实现的。</p>
+<p>注意这个时候扫描的类已经注册进了bean工厂。</p>
+<h4 id="ImportBeanDefinitionRegistrar"><a href="#ImportBeanDefinitionRegistrar" class="headerlink" title="ImportBeanDefinitionRegistrar"></a>ImportBeanDefinitionRegistrar</h4><p>这个接口的实现类因为是在@Import中注入的，所以自然这个类的回调方法也在BeanDefinitionRegistryPostProcessor的后调方法中执行的，它也是在初始化bean工厂时期调用的。</p>
+<p>注意这个时候扫描的类已经注册进了bean工厂。</p>
+<p>当然还包含每天提到的@Configuration注解配置的bean也是在这个时候注册进了bean工厂。</p>
+<h4 id="BeanFactoryPostProcessor"><a href="#BeanFactoryPostProcessor" class="headerlink" title="BeanFactoryPostProcessor"></a>BeanFactoryPostProcessor</h4><p>在初始化完bean工厂的最后，这个时候绝大部分类已经注册进了bean工厂，包括扫描到的和@Import和@Import注入的类。</p>
+<p>同时BeanDefinitionRegistryPostProcessor接口中实现的BeanFactoryPostProcessor的后调方法也会调用，不过会在BeanFactoryPostProcessor的实现类之前。</p>
+<p>同样是ConfigurationClassPostProcessor实现的BeanFactoryPostProcessor的postProcessBeanFactory方法会对@Configuration类做cglib的动态代理。</p>
+<p>PropertyPlaceholderConfigurer，在BeanDefinition生成后，可能某些参数是${key}，这个实现类就是把前边这种参数转换成xxx.properties中key所对应的值。</p>
+<h3 id="实例化Instantiation"><a href="#实例化Instantiation" class="headerlink" title="实例化Instantiation"></a>实例化Instantiation</h3><p>已经实例化的bean时期调用的接口</p>
+<h4 id="InstantiationAwareBeanPostProcessor"><a href="#InstantiationAwareBeanPostProcessor" class="headerlink" title="InstantiationAwareBeanPostProcessor"></a>InstantiationAwareBeanPostProcessor</h4><h5 id="实例化前"><a href="#实例化前" class="headerlink" title="实例化前"></a>实例化前</h5><p>BeanPostProcessor子接口，用在实例化前后，属性填充。</p>
+<p>实例化前引用AbstractAutowireCapableBeanFactory#createBean(String, RootBeanDefinition,Object[])方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">protected</span> Object <span class="title function_">createBean</span><span class="params">(String beanName, RootBeanDefinition mbd, <span class="meta">@Nullable</span> Object[] args)</span></span><br><span class="line">    <span class="keyword">throws</span> BeanCreationException &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 省略代码</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.</span></span><br><span class="line">        <span class="comment">// 有兴趣可以自己看下，就是for循环调用所有的InstantiationAwareBeanPostProcessor</span></span><br><span class="line">        <span class="type">Object</span> <span class="variable">bean</span> <span class="operator">=</span> resolveBeforeInstantiation(beanName, mbdToUse);</span><br><span class="line">        <span class="keyword">if</span> (bean != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> bean;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 上文提到的doCreateBean方法，可以看到postProcessBeforeInstantiation方法在创建Bean之前调用</span></span><br><span class="line">        <span class="type">Object</span> <span class="variable">beanInstance</span> <span class="operator">=</span> doCreateBean(beanName, mbdToUse, args);</span><br><span class="line">        <span class="keyword">if</span> (logger.isTraceEnabled()) &#123;</span><br><span class="line">            logger.trace(<span class="string">&quot;Finished creating instance of bean &#x27;&quot;</span> + beanName + <span class="string">&quot;&#x27;&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> beanInstance;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 省略代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，postProcessBeforeInstantiation在doCreateBean之前调用，也就是在bean实例化之前调用的，英文源码注释解释道该方法的返回值会替换原本的Bean作为代理，这是通过TargetSource实现Aop等功能实现的关键点。</p>
+<h5 id="实例化后"><a href="#实例化后" class="headerlink" title="实例化后"></a>实例化后</h5><p>在属性赋值阶段，poulate方法中调用。</p>
+<h4 id="MergedBeanDefinitionPostProcessor"><a href="#MergedBeanDefinitionPostProcessor" class="headerlink" title="MergedBeanDefinitionPostProcessor"></a>MergedBeanDefinitionPostProcessor</h4><p>BeanPostProcessor的子接口</p>
+<p>创建完对象之后, 接下来, 就应该想办法对属性进行注入了, 其中就包括 @Autowired 注入，在注入之前需要对 @Autowired 进行扫描和解析，只是进行了扫描, 没有进行属性注入工作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Allow post-processors to modify the merged bean definition.</span></span><br><span class="line"><span class="keyword">synchronized</span> (mbd.postProcessingLock) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!mbd.postProcessed) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//调用属性合并后置处理器, 进行属性合并</span></span><br><span class="line">            <span class="comment">//这里会进行 一些注解 的扫描</span></span><br><span class="line">            <span class="comment">//CommonAnnotationBeanPostProcessor -&gt; @PostConstruct @PreDestroy @Resource</span></span><br><span class="line">            <span class="comment">//AutowiredAnnotationBeanPostProcessor -&gt; @Autowired @Value</span></span><br><span class="line">            applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">BeanCreationException</span>(mbd.getResourceDescription(), beanName,</span><br><span class="line">                                            <span class="string">&quot;Post-processing of merged bean definition failed&quot;</span>, ex);</span><br><span class="line">        &#125;</span><br><span class="line">        mbd.postProcessed = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>applyMergedBeanDefinitionPostProcessors方法实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">applyMergedBeanDefinitionPostProcessors</span><span class="params">(RootBeanDefinition mbd, Class&lt;?&gt; beanType, String beanName)</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (BeanPostProcessor bp : getBeanPostProcessors()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (bp <span class="keyword">instanceof</span> MergedBeanDefinitionPostProcessor) &#123;</span><br><span class="line">            <span class="type">MergedBeanDefinitionPostProcessor</span> <span class="variable">bdp</span> <span class="operator">=</span> (MergedBeanDefinitionPostProcessor) bp;</span><br><span class="line">            bdp.postProcessMergedBeanDefinition(mbd, beanType, beanName);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有三个后置处理器满足条件，按照调用先后顺序为: </p>
+<ol>
+<li><p>CommonAnnotationBeanPostProcessor</p>
+</li>
+<li><p>AutowiredAnnotationBeanPostProcessor</p>
+</li>
+<li><p>ApplicationListenerDetector</p>
+</li>
+</ol>
+<h5 id="CommonAnnotationBeanPostProcessor"><a href="#CommonAnnotationBeanPostProcessor" class="headerlink" title="CommonAnnotationBeanPostProcessor"></a>CommonAnnotationBeanPostProcessor</h5><ol>
+<li><p>扫描 @PostConstruct 和 @PreDestroy</p>
+</li>
+<li><p>扫描 @Resource , 这个需要到 findResourceMetadata 中, 才能看到</p>
+</li>
+</ol>
+<h5 id="AutowiredAnnotationBeanPostProcessor"><a href="#AutowiredAnnotationBeanPostProcessor" class="headerlink" title="AutowiredAnnotationBeanPostProcessor"></a>AutowiredAnnotationBeanPostProcessor</h5><ol>
+<li><p>扫描@Autowired</p>
+</li>
+<li><p>扫描@Value</p>
+<p>AutowiredAnnotationBeanPostProcessor类定义</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">AutowiredAnnotationBeanPostProcessor</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.autowiredAnnotationTypes.add(Autowired.class);</span><br><span class="line">    <span class="built_in">this</span>.autowiredAnnotationTypes.add(Value.class);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.autowiredAnnotationTypes.add((Class&lt;? <span class="keyword">extends</span> <span class="title class_">Annotation</span>&gt;)</span><br><span class="line">                                          ClassUtils.forName(<span class="string">&quot;javax.inject.Inject&quot;</span>, AutowiredAnnotationBeanPostProcessor.class.getClassLoader()));</span><br><span class="line">        logger.trace(<span class="string">&quot;JSR-330 &#x27;javax.inject.Inject&#x27; annotation found and supported for autowiring&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (ClassNotFoundException ex) &#123;</span><br><span class="line">        <span class="comment">// JSR-330 API not available - simply skip.</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>AutowiredAnnotationBeanPostProcessor#buildAutowiringMetadata</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">private</span> InjectionMetadata <span class="title function_">buildAutowiringMetadata</span><span class="params">(<span class="keyword">final</span> Class&lt;?&gt; clazz)</span> &#123;</span><br><span class="line">       <span class="keyword">if</span> (!AnnotationUtils.isCandidateClass(clazz, <span class="built_in">this</span>.autowiredAnnotationTypes)) &#123;</span><br><span class="line">           <span class="keyword">return</span> InjectionMetadata.EMPTY;</span><br><span class="line">       &#125;</span><br><span class="line">   </span><br><span class="line">       List&lt;InjectionMetadata.InjectedElement&gt; elements = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">       Class&lt;?&gt; targetClass = clazz;</span><br><span class="line">   </span><br><span class="line">       <span class="keyword">do</span> &#123;</span><br><span class="line">           <span class="keyword">final</span> List&lt;InjectionMetadata.InjectedElement&gt; currElements = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">   		<span class="comment">// 通过反射获取该类所有的字段，并遍历每一个字段，通过方法findAutowiredAnnotation 遍历每一个字段的所用注解</span></span><br><span class="line">           <span class="comment">// 如果用autowired修饰了，则返回 auotowired 相关属性</span></span><br><span class="line">           ReflectionUtils.doWithLocalFields(targetClass, field -&gt; &#123;</span><br><span class="line">               MergedAnnotation&lt;?&gt; ann = findAutowiredAnnotation(field);</span><br><span class="line">               <span class="keyword">if</span> (ann != <span class="literal">null</span>) &#123;</span><br><span class="line">                   <span class="keyword">if</span> (Modifier.isStatic(field.getModifiers())) &#123;</span><br><span class="line">                       <span class="keyword">if</span> (logger.isInfoEnabled()) &#123;</span><br><span class="line">                           logger.info(<span class="string">&quot;Autowired annotation is not supported on static fields: &quot;</span> + field);</span><br><span class="line">                       &#125;</span><br><span class="line">                       <span class="keyword">return</span>;</span><br><span class="line">                   &#125;</span><br><span class="line">                   <span class="type">boolean</span> <span class="variable">required</span> <span class="operator">=</span> determineRequiredStatus(ann);</span><br><span class="line">                   currElements.add(<span class="keyword">new</span> <span class="title class_">AutowiredFieldElement</span>(field, required));</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;);</span><br><span class="line">   </span><br><span class="line">           <span class="comment">// 通过反射处理类的method</span></span><br><span class="line">           ReflectionUtils.doWithLocalMethods(targetClass, method -&gt; &#123;</span><br><span class="line">               <span class="type">Method</span> <span class="variable">bridgedMethod</span> <span class="operator">=</span> BridgeMethodResolver.findBridgedMethod(method);</span><br><span class="line">               <span class="keyword">if</span> (!BridgeMethodResolver.isVisibilityBridgeMethodPair(method, bridgedMethod)) &#123;</span><br><span class="line">                   <span class="keyword">return</span>;</span><br><span class="line">               &#125;</span><br><span class="line">               MergedAnnotation&lt;?&gt; ann = findAutowiredAnnotation(bridgedMethod);</span><br><span class="line">               <span class="keyword">if</span> (ann != <span class="literal">null</span> &amp;&amp; method.equals(ClassUtils.getMostSpecificMethod(method, clazz))) &#123;</span><br><span class="line">                   <span class="keyword">if</span> (Modifier.isStatic(method.getModifiers())) &#123;</span><br><span class="line">                       <span class="keyword">if</span> (logger.isInfoEnabled()) &#123;</span><br><span class="line">                           logger.info(<span class="string">&quot;Autowired annotation is not supported on static methods: &quot;</span> + method);</span><br><span class="line">                       &#125;</span><br><span class="line">                       <span class="keyword">return</span>;</span><br><span class="line">                   &#125;</span><br><span class="line">                   <span class="keyword">if</span> (method.getParameterCount() == <span class="number">0</span>) &#123;</span><br><span class="line">                       <span class="keyword">if</span> (logger.isInfoEnabled()) &#123;</span><br><span class="line">                           logger.info(<span class="string">&quot;Autowired annotation should only be used on methods with parameters: &quot;</span> +</span><br><span class="line">                                       method);</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125;</span><br><span class="line">                   <span class="type">boolean</span> <span class="variable">required</span> <span class="operator">=</span> determineRequiredStatus(ann);</span><br><span class="line">                   <span class="type">PropertyDescriptor</span> <span class="variable">pd</span> <span class="operator">=</span> BeanUtils.findPropertyForMethod(bridgedMethod, clazz);</span><br><span class="line">                   currElements.add(<span class="keyword">new</span> <span class="title class_">AutowiredMethodElement</span>(method, required, pd));</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;);</span><br><span class="line">   </span><br><span class="line">           <span class="comment">// 用@Autowired修饰的注解可能不止一个，因此都加在 elements 这个容器里面，一起处理</span></span><br><span class="line">           elements.addAll(<span class="number">0</span>, currElements);</span><br><span class="line">           targetClass = targetClass.getSuperclass();</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">while</span> (targetClass != <span class="literal">null</span> &amp;&amp; targetClass != Object.class);</span><br><span class="line">   </span><br><span class="line">       <span class="keyword">return</span> InjectionMetadata.forElements(elements, clazz);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">##### ApplicationListenerDetector</span><br><span class="line"></span><br><span class="line">记录了容器中的 bean 是否是单例模式，这个标志, 是为了后面用的，对监听器进行过滤用的。</span><br><span class="line"></span><br><span class="line">````java</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">postProcessMergedBeanDefinition</span><span class="params">(RootBeanDefinition beanDefinition, Class&lt;?&gt; beanType, String beanName)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (ApplicationListener.class.isAssignableFrom(beanType)) &#123;</span><br><span class="line">        <span class="built_in">this</span>.singletonNames.put(beanName, beanDefinition.isSingleton());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="SmartInstantiationAwareBeanPostProcessor"><a href="#SmartInstantiationAwareBeanPostProcessor" class="headerlink" title="SmartInstantiationAwareBeanPostProcessor"></a>SmartInstantiationAwareBeanPostProcessor</h4><p>InstantiationAwareBeanPostProcessor的子接口，用在单例bean循环引用场景，AOP代理提前暴露bean引用。</p>
+<p>SmartInstantiationAwareBeanPostProcessor.getEarlyBeanReference方法的实现在</p>
+<p>AbstractAutoProxyCreator#getEarlyBeanReference中。</p>
+<h3 id="Aware接口"><a href="#Aware接口" class="headerlink" title="Aware接口"></a>Aware接口</h3><h4 id="属性赋值-Populate"><a href="#属性赋值-Populate" class="headerlink" title="属性赋值 Populate"></a>属性赋值 Populate</h4><h5 id="InstantiationAwareBeanPostProcessor-1"><a href="#InstantiationAwareBeanPostProcessor-1" class="headerlink" title="InstantiationAwareBeanPostProcessor"></a>InstantiationAwareBeanPostProcessor</h5><h6 id="实例化前-1"><a href="#实例化前-1" class="headerlink" title="实例化前"></a>实例化前</h6><p>在createBean方法中调用</p>
+<h6 id="实例化后-1"><a href="#实例化后-1" class="headerlink" title="实例化后"></a>实例化后</h6><p>先进行postProcessAfterInstantiation方法的调用</p>
+<p>该方法在属性赋值方法内，但是在真正执行赋值操作之前。其返回值为boolean，返回false时可以阻断属性赋值阶段。</p>
+<p>再进行postProcessProperties方法调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">populateBean</span><span class="params">(String beanName, RootBeanDefinition mbd, <span class="meta">@Nullable</span> BeanWrapper bw)</span> &#123;</span><br><span class="line">    <span class="comment">// 省略其他代码</span></span><br><span class="line">    <span class="comment">// Give any InstantiationAwareBeanPostProcessors the opportunity to modify the</span></span><br><span class="line">    <span class="comment">// state of the bean before properties are set. This can be used, for example,</span></span><br><span class="line">    <span class="comment">// to support styles of field injection.</span></span><br><span class="line">    <span class="keyword">if</span> (!mbd.isSynthetic() &amp;&amp; hasInstantiationAwareBeanPostProcessors()) &#123;</span><br><span class="line">        <span class="keyword">for</span> (BeanPostProcessor bp : getBeanPostProcessors()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (bp <span class="keyword">instanceof</span> InstantiationAwareBeanPostProcessor) &#123;</span><br><span class="line">                <span class="type">InstantiationAwareBeanPostProcessor</span> <span class="variable">ibp</span> <span class="operator">=</span> (InstantiationAwareBeanPostProcessor) bp;</span><br><span class="line">                <span class="keyword">if</span> (!ibp.postProcessAfterInstantiation(bw.getWrappedInstance(), beanName)) &#123;</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 省略其他代码</span></span><br><span class="line">    PropertyDescriptor[] filteredPds = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">if</span> (hasInstAwareBpps) &#123;</span><br><span class="line">        <span class="keyword">if</span> (pvs == <span class="literal">null</span>) &#123;</span><br><span class="line">            pvs = mbd.getPropertyValues();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (BeanPostProcessor bp : getBeanPostProcessors()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (bp <span class="keyword">instanceof</span> InstantiationAwareBeanPostProcessor) &#123;</span><br><span class="line">                <span class="type">InstantiationAwareBeanPostProcessor</span> <span class="variable">ibp</span> <span class="operator">=</span> (InstantiationAwareBeanPostProcessor) bp;</span><br><span class="line">                <span class="type">PropertyValues</span> <span class="variable">pvsToUse</span> <span class="operator">=</span> ibp.postProcessProperties(pvs, bw.getWrappedInstance(), beanName);</span><br><span class="line">                <span class="keyword">if</span> (pvsToUse == <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (filteredPds == <span class="literal">null</span>) &#123;</span><br><span class="line">                        filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);</span><br><span class="line">                    &#125;</span><br><span class="line">                    pvsToUse = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);</span><br><span class="line">                    <span class="keyword">if</span> (pvsToUse == <span class="literal">null</span>) &#123;</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                pvs = pvsToUse;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (needsDepCheck) &#123;</span><br><span class="line">        <span class="keyword">if</span> (filteredPds == <span class="literal">null</span>) &#123;</span><br><span class="line">            filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);</span><br><span class="line">        &#125;</span><br><span class="line">        checkDependencies(beanName, mbd, filteredPds, pvs);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pvs != <span class="literal">null</span>) &#123;</span><br><span class="line">        applyPropertyValues(beanName, mbd, bw, pvs);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="初始化-Initialization"><a href="#初始化-Initialization" class="headerlink" title="初始化 Initialization"></a>初始化 Initialization</h4><p>AbstractAutowireCapableBeanFactory#initializeBean(Object, RootBeanDefinition)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> Object <span class="title function_">initializeBean</span><span class="params">(String beanName, Object bean, <span class="meta">@Nullable</span> RootBeanDefinition mbd)</span> &#123;</span><br><span class="line">    <span class="comment">// Aware接口扩展</span></span><br><span class="line">    <span class="keyword">if</span> (System.getSecurityManager() != <span class="literal">null</span>) &#123;</span><br><span class="line">        AccessController.doPrivileged((PrivilegedAction&lt;Object&gt;) () -&gt; &#123;</span><br><span class="line">            invokeAwareMethods(beanName, bean);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;, getAccessControlContext());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        invokeAwareMethods(beanName, bean);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">Object</span> <span class="variable">wrappedBean</span> <span class="operator">=</span> bean;</span><br><span class="line">    <span class="keyword">if</span> (mbd == <span class="literal">null</span> || !mbd.isSynthetic()) &#123;</span><br><span class="line">        <span class="comment">// 初始化前，BeanPostProcessor.postProcessBeforeInitialization</span></span><br><span class="line">        <span class="comment">// 调用剩下的Aware接口</span></span><br><span class="line">        wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 初始化处理 </span></span><br><span class="line">        <span class="comment">// 1. 处理InitializingBean.afterPropertiesSet </span></span><br><span class="line">        <span class="comment">// 2. 调用bean定义initMethod</span></span><br><span class="line">        invokeInitMethods(beanName, wrappedBean, mbd);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">BeanCreationException</span>(</span><br><span class="line">            (mbd != <span class="literal">null</span> ? mbd.getResourceDescription() : <span class="literal">null</span>),</span><br><span class="line">            beanName, <span class="string">&quot;Invocation of init method failed&quot;</span>, ex);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mbd == <span class="literal">null</span> || !mbd.isSynthetic()) &#123;</span><br><span class="line">        <span class="comment">// 初始化后，BeanPostProcessor.postProcessAfterInitialization</span></span><br><span class="line">        wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> wrappedBean;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="Aware接口-1"><a href="#Aware接口-1" class="headerlink" title="Aware接口"></a>Aware接口</h5><p>Aware类型的接口的作用就是让我们能够拿到Spring容器中的一些资源。基本都能够见名知意，Aware之前的名字就是可以拿到什么资源，例如 BeanNameAware 可以拿到BeanName，以此类推。调用时机</p>
+<p>需要注意：所有的Aware方法都是在初始化阶段之前调用的！</p>
+<p>Aware接口众多，这里同样通过分类的方式帮助大家记忆。 Aware接口具体可以分为两组，至于为什么这么分，详见下面的源码分析。如下排列顺序同样也是Aware接口的执行顺序，能够见名知意的接口不再解释。</p>
+<ol>
+<li><p>第一组，invokeAwareMethods方法调用</p>
+<ol>
+<li><p>BeanNameAware</p>
+</li>
+<li><p>BeanClassLoaderAware</p>
+</li>
+<li><p>BeanFactoryAware</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">invokeAwareMethods</span><span class="params">(String beanName, Object bean)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (bean <span class="keyword">instanceof</span> Aware) &#123;</span><br><span class="line">        <span class="keyword">if</span> (bean <span class="keyword">instanceof</span> BeanNameAware) &#123;</span><br><span class="line">            ((BeanNameAware) bean).setBeanName(beanName);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (bean <span class="keyword">instanceof</span> BeanClassLoaderAware) &#123;</span><br><span class="line">            <span class="type">ClassLoader</span> <span class="variable">bcl</span> <span class="operator">=</span> getBeanClassLoader();</span><br><span class="line">            <span class="keyword">if</span> (bcl != <span class="literal">null</span>) &#123;</span><br><span class="line">                ((BeanClassLoaderAware) bean).setBeanClassLoader(bcl);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (bean <span class="keyword">instanceof</span> BeanFactoryAware) &#123;</span><br><span class="line">            ((BeanFactoryAware) bean).setBeanFactory(AbstractAutowireCapableBeanFactory.<span class="built_in">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><p>第二组，applyBeanPostProcessorsBeforeInitialization方法调用</p>
+</li>
+<li><p>EnvironmentAware</p>
+</li>
+<li><p>EmbeddedValueResolverAware 这个知道的人可能不多，实现该接口能够获取Spring EL解析器，用户的自定义注解需要支持spel表达式的时候可以使用，非常方便。</p>
+</li>
+<li><p>ApplicationContextAware(ResourceLoaderAware\ApplicationEventPublisherAware\MessageSourceAware) 这几个接口可能让人有点懵，实际上这几个接口可以一起记，其返回值实质上都是当前的ApplicationContext对象，因为ApplicationContext是一个复合接口</p>
+<p>ApplicationContextAwareProcessor#postProcessBeforeInitialization</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">postProcessBeforeInitialization</span><span class="params">(Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException &#123;</span><br><span class="line">    <span class="keyword">if</span> (!(bean <span class="keyword">instanceof</span> EnvironmentAware || bean <span class="keyword">instanceof</span> EmbeddedValueResolverAware ||</span><br><span class="line">          bean <span class="keyword">instanceof</span> ResourceLoaderAware || bean <span class="keyword">instanceof</span> ApplicationEventPublisherAware ||</span><br><span class="line">          bean <span class="keyword">instanceof</span> MessageSourceAware || bean <span class="keyword">instanceof</span> ApplicationContextAware))&#123;</span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">AccessControlContext</span> <span class="variable">acc</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (System.getSecurityManager() != <span class="literal">null</span>) &#123;</span><br><span class="line">        acc = <span class="built_in">this</span>.applicationContext.getBeanFactory().getAccessControlContext();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (acc != <span class="literal">null</span>) &#123;</span><br><span class="line">        AccessController.doPrivileged((PrivilegedAction&lt;Object&gt;) () -&gt; &#123;</span><br><span class="line">            invokeAwareInterfaces(bean);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;, acc);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        invokeAwareInterfaces(bean);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> bean;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ApplicationContext和BeanFactory的区别，可以从ApplicationContext继承的这几个接口入手，除去BeanFactory相关的两个接口就是ApplicationContext独有的功能，这里不详细说明。</p>
+</li>
+</ol>
+<h5 id="BeanPostProcessor"><a href="#BeanPostProcessor" class="headerlink" title="BeanPostProcessor"></a>BeanPostProcessor</h5><p>在refresh方法中的registerBeanPostProcessors，BeanPostProcessor也会注册为Bean。</p>
+<h6 id="初始化前"><a href="#初始化前" class="headerlink" title="初始化前"></a>初始化前</h6><p>BeanPostProcessor#postProcessBeforeInitialization</p>
+<p>AbstractAutowireCapableBeanFactory#applyBeanPostProcessorsBeforeInitialization</p>
+<p>对应的实现类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">AbstractAdvisingBeanPostProcessor</span><br><span class="line">AbstractAutoProxyCreator</span><br><span class="line">AdvisorAdapterRegistrationManager</span><br><span class="line">ApplicationContextAwareProcessor</span><br><span class="line">ApplicationListenerDetector</span><br><span class="line">BeanPostProcessorChecker in PostProcessorRegistrationDelegate</span><br><span class="line">BeanValidationPostProcessor</span><br><span class="line">BootstrapContextAwareProcessor</span><br><span class="line">ImportAwareBeanPostProcessor in ConfigurationClassPostProcessor</span><br><span class="line">InitDestroyAnnotationBeanPostProcessor</span><br><span class="line">InstantiationAwareBeanPostProcessorAdapter</span><br><span class="line">LoadTimeWeaverAwareProcessor</span><br><span class="line">ScheduledAnnotationBeanPostProcessor</span><br></pre></td></tr></table></figure>
+
+<p>BeanPostProcessor有很多个，而且每个BeanPostProcessor都影响多个Bean，其执行顺序至关重要，必须能够控制其执行顺序才行。关于执行顺序这里需要引入两个排序相关的接口：PriorityOrdered、Ordered。</p>
+<ul>
+<li>PriorityOrdered是一等公民，首先被执行，PriorityOrdered公民之间通过接口返回值排序</li>
+<li>Ordered是二等公民，然后执行，Ordered公民之间通过接口返回值排序</li>
+<li>都没有实现是三等公民，最后执行</li>
+</ul>
+<p>registerBeanPostProcessors方法的代理实现中进行了相关排序的计算处理。</p>
+<p>其中AbstractAutoProxyCreator是非常重要的AOP实现，只不过在初始化之前，AOP中的没有做任何实现。</p>
+<h6 id="初始化后"><a href="#初始化后" class="headerlink" title="初始化后"></a>初始化后</h6><p>BeanPostProcessor#postProcessAfterInitialization</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">AbstractAdvisingBeanPostProcessor</span><br><span class="line">AbstractAutoProxyCreator</span><br><span class="line">AdvisorAdapterRegistrationManager</span><br><span class="line">ApplicationListenerDetector</span><br><span class="line">BeanPostProcessorChecker in PostProcessorRegistrationDelegate</span><br><span class="line">BeanValidationPostProcessor</span><br><span class="line">BootstrapContextAwareProcessor</span><br><span class="line">InitDestroyAnnotationBeanPostProcessor</span><br><span class="line">InstantiationAwareBeanPostProcessorAdapter</span><br><span class="line">LoadTimeWeaverAwareProcessor</span><br><span class="line">ScheduledAnnotationBeanPostProcessor</span><br></pre></td></tr></table></figure>
+
+<p>AbstractAutoProxyCreator的postProcessAfterInitialization实现了对bean进行了AOP代理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">postProcessAfterInitialization</span><span class="params">(<span class="meta">@Nullable</span> Object bean, String beanName)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (bean != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">cacheKey</span> <span class="operator">=</span> getCacheKey(bean.getClass(), beanName);</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span>.earlyProxyReferences.remove(cacheKey) != bean) &#123;</span><br><span class="line">            <span class="keyword">return</span> wrapIfNecessary(bean, beanName, cacheKey);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> bean;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="InitializingBean"><a href="#InitializingBean" class="headerlink" title="InitializingBean"></a>InitializingBean</h5><p>AbstractAutowireCapableBeanFactory#invokeInitMethods</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">invokeInitMethods</span><span class="params">(String beanName, Object bean, <span class="meta">@Nullable</span> RootBeanDefinition mbd)</span></span><br><span class="line">    <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="variable">isInitializingBean</span> <span class="operator">=</span> (bean <span class="keyword">instanceof</span> InitializingBean);</span><br><span class="line">    <span class="keyword">if</span> (isInitializingBean &amp;&amp; (mbd == <span class="literal">null</span> || !mbd.isExternallyManagedInitMethod(<span class="string">&quot;afterPropertiesSet&quot;</span>))) &#123;</span><br><span class="line">        <span class="keyword">if</span> (logger.isTraceEnabled()) &#123;</span><br><span class="line">            logger.trace(<span class="string">&quot;Invoking afterPropertiesSet() on bean with name &#x27;&quot;</span> + beanName + <span class="string">&quot;&#x27;&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (System.getSecurityManager() != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                AccessController.doPrivileged((PrivilegedExceptionAction&lt;Object&gt;) () -&gt; &#123;</span><br><span class="line">                    ((InitializingBean) bean).afterPropertiesSet();</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">                &#125;, getAccessControlContext());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span> (PrivilegedActionException pae) &#123;</span><br><span class="line">                <span class="keyword">throw</span> pae.getException();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            ((InitializingBean) bean).afterPropertiesSet();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (mbd != <span class="literal">null</span> &amp;&amp; bean.getClass() != NullBean.class) &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">initMethodName</span> <span class="operator">=</span> mbd.getInitMethodName();</span><br><span class="line">        <span class="keyword">if</span> (StringUtils.hasLength(initMethodName) &amp;&amp;</span><br><span class="line">            !(isInitializingBean &amp;&amp; <span class="string">&quot;afterPropertiesSet&quot;</span>.equals(initMethodName)) &amp;&amp;</span><br><span class="line">            !mbd.isExternallyManagedInitMethod(initMethodName)) &#123;</span><br><span class="line">            invokeCustomInitMethod(beanName, bean, mbd);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时，Bean初始化完成，业务中可以正常调用该bean了。</p>
+<h3 id="销毁-Destruction"><a href="#销毁-Destruction" class="headerlink" title="销毁 Destruction"></a>销毁 Destruction</h3><p>当容器关闭的时候，会触发销毁方法调用</p>
+<h4 id="注册销毁回调"><a href="#注册销毁回调" class="headerlink" title="注册销毁回调"></a>注册销毁回调</h4><p>AbstractBeanFactory#registerDisposableBeanIfNecessary</p>
+<h5 id="DisposableBean"><a href="#DisposableBean" class="headerlink" title="DisposableBean"></a>DisposableBean</h5><h5 id="DestructionAwareBeanPostProcessor"><a href="#DestructionAwareBeanPostProcessor" class="headerlink" title="DestructionAwareBeanPostProcessor"></a>DestructionAwareBeanPostProcessor</h5><p>BeanPostProcessor的子接口</p>
+<h5 id="触发销毁"><a href="#触发销毁" class="headerlink" title="触发销毁"></a>触发销毁</h5><p>AbstractApplicationContext#close</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/02-Spring/13-Spring%E6%BA%90%E7%A0%81-%E6%89%A9%E5%B1%95%E7%82%B9%E6%80%BB%E7%BB%93/" data-id="clmcxecui007mu8wa021d4mmw" data-title="Spring中的扩展点总结" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/05/07/02-Spring/12-Spring%E6%BA%90%E7%A0%81-%E4%BA%8B%E5%8A%A1%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Spring源码-事务源码解读
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/05/07/02-Spring/14-%E6%89%8B%E5%86%99SpringMVC/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">手写SpringMVC</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

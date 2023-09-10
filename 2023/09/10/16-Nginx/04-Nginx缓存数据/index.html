@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Nginx缓存机制介绍Nginx缓存机制的作用 缓存能够提升性能，学会Nginx中如何使用缓存很重要。 Nginx作为静态资源服务器，静态资源变动频率小，缓存能够加速访问。 Nginx离用户最近，启用缓存能更好的提高性能，结合Redis可以组成类似二级缓存。  Nginx缓存机制简述Nginx中的缓存 nginx中的缓存是以文件系统上的分层数据存储的形式实现的。缓存Key是可配置的，并且可以使用不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/16-Nginx/04-Nginx%E7%BC%93%E5%AD%98%E6%95%B0%E6%8D%AE/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Nginx缓存机制介绍Nginx缓存机制的作用 缓存能够提升性能，学会Nginx中如何使用缓存很重要。 Nginx作为静态资源服务器，静态资源变动频率小，缓存能够加速访问。 Nginx离用户最近，启用缓存能更好的提高性能，结合Redis可以组成类似二级缓存。  Nginx缓存机制简述Nginx中的缓存 nginx中的缓存是以文件系统上的分层数据存储的形式实现的。缓存Key是可配置的，并且可以使用不">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-09-10T03:59:07.809Z">
+<meta property="article:modified_time" content="2022-11-06T11:57:36.843Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-16-Nginx/04-Nginx缓存数据" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/16-Nginx/04-Nginx%E7%BC%93%E5%AD%98%E6%95%B0%E6%8D%AE/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:07.809Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Nginx缓存机制介绍"><a href="#Nginx缓存机制介绍" class="headerlink" title="Nginx缓存机制介绍"></a>Nginx缓存机制介绍</h1><h2 id="Nginx缓存机制的作用"><a href="#Nginx缓存机制的作用" class="headerlink" title="Nginx缓存机制的作用"></a>Nginx缓存机制的作用</h2><ol>
+<li>缓存能够提升性能，学会Nginx中如何使用缓存很重要。</li>
+<li>Nginx作为静态资源服务器，静态资源变动频率小，缓存能够加速访问。</li>
+<li>Nginx离用户最近，启用缓存能更好的提高性能，结合Redis可以组成类似二级缓存。</li>
+</ol>
+<h2 id="Nginx缓存机制简述"><a href="#Nginx缓存机制简述" class="headerlink" title="Nginx缓存机制简述"></a>Nginx缓存机制简述</h2><p><strong>Nginx中的缓存</strong></p>
+<p>nginx中的缓存是以文件系统上的分层数据存储的形式实现的。<br>缓存Key是可配置的，并且可以使用不同的请求特定参数来控制进入缓存的内容。<br>缓存Key和缓存元数据存储在共享内存段中，缓存加载器、缓存管理器和Worker进程可以访问它们。<br>目前，除了操作系统的虚拟文件系统机制所暗示的优化之外，没有任何内存中的文件缓存。每个缓存的响应都放在文件系统上的不同文件中。通过nginx配置指令控制指定层次结构(级别和命名细节)。</p>
+<p><strong>缓存放置内容过程：</strong></p>
+<p>当nginx从上游服务器读取响应时，首先将内容写入缓存目录结构之外的临时文件。 </p>
+<p>当nginx完成处理请求时，它会重命名临时文件并将其移动到缓存目录。如果用于代理的临时文件目录位于另一个文件系统上，则文件将被复制，因此建议将临时目录和缓存目录保留在同一个文件系统上。当需要显式清除文件时，从缓存目录结构中删除文件也是非常安全的。</p>
+<p>nginx有第三方扩展，可以远程控制缓存的内容，并计划在主发行版中集成此功能</p>
+<h2 id="Nginx缓存支持"><a href="#Nginx缓存支持" class="headerlink" title="Nginx缓存支持"></a>Nginx缓存支持</h2><p>Nginx中有非常强大的缓存功能，针对后台服务返回的数据能够进行缓存，再次访问时，无需从后台服务拿取结果，直接在nginx本地获取即可。Nginx中针对fastcgi、http_proxy、scgi、ssl_session、ngx_http_uwsgi_module模块提供了通用的缓存功能。</p>
+<table>
+<thead>
+<tr>
+<th>cache支持的模块</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ngx_http_fastcgi_module</td>
+<td>快速通用网关接口，如php,perl,tcl等采用</td>
+</tr>
+<tr>
+<td>ngx_http_proxy_module</td>
+<td>http代理模块，适用任何http协议的后台服务</td>
+</tr>
+<tr>
+<td>ngx_http_scgi_module</td>
+<td>通用网关接口，如php,perl,tcl等采用</td>
+</tr>
+<tr>
+<td>ngx_http_uwsgi_module</td>
+<td>WSGI协议的web服务，如python采用</td>
+</tr>
+<tr>
+<td>ngx_http_ssl_module</td>
+<td>session缓存</td>
+</tr>
+<tr>
+<td>ngx_http_core_module</td>
+<td>open_file_cache文件缓存</td>
+</tr>
+</tbody></table>
+<p> 以http_proxy模块为例来进行学习，观察官网其他模块，都相差不大，学会一个其他的也就学会了</p>
+<h2 id="缓存使用"><a href="#缓存使用" class="headerlink" title="缓存使用"></a>缓存使用</h2><p>缓存常用指令：</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>作用</th>
+<th>默认值</th>
+<th>分类</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>proxy_cache_path</td>
+<td>定义缓存的路径和缓存空间名、大小等配置，缓存数据存储在文件中。缓存中的文件名是将MD5功能应用于缓存键的结果。</td>
+<td>-</td>
+<td>定义</td>
+</tr>
+<tr>
+<td>proxy_cache</td>
+<td>启用缓存，指定的用于缓存的缓存空间名，不同地方可以启用同一个空间名。</td>
+<td>-</td>
+<td>应用</td>
+</tr>
+<tr>
+<td>proxy_cache_valid</td>
+<td>设置不同响应代码的缓存时间</td>
+<td>-</td>
+<td>应用</td>
+</tr>
+<tr>
+<td>proxy_cache_key</td>
+<td>定义缓存的Key</td>
+<td>$scheme $proxy_host $request_uri;</td>
+<td>定义</td>
+</tr>
+<tr>
+<td>proxy_cache_purge</td>
+<td>定义将请求视为缓存清除请求的条件。如果字符串参数的至少一个值不为空且不等于“0”，则移除具有相应高速缓存键的高速缓存条目 。通过返回204（无内容）响应来指示成功操作的结果。</td>
+<td>-</td>
+<td>应用</td>
+</tr>
+</tbody></table>
+<p> 示例参考下面内容</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">	<span class="comment"># 并发连接数</span></span><br><span class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="comment"># JAVA服务器集群</span></span><br><span class="line">	<span class="section">upstream</span> app_servers &#123;</span><br><span class="line">		<span class="attribute">server</span> <span class="number">127.0.0.1:8080</span>;	</span><br><span class="line"><span class="comment">#		server 127.0.0.1:8081;</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment"># 代理缓存配置 - 定义配置</span></span><br><span class="line">	<span class="attribute">proxy_cache_path</span> <span class="string">&quot;./cache_data/&quot;</span> levels=<span class="number">2</span>:<span class="number">1</span>:<span class="number">2</span> keys_zone=hot_information_cache:<span class="number">256m</span> inactive=<span class="number">1d</span> max_size=<span class="number">1000g</span>;  </span><br><span class="line">	<span class="attribute">proxy_cache_path</span> <span class="string">&quot;./cache_data/&quot;</span> levels=<span class="number">2</span>:<span class="number">1</span>:<span class="number">2</span> keys_zone=cache2:<span class="number">256m</span> inactive=<span class="number">30s</span> max_size=<span class="number">30g</span>;  </span><br><span class="line">	<span class="section">server</span> &#123;</span><br><span class="line">		<span class="comment"># 监听80端口</span></span><br><span class="line">		<span class="attribute">listen</span>	<span class="number">80</span>;</span><br><span class="line">		<span class="section">location</span> / &#123;</span><br><span class="line">            <span class="comment"># 开启缓存</span></span><br><span class="line">            <span class="attribute">proxy_cache</span> hot_information_cache;</span><br><span class="line">            <span class="comment"># 缓存JAVA应用返回的指定状态的数据，缓存时间时1天       </span></span><br><span class="line">            <span class="attribute">proxy_cache_valid</span> <span class="number">200</span> <span class="number">206</span> <span class="number">304</span> <span class="number">301</span> <span class="number">302</span> <span class="number">1d</span>;</span><br><span class="line">            <span class="comment"># 请求的url就是缓存的key（根据实际业务场景匹配）       </span></span><br><span class="line">            <span class="attribute">proxy_cache_key</span> <span class="variable">$uri</span><span class="variable">$is_args</span><span class="variable">$args</span>;      </span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 设置传递给上游服务的请求头，Host为客户端host，默认为$proxy_host</span></span><br><span class="line">            <span class="attribute">proxy_set_header</span> Host <span class="variable">$http_host</span>;</span><br><span class="line">            <span class="comment"># 如果缓存中没找到，再去请求后端服务器</span></span><br><span class="line">            <span class="attribute">proxy_pass</span> http://app_servers;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="comment"># 该指令在商业版本Nginx Plus支持，可以通过第三方模块ngx_cache_purge来替代</span></span><br><span class="line">		<span class="comment"># 资源有变化的时候清除缓存</span></span><br><span class="line">		<span class="section">location</span> <span class="regexp">~ /purge(/.*)</span> &#123;</span><br><span class="line">			<span class="comment">#设置只允许指定的IP来清除缓存</span></span><br><span class="line">			<span class="attribute">allow</span> all;</span><br><span class="line">			<span class="comment"># allow 127.0.0.1;</span></span><br><span class="line">			<span class="comment"># deny all ;</span></span><br><span class="line">			<span class="attribute">proxy_cache_purge</span> hot_information_cache <span class="variable">$1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="proxy-cache-path参数详解"><a href="#proxy-cache-path参数详解" class="headerlink" title="proxy_cache_path参数详解"></a>proxy_cache_path参数详解</h2><p><strong>level</strong>：用来定义缓存的层级，可以定义1到3个层级，每个层级接收值1、2</p>
+<p><strong>use_temp_path</strong>：是否启用缓存临时文件，第一次响应的内容将写入临时文件，后面才会重写回来。使用网盘注意网络IO的开销。</p>
+<p><strong>keys_zone</strong>：定义在共享存储区中存储了所有活跃的Key和关于数据的信息。存储区名称和大小由key_zone参数配置。一个兆字节的区域可以存储大约8,000个Key</p>
+<p><strong>Inactive</strong>：不论数据新旧程度，在inactive指定的时间内未访问的缓存数据 将从缓存中删除。</p>
+<h2 id="缓存指令附录"><a href="#缓存指令附录" class="headerlink" title="缓存指令附录"></a>缓存指令附录</h2><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>作用</th>
+<th>默认值</th>
+<th>分类</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>proxy_cache</td>
+<td>定义用于缓存的共享内存区域，可以在多个地方使用相同的区域。off禁用从先前配置级别继承的高速缓存。</td>
+<td>off</td>
+<td>定义</td>
+</tr>
+<tr>
+<td>proxy_cache_background_update</td>
+<td>允许启动后台子请求以更新过期的缓存项，同时将过时的缓存响应返回给客户端。</td>
+<td>off</td>
+<td>更新</td>
+</tr>
+<tr>
+<td>proxy_cache_bypass</td>
+<td>定义不从缓存中获取响应的条件。如果字符串参数的至少一个值不为空且不等于“0”，则不会从缓存中获取响应，可以与proxy_no_cache指令一起使用</td>
+<td>-</td>
+<td>应用</td>
+</tr>
+<tr>
+<td>proxy_cache_convert_head</td>
+<td>启用或禁用将“ HEAD”方法转换为“ ”以GET进行缓存。禁用转换时， 应将缓存键配置为包含$request_method。</td>
+<td>on</td>
+<td>应用</td>
+</tr>
+<tr>
+<td>proxy_cache_key</td>
+<td>定义缓存的键，默认情况下，指令的值接近字符串</td>
+<td>$scheme $proxy_host $request_uri</td>
+<td>定义</td>
+</tr>
+<tr>
+<td>proxy_cache_lock</td>
+<td>启用锁，一次只允许一个请求重建缓存，其他请求等待直到proxy_cache_lock_timeout设置超时。</td>
+<td>off</td>
+<td>管理</td>
+</tr>
+<tr>
+<td>proxy_cache_lock_age</td>
+<td>在指定的时间内，上一个重构缓存的请求未完成，则将另一个请求传递给代理服务器。</td>
+<td>5s</td>
+<td>应用</td>
+</tr>
+<tr>
+<td>proxy_cache_lock_timeout</td>
+<td>设置proxy_cache_lock的超时，超时请求将被传递给代理的服务器，但是，响应不会被缓存。</td>
+<td>5s</td>
+<td>应用</td>
+</tr>
+<tr>
+<td>proxy_cache_max_range_offset</td>
+<td>设置响应被缓存的最大字节数，超过则不缓存响应，直接请求代理服务。</td>
+<td>-</td>
+<td>应用</td>
+</tr>
+<tr>
+<td>proxy_cache_methods</td>
+<td>需要进行缓存的HTTP方法</td>
+<td>GET、HEAD</td>
+<td>应用</td>
+</tr>
+<tr>
+<td>proxy_cache_min_uses</td>
+<td>设置多少次请求后才缓存响应内容</td>
+<td>1</td>
+<td>应用</td>
+</tr>
+<tr>
+<td>proxy_cache_path</td>
+<td>设置缓存的路径和其他参数，缓存数据存储在文件中。缓存中的文件名是将MD5功能应用于缓存键的结果。 其他参数 levels参数定义高速缓存的层次结构级别 use_temp_path是否启用临时文件keys_zone定义键的大小，一兆字节区域可以存储大约8000个键inactive 指定的时间内未访问的缓存数据 将从缓存中删除 缓存管理器：max_size、manager_files、manager_threshold、manager_sleep 缓存清除：purger、purger_files、purger_threshold、purger_sleep</td>
+<td>-</td>
+<td>定义&#x2F;清除</td>
+</tr>
+<tr>
+<td>proxy_cache_purge</td>
+<td>定义将请求视为缓存清除请求的条件。如果字符串参数的至少一个值不为空且不等于“0”，则移除具有相应高速缓存键的高速缓存条目 。通过返回204（无内容）响应来指示成功操作的结果。 如果清除请求的缓存键以星号（“ *”）结束，则将从缓存中删除与通配符键匹配的所有缓存条目。但是，这些条目将保留在磁盘上，直到它们被删除为非活动状态，或由缓存清除程序（1.7.12）处理，或者客户端尝试访问它们。</td>
+<td>-</td>
+<td>清除</td>
+</tr>
+<tr>
+<td>proxy_cache_revalidate</td>
+<td>使用带有“If-Modified-Since”和“If-None-Match”标头字段的条件请求启用过期缓存项的重新验证。</td>
+<td>off</td>
+<td>应用</td>
+</tr>
+<tr>
+<td>proxy_cache_use_stale</td>
+<td>确定在与代理服务器通信期间，可以在哪些情况下使用过时的缓存响应。该指令的参数与proxy_next_upstream指令的参数匹配</td>
+<td>off</td>
+<td>应用</td>
+</tr>
+<tr>
+<td>proxy_cache_valid</td>
+<td>设置不同响应代码的缓存时间</td>
+<td>-</td>
+<td>应用</td>
+</tr>
+<tr>
+<td>proxy_no_cache</td>
+<td>定义不将响应保存到缓存的条件。如果字符串参数的至少一个值不为空且不等于“0”，则不会保存响应。</td>
+<td>-</td>
+<td>应用</td>
+</tr>
+</tbody></table>
+<h1 id="缓存清除机制分析"><a href="#缓存清除机制分析" class="headerlink" title="缓存清除机制分析"></a>缓存清除机制分析</h1><h2 id="被动缓存清除"><a href="#被动缓存清除" class="headerlink" title="被动缓存清除"></a>被动缓存清除</h2><p><strong>proxy_cache_path指令的缓存管理</strong></p>
+<p>proxy_cache_path中可以通过以下指令来管理缓存</p>
+<p>max_size：指定缓存大小，缓存管理进程监控缓存是否超过指定值，超过该大小则通过LRU算法来淘汰数据。一次迭代删除的数据通过下面的参数来指定。</p>
+<p>manager_files：一次迭代过程中删除的项的数量，默认100个</p>
+<p>manager_threshold：一次迭代操作的持续时间限制，默认200毫秒</p>
+<p>manager_sleep：两次迭代的间隔时间，默认50毫秒</p>
+<h2 id="缓存加载"><a href="#缓存加载" class="headerlink" title="缓存加载"></a>缓存加载</h2><p>proxy_cache_path中可以通过以下参数来调整加载缓存</p>
+<p>Nginx启动一分钟后，缓存加载进程被激活，存储在文件系统上先前缓存的数据将被加载到缓存区中，整个加载是在迭代中完成的。一次加载</p>
+<p>loader_files：一次迭代加载不超过指定数目的项，默认100。</p>
+<p>loader_threshold：一次迭代操作的持续时间限制，默认200毫秒</p>
+<p>loader_sleep：两次迭代的间隔时间，默认50毫秒</p>
+<h2 id="主动清除缓存"><a href="#主动清除缓存" class="headerlink" title="主动清除缓存"></a>主动清除缓存</h2><p><strong>Nginx商业功能</strong></p>
+<p>proxy_cache_path中可以通过以下参数来调整主动清除缓存</p>
+<p>purger：on开启缓存清除进程，遍历所有缓存条目并删除匹配到的键的缓存数据</p>
+<p>purger_files：一次迭代过程中扫描的项的数量，默认10个</p>
+<p>purger_threshold：一次迭代的持续时间，默认50毫秒</p>
+<p>purger_sleep：两次迭代的间隔时间，默认50毫秒</p>
+<p>以上参数与proxy_cache_purge指令配合进行。</p>
+<p><strong>虽说只能在商业版的Nginx中使用，但是我们可以通过强大的第三方模块来替代</strong></p>
+<h1 id="第三方缓存主动清除"><a href="#第三方缓存主动清除" class="headerlink" title="第三方缓存主动清除"></a>第三方缓存主动清除</h1><h2 id="ngx-cache-purge"><a href="#ngx-cache-purge" class="headerlink" title="ngx_cache_purge"></a>ngx_cache_purge</h2><p>ngx_cache_purge是一个第三方的nginx缓存主动清除模块，集成方便，使用简单。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">下载nginx构建purge模块</span><br><span class="line">wget https://github.com/FRiCKLE/ngx_cache_purge/archive/2.3.tar.gz</span><br><span class="line">tar -xfvz ngx_cache_purge-2.3.tar.gz</span><br><span class="line">./configure --prefix=/app/nginx --with-http_stub_status_module --with-http_ssl_module --add-module=../ngx_cache_purge-2.3</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line"></span><br><span class="line">对于之前安装过nginx的可以按下面步骤操作</span><br><span class="line">wget https://github.com/FRiCKLE/ngx_cache_purge/archive/2.3.tar.gz</span><br><span class="line"><span class="built_in">mv</span> 2.3.tar.gz ngx_cache_purge-2.3.tar.gz</span><br><span class="line">tar -xvzf ngx_cache_purge-2.3.tar.gz</span><br><span class="line"></span><br><span class="line">sudo <span class="built_in">rm</span> -rf /usr/local/nginx</span><br><span class="line"><span class="built_in">cd</span> /usr/local/nginx-1.16.0</span><br><span class="line">sudo ./configure \</span><br><span class="line">	--prefix=/usr/local/nginx \</span><br><span class="line">    --sbin-path=/usr/local/nginx/nginx \</span><br><span class="line">    --conf-path=/usr/local/nginx/conf/nginx.conf \</span><br><span class="line">    --error-log-path=/usr/local/nginx/logs/error.log \</span><br><span class="line">    --pid-path=/usr/local/nginx/pid/nginx.pid \</span><br><span class="line">    --with-http_ssl_module \</span><br><span class="line">    --with-openssl=/home/root/openssl-OpenSSL_1_0_2k \</span><br><span class="line">    --add-module=/home/root/echo-nginx-module-0.61 \</span><br><span class="line">    --with-http_stub_status_module \</span><br><span class="line">    --add-module=/home/root/ngx_cache_purge-2.3</span><br><span class="line">    </span><br><span class="line">sudo make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+
+<p>详细资料地址：<a target="_blank" rel="noopener" href="https://github.com/FRiCKLE/ngx_cache_purge">https://github.com/FRiCKLE/ngx_cache_purge</a></p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">proxy_cache_path  /app/proxy_cache_dir  levels=<span class="number">1</span>:<span class="number">2</span> keys_zone=cache1:<span class="number">200</span>m inactive=<span class="number">1</span>d max_size=<span class="number">10</span>g;</span><br><span class="line"><span class="comment">#设置Web缓存区名称为cache1，内存缓存空间大小为200MB，1天没有被访问的内容自动清除，硬盘缓存空间大小为30GB。levels=1:2 表示缓存目录的第一级目录是1个字符，第二级目录是2个字符，即/app/proxy_cache_dir/cache1/a/1b这种形式</span></span><br><span class="line">server &#123;</span><br><span class="line">        <span class="keyword">listen</span>       <span class="number">80</span>;</span><br><span class="line">        server_name  localhost;</span><br><span class="line"></span><br><span class="line">        <span class="comment">#charset koi8-r;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#access_log  logs/host.access.log  main;</span></span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">            root   html;</span><br><span class="line">            <span class="keyword">index</span>  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line">        location ~ <span class="regexp">/purge(/</span>.*) &#123;</span><br><span class="line">            allow           <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>;</span><br><span class="line">            allow           <span class="number">192.168</span>.<span class="number">116.0</span>/<span class="number">24</span></span><br><span class="line">            deny            all;</span><br><span class="line">            proxy_cache_purge    cache1 $host$1$is_args$args;</span><br><span class="line">        &#125;</span><br><span class="line">        location ~ \.(gif|jpg|jpeg|png|bmp|ico)$ &#123;</span><br><span class="line">            proxy_set_header Host  $host;</span><br><span class="line">            proxy_set_header X-Forwarded-For  $remote_addr;</span><br><span class="line">            proxy_pass http:<span class="regexp">//</span><span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span>:<span class="number">8080</span>;</span><br><span class="line">            proxy_cache cache1; <span class="comment"># 设置资源缓存的zone</span></span><br><span class="line">            <span class="comment"># 设置缓存的key，以域名、URI、参数组合成Web缓存的Key值，</span></span><br><span class="line">            <span class="comment"># Nginx根据Key值哈希，存储缓存内容到二级缓存目录内</span></span><br><span class="line">            proxy_cache_key $host$uri$is_args$args; </span><br><span class="line">            proxy_cache_valid <span class="number">200</span> <span class="number">304</span> <span class="number">12</span>h;  <span class="comment"># 对不同的HTTP状态码设置不同的缓存时间</span></span><br><span class="line">            expires <span class="number">7</span>d; <span class="comment"># 缓存时间</span></span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="使用ngx-cache-purge"><a href="#使用ngx-cache-purge" class="headerlink" title="使用ngx_cache_purge"></a>使用ngx_cache_purge</h2><ol>
+<li>访问缓存URL，<a target="_blank" rel="noopener" href="http://hostname/test/n.jpg">http://hostname/test/n.jpg</a><br>服务端初次响应，建立缓存内容</li>
+<li>查看缓存的文件<br>查看缓存文件系统内容</li>
+<li>修改数据访问<br>修改数据以后，缓存还在起作用，一段时间不能访问到新数据</li>
+<li>清除缓存再次访问<br>通过插件主动清除缓存，再次访问到新的数据内容</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Nginx缓存支持的模块和常用指令</p>
+<p>Nginx中缓存管理机制</p>
+<ul>
+<li>缓存开启</li>
+<li>缓存管理</li>
+<li>缓存加载</li>
+<li>缓存清除</li>
+</ul>
+<p>第三方缓存主动清除插件</p>
+<ul>
+<li>安装使用</li>
+<li>测试验证</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/16-Nginx/04-Nginx%E7%BC%93%E5%AD%98%E6%95%B0%E6%8D%AE/" data-id="clmcxeccd002uu8wa8gmedeew" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/16-Nginx/05-Nginx%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/16-Nginx/03-02-OpenResty%E5%AE%89%E8%A3%85%E6%93%8D%E4%BD%9C/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

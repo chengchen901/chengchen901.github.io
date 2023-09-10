@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="数据加密技术简述Http安全如何？HTTP HTTP协议，即超文本传输协议(Hypertext transfer protocol)。是一种详细规定了浏览器和万维网 (WWW &#x3D; World Wide Web)服务器之间互相通信的规则，通过因特网传送万维网文档的数据传送协议。 明文传输，容易泄密，容易被拦截  如何解决Http的这个安全问题？——加密技术 摘要算法摘要算法 JDK8支持的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/09/10/16-Nginx/02-00-Nginx%E7%9A%84WEB%E5%AE%89%E5%85%A8%E4%BD%93%E7%B3%BB/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="数据加密技术简述Http安全如何？HTTP HTTP协议，即超文本传输协议(Hypertext transfer protocol)。是一种详细规定了浏览器和万维网 (WWW &#x3D; World Wide Web)服务器之间互相通信的规则，通过因特网传送万维网文档的数据传送协议。 明文传输，容易泄密，容易被拦截  如何解决Http的这个安全问题？——加密技术 摘要算法摘要算法 JDK8支持的">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220829213059.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220829213158.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220829213315.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220829214316.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/Untitled%20Diagram.drawio.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220829221502.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220829221940.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220918154515.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220918154820.png">
+<meta property="article:published_time" content="2023-09-10T03:59:07.774Z">
+<meta property="article:modified_time" content="2022-09-25T15:26:28.834Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220829213059.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-16-Nginx/02-00-Nginx的WEB安全体系" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/09/10/16-Nginx/02-00-Nginx%E7%9A%84WEB%E5%AE%89%E5%85%A8%E4%BD%93%E7%B3%BB/" class="article-date">
+  <time class="dt-published" datetime="2023-09-10T03:59:07.774Z" itemprop="datePublished">2023-09-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="数据加密技术简述"><a href="#数据加密技术简述" class="headerlink" title="数据加密技术简述"></a>数据加密技术简述</h1><h2 id="Http安全如何？"><a href="#Http安全如何？" class="headerlink" title="Http安全如何？"></a>Http安全如何？</h2><p><strong>HTTP</strong></p>
+<p>HTTP协议，即超文本传输协议(Hypertext transfer protocol)。是一种详细规定了浏览器和万维网</p>
+<p>(WWW &#x3D; World Wide Web)服务器之间互相通信的规则，通过因特网传送万维网文档的数据传送协议。</p>
+<p>明文传输，容易泄密，容易被拦截</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220829213059.png"></p>
+<p>如何解决Http的这个安全问题？——加密技术</p>
+<h2 id="摘要算法"><a href="#摘要算法" class="headerlink" title="摘要算法"></a>摘要算法</h2><p><strong>摘要算法</strong></p>
+<p>JDK8支持的加密种类：<a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#MessageDigest">https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#MessageDigest</a></p>
+<p>消息摘要算法用来验证数据的完整性，分为三类</p>
+<p>MD(Message Digest)：消息摘要</p>
+<p>SHA(Secure Hash Algorithm)：安全散列</p>
+<p>MAC(Message Authentication Code)：消息认证码</p>
+<p>最常见的登录密码加密处理，MD5加密，MD5属于消息摘要类。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220829213158.png"></p>
+<p>可以用来保证内容不被篡改：<strong>密码加密、文件校验码</strong></p>
+<h2 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a>对称加密</h2><p><strong>对称加密</strong></p>
+<p>DES(Data Encryption Standard，数据加密算法) </p>
+<p>PBE(Password-based encryption，基于密码验证) </p>
+<p>AES(Advanced Encryption Standard，高级加密标准)</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220829213315.png"></p>
+<p><strong>存在的问题</strong>：A服务器加密，B服务器解密，秘钥在网络传输中不安全</p>
+<h2 id="网络上的加密算法—非对称加密"><a href="#网络上的加密算法—非对称加密" class="headerlink" title="网络上的加密算法—非对称加密"></a>网络上的加密算法—非对称加密</h2><p><strong>非对称加密</strong></p>
+<p>用在不可信的环境下</p>
+<p>RSA(算法的名字以发明者的名字命名：Ron Rivest, AdiShamir 和Leonard Adleman) </p>
+<p>DH(Diffie-Hellman算法，密钥一致协议) </p>
+<p>DSA(Digital Signature Algorithm，数字签名) </p>
+<p>ECC(Elliptic Curves Cryptography，椭圆曲线密码编码学) </p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220829214316.png"></p>
+<h2 id="Https协议"><a href="#Https协议" class="headerlink" title="Https协议"></a>Https协议</h2><p><strong>SSL&#x2F;TLS</strong></p>
+<p>SSL(Secure Socket Layer 安全套接层)是基于HTTPS下的一个协议加密层。HTTP在传输数据时使用的是明文，是不安全的，为了解决这一隐患网景公司推出了SSL安全套接字协议层，SSL是基于HTTP之下TCP之上的一个协议层，是基于HTTP标准并对TCP传输数据时进行加密，所以HPPTS是HTTP+SSL&#x2F;TCP的简称。TLS(Transport Layer Security)即安全传输层协议，保障应用程序之间通信的安全性。SSL 3.0版本改名叫TLS，所以TLS是从SSL转过来的。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/Untitled%20Diagram.drawio.png"></p>
+<p><strong>HTTPS</strong></p>
+<p>HTTPS（全称：Hyper Text Transfer Protocol over Secure Socket Layer超文本传输安全协议），是以安全为目标的HTTP通道，简单讲是HTTP的安全版。HTTP下加入SSL层，HTTPS的安全基础是SSL，因此加密的详细内容就需要SSL。</p>
+<h3 id="Https协议架构组成"><a href="#Https协议架构组成" class="headerlink" title="Https协议架构组成"></a>Https协议架构组成</h3><p><strong>安全保证：</strong></p>
+<p><strong>1. 身份认证</strong>，认证用户或服务器，确保数据发送到正确的客户机或服务器</p>
+<p><strong>2. 内容加密</strong>，加密数据以防止数据中途被窃取</p>
+<p><strong>3. 数据完整性</strong>，维护数据的完整性，确保数据在传输过程中不被篡改</p>
+<p>https使用了<strong>摘要算法、对称加密算法、非对称加密算法</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220829221502.png"></p>
+<h3 id="Https与Http的区别"><a href="#Https与Http的区别" class="headerlink" title="Https与Http的区别"></a>Https与Http的区别</h3><ol>
+<li><p>https协议需要到CA申请数字证书。</p>
+</li>
+<li><p>http是超文本传输协议，信息是明文传输；https 则是具有安全性的ssl加密传输协议。</p>
+</li>
+<li><p>http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。</p>
+</li>
+<li><p>http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全</p>
+</li>
+</ol>
+<p>HTTPS对数据进行加解密，决定了它比http慢</p>
+<h1 id="Https如何保证数据传输安全"><a href="#Https如何保证数据传输安全" class="headerlink" title="Https如何保证数据传输安全"></a>Https如何保证数据传输安全</h1><h2 id="SSL-TLS的握手过程—秘钥协商"><a href="#SSL-TLS的握手过程—秘钥协商" class="headerlink" title="SSL&#x2F;TLS的握手过程—秘钥协商"></a>SSL&#x2F;TLS的握手过程—秘钥协商</h2><p>https分为单向认证和双向认证，这里客户端被动接受服务段证书，是一个单向认证过程</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220829221940.png"></p>
+<h2 id="Https协议安全保证的原因"><a href="#Https协议安全保证的原因" class="headerlink" title="Https协议安全保证的原因"></a>Https协议安全保证的原因</h2><p><strong>注意：</strong></p>
+<p>SSL协议在握手阶段使用的是非对称加密，在传输阶段使用的是对称加密，也就是说在SSL上传送的数据是使用对称密钥加密的！因为非对称加密的速度缓慢，耗费资源。</p>
+<p>其实当客户端和主机使用非对称加密方式建立连接后，客户端和主机已经决定好了在传输过程使用的对称加密算法和关键的对称加密密钥，由于这个过程本身是安全可靠的，也即对称加密密钥是不可能被窃取盗用的，因此，保证了在传输过程中对数据进行对称加密也是安全可靠的，因为除了客户端和主机之外，不可能有第三方窃取并解密出对称加密密钥！</p>
+<p>如果有人窃听通信，他可以知道双方选择的加密方法，以及三个随机数中的两个。整个通话的安全，只取决于第三个随机数能不能被破解。</p>
+<p>https实际就是在TCP层与http层之间加入了SSL&#x2F;TLS来为上层的安全保驾护航，主要用到对称加密、非对称加密、证书，等技术进行客户端与服务器的数据加密传输，最终达到保证整个通信的安全性。</p>
+<h1 id="制作你的第一个SSL证书"><a href="#制作你的第一个SSL证书" class="headerlink" title="制作你的第一个SSL证书"></a>制作你的第一个SSL证书</h1><h2 id="CA和数字证书"><a href="#CA和数字证书" class="headerlink" title="CA和数字证书"></a>CA和数字证书</h2><p><strong>怎么能确定客户端所得到的公钥一定是从目标主机那里发布的，而且没有被篡改过呢？</strong></p>
+<p>需要有一个权威的值得信赖的第三方机构CA(一般是由政府审核并授权的机构)来统一对外发放主机机构的公钥，只要请求方这种机构获取公钥，就避免了上述问题的发生。</p>
+<p><strong>数字证书的颁发过程</strong></p>
+<p>用户首先产生自己的密钥对，并将公共密钥及部分个人身份信息传送给认证中心。认证中心在核实身份后，将执行一些必要的步骤，以确信请求确实由用户发送而来，然后，认证中心将发给用户一个数字证书，该证书内包含用户的个人信息和他的公钥信息，同时还附有认证中心的签名信息(根证书私钥签名)。用户就可以使用自己的数字证书进行相关的各种活动。数字证书由独立的证书发行机构发布，数字证书各不相同，每种证书可提供不同级别的可信度。</p>
+<h2 id="浏览器CA认证流程"><a href="#浏览器CA认证流程" class="headerlink" title="浏览器CA认证流程"></a>浏览器CA认证流程</h2><p><strong>浏览器默认都会内置CA根证书，其中根证书包含了CA的公钥</strong></p>
+<ol>
+<li><p>证书颁发的机构是伪造的：浏览器不认识，直接认为是危险证书</p>
+</li>
+<li><p>证书颁发的机构是确实存在的，于是根据CA名，找到对应内置的CA根证书、CA的公钥。用CA的公钥，对伪造的证书的摘要进行解密，发现解不了，认为是危险证书。</p>
+</li>
+<li><p>对于篡改的证书，使用CA的公钥对数字签名进行解密得到摘要A，然后再根据签名的Hash算法计算出证书的摘要B，对比A与B，若相等则正常，若不相等则是被篡改过的。</p>
+</li>
+<li><p>证书可在其过期前被吊销，通常情况是该证书的私钥已经失密。较新的浏览器如Chrome、Firefox、Opera和Internet Explorer都实现了在线证书状态协议（OCSP）以排除这种情形：浏览器将网站提供的证书的序列号通过OCSP发送给证书颁发机构，后者会告诉浏览器证书是否还是有效的。</p>
+</li>
+</ol>
+<p>1、2点是对伪造证书进行的，3是对于篡改后的证书验证，4是对于过期失效的验证。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220918154515.png"></p>
+<h2 id="OpenSSL"><a href="#OpenSSL" class="headerlink" title="OpenSSL"></a>OpenSSL</h2><p>OpenSSL是个多功能命令行工具、他可以实现加密解密、甚至还可以当CA来用、可以让你创建证书、吊销证书。</p>
+<p>OpenSSL由应用、TLS、加密、引擎四个组件层组成。加密组件通过引擎组件来扩展，TLS依赖加密组件，应用组件则依赖TLS和加密组件。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20220918154820.png"></p>
+<p>更多资料参考官网：<a target="_blank" rel="noopener" href="https://www.openssl.org/">https://www.openssl.org/</a></p>
+<h2 id="动手制作证书"><a href="#动手制作证书" class="headerlink" title="动手制作证书"></a>动手制作证书</h2><p>SSL 证书就是遵守 SSL协议，由受信任的数字证书颁发机构CA，在验证服务器身份后颁发，具有服务器身份验证和</p>
+<p>数据传输加密功能的文件，当前大多数的ssl证书是收费的。</p>
+<p><strong>免费证书</strong></p>
+<p>也可以到阿里云、腾讯云申请1年的免费的简单证书。</p>
+<p>下面，我们将通过OpenSSL自建一个CA服务，自己给自己的服务颁发数字证书，学习整个证书签发过程</p>
+<p>​	具体操作参考《 制作第一张自己的SSL证书.md》手册</p>
+<h1 id="Nginx中实现高性能Https"><a href="#Nginx中实现高性能Https" class="headerlink" title="Nginx中实现高性能Https"></a>Nginx中实现高性能Https</h1><h2 id="Nginx中配置HTTPS"><a href="#Nginx中配置HTTPS" class="headerlink" title="Nginx中配置HTTPS"></a>Nginx中配置HTTPS</h2><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">	<span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">	<span class="attribute">server_name</span> www.example.com;</span><br><span class="line">	<span class="attribute">ssl_certificate</span> www.example.com.crt; <span class="comment"># 发送到客户端具有PEM格式的公共证书</span></span><br><span class="line">	<span class="attribute">ssl_certificate_key</span> www.example.com.key; <span class="comment"># 具有PEM格式的服务器端私钥，注意访问权限设置</span></span><br><span class="line">	<span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span>; <span class="comment"># ssl支持的协议</span></span><br><span class="line">	<span class="attribute">ssl_ciphers</span> HIGH:!aNULL:!MD5; <span class="comment"># 以OpenSS L库所理解的格式指定</span></span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Https服务的优化"><a href="#Https服务的优化" class="headerlink" title="Https服务的优化"></a>Https服务的优化</h2><p><strong>优化方法</strong></p>
+<p>SSL操作消耗额外的CPU资源。在多处理器系统上，应该运行多个工作进程，而不小于可用CPU核的数量。CPU密集型操作是SSL握手。有两种方法可以使每个客户端的这些操作的数量最小化：<br>第一个是通过启用Keepalive连接来通过一个连接发送多个请求。<br>第二个是重用SSL会话参数，以避免用于并行和后续连接的SSL握手。</p>
+<p><strong>Nginx中为了减少处理器负载，建议</strong></p>
+<ol>
+<li><p>将工作进程的数量设置为等于处理器的数目，worker_processes</p>
+</li>
+<li><p>启用维持生命的连接，keepalive_timeout</p>
+</li>
+<li><p>启用共享会话缓存，禁用内置会话缓存，<a target="_blank" rel="noopener" href="https://nginx.org/en/docs/http/configuring_https_servers.html#single_http_https_server">ssl_session_cache</a> shared:SSL:10m;</p>
+</li>
+</ol>
+<p>off，禁用、</p>
+<p>none，客户端可重用服务端不缓存</p>
+<p>builtin，在openssl中重构缓存，<code>builtin</code>[:<code>size</code>]</p>
+<p>shared，在worker进程间共享的缓存，<code>shared</code>:<code>name</code>:<code>size</code></p>
+<ol start="4">
+<li>增加会话生存期(默认为5分钟)，ssl_session_timeout</li>
+</ol>
+<p>配置示例</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 简单指令以;结尾</span></span><br><span class="line"><span class="attribute">worker_processes</span>  <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 大括号属于块指令</span></span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="comment"># 上游服务</span></span><br><span class="line">    <span class="section">upstream</span> backend &#123;</span><br><span class="line">        <span class="attribute">server</span> <span class="number">192.168.120.58:8080</span>;</span><br><span class="line">        <span class="attribute">server</span> <span class="number">192.168.120.103:8080</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 配置https服务</span></span><br><span class="line">    <span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span>       <span class="number">80</span>;    <span class="comment"># 访问80，走http协议</span></span><br><span class="line">        <span class="attribute">listen</span>       <span class="number">443</span> ssl;   <span class="comment"># 访问443端口，走https安全协议</span></span><br><span class="line">        <span class="attribute">server_name</span>  localhost;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 配置证书及服务器私钥</span></span><br><span class="line">        <span class="attribute">ssl_certificate</span>      servercert.pem;</span><br><span class="line">        <span class="attribute">ssl_certificate_key</span>  serverkey.pem;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 会话参数的缓存,所有工作进程之间共享的缓存</span></span><br><span class="line">        <span class="attribute">ssl_session_cache</span>    shared:SSL:<span class="number">1m</span>;</span><br><span class="line">        <span class="attribute">ssl_session_timeout</span>  <span class="number">5m</span>;</span><br><span class="line">        <span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 启用的密码</span></span><br><span class="line">        <span class="attribute">ssl_ciphers</span>  ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;</span><br><span class="line">        <span class="comment"># SSLv3和TLS协议时,服务器密码优先于客户端密码</span></span><br><span class="line">        <span class="attribute">ssl_prefer_server_ciphers</span>  <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">        <span class="section">location</span> / &#123;</span><br><span class="line">            <span class="attribute">proxy_pass</span> http://backend;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/09/10/16-Nginx/02-00-Nginx%E7%9A%84WEB%E5%AE%89%E5%85%A8%E4%BD%93%E7%B3%BB/" data-id="clmcxecbb002ku8wa2cewe4os" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/09/10/16-Nginx/02-01-%E5%88%B6%E4%BD%9C%E7%AC%AC%E4%B8%80%E5%BC%A0%E8%87%AA%E5%B7%B1%E7%9A%84SSL%E8%AF%81%E4%B9%A6/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/09/10/16-Nginx/01-Nginx%E5%85%A5%E9%97%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

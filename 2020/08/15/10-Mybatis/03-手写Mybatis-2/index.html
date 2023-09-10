@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>手写Mybatis-2 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="需求4 用户只需定义持久层接口（dao接口）、接口方法对应的SQL语句。 用户需指明接口方法的参数与语句参数的对应关系。 用户需指明查询结果集与对象属性的映射关系。 框架完成接口对象的生成，JDBC执行过程。  如何执行SQLSQL语句有了，参数对应关系也有了，我们想想怎么执行SQL吧。 问题： 要执行SQL，我们得要有DataSource，谁来持有DataSource? 要执行SQL，我们得要有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手写Mybatis-2">
+<meta property="og:url" content="http://example.com/2020/08/15/10-Mybatis/03-%E6%89%8B%E5%86%99Mybatis-2/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="需求4 用户只需定义持久层接口（dao接口）、接口方法对应的SQL语句。 用户需指明接口方法的参数与语句参数的对应关系。 用户需指明查询结果集与对象属性的映射关系。 框架完成接口对象的生成，JDBC执行过程。  如何执行SQLSQL语句有了，参数对应关系也有了，我们想想怎么执行SQL吧。 问题： 要执行SQL，我们得要有DataSource，谁来持有DataSource? 要执行SQL，我们得要有">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920194328.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920195042.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920195145.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920195252.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920195540.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920195745.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920200335.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920200752.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920200911.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920201048.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920201259.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920202708.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920202754.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920203034.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920203627.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920203534.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204010.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204052.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204129.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204324.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204421.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204618.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204731.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204945.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920205004.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920205311.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920205355.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920205441.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920205508.png">
+<meta property="article:published_time" content="2020-08-15T08:50:45.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:50:45.508Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Mybatis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920194328.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-10-Mybatis/03-手写Mybatis-2" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/08/15/10-Mybatis/03-%E6%89%8B%E5%86%99Mybatis-2/" class="article-date">
+  <time class="dt-published" datetime="2020-08-15T08:50:45.000Z" itemprop="datePublished">2020-08-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mybatis/">Mybatis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      手写Mybatis-2
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="需求4"><a href="#需求4" class="headerlink" title="需求4"></a>需求4</h1><ol>
+<li>用户只需定义持久层接口（dao接口）、接口方法对应的SQL语句。</li>
+<li>用户需指明接口方法的参数与语句参数的对应关系。</li>
+<li>用户需指明查询结果集与对象属性的映射关系。</li>
+<li><strong>框架完成接口对象的生成，JDBC执行过程。</strong></li>
+</ol>
+<h2 id="如何执行SQL"><a href="#如何执行SQL" class="headerlink" title="如何执行SQL"></a>如何执行SQL</h2><p>SQL语句有了，参数对应关系也有了，我们想想怎么执行SQL吧。</p>
+<p>问题：</p>
+<h3 id="要执行SQL，我们得要有DataSource，谁来持有DataSource"><a href="#要执行SQL，我们得要有DataSource，谁来持有DataSource" class="headerlink" title="要执行SQL，我们得要有DataSource，谁来持有DataSource?"></a>要执行SQL，我们得要有DataSource，谁来持有DataSource?</h3><ol>
+<li><p>要执行SQL，我们得要有DataSource，谁来持有DataSource?</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920194328.png"></p>
+</li>
+</ol>
+<h3 id="谁来执行SQL-Configuration"><a href="#谁来执行SQL-Configuration" class="headerlink" title="谁来执行SQL? Configuration ?"></a>谁来执行SQL? Configuration ?</h3><ol>
+<li><p>谁来执行SQL? Configuration ?</p>
+<p>不合适，它是配置对象，持有所有配置信息！</p>
+<p>既然是来做事的，那就先定义一个接口吧：SqlSession</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920195042.png"></p>
+<p>该为它定义什么方法呢？</p>
+<p><strong>需求4：框架完成接口对象的生成，JDBC执行过程。</strong></p>
+<p>用户给定Mapper接口类，要为它生成对象，用户再使用这个对象完成对应的数据库操作。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920195145.png"></p>
+<p>使用示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">UserDao</span> <span class="variable">userDao</span> <span class="operator">=</span> sqlSession.getMapper(UserDao.class); </span><br><span class="line">userDao.addUser(user);</span><br></pre></td></tr></table></figure>
+
+<p>来为它定义一个实现类：DefaultSqlSession</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920195252.png"></p>
+<p>它该持有什么属性吗？</p>
+<p>用户给入一个接口类，DefaultSqlSession中就为它生成一个对象？</p>
+<p>万一给入的不是一个Mapper接口呢？</p>
+<p>也为其生成一个对象就不合理了？</p>
+<p>那怎么判断给入的接口类是否是一个Mapper接口呢？</p>
+<p>那就只有在配置阶段扫描、解析Mapper接口时做个存储了。</p>
+<p>存哪，用什么存？</p>
+<p>这也是配置信息，还是存在Confifiguration 中，就用个Set来存吧。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920195540.png"></p>
+<p>DefaultSqlSession中需要持有Configuration</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920195745.png"></p>
+</li>
+</ol>
+<h2 id="对象生成"><a href="#对象生成" class="headerlink" title="对象生成"></a>对象生成</h2><ol>
+<li>如何为用户给入的Mapper接口生成对象？</li>
+</ol>
+<p>很简单，JDK动态代理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Proxy.newProxyInstance(mapperInterface.getClassLoader(), <span class="keyword">new</span> <span class="title class_">Class</span>[] &#123;mapperInterface &#125;, invocationHandler);</span><br></pre></td></tr></table></figure>
+
+<p>写一版DefaultSqlSession的实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.study.mybatis.session;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationHandler;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Proxy;</span><br><span class="line"><span class="keyword">import</span> com.study.mybatis.config.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DefaultSqlSession</span> <span class="keyword">implements</span> <span class="title class_">SqlSession</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Configuration configuration;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">DefaultSqlSession</span><span class="params">(Configuration configuration)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>();</span><br><span class="line">        <span class="built_in">this</span>.configuration = configuration;</span><br><span class="line">     &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> &lt;T&gt; T <span class="title function_">getMapper</span><span class="params">(Class&lt;T&gt; type)</span> &#123;</span><br><span class="line">        <span class="comment">//检查给入的接口</span></span><br><span class="line">        <span class="keyword">if</span> (!<span class="built_in">this</span>.configuration.getMappers().contains(type)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(type + <span class="string">&quot; 不在Mapper接口列表中！&quot;</span>);</span><br><span class="line">         &#125;</span><br><span class="line">        <span class="comment">//得到 InvocationHandler</span></span><br><span class="line">        <span class="type">InvocationHandler</span> <span class="variable">ih</span> <span class="operator">=</span> <span class="literal">null</span>; <span class="comment">// TODO 必须要有一个</span></span><br><span class="line">        <span class="comment">// 创建代理对象</span></span><br><span class="line">        <span class="type">T</span> <span class="variable">t</span> <span class="operator">=</span> (T)Proxy.newProxyInstance(type.getClassLoader(), <span class="keyword">new</span></span><br><span class="line">        <span class="title class_">Class</span>&lt;?&gt;[] &#123;type&#125;, ih);</span><br><span class="line">        <span class="keyword">return</span> t;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>问题：每次调用getMapper(Class type)都需要生成一个新的实例吗？</p>
+<p>代理对象中持有InvocationHandler，如果InvocationHandler能做到线程安全，就只需要一个实例。</p>
+<p>还得看InvocationHandler，先放这吧，把InvocationHandler搞定先。</p>
+<h2 id="执行SQL的InvocationHandler"><a href="#执行SQL的InvocationHandler" class="headerlink" title="执行SQL的InvocationHandler"></a>执行SQL的InvocationHandler</h2><p>了解 InvocationHandler</p>
+<p>InvocationHandler 是在代理对象中完成增强。我们这里通过它来执行SQL。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">InvocationHandler</span> &#123; </span><br><span class="line">    <span class="comment">/** </span></span><br><span class="line"><span class="comment">    <span class="doctag">@param</span> proxy 生成的代理对象 </span></span><br><span class="line"><span class="comment">    <span class="doctag">@param</span> method 被调用的方法 </span></span><br><span class="line"><span class="comment">    <span class="doctag">@param</span> args <span class="doctag">@return</span> Object 方法执行的返回值 </span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>来实现我们的InvocationHandler： MapperProxy</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920200335.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.study.mybatis.session;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationHandler;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MapperProxy</span> <span class="keyword">implements</span> <span class="title class_">InvocationHandler</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">      <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> </span><br><span class="line">    <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        <span class="comment">// TODO 这里需要完成哪些事？</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;	</span><br></pre></td></tr></table></figure>
+
+<p>思考： 在 MapperProxy.invoke方法中需要完成哪些事？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.study.mybatis.session;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationHandler;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MapperProxy</span> <span class="keyword">implements</span> <span class="title class_">InvocationHandler</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">      <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> </span><br><span class="line">    <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">          <span class="comment">// TODO 这里需要完成哪些事？</span></span><br><span class="line">          <span class="comment">// 1、获得方法对应的SQL语句</span></span><br><span class="line">          </span><br><span class="line">          <span class="comment">// 2、解析SQL参数与方法参数的对应关系，得到真正的SQL与语句参数值</span></span><br><span class="line">          </span><br><span class="line">          <span class="comment">// 3、获得数据库连接</span></span><br><span class="line">          </span><br><span class="line">          <span class="comment">// 4、执行语句</span></span><br><span class="line">          </span><br><span class="line">          <span class="comment">// 5、处理结果</span></span><br><span class="line">          </span><br><span class="line">          <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;	</span><br></pre></td></tr></table></figure>
+
+<h3 id="获得方法对应的SQL语句"><a href="#获得方法对应的SQL语句" class="headerlink" title="获得方法对应的SQL语句"></a>获得方法对应的SQL语句</h3><p>要获得SQL语句，需要用到Configuration，MapperProxy中需持有Configuration。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920200752.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920200911.png"></p>
+<p>问题：id怎么得来？</p>
+<p>id是类名.方法名。从invoke方法的参数中能得来吗？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span></span><br></pre></td></tr></table></figure>
+
+<p>method参数能得到方法名，但得到的类名不是Mapper接口类名。</p>
+<p>那就直接让MapperProxy持有其增强的Mapper接口类吧！简单！</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920201048.png"></p>
+<h3 id="解析SQL参数与方法参数的对应关系，得到真正的SQL与语句参数值"><a href="#解析SQL参数与方法参数的对应关系，得到真正的SQL与语句参数值" class="headerlink" title="解析SQL参数与方法参数的对应关系，得到真正的SQL与语句参数值"></a>解析SQL参数与方法参数的对应关系，得到真正的SQL与语句参数值</h3><p>逻辑：</p>
+<ol>
+<li>查找SQL语句中的 #{属性} ，确定是第几个参数，再在方法参数中找到对应的值，存储下来，替换 #{属性} 为？ 。 </li>
+<li>查找SQL语句中的 ${属性} ，确定是哪个参数，再在方法参数中找到对应的值，替换 ${属性} 。 </li>
+<li>返回最终的SQL与参数数组。</li>
+</ol>
+<p>解析过程涉及的数据：SQL语句、方法的参数定义、方法的参数值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert(&quot;insert into t_user(id,name,sex,age) values(#&#123;id&#125;,#&#123;name&#125;,# &#123;sex&#125;,#&#123;age&#125;)&quot;)</span> </span><br><span class="line"><span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(String id,<span class="meta">@Param(&quot;name&quot;)</span>String xname,String sex,<span class="type">int</span> age)</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Parameter[] params = method.getParameters();</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920201259.png"></p>
+<p>说明： 这里是要确定SQL中的？N是哪个参数值。</p>
+<p>这里要分三种情况： 方法参数是0参数，单个参数、多个参数。</p>
+<p>0参数：不需要考虑参数了。</p>
+<p>单个参数：SQL中的参数取值参数的属性或就是参数本身。</p>
+<p>多个参数：则需要确定SQL中的参数值取第几个参数的值。</p>
+<p>多个参数的情况，可以有两种做法：</p>
+<p>方式一： 查找#{属性}，根据Parameter[]中的名称（注解名、序号）匹配确定是第几个参数，再到 Object[] args中取到对应的值。</p>
+<p>方式二：先将Parameter[] 和 Object[] args转为Map，参数名（注解名、序号）为key，Object参数值为值；然后再查找SQL语句中的 #{} ${}，根据里面的名称到map中取对应的值。</p>
+<p>哪种方式更好呢？</p>
+<p>我们来看下两者查找过程的输出：</p>
+<p>方式一：</p>
+<table>
+<thead>
+<tr>
+<th>?</th>
+<th>对应值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>？N</td>
+<td>参数索引号</td>
+</tr>
+</tbody></table>
+<p>方式二：</p>
+<table>
+<thead>
+<tr>
+<th>?</th>
+<th>对应值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>？N</td>
+<td>属性名或注解名或参数索引号</td>
+</tr>
+</tbody></table>
+<p>方式一相较于方式二，看起来复杂的地方是要遍历Parameter[] 来确定索引号。</p>
+<p>思考一下：这种查找对应关系的事，需要每次调用方法时都做吗？方法的参数会有很多个吗？</p>
+<p>这个对应关系可以在扫描解析Mapper接口时做一次即可。在调用Mapper代理对象的方法时，就可以直接根据索引号去Object[] args中取参数值了。</p>
+<p>方式二每次调用Mapper代理对象的方法时，都需要创建转换Map。</p>
+<p>方式一，单个参数与多个参数我们可以同样处理。</p>
+<p>要在扫描解析Mapper接口时做参数解析我们就需要定义对应的存储结构，及修改MappedStatement了 </p>
+<p>？N— 参数索引号 的对应关系如何表示？</p>
+<p>？N 就是一个数值，而且是一个顺序数（只是jdbc中的？是从1开始）。我们完成可以用List来存储。</p>
+<p>参数索引号，仅仅是个索引号吗？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert(&quot;insert into t_user(id,name,sex,age,org_id) values(#&#123;user.id&#125;,# &#123;user.name&#125;,#&#123;user.sex&#125;,#&#123;user.age&#125;,#&#123;org.id&#125;)&quot;)</span> </span><br><span class="line"><span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(User user,Org org)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>它应该是索引号、和里面的属性两部分。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920202708.png"></p>
+<p>解析阶段有它们俩完成这件事：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920202754.png"></p>
+<p>我们在MappedStatement中再增加一个方法来完成根据参数映射关系得到真正参数值的方法：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920203034.png"></p>
+<p>把MapperProxy的invoke方法填填看：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> </span><br><span class="line">    <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">    <span class="comment">// TODO 这里需要完成哪些事？</span></span><br><span class="line">    <span class="comment">// 1、获得方法对应的SQL语句</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">id</span> <span class="operator">=</span> <span class="built_in">this</span>.mapper.getName() + <span class="string">&quot;.&quot;</span> + method.getName(); </span><br><span class="line">    <span class="type">MappedStatement</span> <span class="variable">ms</span> <span class="operator">=</span> <span class="built_in">this</span>.configuration.getMappedStatement(id);</span><br><span class="line">    <span class="comment">// 2、解析SQL参数与方法参数的对应关系，得到真正的SQL与语句参数值</span></span><br><span class="line">	<span class="type">RealSqlAndParamValues</span> <span class="variable">rsp</span> <span class="operator">=</span> ms.getRealSqlAndParamValues(args);</span><br><span class="line">    <span class="comment">// 3、获得数据库连接</span></span><br><span class="line">	<span class="type">Connection</span> <span class="variable">conn</span> <span class="operator">=</span> <span class="built_in">this</span>.configuration.getDataSource().getConnection();</span><br><span class="line">    <span class="comment">// 4、执行语句</span></span><br><span class="line">	<span class="type">PreparedStatement</span> <span class="variable">pst</span> <span class="operator">=</span> conn.prepareStatement(rsp.getSql());</span><br><span class="line">    <span class="comment">// 疑问：语句一定是PreparedStatement？</span></span><br><span class="line">    <span class="comment">// 设置参数</span></span><br><span class="line">    <span class="keyword">if</span> (rsp.getParamValues() != <span class="literal">null</span>) &#123; </span><br><span class="line">        <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; </span><br><span class="line">        <span class="keyword">for</span> (Object p : rsp.getParamValues()) &#123;</span><br><span class="line">            pst.setxxx(i++, p); </span><br><span class="line">            <span class="comment">//这里写不下去了.......如何决定该调用pst的哪 个set方法？</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 5、处理结果</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="JavaType、JdbcType转换"><a href="#JavaType、JdbcType转换" class="headerlink" title="JavaType、JdbcType转换"></a>JavaType、JdbcType转换</h2><h3 id="认识它们"><a href="#认识它们" class="headerlink" title="认识它们"></a>认识它们</h3><p>JavaType：java中的数据类型。</p>
+<p>JdbcType：Jdbc规范中根据数据库sql数据类型定义的一套数据类型规范，各数据库厂商遵照这套规范来提供jdbc驱动中数据类型支持。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920203627.png"></p>
+<p>请看看PreparedStatement的set方法</p>
+<p>疑问：为什么我们在这里需要考虑它呢？</p>
+<p>pst.setxxx(i++, p)，我们不能根据p的类型选择set方法吗？</p>
+<p>你看pst的set方法中与对应的：</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920203534.png"></p>
+<p>我们判断p的类型，然后选择不可吗? 像下面这样</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; </span><br><span class="line"><span class="keyword">for</span> (Object p : rsp.getParamValues()) &#123;</span><br><span class="line">    <span class="keyword">if</span> (p <span class="keyword">instanceof</span> Byte) &#123; </span><br><span class="line">        pst.setByte(i++, (Byte) p); </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (p <span class="keyword">instanceof</span> Integer) &#123; </span><br><span class="line">        pst.setInt(i++, (<span class="type">int</span>) p); </span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> (p <span class="keyword">instanceof</span> String) &#123; </span><br><span class="line">        pst.setString(i++, (String) p); </span><br><span class="line">    &#125;... <span class="keyword">else</span> <span class="keyword">if</span>(...) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们来看一下这种情况：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>SQL数据类型(mysql)</th>
+<th>JDBCType</th>
+<th>JavaType</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>start_time</td>
+<td>Date</td>
+<td>DATE(Types.DATE)</td>
+<td>java.util.Date</td>
+</tr>
+<tr>
+<td>start_time</td>
+<td>Time</td>
+<td>TIME(Types.TIME)</td>
+<td>java.util.Date</td>
+</tr>
+<tr>
+<td>start_time</td>
+<td>Timestamp</td>
+<td>TIMESTAMP(Types.TIMESTAMP)</td>
+<td>java.util.Date</td>
+</tr>
+</tbody></table>
+<p>还请看PreparedStatment的set方法：</p>
+<p>InputStream怎么选？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204010.png"></p>
+<p>Reader怎么选？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204052.png"></p>
+<p>java对线只能存为Object吗？</p>
+<p>我想将对线存为json字符串、xml字符串可以吗？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204129.png"></p>
+<p>上面前两种情况怎么处理？</p>
+<p>这个需要用户说明其要使用的JDBCType，不然鬼知道他想要什么。</p>
+<p>让用户怎么指定呢？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#&#123;user.id，jdbcType=TIME&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204324.png"></p>
+<p>javaType有需要指定不呢？</p>
+<p>好像不需要，那就暂放下。</p>
+<p>第3种情况怎么处理？</p>
+<p>这是一个未知的问题，鬼知道将来使用我的框架的人会需要怎么处理他们的对象呢！</p>
+<p>如何以不变应万变呢？</p>
+<p>面向接口编程</p>
+<p>定义一个什么样的接口呢？</p>
+<p>该接口的用途是什么？</p>
+<p>完成Object p 的pst.setXXX（）。</p>
+<h3 id="TypeHandler"><a href="#TypeHandler" class="headerlink" title="TypeHandler"></a>TypeHandler</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204421.png"></p>
+<p>下面这个if-else-if的代码是否可以通过TypeHandler，换成策略模式？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; </span><br><span class="line"><span class="keyword">for</span> (Object p : rsp.getParamValues()) &#123;</span><br><span class="line">    <span class="keyword">if</span> (p <span class="keyword">instanceof</span> Byte) &#123; </span><br><span class="line">        pst.setByte(i++, (Byte) p); </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (p <span class="keyword">instanceof</span> Integer) &#123; </span><br><span class="line">        pst.setInt(i++, (<span class="type">int</span>) p); </span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> (p <span class="keyword">instanceof</span> String) &#123; </span><br><span class="line">        pst.setString(i++, (String) p); </span><br><span class="line">    &#125;... <span class="keyword">else</span> <span class="keyword">if</span>(...) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>定义一些常用数据类型的TypeHandler.</p>
+<p>先不急着去定义，我们来考虑一下下面的问题。</p>
+<p>这个怎么使用它呢？</p>
+<p>在MapperProxy.invoke()中？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; </span><br><span class="line"><span class="keyword">for</span> (Object p : rsp.getParamValues()) &#123; </span><br><span class="line">    <span class="type">TypeHandler</span> <span class="variable">th</span> <span class="operator">=</span> getTypeHandler(p.getClass);</span><br><span class="line">    <span class="comment">//还需要别的参数吗？ </span></span><br><span class="line">    th.setParameter(pst,i++,p); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还需要JDBCType。 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; </span><br><span class="line"><span class="keyword">for</span> (Object p : rsp.getParamValues()) &#123; </span><br><span class="line">    <span class="type">TypeHandler</span> <span class="variable">th</span> <span class="operator">=</span> getTypeHandler(p.getClass, jdbcType);</span><br><span class="line">    <span class="comment">//jdbcType 从哪来？ </span></span><br><span class="line">    th.setParameter(pst,i++,p); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204618.png"></p>
+<p>问题：</p>
+<h4 id="是在invoke方法中来判断TypeHandler呢？还是在MappedStatement的getRealSqlAndParamValues时就返回值对应的TypeHandler？"><a href="#是在invoke方法中来判断TypeHandler呢？还是在MappedStatement的getRealSqlAndParamValues时就返回值对应的TypeHandler？" class="headerlink" title="是在invoke方法中来判断TypeHandler呢？还是在MappedStatement的getRealSqlAndParamValues时就返回值对应的TypeHandler？"></a>是在invoke方法中来判断TypeHandler呢？还是在MappedStatement的getRealSqlAndParamValues时就返回值对应的TypeHandler？</h4><p>选择后者更合适！</p>
+<p>那SqlAndParamValues中的参数值就不能是Object[]。它是值和TypeHandler两部分构成。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204731.png"></p>
+<p>MapperProxy中的代码就变成下面这样了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; </span><br><span class="line"><span class="keyword">for</span> (ParamValue p : rsp.getParamValues()) &#123; </span><br><span class="line">    <span class="type">TypeHandler</span> <span class="variable">th</span> <span class="operator">=</span> getTypeHandler();</span><br><span class="line">    th.setParameter(pst,i++,p.getValue()); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="MappedStatement又从哪里去获取TypeHandler呢？"><a href="#MappedStatement又从哪里去获取TypeHandler呢？" class="headerlink" title="MappedStatement又从哪里去获取TypeHandler呢？"></a>MappedStatement又从哪里去获取TypeHandler呢？</h4><p>我们会定义一些常用的，用户可能会提供一些。用户怎么提供？存储到哪里？</p>
+<p>Configuration 吧，它最合适了。以什么结构来存储呢？</p>
+<p>这里涉及到查找，需要根据 参数的javaType、jdbcTyp来查找。</p>
+<p>那就定义一个map吧，如下这样如何？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Type,Map&lt;JDBCType,TypeHandler&gt;&gt; typeHandlerMap;</span><br></pre></td></tr></table></figure>
+
+<p>我们定义一个TypeHandlerRegistry类来持有所有的TypeHandler,Configuration 中则持有TypeHandlerRegistry。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920204945.png"></p>
+<p>同时我们完善一下TypeHandler</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920205004.png"></p>
+<h4 id="用户如何来指定它们的TypeHandler"><a href="#用户如何来指定它们的TypeHandler" class="headerlink" title="用户如何来指定它们的TypeHandler?"></a>用户如何来指定它们的TypeHandler?</h4><p>在mybatis-confifig.xml中增加一个元素来让用户指定吧。</p>
+<p>mybatis-confifig.dtd</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ELEMENT configuration (mappers?, typeHandlers?)+ &gt; </span><br><span class="line"></span><br><span class="line">&lt;!ELEMENT mappers (mapper*,package*)&gt; </span><br><span class="line"></span><br><span class="line">&lt;!ELEMENT mapper EMPTY&gt; </span><br><span class="line">&lt;!ATTLIST mapper </span><br><span class="line">resource CDATA #IMPLIED </span><br><span class="line">url CDATA #IMPLIED </span><br><span class="line">class CDATA #IMPLIED &gt;</span><br><span class="line"></span><br><span class="line">&lt;!ELEMENT package EMPTY&gt; </span><br><span class="line">&lt;!ATTLIST package </span><br><span class="line">name CDATA #IMPLIED </span><br><span class="line">type CDATA #IMPLIED </span><br><span class="line">annotation CDATA #IMPLIED </span><br><span class="line">&gt;</span><br><span class="line"></span><br><span class="line">&lt;!ELEMENT typeHandlers (typeHandler*,package*)&gt; </span><br><span class="line"></span><br><span class="line">&lt;!ELEMENT typeHandler EMPTY&gt; </span><br><span class="line">&lt;!ATTLIST typeHandler </span><br><span class="line">class CDATA #REQUIRED </span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+
+<p>既可以用typeHandler指定单个，也可用package指定扫描的包，扫描包下实现了TypeHandler接口的类。</p>
+<p>mybatis-config.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;com/study/UserMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">url</span>=<span class="string">&quot;file:///var/mappers/CourseMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">class</span>=<span class="string">&quot;com.study.dao.UserDao&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">&quot;com.study.mapper&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">typeHandlers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">typeHandler</span> <span class="attr">class</span>=<span class="string">&quot;com.study.type.XoTypeHandler&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">&quot;com.study.type&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">typeHandlers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>解析注册的工作就交给XMLConfigBuilder</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920205311.png"></p>
+<h4 id="MappedStatement中来决定TypeHandler-它就需要Configuration"><a href="#MappedStatement中来决定TypeHandler-它就需要Configuration" class="headerlink" title="MappedStatement中来决定TypeHandler,它就需要Configuration"></a>MappedStatement中来决定TypeHandler,它就需要Configuration</h4><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920205355.png"></p>
+<h4 id="可不可以在解析语句参数关系时，就决定好TypeHandler"><a href="#可不可以在解析语句参数关系时，就决定好TypeHandler" class="headerlink" title="可不可以在解析语句参数关系时，就决定好TypeHandler?"></a>可不可以在解析语句参数关系时，就决定好TypeHandler?</h4><p>可以。我们在ParameterMap中增加typeHandler属性。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920205441.png"></p>
+<p>用户在SQL语句参数中必须要指定JDBCType吗？</p>
+<p>常用的数据类型可以不指定，我们可以提供默认的TypeHandler。</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210920205508.png"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringTypeHandler</span> <span class="keyword">implements</span> <span class="title class_">TypeHandler</span> &#123; </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="keyword">public</span> Type <span class="title function_">getType</span><span class="params">()</span> &#123; </span><br><span class="line">        <span class="keyword">return</span> String.class; </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="keyword">public</span> JDBCType <span class="title function_">getJDBCType</span><span class="params">()</span> &#123; </span><br><span class="line">        <span class="keyword">return</span> JDBCType.VARCHAR; </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setParameter</span><span class="params">(PreparedStatement pst, <span class="type">int</span> index, Object paramValue)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">        pst.setString(index, (String) paramValue); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用户在SQL中参数定义没有指定JDBCType，则我们可以直接使用我们默认的TypeHandler</p>
+<p>如 #{user.name}</p>
+<p>我们判断它的参数类型为String，就可以指定它的TypeHandler为 StringTypeHandler。	可能它的数据库类型不为VACHAR，而是一个CHAR定长字符，没关系！因为pst.setString对 VARCHAR、CHAR是通用的。</p>
+<h2 id="执行结果处理"><a href="#执行结果处理" class="headerlink" title="执行结果处理"></a>执行结果处理</h2><h3 id="执行结果处理要干的是什么事"><a href="#执行结果处理要干的是什么事" class="headerlink" title="执行结果处理要干的是什么事"></a>执行结果处理要干的是什么事</h3><p>pst.executeUpate()的返回结果是int，影响的行数。</p>
+<p>pst.executeQuery()的返回结果是ResultSet。</p>
+<p>在得到语句执行的结果后，要转为方法的返回结果进行返回。这就是执行结果处理要干的事</p>
+<p>根据方法的返回值类型来进行相应的处理。</p>
+<p>这里我们根据语句执行结果的不同，分开处理：</p>
+<h4 id="pst-executeUpate-的返回结果是int。"><a href="#pst-executeUpate-的返回结果是int。" class="headerlink" title="pst.executeUpate()的返回结果是int。"></a>pst.executeUpate()的返回结果是int。</h4><p>方法的返回值可以是什么？</p>
+<p>void、int、long ，其他的不可以！</p>
+<h4 id="pst-executeQuery-的返回结果是ResultSet"><a href="#pst-executeQuery-的返回结果是ResultSet" class="headerlink" title="pst.executeQuery()的返回结果是ResultSet"></a>pst.executeQuery()的返回结果是ResultSet</h4><p>方法的返回值可以是什么？</p>
+<p>可以是void、单个值、集合。</p>
+<p>单个值可以是什么类型的值？<br>任意值</p>
+<p>集合可以是什么类型？<br>List、Set</p>
+<p>集合的元素可以是什么类型的？</p>
+<p>任意类型的</p>
+<p>结果集中的列如何与结果、结果的属性对应？<br>根据结果集列名与属性名对应</p>
+<p>如果属性名与列名不一样呢？<br>则需用户显式说明映射规则。</p>
+<p>需要考虑JDBCType — JavaType的处理吗？</p>
+<h2 id="不同的语句类型"><a href="#不同的语句类型" class="headerlink" title="不同的语句类型"></a>不同的语句类型</h2><p>Statement</p>
+<p>PreparedStatement</p>
+<p>CallableStatement</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/08/15/10-Mybatis/03-%E6%89%8B%E5%86%99Mybatis-2/" data-id="clmcxed4i00c2u8wahdua3r5o" data-title="手写Mybatis-2" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/08/15/10-Mybatis/02-%E6%89%8B%E5%86%99Mybatis-1/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          手写Mybatis-1
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/08/15/10-Mybatis/04-%E6%89%8B%E5%86%99Mybatis-3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">手写Mybatis-3</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

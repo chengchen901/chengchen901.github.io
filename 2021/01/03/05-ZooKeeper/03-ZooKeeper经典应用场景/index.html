@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>ZooKeeper经典应用场景 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="ZooKeeper经典应用场景">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZooKeeper经典应用场景">
+<meta property="og:url" content="http://example.com/2021/01/03/05-ZooKeeper/03-ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="ZooKeeper经典应用场景">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163510947.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163531798.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163559415.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163628459.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163804220.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163849142.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163934328.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103164717123.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103171144424.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103171214324.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103171304783.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103180504165.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103180631666.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103181723545.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103182907043.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103182653225.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103182646083.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103182931085.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103183707540.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103183711556.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103183933481.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103183936479.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103184548690.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103184640506.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103185055651.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103185049210.png">
+<meta property="article:published_time" content="2021-01-03T08:23:39.000Z">
+<meta property="article:modified_time" content="2022-09-25T13:06:16.445Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="ZooKeeper">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163510947.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-05-ZooKeeper/03-ZooKeeper经典应用场景" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/01/03/05-ZooKeeper/03-ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="article-date">
+  <time class="dt-published" datetime="2021-01-03T08:23:39.000Z" itemprop="datePublished">2021-01-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ZooKeeper/">ZooKeeper</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      ZooKeeper经典应用场景
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>ZooKeeper经典应用场景</p>
+<span id="more"></span>
+
+<h1 id="1-典型应用场景"><a href="#1-典型应用场景" class="headerlink" title="1 典型应用场景"></a>1 典型应用场景</h1><ol>
+<li>数据发布订阅（配置中心）</li>
+<li>命名服务</li>
+<li>Master选举</li>
+<li>集群管理</li>
+<li>分布式队列</li>
+<li>分布式锁</li>
+</ol>
+<h1 id="2-ZK分布式队列"><a href="#2-ZK分布式队列" class="headerlink" title="2 ZK分布式队列"></a>2 ZK分布式队列</h1><h2 id="2-1-解耦"><a href="#2-1-解耦" class="headerlink" title="2.1 解耦"></a>2.1 解耦</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163510947.png" alt="image-20210103163510947"></p>
+<h2 id="2-2-异步"><a href="#2-2-异步" class="headerlink" title="2.2 异步"></a>2.2 异步</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163531798.png" alt="image-20210103163531798"></p>
+<h2 id="2-3-削峰填谷"><a href="#2-3-削峰填谷" class="headerlink" title="2.3 削峰填谷"></a>2.3 削峰填谷</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163559415.png" alt="image-20210103163559415"></p>
+<h2 id="2-4-队列的特点"><a href="#2-4-队列的特点" class="headerlink" title="2.4 队列的特点"></a>2.4 队列的特点</h2><p><strong>先进先出</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163628459.png" alt="image-20210103163628459"></p>
+<p>队列空，消费者没有元素可以进行消费</p>
+<p>队列满了，生产者没有空间可存放元素</p>
+<h2 id="2-5-ZooKeeper实现分布式队列逻辑"><a href="#2-5-ZooKeeper实现分布式队列逻辑" class="headerlink" title="2.5 ZooKeeper实现分布式队列逻辑"></a>2.5 ZooKeeper实现分布式队列逻辑</h2><p><strong>顺序节点</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163804220.png" alt="image-20210103163804220"></p>
+<h3 id="2-5-1-入队逻辑"><a href="#2-5-1-入队逻辑" class="headerlink" title="2.5.1 入队逻辑"></a>2.5.1 入队逻辑</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163849142.png" alt="image-20210103163849142"></p>
+<h3 id="2-5-2-出队逻辑"><a href="#2-5-2-出队逻辑" class="headerlink" title="2.5.2 出队逻辑"></a>2.5.2 出队逻辑</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103163934328.png" alt="image-20210103163934328"></p>
+<h3 id="2-5-3-JDK阻塞队列操作"><a href="#2-5-3-JDK阻塞队列操作" class="headerlink" title="2.5.3 JDK阻塞队列操作"></a>2.5.3 JDK阻塞队列操作</h3><p><strong>阻塞队列BlockingQueue</strong></p>
+<ul>
+<li>阻塞队列，线程安全的</li>
+</ul>
+<p>在队列为空时的获取阻塞，在队列满时放入阻塞。</p>
+<p>BlockingQueue方法以四种形式出现，对于不能立即满足但可能在将来某一时刻可以满足的操作，这四种形式的处理方式不同:</p>
+<p>第一种是抛出一个异常</p>
+<p>第二种是返回一个特殊值（null或false，具体取决于操作）</p>
+<p>第三种是在操作可以成功前，无限期地阻塞当前线程</p>
+<p>第四种是在放弃前只在给定的最大事件限制内阻塞</p>
+<p>插入移除方法，四种形式总结二</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>抛出异常</th>
+<th>特殊值</th>
+<th>阻塞</th>
+<th>超时</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>插入</td>
+<td>add(e)</td>
+<td>offer(e)</td>
+<td>put(e)</td>
+<td>offer(e,time,unit)</td>
+</tr>
+<tr>
+<td>移除</td>
+<td>remove()</td>
+<td>poll()</td>
+<td>take()</td>
+<td>poll(time,unit)</td>
+</tr>
+<tr>
+<td>检查</td>
+<td>element()</td>
+<td>peek()</td>
+<td>不可用</td>
+<td>不可用</td>
+</tr>
+</tbody></table>
+<h2 id="2-6-队列代码实现"><a href="#2-6-队列代码实现" class="headerlink" title="2.6 队列代码实现"></a>2.6 队列代码实现</h2><p>github地址：<a target="_blank" rel="noopener" href="https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/ZkDistributeQueue.java">https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/ZkDistributeQueue.java</a></p>
+<h2 id="2-7-队列整体逻辑"><a href="#2-7-队列整体逻辑" class="headerlink" title="2.7 队列整体逻辑"></a>2.7 队列整体逻辑<img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103164717123.png" alt="image-20210103164717123"></h2><h1 id="3-ZK配置中心"><a href="#3-ZK配置中心" class="headerlink" title="3 ZK配置中心"></a>3 ZK配置中心</h1><h2 id="3-1-ZooKeeper实现配置中心"><a href="#3-1-ZooKeeper实现配置中心" class="headerlink" title="3.1 ZooKeeper实现配置中心"></a>3.1 ZooKeeper实现配置中心</h2><p>何为配置中心？</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103171144424.png" alt="image-20210103171144424"></p>
+<h2 id="3-2-配置中心操作图"><a href="#3-2-配置中心操作图" class="headerlink" title="3.2 配置中心操作图"></a>3.2 配置中心操作图</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103171214324.png" alt="image-20210103171214324"></p>
+<h2 id="3-3-ZooKeeper实现配置中心"><a href="#3-3-ZooKeeper实现配置中心" class="headerlink" title="3.3 ZooKeeper实现配置中心"></a>3.3 ZooKeeper实现配置中心</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103171304783.png" alt="image-20210103171304783"></p>
+<p><strong>用ZooKeeper实现配置中心</strong></p>
+<ul>
+<li>znode能存储数据</li>
+<li>Watch能监听数据改变</li>
+</ul>
+<p>一个配置项一个znode</p>
+<p>一个配置文件一个znode</p>
+<h2 id="3-4-配置中心代码实现"><a href="#3-4-配置中心代码实现" class="headerlink" title="3.4 配置中心代码实现"></a>3.4 配置中心代码实现</h2><p>github地址：<a target="_blank" rel="noopener" href="https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/ZkConfigureCenter.java">https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/ZkConfigureCenter.java</a></p>
+<h1 id="4-Master选举应用"><a href="#4-Master选举应用" class="headerlink" title="4 Master选举应用"></a>4 Master选举应用</h1><h2 id="4-1-ZooKeeper实现Master选举"><a href="#4-1-ZooKeeper实现Master选举" class="headerlink" title="4.1 ZooKeeper实现Master选举"></a>4.1 ZooKeeper实现Master选举</h2><p><strong>何为Master选举？</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103180504165.png" alt="image-20210103180504165"></p>
+<p><strong>ZooKeeper如何来实现Master选举？</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103180631666.png" alt="image-20210103180631666"></p>
+<h2 id="4-2-代码实现"><a href="#4-2-代码实现" class="headerlink" title="4.2 代码实现"></a>4.2 代码实现</h2><p>github地址：<a target="_blank" rel="noopener" href="https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/MasterElectionDemo.java">https://github.com/chengchen901/zookeeper-study/blob/master/src/main/java/com/study/zkclient/MasterElectionDemo.java</a></p>
+<h1 id="5-ZooKeeper官网"><a href="#5-ZooKeeper官网" class="headerlink" title="5 ZooKeeper官网"></a>5 ZooKeeper官网</h1><h2 id="5-1-为什么要介绍ZooKeeper官网？"><a href="#5-1-为什么要介绍ZooKeeper官网？" class="headerlink" title="5.1 为什么要介绍ZooKeeper官网？"></a>5.1 为什么要介绍ZooKeeper官网？</h2><p>良好的学习方法</p>
+<ul>
+<li>我是怎么学的</li>
+<li>遇到问题百度？</li>
+<li>学到知识，不如会学知识</li>
+</ul>
+<p>一切从官网开始</p>
+<ul>
+<li>最权威准确，但也浅显简单</li>
+<li>官网的结构</li>
+<li>有哪些重要的点</li>
+</ul>
+<h2 id="5-2-ZooKeeper官网结构"><a href="#5-2-ZooKeeper官网结构" class="headerlink" title="5.2 ZooKeeper官网结构"></a>5.2 ZooKeeper官网结构</h2><p><strong>怎么看ZooKeeper官网？</strong></p>
+<p>官网地址：<a target="_blank" rel="noopener" href="https://zookeeper.apache.org/doc/r3.6.2/index.html">https://zookeeper.apache.org/doc/r3.6.2/index.html</a></p>
+<p>​	把握官网目录结构，就把握住了ZooKeeper的主骨架</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103181723545.png" alt="image-20210103181723545"></p>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ZooKeeper Overview</td>
+<td>ZooKeeper总览：概览、开始使用、发布说明</td>
+</tr>
+<tr>
+<td>Developers</td>
+<td>开发者如何使用Client API：API文档、程序员开发指南、ZK Java代码示例、队列和栅栏教程、分布式下高级别通用问题解决方案</td>
+</tr>
+<tr>
+<td>Administrators &amp; Operators</td>
+<td>管理员、运维人员部署内容：部署指南、配额指南、开启使用JMX、法定人数分级、观察者</td>
+</tr>
+<tr>
+<td>Contributors</td>
+<td>贡献代码给ZK人员的文档，ZK内部工作的各种主题</td>
+</tr>
+<tr>
+<td>Miscellaneous ZooKeeper Documentation</td>
+<td>ZK其他的各种文档，wiki、见问题解答</td>
+</tr>
+<tr>
+<td>BookKeeper Documentation</td>
+<td>图书管理员文档，一个高可用的具有高性能的日志预写系统，使用ZK作为元数据，ZK的捐献者。</td>
+</tr>
+</tbody></table>
+<h2 id="5-3-开发者常用部分的目录"><a href="#5-3-开发者常用部分的目录" class="headerlink" title="5.3 开发者常用部分的目录"></a>5.3 开发者常用部分的目录</h2><h3 id="5-3-1-程序员指南，zk的核心功能、客户端编程"><a href="#5-3-1-程序员指南，zk的核心功能、客户端编程" class="headerlink" title="5.3.1 程序员指南，zk的核心功能、客户端编程"></a>5.3.1 程序员指南，zk的核心功能、客户端编程</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103182907043.png" alt="image-20210103182907043.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103182653225.png" alt="image-20210103182653225.png"></p>
+<h3 id="5-3-2-管理员指南，集群、管理员常规操作、参数配置"><a href="#5-3-2-管理员指南，集群、管理员常规操作、参数配置" class="headerlink" title="5.3.2 管理员指南，集群、管理员常规操作、参数配置"></a>5.3.2 管理员指南，集群、管理员常规操作、参数配置</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103182646083.png" alt="image-20210103182646083.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103182931085.png" alt="image-20210103182931085.png"></p>
+<h3 id="5-3-3-源码贡献，zk的内部运行，zab协议、leader选举、请求流程"><a href="#5-3-3-源码贡献，zk的内部运行，zab协议、leader选举、请求流程" class="headerlink" title="5.3.3 源码贡献，zk的内部运行，zab协议、leader选举、请求流程"></a>5.3.3 源码贡献，zk的内部运行，zab协议、leader选举、请求流程</h3><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103183707540.png" alt="image-20210103183707540.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103183711556.png" alt="image-20210103183711556.png"></p>
+<h3 id="5-3-4-开发者常用部分的目录"><a href="#5-3-4-开发者常用部分的目录" class="headerlink" title="5.3.4 开发者常用部分的目录"></a>5.3.4 开发者常用部分的目录</h3><p>Wiki，其他语言客户端、有用的工具、性能测试报告、Zab协议深入、集群故障处理场景</p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103183933481.png" alt="image-20210103183933481.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103183936479.png" alt="image-20210103183936479.png"></p>
+<h1 id="6-ZooKeeper拓展"><a href="#6-ZooKeeper拓展" class="headerlink" title="6 ZooKeeper拓展"></a>6 ZooKeeper拓展</h1><h2 id="6-1-其它语言的客户端支持"><a href="#6-1-其它语言的客户端支持" class="headerlink" title="6.1 其它语言的客户端支持"></a>6.1 其它语言的客户端支持</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103184548690.png" alt="image-20210103184548690"></p>
+<p><a target="_blank" rel="noopener" href="https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZKClientBindings">https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZKClientBindings</a></p>
+<h2 id="6-2-一些有用的工具"><a href="#6-2-一些有用的工具" class="headerlink" title="6.2 一些有用的工具"></a>6.2 一些有用的工具</h2><p><strong>KeptCollections</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103184640506.png" alt="image-20210103184640506.png"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/anthonyu/KeptCollections">https://github.com/anthonyu/KeptCollections</a></p>
+<p>KeptCollections是一个替换了数据结构的，Java Collections框架库。</p>
+<p>由于KeptCollections使用ZK作为数据存储，使得数据结构是分布式的可升级的。</p>
+<p>里面的功能不多也不难，但是适合我们去学习zk在里面用法及扩展方式，带给我们不一样的思路。</p>
+<h2 id="6-3-一些有用的工具"><a href="#6-3-一些有用的工具" class="headerlink" title="6.3 一些有用的工具"></a>6.3 一些有用的工具</h2><p><strong>Curator</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103185055651.png" alt="image-20210103185055651.png"></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/image-20210103185049210.png" alt="image-20210103185049210"></p>
+<p>GitHub：<a target="_blank" rel="noopener" href="https://github.com/apache/curator">https://github.com/apache/curator</a></p>
+<p>Apache：<a target="_blank" rel="noopener" href="http://curator.apache.org/">http://curator.apache.org/</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/01/03/05-ZooKeeper/03-ZooKeeper%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" data-id="clmcxecxt008nu8wa221o1hi0" data-title="ZooKeeper经典应用场景" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/01/16/06-Dubbo/01-RPC%E7%90%86%E8%AE%BA/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          RPC理论
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/01/02/05-ZooKeeper/02-Zookeeper%E9%9B%86%E7%BE%A4/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Zookeeper集群</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

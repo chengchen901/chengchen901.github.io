@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>SpringBoot-AutoConfiguration | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="参数配置规则详解SpringBoot参数配置规则详解 1 Spring Boot应用中可以在哪里配置参数?   classpath:&#x2F;下的application.properties &#x2F; application.yml中   参数配置文件的名称有什么要求没?  application.properties &#x2F; application.yml   参数配置文件的位置有什">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot-AutoConfiguration">
+<meta property="og:url" content="http://example.com/2021/05/07/03-SpringBoot/03-SpringBoot-AutoConfiguration/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="参数配置规则详解SpringBoot参数配置规则详解 1 Spring Boot应用中可以在哪里配置参数?   classpath:&#x2F;下的application.properties &#x2F; application.yml中   参数配置文件的名称有什么要求没?  application.properties &#x2F; application.yml   参数配置文件的位置有什">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210916192522.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210916192624.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210916194933.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210916195052.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210916195434.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210916201435.png">
+<meta property="article:published_time" content="2021-05-07T14:36:30.000Z">
+<meta property="article:modified_time" content="2021-12-12T10:26:20.047Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="SpringBoot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210916192522.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-03-SpringBoot/03-SpringBoot-AutoConfiguration" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/07/03-SpringBoot/03-SpringBoot-AutoConfiguration/" class="article-date">
+  <time class="dt-published" datetime="2021-05-07T14:36:30.000Z" itemprop="datePublished">2021-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/SpringBoot/">SpringBoot</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      SpringBoot-AutoConfiguration
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="参数配置规则详解"><a href="#参数配置规则详解" class="headerlink" title="参数配置规则详解"></a>参数配置规则详解</h1><h2 id="SpringBoot参数配置规则详解"><a href="#SpringBoot参数配置规则详解" class="headerlink" title="SpringBoot参数配置规则详解"></a>SpringBoot参数配置规则详解</h2><ul>
+<li><p><strong>1 Spring Boot应用中可以在哪里配置参数?</strong> </p>
+<ul>
+<li>classpath:&#x2F;下的application.properties &#x2F; application.yml中</li>
+</ul>
+</li>
+<li><p><strong>参数配置文件的名称有什么要求没?</strong></p>
+<ul>
+<li>application.properties &#x2F; application.yml</li>
+</ul>
+</li>
+<li><p><strong>参数配置文件的位置有什么要求没?</strong></p>
+<ul>
+<li>classpath:&#x2F;</li>
+</ul>
+</li>
+<li><p><strong>参数配置文件的约定名称为:</strong></p>
+<ul>
+<li>application.properties &#x2F; application.yml</li>
+</ul>
+</li>
+<li><p><strong>参数配置文件的约定放置位置（优先级从高到低)为:</strong> </p>
+<ul>
+<li><strong>1 运行程序的当前工作目录下的config子目录file:.&#x2F;config</strong></li>
+<li><strong>2 运行程序的当前工作目录file:.&#x2F;</strong></li>
+<li><strong>3 classpath:&#x2F;config子目录</strong></li>
+<li><strong>4 classpath:&#x2F;根目录</strong></li>
+</ul>
+<p><strong>看ConfigFileApplicationListener类</strong></p>
+</li>
+</ul>
+<p><strong>ConfigFileApplicationListener:</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210916192522.png"></p>
+<p><strong>通过指定spring.config.name和spring.config.location属性的值来改变约定的默认名称、位置!</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210916192624.png"></p>
+<ul>
+<li><strong>指定spring.config.name、spring.config.location属性值的三种方式（优先级 程序命令行参数 &gt; JVM参数 &gt; 操作系统环境变量）:</strong><ul>
+<li>程序命令行参数:–spring.config.name&#x3D;xXXX</li>
+<li>JVM参数:-Dspring.config.name&#x3D;xXXX</li>
+<li>操作系统环境变量: spring.config.name&#x3D;xxXX</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">java -jar myproject.jar --spring.config.name=girl</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">java -jar myproject.jar --spring.config.location=classpath:/default.properties,classpath:/override.properties</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><strong>spring.config.location属性特别说明</strong></p>
+<ul>
+<li>spring.config.location指定配置文件所在目录(以&#x2F;结尾）或文件名,可多值(逗号间隔) </li>
+<li>查找的顺序是配置的反序</li>
+</ul>
+</li>
+<li><p><strong>spring.config.name属性特别说明:</strong> </p>
+<ul>
+<li>spring.config.name可多值(逗号间隔) </li>
+<li>属性查找的顺序是配置的反序</li>
+</ul>
+</li>
+<li><p><strong>spring.config.additional-location属性说明:</strong> </p>
+<ul>
+<li>除了默认规则外用来指定额外补充的配置文件目录或配置文件</li>
+<li>优先级高于spring.config.location</li>
+</ul>
+</li>
+<li><p><strong>除了可在参数配置文件中配置外,还有其他方式配置参数吗?</strong></p>
+<ul>
+<li>程序命令行参数</li>
+<li>Jvm参数</li>
+<li>系统环境变量</li>
+<li>参数配置文件</li>
+<li>SpringApplication.setDefaultProperties()</li>
+<li>@PropertySource</li>
+</ul>
+</li>
+</ul>
+<h2 id="SpringBoot参数配置语法"><a href="#SpringBoot参数配置语法" class="headerlink" title="SpringBoot参数配置语法"></a>SpringBoot参数配置语法</h2><ul>
+<li><p><strong>配置文件格式:</strong> </p>
+<ul>
+<li>application.properties</li>
+<li>application.yml</li>
+</ul>
+</li>
+<li><p><strong>参数引用:</strong></p>
+<ul>
+<li>my.info&#x3D;${my.name} age is ${my.age}</li>
+</ul>
+</li>
+<li><p><strong>参数随机值:</strong></p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">  <span class="attr">my.secret</span>=<span class="string">$&#123;random.value&#125;</span></span><br><span class="line">  <span class="attr">my.number</span>=<span class="string">$&#123;random.int&#125;</span></span><br><span class="line">  <span class="attr">my.bignumber</span>=<span class="string">$&#123;random.long&#125;</span></span><br><span class="line">  <span class="attr">my.uuid</span>=<span class="string">$&#123;random. uuid&#125;</span></span><br><span class="line">  <span class="attr">my.number.less.than.ten</span>=<span class="string">$&#123;random.int(10)&#125;</span></span><br><span class="line">  <span class="attr">my.number.in.range</span>=<span class="string">$&#123;random.int[1024,65536]&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="attr">-</span> <span class="string">**参数值加密 password=eadesdrefdaf8efacnanaeijr91qw:**</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">1.</span> <span class="string">实现一个EnvironmentPostProcessor,在里面完成密文值的解密</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">     ![](https://raw.githubusercontent.com/chengchen901/img/master/blog/20210916193718.png)</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">2.</span> <span class="string">将这个实现加到META-INF/spring.factories 中，让其生效</span></span><br><span class="line"></span><br><span class="line">     <span class="attr">````properties</span></span><br><span class="line">     <span class="attr">org.springframework.boot.env.EnvironmentPostProcessor</span>=<span class="string">com.example.YourEnvironmentPostProcessor</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="attr">-</span> <span class="string">YAML语法</span></span><br><span class="line">  <span class="attr">-</span> <span class="string">很简单，参考学习: https://blog.csdn.net/vincent_hbl/article/details/75411243</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 参数使用详解</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">## 参数使用详解</span></span><br><span class="line"></span><br><span class="line"><span class="attr">-</span> <span class="string">**方式一: @Value(&quot;$&#123;my.name&#125;&quot;)**</span></span><br><span class="line"></span><br><span class="line"><span class="attr">-</span> <span class="string">**方式二:注入Environment bean**</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">````java</span></span><br><span class="line">  <span class="attr">@Component</span></span><br><span class="line">  <span class="attr">public</span> <span class="string">class UserEnvironmentDemo &#123;</span></span><br><span class="line">      <span class="attr">@Autowired</span></span><br><span class="line">      <span class="attr">private</span> <span class="string">Environment env;</span></span><br><span class="line">      </span><br><span class="line">      <span class="attr">public</span> <span class="string">void service() &#123;</span></span><br><span class="line">          <span class="attr">System.out.println(env.getProperty(&quot;my.name&quot;));</span></span><br><span class="line">      <span class="attr">&#125;</span></span><br><span class="line">  <span class="attr">&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>方式三:@ConfigurationProperties(prefix &#x3D; “my”)</strong></p>
+<ul>
+<li><p>加在一个bean类上，给bean的属性进行赋值，属性需有getters and setters</p>
+</li>
+<li><p>有两种具体用法</p>
+<ul>
+<li><p><strong>1 自动配置中的参数装载Bean</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;user.share&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ShareProperties</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String desc;</span><br><span class="line">    <span class="keyword">private</span> String url;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// get set...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableConfigurationProperties(ShareProperties.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ShareAutoConfiguration</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ShareProperties sp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>2 Bean属性值注入</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;user.share&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ShareProperties</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String desc;</span><br><span class="line">    <span class="keyword">private</span> String url;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// get set...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">      <span class="meta">@ConfigurationProperties(prefix = &quot;user.share&quot;)</span></span><br><span class="line">      <span class="meta">@Bean</span></span><br><span class="line">      <span class="keyword">public</span> ShareProperties <span class="title function_">shareProperties</span><span class="params">()</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ShareProperties</span>();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## <span class="meta">@ConfigurationProperties</span>属性名灵活绑定</span><br><span class="line"></span><br><span class="line">- **类中属性名一般会采用驼峰方式，配置参数名也要驼峰吗?**</span><br><span class="line"></span><br><span class="line">  不需要</span><br><span class="line"></span><br><span class="line">  ````java</span><br><span class="line">  <span class="meta">@ConfigurationProperties(prefix = &quot;user.share&quot;)</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ShareProperties</span> &#123;</span><br><span class="line">      <span class="keyword">private</span> String firstName;</span><br><span class="line">      </span><br><span class="line">      <span class="comment">// get set...</span></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>类中属性名一般会采用驼峰方式，配置参数名可以用如下方式:</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210916194933.png"></p>
+<p>注意:prefix的值只可使用-、小写，如</p>
+<p>@ConfigurationProperties(prefix &#x3D; “acme.my-project.person”)</p>
+</li>
+<li><p><strong>各类配置源对灵活绑定的支持情况:</strong></p>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210916195052.png"></p>
+<p>建议:属性名采用小写–连接格式，如my.property-name&#x3D;acme</p>
+</li>
+<li><p><strong>如果名字本身包含-_等特殊字符怎么办?用[]包裹:</strong></p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">acme:</span></span><br><span class="line">	<span class="attr">map:</span></span><br><span class="line">		<span class="string">&quot;[/key1]&quot;</span><span class="string">:</span> <span class="string">value1</span></span><br><span class="line">		<span class="string">&quot;[/key2]&quot;</span><span class="string">:</span> <span class="string">value2</span></span><br><span class="line">		<span class="string">/key3:</span> <span class="string">value3</span></span><br></pre></td></tr></table></figure>
+
+<p>最终的参数名为：&#x2F;key1，&#x2F;key2，key3</p>
+</li>
+</ul>
+<h2 id="ConfigurationProperties更多用法"><a href="#ConfigurationProperties更多用法" class="headerlink" title="@ConfigurationProperties更多用法"></a>@ConfigurationProperties更多用法</h2><ul>
+<li><p><strong>参数值直接转换</strong></p>
+</li>
+<li><p><strong>bean属性参数值绑定合法性校验@Validated</strong></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_32352777/article/details/108424932">https://blog.csdn.net/qq_32352777/article/details/108424932</a></p>
+<p>详细用法通过官网了解</p>
+</li>
+</ul>
+<h2 id="ConfigurationProperties-VS-Value"><a href="#ConfigurationProperties-VS-Value" class="headerlink" title="@ConfigurationProperties VS @Value"></a>@ConfigurationProperties VS @Value</h2><p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210916195434.png"></p>
+<h1 id="Profiles详解"><a href="#Profiles详解" class="headerlink" title="Profiles详解"></a>Profiles详解</h1><h2 id="Profiles详解-1"><a href="#Profiles详解-1" class="headerlink" title="Profiles详解"></a>Profiles详解</h2><ul>
+<li><p><strong>profile是什么?</strong> </p>
+<ul>
+<li>Spring配置文件提供的一种隔离应用程序配置的方法，使其仅在特定环境中可用。 </li>
+<li>可通过profile指定Bean的应用环境(如开发、测试、生产等环境) </li>
+<li>可通过profile指定不同环境的配置参数值</li>
+</ul>
+</li>
+<li><p><strong>通过profile指定Bean的应用环境</strong></p>
+<ul>
+<li><p>任何@Component或@Configuration都可以用@Profile来标记，以便在加载时进行限制。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@Profile(&quot;production&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductionConfiguration</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Profile(&quot;dev&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyBean</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">profile</span>=<span class="string">&quot;dev&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;combatService&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.study.spring.service.CombatService&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;6e&quot;</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">constructor-</span> <span class="attr">arg</span> <span class="attr">index</span>=<span class="string">&quot;5&quot;</span> <span class="attr">value</span>=<span class="string">&quot;999&quot;</span>/&gt;</span></span><br><span class="line">	&lt;/ bean&gt;</span><br><span class="line">&lt;/ beans&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>通过profile指定不同环境的配置参数值</strong> </p>
+<ul>
+<li><p>方式一∶通过不同的环境配置文件来区分</p>
+<ul>
+<li>application-{profile}.properties或application-{profile}.yml，没有带-{profile}表示共用到所有环境</li>
+</ul>
+</li>
+<li><p>方式二:在同一个yml配置文件中区分，—是内容分隔符，第一部分为通用配置</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">	<span class="attr">address:</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.100</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">	<span class="attr">profiles:</span> <span class="string">dev</span></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line">	<span class="attr">address:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">	<span class="attr">profiles:</span> <span class="string">pro</span> <span class="string">&amp;</span> <span class="string">central</span></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line">	<span class="attr">address:</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.120</span></span><br></pre></td></tr></table></figure>
+
+<p>还可通过spring.profiles.include来指定某个环境包含的其它profile定义</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">my.property</span>: <span class="string">fromyamlfile</span></span><br><span class="line"><span class="attr">---</span></span><br><span class="line"><span class="attr">spring.profiles</span>: <span class="string">prod</span></span><br><span class="line"><span class="attr">spring.profiles.include</span>:<span class="string"></span></span><br><span class="line">	<span class="attr">-</span> <span class="string">proddb</span></span><br><span class="line">	<span class="attr">-</span> <span class="string">prodmq</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>指定程序启用的profiles</strong></p>
+<ul>
+<li><p>通过配置参数spring.profiles.active来指定应用启用的profiles</p>
+<ul>
+<li><p>环境变量、jvm参数、命令行程序参数、application.properties中都可以</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spring.profiles.active=dev,hsqldb</span><br><span class="line">--spring.profiles.active=dev,hsqldb</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>编程式指定启用的环境</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SpringApplication.setAdditionalProfiles(...)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>注意事项</strong></p>
+<ul>
+<li><p>1没有通过spring.profiles.active指定启用的profiles时，将使用-default的（如果有) </p>
+</li>
+<li><p>2通过spring.config.location指定的配置文件不会应用profile，目录会。</p>
+<pre><code>application-default.properties
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="AutoConfiguration"><a href="#AutoConfiguration" class="headerlink" title="AutoConfiguration"></a>AutoConfiguration</h1><h2 id="AutoConfiguration-1"><a href="#AutoConfiguration-1" class="headerlink" title="AutoConfiguration"></a>AutoConfiguration</h2><p><strong>AutoConfiguration继承体系</strong></p>
+<ol>
+<li>继承spring boot-starter-parent</li>
+<li>继承spring boot-dependencies</li>
+<li>引入spring-boot-autoconfigure</li>
+</ol>
+<p><strong>AutoConfiguration的加载触发</strong></p>
+<ol>
+<li>注解EnableAutoConfiguration</li>
+<li>AutoConfigurationImportSelector</li>
+<li>通对selectImports加载自动配置信息</li>
+<li>通getCandidateConfigurations加载META-INF&#x2F;spring.factories</li>
+</ol>
+<h2 id="AutoConfiguration-官方集成框架"><a href="#AutoConfiguration-官方集成框架" class="headerlink" title="AutoConfiguration 官方集成框架"></a>AutoConfiguration 官方集成框架</h2><p>Spring官方集成自动配置</p>
+<ul>
+<li>RabbitAutoConfiguration</li>
+<li>JpaRepositoriesAutoConfiguration</li>
+<li>ElasticsearchDataAutoConfiguration</li>
+<li>RedisAutoConfiguration</li>
+<li>EmbeddedMongoAutoConfiguration</li>
+<li>HibernateJpaAutoConfiguration</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chengchen901/img/master/blog/20210916201435.png"></p>
+<p>更多参考官方地址：<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-auto-configuration-classes.html#auto-configuration-classes-from-autoconfigure-module">https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-auto-configuration-classes.html#auto-configuration-classes-from-autoconfigure-module</a></p>
+<p>越来越多的第三方框架也进行了集成：Mybatis、Shiro、Dubbo、PageHelper等</p>
+<h2 id="AutoConfiguration-相关注解"><a href="#AutoConfiguration-相关注解" class="headerlink" title="AutoConfiguration 相关注解"></a>AutoConfiguration 相关注解</h2><p><strong>自动配置-―条件依赖注解</strong></p>
+<p>@ConditionalOnClass @ConditionalOnMissingClass 指定的类存在或不存在</p>
+<p>@ConditionalOnBean @ConditionalOnMissingBean 指定的bean存在或不存在</p>
+<p>@ConditionalOnProperty 指定的属性值存在或不存在</p>
+<p>@ConditionalOnResource 类路径是否有指定的值</p>
+<p>@ConditionalOnWebApplication @ConditionalOnNotWebApplication 是否为Web应用</p>
+<p>@ConditionalOnExpression 当抛出某个异常的情况下</p>
+<p>@AutoConfigureAfter @AutoConfigureBefore @AutoConfigureOrder 指定顺序</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/07/03-SpringBoot/03-SpringBoot-AutoConfiguration/" data-id="clmcxecw40080u8wa43xn6jhk" data-title="SpringBoot-AutoConfiguration" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/05/07/03-SpringBoot/02-SpringBoot-Starter/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          SpringBoot-Starter
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/05/07/03-SpringBoot/04-SpringBoot-CLI/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">SpringBoot-CLI</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ActiveMQ/">ActiveMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dubbo/">Dubbo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Golang/">Golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/K8s/">K8s</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Kafka/">Kafka</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MQ/">MQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mybatis/">Mybatis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RPC/">RPC</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Socker/">Socker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringBoot/">SpringBoot</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SpringCloud/">SpringCloud</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tomcat/">Tomcat</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ZooKeeper/">ZooKeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Zookeeper/">Zookeeper</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ActiveMQ/" rel="tag">ActiveMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CDH/" rel="tag">CDH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dubbo/" rel="tag">Dubbo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/" rel="tag">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K8s/" rel="tag">K8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KDTree/" rel="tag">KDTree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/" rel="tag">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MQ/" rel="tag">MQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Netty/" rel="tag">Netty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPC/" rel="tag">RPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RabbitMQ/" rel="tag">RabbitMQ</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Socker/" rel="tag">Socker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/" rel="tag">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YARN/" rel="tag">YARN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E8%A7%A3/" rel="tag">注解</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" rel="tag">集合源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag">面试题</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ActiveMQ/" style="font-size: 10px;">ActiveMQ</a> <a href="/tags/CDH/" style="font-size: 10px;">CDH</a> <a href="/tags/Docker/" style="font-size: 18px;">Docker</a> <a href="/tags/Dubbo/" style="font-size: 13px;">Dubbo</a> <a href="/tags/Golang/" style="font-size: 19px;">Golang</a> <a href="/tags/HDFS/" style="font-size: 10px;">HDFS</a> <a href="/tags/K8s/" style="font-size: 10px;">K8s</a> <a href="/tags/KDTree/" style="font-size: 10px;">KDTree</a> <a href="/tags/Kafka/" style="font-size: 10px;">Kafka</a> <a href="/tags/MQ/" style="font-size: 10px;">MQ</a> <a href="/tags/MapReduce/" style="font-size: 10px;">MapReduce</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Mybatis/" style="font-size: 14px;">Mybatis</a> <a href="/tags/Netty/" style="font-size: 14px;">Netty</a> <a href="/tags/RPC/" style="font-size: 11px;">RPC</a> <a href="/tags/RabbitMQ/" style="font-size: 15px;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 17px;">Redis</a> <a href="/tags/Socker/" style="font-size: 10px;">Socker</a> <a href="/tags/Spark/" style="font-size: 11px;">Spark</a> <a href="/tags/Spring/" style="font-size: 20px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 14px;">SpringBoot</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/Tomcat/" style="font-size: 13px;">Tomcat</a> <a href="/tags/YARN/" style="font-size: 11px;">YARN</a> <a href="/tags/ZooKeeper/" style="font-size: 12px;">ZooKeeper</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 16px;">多线程</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 10px;">注解</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 11px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88%E6%BA%90%E7%A0%81/" style="font-size: 13px;">集合源码</a> <a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 10px;">面试题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">January 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/05-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BA%E6%89%8B%E5%86%8C/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/04-Sharding-JDBC%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/03-MyCat%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/02-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/11-MySQL/04-MySQL%E9%AB%98%E5%8F%AF%E7%94%A8%E5%8F%8A%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/01-MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E9%AB%98%E5%8F%AF%E7%94%A8/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
